@@ -1,0 +1,64 @@
+<project default="package" name="textcritical.com">
+
+    <!--
+    Load the properties files, local is loaded first since properties are immutable (cannot be changed
+    by later property files) and we want the local properties to override the default properties
+    -->
+    <property file="local.properties" />
+    <property file="default.properties" />
+	
+	<!-- Set up JRuby so that SASS can run -->
+	<path id="JRuby">
+	    <fileset file="lib/jruby-complete-1.6.7.2.jar"/>
+	</path> 
+	
+    <!-- ================================= 
+          target: compile
+         ================================= -->
+	<target name="compile" description="Compile the application" depends="compile_scss"></target>
+	
+	
+    <!-- ================================= 
+          target: package
+         ================================= -->
+	<target name="package" description="Create the package" depends="compile"></target>
+	
+    <!-- ================================= 
+          target: verify
+         ================================= -->
+	<target name="verify" description="Verify that the package appears to be valid"></target>
+	
+	
+	<target name="test"></target>
+	<target name="deploy"></target>
+	
+	
+    <!-- ================================= 
+          target: compile_scss
+         ================================= -->
+    <target name="compile_scss" description="Compile the SCSS files">
+    	
+        <echo message="Compiling scss files..." />
+    	
+        <property name="filesIn" value="src/media/stylesheets/[^_]*.scss" />
+        <property name="fileOutDir" value="src/media/stylesheets" />
+    	
+        <script language="ruby" classpathref="JRuby">
+            <![CDATA[
+                require 'lib/sass-3.2.1/lib/sass'
+                require 'sass/exec'
+    
+                files = Dir.glob($project.getProperty('filesIn'))
+                #Dir.mkdir($project.getProperty('fileOutDir')) unless File.exists?($project.getProperty('fileOutDir'))
+                files.each do 
+                    | file |
+                    puts "     [sass compiler] " + file + " -> " + $project.getProperty('fileOutDir') + "/" + File.basename(file, ".*") + ".css"
+                    opts = Sass::Exec::Sass.new(["--load-path", File.dirname(file), file, File.join($project.getProperty('fileOutDir'), File.basename(file, ".*") + ".css")])
+                    opts.parse
+                end
+            ]]>
+        </script>
+        <echo message="Done compiling scss files!" />
+    </target>
+
+</project>
