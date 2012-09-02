@@ -11,7 +11,7 @@ from reader.language_tools.greek import Greek
 
 class TestGreekLanguageTools(TestCase):
     def test_beta_code_conversion(self):
-        self.assertEqual( Greek.beta_code_ascii_to_unicode("H)/LIOS"), u"ἤλιος")
+        self.assertEqual( Greek.beta_code_str_to_unicode("H)/LIOS"), u"ἤλιος")
 
     def test_beta_code_conversion_unicode(self):
         self.assertEqual( Greek.beta_code_to_unicode(u"H)/LIOS"), u"ἤλιος")
@@ -21,3 +21,51 @@ class TestGreekLanguageTools(TestCase):
         
     def test_unicode_conversion_to_beta_code(self):
         self.assertEqual( Greek.unicode_to_beta_code(u"ἤλιος"), u"H)/LIOS")
+        
+    def test_unicode_conversion_to_beta_code_str(self):
+        self.assertEqual( Greek.unicode_to_beta_code_str(u"ἤλιος"), "H)/LIOS")
+        
+    def test_section_of_text(self):
+        
+        # The first verse of Josephus' "Against Apion"
+        input = """*(ikanw=s me\\n u(polamba/nw kai\\ dia\\ th=s peri\\ th\\n a)rxaiologi/an 
+suggrafh=s, kra/tiste a)ndrw=n *)epafro/dite, toi=s e)nteucome/nois au)th=| 
+pepoihke/nai fanero\\n peri\\ tou= ge/nous h(mw=n tw=n *)ioudai/wn, o(/ti kai\\ 
+palaio/tato/n e)sti kai\\ th\\n prw/thn u(po/stasin e)/sxen i)di/an, kai\\ pw=s 
+th\\n xw/ran h(\\n nu=n e)/xomen katw/|khse &ast; pentakisxili/wn e)tw=n a)riqmo\\n 
+i(stori/an perie/xousan e)k tw=n par' h(mi=n i(erw=n bi/blwn dia\\ th=s *(ellhnikh=s
+fwnh=s sunegraya/mhn."""
+
+        expected_output = u"""Ἱκανῶς μὲν ὑπολαμβάνω καὶ διὰ τῆς περὶ τὴν ἀρχαιολογίαν 
+συγγραφῆς, κράτιστε ἀνδρῶν Ἐπαφρόδιτε, τοῖς ἐντευξομένοις αὐτῇ 
+πεποιηκέναι φανερὸν περὶ τοῦ γένους ἡμῶν τῶν Ἰουδαίων, ὅτι καὶ 
+παλαιότατόν ἐστι καὶ τὴν πρώτην ὑπόστασιν ἔσχεν ἰδίαν, καὶ πῶς 
+τὴν χώραν ἣν νῦν ἔχομεν κατῴκησε &αστ; πεντακισχιλίων ἐτῶν ἀριθμὸν 
+ἱστορίαν περιέχουσαν ἐκ τῶν παρ' ἡμῖν ἱερῶν βίβλων διὰ τῆς Ἑλληνικῆς
+φωνῆς συνεγραψάμην."""
+
+        output = Greek.beta_code_str_to_unicode(input)
+        
+        self.assertEquals(output, expected_output)
+        
+    def test_various_beta_code_conversions(self):
+        
+        TEST_BETA_CODES = [
+                           ('KAI\\', u'καὶ'),
+                           ('KAT)', u'κατʼ'),
+                           ('*KAI E)GE/NETO E)N TW=| TETA/RTOW', None), #Και ἐγένετο ἐν τῷ τετάρτῳ
+                           ('STH/SAI', u'στήσαι'),
+                           
+                           # Alternate versions of the acute
+                           ('A/E/H/O/I/U/W/', None) #άέήόίύώ
+                          ]
+
+        for beta_original, greek_expected in TEST_BETA_CODES:
+            greek_actual = Greek.beta_code_to_unicode(beta_original)
+            
+            if greek_expected is not None:
+                self.assertEqual( greek_expected, greek_actual)
+            
+            beta_actual = Greek.unicode_to_beta_code_str(greek_actual)
+            
+            self.assertEqual( beta_original, beta_actual )
