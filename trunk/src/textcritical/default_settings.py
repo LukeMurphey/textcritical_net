@@ -1,4 +1,5 @@
 # Django settings for textcritical project.
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -46,9 +47,12 @@ USE_L10N = True
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 
+# This indicates the root of the application and can be used for dynamically configuring directories
+SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -106,9 +110,7 @@ ROOT_URLCONF = 'textcritical.urls'
 WSGI_APPLICATION = 'textcritical.wsgi.application'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(SITE_ROOT, 'templates')
 )
 
 INSTALLED_APPS = (
