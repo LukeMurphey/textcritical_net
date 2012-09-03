@@ -12,8 +12,22 @@
 /* -----------------------------------------
    Shared Styles
 ----------------------------------------- */
+.chromeframe {
+	margin: 0.2em 0;
+	background: #ccc;
+	color: black;
+	padding: 0.2em 0;
+}
 
-
+.header{
+    background-color: #ededed;
+    background-image: -ms-linear-gradient(bottom, #EDEDED 0%, #FEFEFE 100%);
+    background-image: -moz-linear-gradient(bottom, #EDEDED 0%, #FEFEFE 100%);
+    background-image: -o-linear-gradient(bottom, #EDEDED 0%, #FEFEFE 100%);
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #EDEDED), color-stop(1, #FEFEFE));
+    background-image: -webkit-linear-gradient(bottom, #EDEDED 0%, #FEFEFE 100%);
+    background-image: linear-gradient(to top, #EDEDED 0%, #FEFEFE 100%);
+}
 
 /* -----------------------------------------
    Page Name 1

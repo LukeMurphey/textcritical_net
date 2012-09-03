@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Welcome to Foundation</title>
+  
+  {% if use_uncompressed %}
+  {% comment %}
+  Included CSS Files (Uncompressed)
+  {% endcomment %}
+  <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/foundation.css">
+  {% else %}
+  {% comment %}
+  Included CSS Files (Compressed)
+  {% endcomment %}
+  <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/app.css">
+  {% endif %}
+  
+  <script src="{{ MEDIA_URL }}/javascripts/modernizr.foundation.js"></script>
+
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  
+  <!-- Icons -->
+  <link rel="icon" type="image/png" href="{{ MEDIA_URL }}/images/favicon.ico" />
+  <link rel="apple-touch-icon" href="{{ MEDIA_URL }}/images/apple-touch-icon.png">
+  <link rel="apple-touch-icon-precomposed" href="{{ MEDIA_URL }}/images/apple-touch-icon-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="57x57" href="{{ MEDIA_URL }}/images/apple-touch-icon-57x57-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ MEDIA_URL }}/images/apple-touch-icon-72x72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ MEDIA_URL }}/images/apple-touch-icon-114x114-precomposed.png">
+  <!-- <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ MEDIA_URL }}/images/apple-touch-icon-144x144-precomposed.png"> -->
+
+</head>
+<body>
+  <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+  {% block content %}{% endblock %}
+  
+  {% if use_uncompressed %}
+  {% comment %}
+  Included JS Files (Uncompressed) -->
+  {% endcomment %}
+  
+  <script src="{{ MEDIA_URL }}/javascripts/modernizr.foundation.js"></script>
+  <script src="{{ MEDIA_URL }}/javascripts/jquery.js"></script>
+  <script src="{{ MEDIA_URL }}/javascripts/jquery.foundation.mediaQueryToggle.js"></script>
+  <script src="{{ MEDIA_URL }}/javascripts/jquery.foundation.reveal.js"></script>
+  <script src="{{ MEDIA_URL }}/javascripts/jquery.foundation.orbit.js"></script>
+  <script src="{{ MEDIA_URL }}/javascripts/jquery.foundation.navigation.js"></script>
+  <script src="{{ MEDIA_URL }}/javascripts/jquery.foundation.buttons.js"></script>
+  <script src="{{ MEDIA_URL }}/javascripts/jquery.foundation.tabs.js"></script>
+  <script src="{{ MEDIA_URL }}/javascripts/jquery.foundation.forms.js"></script>
+  <script src="{{ MEDIA_URL }}/javascripts/jquery.foundation.tooltips.js"></script>
+  <script src="{{ MEDIA_URL }}/javascripts/jquery.foundation.accordion.js"></script>
+  <script src="{{ MEDIA_URL }}/javascripts/jquery.placeholder.js"></script>
+  <script src="{{ MEDIA_URL }}/javascripts/jquery.foundation.alerts.js"></script>
+  {% else %}
+  {% comment %}
+  Included JS Files (Compressed)
+  {% endcomment %}
+  <script src="{{ MEDIA_URL }}/javascripts/foundation.min.js"></script>
+  {% endif %}
+  <!-- Initialize JS Plugins -->
+  <script src="{{ MEDIA_URL }}/javascripts/app.js"></script>
+</body>
+</html>
