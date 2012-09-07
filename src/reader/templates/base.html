@@ -29,13 +29,14 @@
   
   <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/app.css">
   <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/style.css">
-  {% if use_minified %}
+  {% if use_minified|default:1 %}
   <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap.min.css">
   <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap-responsive.min.css">
   {% else %}
   <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap.css">
   <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap-responsive.css">
   {% endif %}
+  {% block style %}{% endblock %}
   <style>
       body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
@@ -56,19 +57,17 @@
   <header>
 
   </header>
-  {% block content %}{% endblock %}
+  {% block base_content %}{% endblock %}
   
   <!-- JavaScript at the bottom for fast page loading -->
-
-  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="{{MEDIA_URL|escapejs}}/javascripts/libs/jquery-1.7.1.min.js"><\/script>')</script>
-
-  <!-- scripts concatenated and minified via build script -->
-  {% if use_minified %}<script src="{{ MEDIA_URL }}/javascripts/libs/bootstrap-min.js"></script>
-  {% else %}<script src="{{ MEDIA_URL }}/javascripts/libs/bootstrap.js"></script>{% endif %}
-  <script src="{{ MEDIA_URL }}/javascripts/plugins.js"></script>
-  <script src="{{ MEDIA_URL }}/javascripts/script.js"></script>
+  <script src="{{ MEDIA_URL }}/javascripts/libs/require.js"></script>
+  {% if use_minified|default:1 %}
+  <script src="{{ MEDIA_URL }}/javascripts/main.min.js"></script>
+  {% else %}
+  <script src="{{ MEDIA_URL }}/javascripts/main.js"></script>
+  {% endif %}
+  
+  {% block javascript %}{% endblock %}
   <!-- end scripts -->
 
   {% if google_analytics_id %}
