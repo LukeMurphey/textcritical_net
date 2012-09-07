@@ -12,13 +12,6 @@
 /* -----------------------------------------
    Shared Styles
 ----------------------------------------- */
-.chromeframe {
-	margin: 0.2em 0;
-	background: #ccc;
-	color: black;
-	padding: 0.2em 0;
-}
-
 .header{
     background-color: #ededed;
     background-image: -ms-linear-gradient(bottom, #EDEDED 0%, #FEFEFE 100%);
