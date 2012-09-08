@@ -13,10 +13,15 @@ require.config({
         datatables: [
             "http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.3/jquery.dataTables",
             "libs/jquery.dataTables"
+        ],
+        
+        bootstrap: [
+            "libs/bootstrap"
         ]
     },
     shim: {
         'jqueryui': ['jquery'],
-        'datatables': ['jquery']
+        'datatables': ['jquery'],
+        'bootstrap': ['jquery']
     }
 });
