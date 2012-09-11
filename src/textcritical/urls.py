@@ -1,14 +1,18 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
+from grappelli import urls as grappelli_urls
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-# admin.autodiscover()
+admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'textcritical.views.home', name='home'),
-    url(r'^$', include('reader.urls')),
+    
+    # Include the Grappelli app                
+    (r'^grappelli/', include(grappelli_urls)),
+    
+    # Include the reader app
+    url(r'^', include('reader.urls')),
 
     # Enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
