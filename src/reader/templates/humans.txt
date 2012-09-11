@@ -1,15 +1,17 @@
-/* humanstxt.org */
+# humanstxt.org/
+# The humans responsible & technology colophon
 
+# TEAM
 
-/* TEAM */
-  Luke: Luke Murphey
-  Site: http://LukeMurphey.net
-  Location: Chicago, IL
+    Luke Murphey -- Founder / Lead Developer -- Luke@LukeMurphey.net
 
-/* THANKS */
-  Names (& URL): 
+# THANKS
 
-/* SITE */
-  Standards: HTML5, CSS3
-  Components: Modernizr, jQuery, Zurb Foundation, Orbit, Reveal
-  Software: Eclipse, SVN, SASS
+    Tufts University (http://www.perseus.tufts.edu)
+    Peter Heslin (p.j.heslin@dur.ac.uk)
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3
+    Modernizr, jQuery, Twitter Bootstrap, Require.js, jQuery DataTables, HTML5 Boilerplate
+    Eclipse, SVN, SASS
