@@ -1,9 +1,9 @@
 require.config({
-    baseUrl: "media/javascripts",
+    baseUrl: "/media/javascripts",
     paths: {
         jquery: [
             "http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery",
-            "libs/jquery-1.7.1"
+            "libs/jquery"
         ],
         jqueryui: [
             "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui",
