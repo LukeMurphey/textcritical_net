@@ -24,10 +24,10 @@ class Work(models.Model):
     
     title = models.CharField(max_length=200)
     work_type = models.ForeignKey(WorkType, blank=True, null=True)
-    authors = models.ManyToManyField(Author)
-    translators = models.ManyToManyField(Author, related_name="translators")
-    descriptor = models.CharField(max_length=30)
-    copyright = models.CharField(max_length=200)
+    authors = models.ManyToManyField(Author, blank=True)
+    translators = models.ManyToManyField(Author, blank=True, related_name="translators")
+    descriptor = models.CharField(max_length=30, blank=True)
+    copyright = models.CharField(max_length=200, blank=True)
     date_written = models.DateTimeField('date written', blank=True, null=True)
     language = models.CharField(max_length=200)
     
@@ -37,10 +37,10 @@ class Work(models.Model):
 class Chapter(models.Model):
     work = models.ForeignKey(Work)
     sequence_number = models.IntegerField()
-    title = models.CharField(max_length=200)
-    subtitle = models.CharField(max_length=200)
-    descriptor = models.CharField(max_length=10)
-    original_content = models.TextField()
+    title = models.CharField(max_length=200, blank=True)
+    subtitle = models.CharField(max_length=200, blank=True)
+    descriptor = models.CharField(max_length=10, blank=True)
+    original_content = models.TextField(blank=True)
     
     def __unicode__(self):
         if self.title is not None and len(self.title) > 0:
