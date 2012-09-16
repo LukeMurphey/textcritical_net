@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+  <teiHeader type="text" status="new">
+    <fileDesc>
+      <titleStmt>
+    <title type="work" n="Vit.">Josephi vita</title>
+    <title type="sub">Machine readable text</title>
+    <author n="J.">Flavius Josephus</author>
+    <editor role="editor" n="Niese">B. Niese</editor>
+      &responsibility;
+      &fund.Tufts;
+      </titleStmt>
+    &Perseus.publish;
+      <sourceDesc>
+    <biblStruct>
+      <monogr>
+        <author>Flavius Josephus</author>
+        <title>Flavii Iosephi opera</title>
+        <editor role="editor">B. Niese</editor>
+        <imprint>
+          <pubPlace>Berlin</pubPlace>
+          <publisher>Weidmann</publisher>
+          <date>1890</date>
+        </imprint>
+      </monogr>
+    </biblStruct>
+      </sourceDesc>
+    </fileDesc>
+    
+    <encodingDesc>
+      <refsDecl doctype="TEI.2">
+    <state unit="section"/>
+      </refsDecl>
+      <refsDecl doctype="TEI.2">
+    <state n="chunk" unit="Whiston section"/>
+      </refsDecl>
+    </encodingDesc>
+    
+    <profileDesc>
+      <langUsage>
+    <language id="greek">Greek
+      </language></langUsage>
+    </profileDesc>
+    
+    <revisionDesc>
+      <change><date>11/21/97</date>
+    <respStmt><name>DAS</name><resp>ed.</resp></respStmt>
+    <item>
+$Log: j.vit_gk.xml,v $
+Revision 1.1  2009-11-24 20:08:29  rsingh04
+moved more xml files around based on copyright status
+
+Revision 1.2  2005/08/01 16:16:04  packel
+removed stray item tags
+
+    Revision 1.1  2005/07/25 14:38:09  packel
+    Converted to XML
+    
+Revision 1.8  2005/03/30 20:29:11  packel
+fixed milestone units
+
+Revision 1.7  2003/07/01 22:17:12  yorkc
+Updated texts to TEI P4 and Perseus P4 extensions; minor cleanup (esp. character encodings and typos.)
+
+Revision 1.6  2000/03/08 16:40:18  dasmith
+Funded by Tufts, not NEH.
+
+Revision 1.5  2000/03/04 20:34:47  dasmith
+Added separate funder entity to TEI header.
+
+Revision 1.4  2000/01/31 19:59:16  dasmith
+Use ED attribute in STATE.
+
+Revision 1.3  1999/08/04 23:57:01  dasmith
+Mark chunking milestones.
+
+Revision 1.2  1999/07/20 22:43:56  dasmith
+Regularized resDecl
+
+Revision 1.1  1997/11/21 23:37:04  textgod
+Added to repository. Passed SGML parse.
+
+
+</item></change>
+</revisionDesc>
+</teiHeader>
+<text n="Vit.">
+<body>
+<head>*)iwsh/pou bi/os</head>
+<milestone n="1" unit="Whiston section"/><milestone n="1" unit="section"/><p>*)emoi\ de\ ge/nos e)sti\n ou)k a)/shmon, a)ll' e)c i(ere/wn a)/nwqen
+katabebhko/s. w(/sper d' h( par' e(ka/stois a)/llh ti/s e)stin eu)genei/as
+u(po/qesis, ou(/tws par' h(mi=n h( th=s i(erwsu/nhs metousi/a tekmh/rio/n
+e)stin ge/nous lampro/thtos. <milestone n="2" unit="section"/>e)moi\ d' ou) mo/non e)c i(ere/wn e)sti\n to\
+ge/nos, a)lla\ kai\ e)k th=s prw/ths e)fhmeri/dos tw=n ei)kositessa/rwn,
+pollh\ de\ ka)n tou/tw| diafora/, kai\ tw=n e)n tau/th| de\ fulw=n e)k th=s
+a)ri/sths. u(pa/rxw de\ kai\ tou= basilikou= ge/nous a)po\ th=s mhtro/s: oi(
+ga\r *)asamwnai/ou pai=des, w(=n e)/ggonos e)kei/nh, tou= e)/qnous h(mw=n e)pi\
+mh/kiston xro/non h)rxiera/teusan kai\ e)basi/leusan. <milestone n="3" unit="section"/>e)rw= de\ th\n diadoxh/n: 
+o( pro/pappos h(mw=n *si/mwn o( *yello\s e)pikalou/menos. ou(=tos
+e)ge/neto kaq' o(\n kairo\n h)rxiera/teusen *si/mwnos a)rxiere/ws o( pai=s,
+o(\s prw=tos a)rxiere/wn *(urkano\s w)noma/sqh. <milestone n="4" unit="section"/>gi/nontai de\ tw=| *yellw=|
+*si/mwni pai=des e)nne/a: tou/twn e)sti\n *matqi/as o( *)hfai/ou lego/menos:
+ou(=tos h)ga/geto pro\s ga/mon qugate/ra *)iwna/qou a)rxiere/ws tou= prw/tou
+e)k tw=n *)asamwnai/ou pai/dwn ge/nous a)rxierateu/santos tou= a)delfou= <pb/>
+*si/mwnos ta)rxiere/ws, kai\ gi/netai pai=s au)tw=| *matqi/as o( *kurto\s
+e)piklhqei\s a)/rxontos *(urkanou= to\n prw=ton e)niauto/n. <milestone n="5" unit="section"/>tou/tou gi/netai
+*)iw/shpos e)na/tw| e)/tei th=s *)aleca/ndras a)rxh=s, kai\ *)iwsh/pou *matqi/as
+basileu/ontos *)arxela/ou to\ de/katon, *matqi/a de\ e)gw\ tw=| prw/tw|
+th=s *gai/+ou *kai/saros h(gemoni/as. e)moi\ de\ pai=de/s ei)sin trei=s, *(urkano\s
+me\n o( presbu/tatos e)/tei teta/rtw| th=s *ou)espasianou= *kai/saros h(gemoni/as, 
+e(bdo/mw| de\ *)iou=stos, e)na/tw| de\ *)agri/ppas. <milestone n="6" unit="section"/>th\n me\n tou=
+ge/nous h(mw=n diadoxh/n, w(s e)n tai=s dhmosi/ais de/ltois a)nagegramme/nhn 
+eu(=ron, ou(/tws parati/qemai toi=s diaba/llein h(ma=s peirwme/nois
+xai/rein fra/sas.
+<milestone n="2" unit="Whiston section"/><milestone n="7" unit="section"/></p><p>*(o path\r de/ mou *matqi/as ou) dia\ mo/nhn th\n eu)ge/neian
+e)pi/shmos h)=n, a)lla\ ple/on dia\ th\n dikaiosu/nhn e)ph|nei=to, gnwrimw/tatos 
+w)\n e)n th=| megi/sth| po/lei tw=n par' h(mi=n toi=s *(ierosolumi/tais.
+</p>
+</body>
+</text>
+</TEI.2>

@@ -2,40 +2,70 @@ from django.db import models
 
 
 class Author(models.Model):
-    name = models.CharField(max_length=200)
-    date_born = models.DateTimeField('date of birth')
-    date_died = models.DateTimeField('date of death')
+    name = models.CharField(max_length=200, blank=True, null=True)
+    date_born = models.DateTimeField('date of birth', blank=True, null=True)
+    date_died = models.DateTimeField('date of death', blank=True, null=True)
     
     # Indicates that the chapter is not a real author but a category (like "unknown" or "various")
     meta_author = models.BooleanField(default=False)
     
+    def __unicode__(self):
+        return self.name
+
+class WorkType(models.Model):
+    title = models.CharField(max_length=40)
     
-class Verse(models.Model):
-    verse_number = models.IntegerField()
-    verse_indicator = models.CharField(max_length=10)
-    
-    content = models.CharField(max_length=200)
-    
-class Chapter(models.Model):
-    verses = models.ManyToManyField(Verse)
-    chapter_number = models.IntegerField()
-    chapter_title = models.CharField(max_length=200)
-    chapter_subtitle = models.CharField(max_length=200)
-    chapter_indicator = models.CharField(max_length=10)
-    
+    def __unicode__(self):
+        return self.title
+
 class Work(models.Model):
+    
+    list_display = ('title', 'authors', 'language')
+    
     title = models.CharField(max_length=200)
+    work_type = models.ForeignKey(WorkType, blank=True, null=True)
     authors = models.ManyToManyField(Author)
     translators = models.ManyToManyField(Author, related_name="translators")
-    
-    date_written = models.DateTimeField('date written')
+    descriptor = models.CharField(max_length=30)
+    copyright = models.CharField(max_length=200)
+    date_written = models.DateTimeField('date written', blank=True, null=True)
     language = models.CharField(max_length=200)
     
-    chapters = models.ManyToManyField(Chapter)
-
+    def __unicode__(self):
+        return self.title
     
-"""
+class Chapter(models.Model):
+    work = models.ForeignKey(Work)
+    sequence_number = models.IntegerField()
+    title = models.CharField(max_length=200)
+    subtitle = models.CharField(max_length=200)
+    descriptor = models.CharField(max_length=10)
+    original_content = models.TextField()
+    
+    def __unicode__(self):
+        if self.title is not None and len(self.title) > 0:
+            return self.title
+        elif self.descriptor is not None and len(self.descriptor) > 0:
+            return self.descriptor
+        elif self.sequence_number is not None:
+            return str(self.sequence_number)
+        else:
+            return "Chapter object"
+    
+class Verse(models.Model):
+    chapter = models.ForeignKey(Chapter)
+    sequence_number = models.IntegerField()
+    indicator = models.CharField(max_length=10)
+    
+    content = models.TextField()
+    original_content = models.TextField()
+    
+class WorkSource(models.Model):
+    source = models.CharField(max_length=200)
+    resource = models.CharField(max_length=500)
+    description = models.TextField(blank=True)
+    work = models.ForeignKey(Work)
+    
 class Section(models.Model):
     chapters = models.ManyToManyField(Chapter)
-    sub_sections = models.ManyToManyField(Section)
-"""
+    sub_sections = models.ManyToManyField('self')
