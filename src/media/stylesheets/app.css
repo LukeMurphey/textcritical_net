@@ -23,11 +23,21 @@
 }
 
 /* -----------------------------------------
-   Page Name 1
+   Read work
 ----------------------------------------- */
 
+.verse.number{
+	font-weight: bold;
+}
 
+.verse_container{
+    display: inline;
+    line-height: 25px;
+}
 
+.block{
+	display: block;
+}
 
 /* -----------------------------------------
    Page Name 2
