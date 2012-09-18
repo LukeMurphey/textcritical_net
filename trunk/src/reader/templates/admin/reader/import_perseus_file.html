@@ -1,0 +1,67 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% load admin_urls %}
+
+{% block breadcrumbs %}{% if not is_popup %}
+<ul class="grp-horizontal-list">
+            <li><a href="{% url admin:index %}">Home</a></li>
+            <li><a href="../">Reader</a></li>
+            <li><a href=".">Works</a></li>
+            <li>Import Perseus File</li>
+</ul>
+        
+{% endif %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+<h1>
+  Import Perseus File
+</h1>
+
+<p style="margin-bottom: 24px">
+Upload a Perseus TEI XML file to import it. The works can be downloaded from <a href="http://www.perseus.tufts.edu/hopper/opensource/download">perseus.tufts.edu</a>.
+</p>
+
+<script type="text/javascript">
+<!--
+    var formed_enabled = true;
+    function submit_form() {
+       var e = document.getElementById('showonsubmit');
+       e.style.display = 'block'
+       
+       if( formed_enabled ){
+          formed_enabled = false;
+          return true;
+       }    
+       else{
+          alert('You already submitted the form. Please wait while the file is imported.')
+          return false;
+       }
+    }
+//-->
+</script>
+
+<div style="margin-left: 32px; margin-bottom: 32px; display: none;" id="showonsubmit">
+    <img src="/media/images/wait_animation_bar.gif" alt="Uploading" />
+    <p>The file is being uploaded; please wait until the import completes</p>
+</div>
+
+<form enctype="multipart/form-data" action="{% url admin_import_perseus_file %}" method="POST">
+    <table>
+        {% csrf_token %}
+        {{form}}
+        <tr>
+            <td></td>
+            <td><input class="SubmitButton" type="submit" value="Import Now" onclick="return submit_form();" /></td>
+        </tr>
+    </table>
+</form>
+
+{% if imported_work %}
+<p style="margin-top: 8px"">Last imported work: <a href="{% url admin:reader_work_change imported_work.pk %}">{{imported_work}}</a></p>
+{% endif %}
+
+</div>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}
