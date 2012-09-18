@@ -72,8 +72,26 @@ class PerseusTextImporter(TextImporter):
                 
             return TextImporter.copy_node(src_node, self.document, dst_node, True, False)
             
+    def import_xml_string(self, xml_string, state_set=0 ):
+        """
+        Import the work from the string provided.
         
+        Arguments:
+        xml_string -- A string representing XML
+        state_set -- The state set to use
+        """
+        
+        doc = parseString(xml_string)
+        return self.import_xml_document(doc, state_set)
+         
     def import_file( self, file_name, state_set=0 ):
+        """
+        Import the provided XML file.
+        
+        Arguments:
+        file_name -- The file name of a Perseus XML work
+        state_set -- The state set to use
+        """
         
         # Create the source object so that we remember where we got the file
         #self.work_source = WorkSource()
@@ -82,7 +100,7 @@ class PerseusTextImporter(TextImporter):
         
         # Import the document
         doc = parse(file_name)
-        self.import_xml_document(doc, state_set)
+        return self.import_xml_document(doc, state_set)
     
     def make_chapter(self, save=True, import_context=None, **kwargs):
         """
