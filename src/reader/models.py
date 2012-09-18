@@ -2,9 +2,12 @@ from django.db import models
 
 
 class Author(models.Model):
-    name = models.CharField(max_length=200, blank=True, null=True)
+    name = models.CharField(max_length=200)
+    first_name = models.CharField(max_length=200, blank=True)
+    last_name = models.CharField(max_length=200, blank=True)
     date_born = models.DateTimeField('date of birth', blank=True, null=True)
     date_died = models.DateTimeField('date of death', blank=True, null=True)
+    description = models.TextField(blank=True)
     
     # Indicates that the chapter is not a real author but a category (like "unknown" or "various")
     meta_author = models.BooleanField(default=False)
@@ -59,6 +62,12 @@ class Verse(models.Model):
     
     content = models.TextField()
     original_content = models.TextField()
+    
+    def __unicode__(self):
+        if self.indicator:
+            return self.indicator
+        else:
+            return self.sequence_number 
     
 class WorkSource(models.Model):
     source = models.CharField(max_length=200)
