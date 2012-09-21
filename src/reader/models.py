@@ -64,7 +64,7 @@ class Verse(models.Model):
     original_content = models.TextField()
     
     def __unicode__(self):
-        if self.indicator:
+        if self.indicator is not None and len(self.indicator) > 0:
             return self.indicator
         else:
             return self.sequence_number 
@@ -76,5 +76,16 @@ class WorkSource(models.Model):
     work = models.ForeignKey(Work)
     
 class Section(models.Model):
+    title = models.CharField(max_length=50)
+    type = models.CharField(max_length=50, blank=True, null=True)
+    level = models.IntegerField()
     chapters = models.ManyToManyField(Chapter)
-    sub_sections = models.ManyToManyField('self')
+    super_section = models.ForeignKey('self', blank=True, null=True)
+    
+    def __unicode__(self):
+        if self.title is not None and len(self.title) > 0:
+            return self.title
+        elif self.type is not None and len(self.type) > 0:
+            return self.type + " " + str(self.level)
+        else:
+            return str(self.level)
