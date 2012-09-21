@@ -109,7 +109,7 @@ class PerseusTextImporter(TextImporter):
         doc = parse(file_name)
         return self.import_xml_document(doc, state_set)
     
-    def make_section(self, level, import_context, section_type=None):
+    def make_section(self, level, import_context, section_type=None, title=None, original_title=None):
         
         new_section = None
         
@@ -127,6 +127,9 @@ class PerseusTextImporter(TextImporter):
                 new_section.level = level
                 new_section.super_section = import_context.section
                 
+            else:
+                logger.warning("Did not make section for level %i in %s" %(level, self.work.title) )
+                
         # Make the section 
         else:
             new_section = Section()
@@ -135,13 +138,15 @@ class PerseusTextImporter(TextImporter):
         # Save the newly created section
         if new_section is not None:
             new_section.type = section_type
+            new_section.title = title
+            new_section.original_title = original_title
             new_section.save()
         
         # Set the created section as the new one
         import_context.section = new_section
         return new_section
     
-    def make_chapter(self, save=True, import_context=None, **kwargs):
+    def make_chapter(self, save=True, import_context=None, descriptor="", **kwargs):
         """
         This method overrides the TextImporter.make_chapter and adds a call to save the original content section
         if necessary.
@@ -155,6 +160,7 @@ class PerseusTextImporter(TextImporter):
         self.save_original_content(import_context)
         
         import_context.chapter = TextImporter.make_chapter(self, import_context.chapter, save)
+        import_context.chapter.descriptor = descriptor
         import_context.chapters.append(import_context.chapter)
         import_context.initialize_xml_doc(PerseusTextImporter.CHAPTER_TAG_NAME)
         
@@ -166,7 +172,7 @@ class PerseusTextImporter(TextImporter):
     
     def make_verse(self, import_context=None, save=True, **kwargs):
         """
-        This method overrides the TextImporter.make_chapter and adds a call to save the original content section
+        This method overrides the TextImporter.make_verse and adds a call to save the original content section
         if necessary.
         
         Arguments:
@@ -253,12 +259,13 @@ class PerseusTextImporter(TextImporter):
             return state_sets
     
     @staticmethod
-    def getText(nodelist):
+    def getText(nodelist, recurse=False):
         """
         Get the text node from the provided nodelist.
         
         Arguments:
         nodelist -- A list of nodes that contain at least one text-node.
+        recurse -- Indicates if this function ought to get the text from the sub-nodes
         """
         
         rc = []
@@ -266,6 +273,8 @@ class PerseusTextImporter(TextImporter):
         for node in nodelist:
             if node.nodeType == node.TEXT_NODE:
                 rc.append(node.data)
+            elif recurse:
+                rc.append( PerseusTextImporter.getText(node.childNodes, True) )
         
         return ''.join(rc)
     
@@ -592,6 +601,22 @@ class PerseusTextImporter(TextImporter):
         else:
             return text
         
+    def getSectionTitle(self, div_node):
+        """
+        Get the the title of a section from the head node if it exists.
+        
+        Arguments:
+        div_node -- A div node
+        """
+        
+        head = div_node.getElementsByTagName("head")
+        
+        if len(head) > 0:
+            head = head[0]
+            
+            return self.getText(head.childNodes, True)
+        
+        
     def import_body_sub_node(self, content_node, state_set, import_context=None, recurse=True, parent_node=None):
         """
         Imports the content from the children of the given node (which ought to be in the body).
@@ -637,8 +662,13 @@ class PerseusTextImporter(TextImporter):
             # If the content is a new chapter marker
             elif is_new_chapter_marker:
                 
+                descriptor = ""
+                
+                if 'n' in node.attributes.keys():
+                    descriptor = node.attributes["n"].value
+                
                 # Make the chapter
-                self.make_chapter(import_context=import_context)
+                self.make_chapter(import_context=import_context, descriptor=descriptor)
                 logger.debug("Making chapter %s (since it is a chunk) of %s" % ( str(import_context.chapter.sequence_number), self.work.title))
                 
                 # Start adding the content to the new chapter
@@ -649,9 +679,14 @@ class PerseusTextImporter(TextImporter):
             # If the content is a verse marker and we don't have a chapter, then create one
             elif node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node):
                 
+                descriptor = ""
+                
+                if 'n' in node.attributes.keys():
+                    descriptor = node.attributes["n"].value
+                
                 # If we have a verse without a chapter, then go ahead and make one
                 if import_context.chapter is None:
-                    self.make_chapter(import_context=import_context)
+                    self.make_chapter(import_context=import_context, descriptor=descriptor)
                     new_chapter_node = import_context.current_node
                     parent_node = new_chapter_node
                     next_level_node = new_chapter_node
@@ -662,16 +697,20 @@ class PerseusTextImporter(TextImporter):
             
             elif PerseusTextImporter.DIV_PARSE_REGEX.match( node.tagName):
                 
+                # Get the level from the tag name
                 m = PerseusTextImporter.DIV_PARSE_REGEX.search( node.tagName )
-                
                 level = int(m.groupdict()['level'] )
                 
+                # Get the type of the section
                 section_type = None
                 
                 if "type" in node.attributes.keys():
                     section_type = node.attributes["type"].value
                 
-                self.make_section(level, import_context, section_type)
+                original_title = self.getSectionTitle(node)
+                title = self.process_text(original_title)
+                
+                self.make_section(level, import_context, section_type, title=title, original_title=original_title)
                 
                 logger.debug("Making section at level %i in %s" % (level, self.work.title))
                 
