@@ -16,7 +16,7 @@ from textcritical.default_settings import SITE_ROOT
 from reader.importer.Perseus import PerseusTextImporter
 from reader.importer import TextImporter
 from reader.language_tools.greek import Greek
-from reader.models import Author, Chapter, Verse
+from reader.models import Author, Chapter, Verse, Section
 
 class TestGreekLanguageTools(TestCase):
     def test_beta_code_conversion(self):
@@ -237,10 +237,10 @@ class TestPerseusImport(TestCase):
         self.assertEquals( verses[1].indicator, "2")
         
         # Make sure the original content
-        expected_content = r"""<?xml version="1.0" ?><Perseus><p>*)emoi\ de\ ge/nos e)sti\n ou)k a)/shmon, a)ll' e)c i(ere/wn a)/nwqen
+        expected_content = r"""<?xml version="1.0" ?><verse><p>*)emoi\ de\ ge/nos e)sti\n ou)k a)/shmon, a)ll' e)c i(ere/wn a)/nwqen
 katabebhko/s. w(/sper d' h( par' e(ka/stois a)/llh ti/s e)stin eu)genei/as
 u(po/qesis, ou(/tws par' h(mi=n h( th=s i(erwsu/nhs metousi/a tekmh/rio/n
-e)stin ge/nous lampro/thtos. </p></Perseus>"""
+e)stin ge/nous lampro/thtos. </p></verse>"""
         
         self.assertEquals( verses[0].original_content, expected_content)
     
@@ -271,8 +271,17 @@ e)stin ge/nous lampro/thtos. </p></Perseus>"""
         self.assertEquals( Verse.objects.filter(chapter=chapters[1]).count(), 1)
     
     def test_load_book_with_sections(self):
-        pass
-    
-    def test_content_combine_across_milestone(self):
-        pass
+        book_xml = self.load_test_resource('j.aj_gk_portion.xml')
+        book_doc = parseString(book_xml)
+        work = self.importer.import_xml_document(book_doc, state_set=1) #Using Whiston sections as opposed to the defaults
+        
+        chapters = Chapter.objects.filter(work=work)
+        
+        self.assertEquals( chapters.count(), 1)
+        #self.assertEquals( Verse.objects.filter(chapter=chapters[0]).count(), 6)
+
+        sections = Section.objects.filter(chapters=chapters[0])
+        self.assertEquals( sections.count(), 1)
+        self.assertEquals( sections[0].type, "Book")
+        self.assertEquals( sections[0].level, 1)
         
