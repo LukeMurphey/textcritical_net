@@ -5,9 +5,10 @@ Created on Sep 2, 2012
 '''
 from xml.dom.minidom import parse, Document, parseString
 import logging
+import re
 
 from reader.importer import TextImporter
-from reader.models import Author, Work, WorkSource, Verse, Chapter
+from reader.models import Author, Work, WorkSource, Verse, Chapter, Section
 from reader.language_tools.greek import Greek
 
 from django.db import transaction
@@ -41,25 +42,31 @@ class State():
 
 class PerseusTextImporter(TextImporter):
     
+    DIV_PARSE_REGEX = re.compile( r"div(?P<level>[0-9]+)" )
+    
+    VERSE_TAG_NAME = "verse"
+    CHAPTER_TAG_NAME = "chapter"
+    
     class ImportContext():
         """
         Represents the context that used during the process of importing. This is necessary so that
         the verse are associated with the correct books and chapters.
         """
         
-        def __init__(self, book=None, chapter=None, verse=None):
+        def __init__(self, tag_name, book=None, chapter=None, verse=None, section = None):
             self.book = book
             self.chapter = chapter
             self.verse= verse
+            self.section = section
             
-            self.initialize_xml_doc()
+            self.initialize_xml_doc(tag_name)
             
             self.chapters = []
             
-        def initialize_xml_doc(self):
+        def initialize_xml_doc(self, tag_name):
             self.document = Document()
             
-            self.current_node = self.document.createElement("Perseus")
+            self.current_node = self.document.createElement(tag_name)
             
             self.document.appendChild(self.current_node)
             
@@ -102,6 +109,38 @@ class PerseusTextImporter(TextImporter):
         doc = parse(file_name)
         return self.import_xml_document(doc, state_set)
     
+    def make_section(self, level, import_context, section_type=None):
+        
+        new_section = None
+        
+        if import_context.section is not None:
+            
+            # If this level is the at the same level, then replace the section with the current one
+            if import_context.section.level <= level:
+                new_section = Section()
+                new_section.level = level
+                new_section.super_section = import_context.section.super_section
+                
+            # If the current level is one higher than the new one, then move the current section under it
+            elif import_context.section.level == (level + 1):
+                new_section = Section()
+                new_section.level = level
+                new_section.super_section = import_context.section
+                
+        # Make the section 
+        else:
+            new_section = Section()
+            new_section.level = level
+            
+        # Save the newly created section
+        if new_section is not None:
+            new_section.type = section_type
+            new_section.save()
+        
+        # Set the created section as the new one
+        import_context.section = new_section
+        return new_section
+    
     def make_chapter(self, save=True, import_context=None, **kwargs):
         """
         This method overrides the TextImporter.make_chapter and adds a call to save the original content section
@@ -117,7 +156,11 @@ class PerseusTextImporter(TextImporter):
         
         import_context.chapter = TextImporter.make_chapter(self, import_context.chapter, save)
         import_context.chapters.append(import_context.chapter)
-        import_context.initialize_xml_doc()
+        import_context.initialize_xml_doc(PerseusTextImporter.CHAPTER_TAG_NAME)
+        
+        # Add the chapter to the section
+        if import_context.section is not None:
+            import_context.section.chapters.add(import_context.chapter)
         
         return import_context.chapter
     
@@ -135,7 +178,7 @@ class PerseusTextImporter(TextImporter):
         self.save_original_verse_content(import_context)
         
         import_context.verse = TextImporter.make_verse(self, import_context.verse, import_context.chapter, save)
-        import_context.initialize_xml_doc()
+        import_context.initialize_xml_doc(PerseusTextImporter.VERSE_TAG_NAME)
         
         return import_context.verse
     
@@ -265,6 +308,21 @@ class PerseusTextImporter(TextImporter):
         title_node = bibl_struct.getElementsByTagName("title")[0]
         return PerseusTextImporter.getText(title_node.childNodes)
         
+    @staticmethod
+    def get_title_from_tei_header(tei_header_node):
+        """
+        Get the title from the TEI header node.
+        
+        Arguments:
+        tei_header_node -- A node representing the TEI header
+        """
+        
+        for node in tei_header_node.getElementsByTagName("title"):
+            if "type" in node.attributes.keys() and node.attributes["type"].value != "sub":
+                return PerseusTextImporter.getText(node.childNodes)
+            else:
+                return PerseusTextImporter.getText(node.childNodes)
+        
     
     def import_info_from_bibl_struct(self, bibl_struct_node):
         """
@@ -329,19 +387,32 @@ class PerseusTextImporter(TextImporter):
             return state.is_chunk()
         else:
             return False
-        
+    
     @transaction.commit_on_success
     def import_xml_document(self, document, state_set=0):
+        """
+        Import the given TEI document into the database.
         
+        Arguments:
+        document -- A parsed TEI XML document
+        state_set -- The state set to use for splitting the verses.
+        """
+        
+        # Obtain references to the nodes that contain meta-data about the book
         tei_header = document.getElementsByTagName("teiHeader")[0]
-        
-        # Populate the author and work from the 'biblStruct' node
         bibl_struct_node = tei_header.getElementsByTagName("biblStruct")[0]
-        self.import_info_from_bibl_struct(bibl_struct_node)
+        
+        # Get the title
+        self.work.title = PerseusTextImporter.get_title_from_tei_header(tei_header)
         
         # Get the language
         self.work.language = PerseusTextImporter.get_language(tei_header)
         self.work.save()
+        
+        # Get the author
+        author_name = PerseusTextImporter.get_author_from_bibl_struct(bibl_struct_node)
+        author = self.make_author(author_name)
+        self.work.authors.add(author)
         
         # Get the sectioning information
         if state_set is None or state_set == "*":
@@ -362,14 +433,21 @@ class PerseusTextImporter(TextImporter):
         chapters = self.import_body_sub_node(body_node, current_state_set)
         
         # Make the verses
-        logger.info("Successfully imported %i chapters" % (len(chapters))) 
+        logger.info("Successfully imported %i chapters of %s" % (len(chapters), self.work.title)) 
         verses_created = self.make_verses(chapters, current_state_set)
         
-        logger.info("Successfully imported %i verses" % (verses_created)) 
+        logger.info("Successfully imported %i verses of %s" % (verses_created, self.work.title)) 
         
         return self.work
         
     def make_verses(self, chapters, state_set):
+        """
+        Parse out the verses from the chapters provided and create the individual verses.
+        
+        Arguments:
+        chapters -- A list of chapters with the original content to get the verses from.
+        state_set -- The state set to use for splitting the verses.
+        """
         
         verses_created = 0
         
@@ -379,20 +457,48 @@ class PerseusTextImporter(TextImporter):
         return verses_created
 
     def make_verses_for_chapter(self, chapter, state_set):
+        """
+        Parse out the verses from the chapter content and create the individual verses.
+        
+        Arguments:
+        chapter -- The chapter with the original content to get the verses from.
+        state_set -- The state set to use for splitting the verses.
+        """
         
         # Parse the XML
         chapter_doc = parseString(chapter.original_content)
         
-        root_node = chapter_doc.getElementsByTagName("Perseus")[0]
+        root_node = chapter_doc.getElementsByTagName(PerseusTextImporter.CHAPTER_TAG_NAME)[0]
         
         return self.import_verse_content( chapter, root_node, state_set)
+        
+    def process_original_verse_content(self, original_content, persist_nodes_as_spans=False):
+        """
+        Takes the original content from the verse (presumed to be from a TEI document from Perseus returns the actual verse content
+        with the expected format.
+        
+        Arguments:
+        original_content -- A verse model instance (if none, then
+        """
+        
+        verse_doc = parseString(original_content)
+        
+        content_node = verse_doc.getElementsByTagName(PerseusTextImporter.VERSE_TAG_NAME)
+        
+        resulting_content = ""
+        
+        for node in content_node.childNodes:
+            if node.nodeType == node.TEXT_NODE:
+                resulting_content = resulting_content + self.process_text(node.data)
+                
+        return resulting_content
         
         
     def import_verse_content(self, chapter, content_node, state_set, import_context = None, parent_node = None, recurse = True):
         
         # Setup an import context if this is the first, top level call
         if import_context is None:
-            import_context = PerseusTextImporter.ImportContext()
+            import_context = PerseusTextImporter.ImportContext(PerseusTextImporter.VERSE_TAG_NAME)
             import_context.chapter = chapter
             is_top_level_call = True
         else:
@@ -421,7 +527,7 @@ class PerseusTextImporter(TextImporter):
                         verses_created = verses_created + 1
                     
                         #import_context.verse = self.make_verse(save=False, chapter=chapter)
-                        logger.debug("Making new verse (since we have content for a verse but no verse itself) for chapter %s" % ( str(chapter.sequence_number)))
+                        logger.debug("Making new verse (since we have content for a verse but no verse itself) for chapter %s of %s" % ( str(chapter.sequence_number), self.work.title))
                     
                     import_context.verse.content = import_context.verse.content + self.process_text(node.data)
                     import_context.verse.chapter = chapter
@@ -445,7 +551,7 @@ class PerseusTextImporter(TextImporter):
                 parent_node = new_verse_node
                 next_level_node = new_verse_node
                 
-                logger.debug("Making verse %s in chapter %s" % (node.attributes["n"].value, str(import_context.chapter.sequence_number)) )
+                logger.debug("Making verse %s in chapter %s of %s" % (node.attributes["n"].value, str(import_context.chapter.sequence_number), self.work.title) )
                 
             # Attach the content to the chapter if it is for the current verse
             if not is_new_verse_node:
@@ -499,7 +605,7 @@ class PerseusTextImporter(TextImporter):
         
         # Setup an import context if this is the first, top level call
         if import_context is None:
-            import_context = PerseusTextImporter.ImportContext()
+            import_context = PerseusTextImporter.ImportContext(PerseusTextImporter.CHAPTER_TAG_NAME)
             is_top_level_call = True
         else:
             is_top_level_call = False
@@ -526,14 +632,14 @@ class PerseusTextImporter(TextImporter):
                 
                 if import_context.chapter is None:
                     # No chapter exists yet, skipping this verse
-                    logger.debug("No chapter exists yet, skipping this content: %s" % (node.data))
+                    logger.debug("No chapter exists yet, skipping this content: %s of %s" % (node.data, self.work.title))
                     
             # If the content is a new chapter marker
             elif is_new_chapter_marker:
                 
                 # Make the chapter
                 self.make_chapter(import_context=import_context)
-                logger.debug("Making chapter %s (since it is a chunk)" % ( str(import_context.chapter.sequence_number)))
+                logger.debug("Making chapter %s (since it is a chunk) of %s" % ( str(import_context.chapter.sequence_number), self.work.title))
                 
                 # Start adding the content to the new chapter
                 new_chapter_node = import_context.current_node
@@ -552,10 +658,26 @@ class PerseusTextImporter(TextImporter):
                     
                     # We just below away the existing chapter is carry the content over
                     
-                    logger.debug("Making a chapter since once does not exist yet (so that we can add a verse)")
+                    logger.debug("Making a chapter for %s since once does not exist yet (so that we can add a verse)" % (self.work.title))
             
-            elif node.tagName == "div1":
-                raise Exception("Book segments not supported yet")
+            elif PerseusTextImporter.DIV_PARSE_REGEX.match( node.tagName):
+                
+                m = PerseusTextImporter.DIV_PARSE_REGEX.search( node.tagName )
+                
+                level = int(m.groupdict()['level'] )
+                
+                section_type = None
+                
+                if "type" in node.attributes.keys():
+                    section_type = node.attributes["type"].value
+                
+                self.make_section(level, import_context, section_type)
+                
+                logger.debug("Making section at level %i in %s" % (level, self.work.title))
+                
+            #elif node.tagName == "note":
+                # We don't yet handle these types of nodes so don't try to get the text under them
+                #recurse = False
                 
             # Attach the content to the chapter if it is for the current chapter
             if not is_new_chapter_marker:
