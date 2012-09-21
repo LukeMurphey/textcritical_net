@@ -169,6 +169,30 @@ class TestPerseusImport(TestCase):
         
         self.assertEquals(language, "Greek")
         
+    def test_get_text(self):
+        
+        sample_xml = r"<head>*ta/de e)/nestin e)n th=| <num>b</num> tw=n *)iwsh/pou i(storiw=n th=s *)ioudai+kh=s a)rxaiologi/as.</head>"
+        
+        doc = parseString(sample_xml)
+        
+        head = doc.getElementsByTagName("head")[0]
+        
+        expected = r"*ta/de e)/nestin e)n th=|  tw=n *)iwsh/pou i(storiw=n th=s *)ioudai+kh=s a)rxaiologi/as."
+        
+        self.assertEquals( PerseusTextImporter.getText(head.childNodes, False), expected)
+        
+    def test_get_text_recursive(self):
+        
+        sample_xml = r"<head>*ta/de e)/nestin e)n th=| <num>b</num> tw=n *)iwsh/pou i(storiw=n th=s *)ioudai+kh=s a)rxaiologi/as.</head>"
+        
+        doc = parseString(sample_xml)
+        
+        head = doc.getElementsByTagName("head")[0]
+        
+        expected = r"*ta/de e)/nestin e)n th=| b tw=n *)iwsh/pou i(storiw=n th=s *)ioudai+kh=s a)rxaiologi/as."
+        
+        self.assertEquals( PerseusTextImporter.getText(head.childNodes, True), expected)
+        
     def test_get_states(self):
                                     
         states_xml = """ <refsDecl doctype="TEI.2">
@@ -214,7 +238,7 @@ class TestPerseusImport(TestCase):
         finally:
             if f is not None:
                 f.close()
-    
+    '''
     def test_load_book(self):
         
         # Pre-make the author in order to see if the importer is smart enough to not create a duplicate
@@ -269,7 +293,7 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         self.assertEquals( chapters.count(), 2)
         self.assertEquals( Verse.objects.filter(chapter=chapters[0]).count(), 6)
         self.assertEquals( Verse.objects.filter(chapter=chapters[1]).count(), 1)
-    
+    '''
     def test_load_book_with_sections(self):
         book_xml = self.load_test_resource('j.aj_gk_portion.xml')
         book_doc = parseString(book_xml)
@@ -277,11 +301,39 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         chapters = Chapter.objects.filter(work=work)
         
-        self.assertEquals( chapters.count(), 1)
+        self.assertEquals( chapters.count(), 3)
+        self.assertEquals( chapters[0].descriptor, "pr.")
         #self.assertEquals( Verse.objects.filter(chapter=chapters[0]).count(), 6)
 
-        sections = Section.objects.filter(chapters=chapters[0])
-        self.assertEquals( sections.count(), 1)
+        sections = Section.objects.filter(chapters__work=work).distinct()
+        
+        self.assertEquals( sections[0].original_title, r"""*ta/de e)/nestin e)n th=| prw/th| tw=n *)iwsh/pou i(storiw=n
+th=s *)ioudai+kh=s a)rxaiologi/as.""" )
+        self.assertEquals( sections[1].original_title, r"""*ta/de e)/nestin e)n th=| b tw=n *)iwsh/pou i(storiw=n th=s
+*)ioudai+kh=s a)rxaiologi/as.""" )
+        
+        self.assertEquals( sections.count(), 2)
         self.assertEquals( sections[0].type, "Book")
         self.assertEquals( sections[0].level, 1)
+        
+        # Make sure that the text from the TOC did not get included
+        expected_content = r"""<?xml version="1.0" ?><verse><milestone n="1" unit="section"/><p>*meta\ de\ th\n *)isa/kou teleuth\n oi( pai=des au)tou= merisa/menoi 
+th\n oi)/khsin pro\s a)llh/lous ou)x h(\n e)/labon tau/thn kate/sxon,
+a)ll' *(hsau=s me\n th=s *nebrwni/as po/lews e)kxwrh/sas tw=| a)delfw=| e)n
+*saeira=| dihta=to kai\ th=s *)idoumai/as h)=rxen ou(/tw kale/sas th\n xw/ran
+a)p' au)tou=: *)/adwmos ga\r e)pwnoma/zeto kata\ toiau/thn ai)ti/an tuxw\n
+th=s e)piklh/sews. <milestone n="2" unit="section"/>a)po\ qh/ras pote\ kai\ po/nou tou= peri\ to\ kunh/gion 
+limw/ttwn e)panh=ken, e)/ti de\ h)=n pai=s th\n h(liki/an, e)pituxw\n
+de\ ta)delfw=| fakh=n e)skeuako/ti pro\s a)/riston au(tw=| canqh\n sfo/dra
+th\n xroia\n kai\ dia\ tou=t' e)/ti ma=llon o)rexqei\s h)ci/ou parasxei=n
+au)tw=| pro\s trofh/n. <milestone n="3" unit="section"/>o( de\ a)podo/sqai to\ presbei=on au)tw=| tou= fagei=n
+sunergw=| xrhsa/menos th=| pei/nh| to\n a)delfo\n h)na/gkaze, ka)kei=nos u(po\
+tou= limou= proaxqei\s paraxwrei= tw=n presbei/wn au)tw=| meq' o(/rkwn.
+e)/nqen dia\ th\n canqo/thta tou= brw/matos u(po\ tw=n h(likiwtw=n kata\
+paidia\n *)/adwmos e)piklhqei/s, a)/dwma ga\r *(ebrai=oi to\ e)ruqro\n kalou=si, 
+th\n xw/ran ou(/tws proshgo/reusen: *(/ellhnes ga\r au)th\n e)pi\ to\
+semno/teron *)idoumai/an w)no/masan.
+</p></verse>"""
+
+        self.assertEquals( Verse.objects.filter(chapter=chapters[1])[0].original_content, expected_content)
         
