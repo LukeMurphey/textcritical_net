@@ -76,7 +76,8 @@ class WorkSource(models.Model):
     work = models.ForeignKey(Work)
     
 class Section(models.Model):
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=200)
+    original_title = models.CharField(max_length=200)
     type = models.CharField(max_length=50, blank=True, null=True)
     level = models.IntegerField()
     chapters = models.ManyToManyField(Chapter)
