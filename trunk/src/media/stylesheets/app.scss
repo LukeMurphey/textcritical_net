@@ -1,0 +1,80 @@
+/* Artfully masterminded by ZURB  */
+
+@mixin rounded_side($side, $radius: 10px) {
+  border-#{$side}-radius: $radius;
+  -moz-border-radius-#{$side}: $radius;
+  -webkit-border-#{$side}-radius: $radius;
+}
+
+@mixin rounded($radius: 10px) {
+  border-radius: $radius;
+  -moz-border-radius: $radius;
+  -webkit-border-radius: $radius;
+}
+
+/* -------------------------------------------------- 
+   Table of Contents
+-----------------------------------------------------
+:: Shared Styles
+:: Page Name 1
+:: Page Name 2
+*/
+
+
+/* -----------------------------------------
+   Shared Styles
+----------------------------------------- */
+.header{
+    background-color: #ededed;
+    background-image: -ms-linear-gradient(bottom, #EDEDED 0%, #FEFEFE 100%);
+    background-image: -moz-linear-gradient(bottom, #EDEDED 0%, #FEFEFE 100%);
+    background-image: -o-linear-gradient(bottom, #EDEDED 0%, #FEFEFE 100%);
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #EDEDED), color-stop(1, #FEFEFE));
+    background-image: -webkit-linear-gradient(bottom, #EDEDED 0%, #FEFEFE 100%);
+    background-image: linear-gradient(to top, #EDEDED 0%, #FEFEFE 100%);
+}
+
+/* -----------------------------------------
+   Read work
+----------------------------------------- */
+
+.verse.number{
+    font-weight: bold;
+}
+
+.verse_container{
+    display: inline;
+    line-height: 25px;
+}
+
+.block{
+    display: block;
+    margin-top: 16px;
+}
+
+.table_of_contents{
+    display: none;
+    padding: 0px;
+    margin: 0px;
+    overflow: hidden;
+}
+
+.verse_link{
+    &:visited { color: #EEE; }
+    &:active { color: #EEE; }
+    &:link { color: #EEE; }
+    &:hover { color: #08C; }
+}
+
+
+.highlighted{
+    background-color: #EEE;
+    padding: 5px;
+    @include rounded(3px);
+}
+
+/* -----------------------------------------
+   Page Name 2
+----------------------------------------- */
+
+
