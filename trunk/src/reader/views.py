@@ -5,9 +5,12 @@ from django.http import HttpResponse
 from django.template.context import RequestContext
 import json
 import logging
-from reader.models import Work, Chapter, Verse
+from reader.models import Work, Chapter, Verse, Section
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 def home(request):
     return render_to_response('index.html',
@@ -39,6 +42,20 @@ def read_work(request, title=None, first_number=None, second_number=None, **kwar
     # Get the verses to display
     verses = Verse.objects.filter(chapter=chapter).all()
     
+    # Get the sections
+    sections = Section.objects.filter(chapters__work=work).distinct()
+    
+    if len(sections) == 0:
+        sections = None
+    
+    # Provide the section that includes this chapter
+    section = None
+    
+    chapter_sections = Section.objects.filter(chapters=chapter)[:1]
+    
+    if len(chapter_sections) > 0:
+        section = chapter_sections[0]
+    
     # Get the next and previous chapter number
     next_chapter = chapter.sequence_number + 1
     previous_chapter = chapter.sequence_number - 1
@@ -51,6 +68,8 @@ def read_work(request, title=None, first_number=None, second_number=None, **kwar
                              {'work'    : work,
                               'chapter' : chapter,
                               'verses'  : verses,
+                              'sections': sections,
+                              'section' : section,
                               'has_next_chapter' : has_next_chapter,
                               'has_previous_chapter' : has_previous_chapter,
                               'next_chapter' : next_chapter,
