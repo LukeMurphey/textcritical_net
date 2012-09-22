@@ -4,17 +4,40 @@
         <ul class="breadcrumb">
             <li><a href="{% url home %}">Home</a> <span class="divider">/</span></li>
             <li><a href="{% url works_index %}">Library</a> <span class="divider">/</span></li>
-            <li class="active">{{work.title}}:{{chapter.sequence_number}}</li>
+            <li class="active">{{work.title}}:{{chapter}}</li>
         </ul>
         
-        <h1>{{work.title}} {{chapter.sequence_number}} <small>By {{work.authors.all|join:", "}}</small></h1>
+        <h1>{{work.title}} {{chapter}} <small>By {{work.authors.all|join:", "}}</small></h1>
         
         <div class="btn-toolbar">
             <div class="btn-group">
-                <button class="btn">Table of Contents</button>
+                
+                {% comment %}
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    Table of Contents
+                    <span class="caret"></span>
+                </a>
+                
+                <ul class="dropdown-menu">
+	                {% for work_section in sections.all %}
+	                   {% if section.id == work_section.id %}
+	                <li class="division_{{work_section.level}} active">
+	                    <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number  %}"><i class="icon-book icon-white"></i>{{work_section}}</a>
+	                </li>
+	                   {% else %}
+	                <li class="division_{{work_section.level}}">
+	                    <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number  %}"><i class="icon-book"></i>{{work_section}}</a>
+	                </li>
+	                   {% endif %}
+	                {% endfor %}
+                </ul>
+                {% endcomment %}
+                
+                
+                <button class="btn {% if not sections %}disabled{% endif %}" data-toggle="button" id="show_table_of_contents">Table of Contents</button>
                 <button id="align_break" class="btn"><i class="icon-align-left"></i></button>
-                <button id="align_inline" class="btn"><i class="icon-align-justify"></i></button>
             </div>
+            {% comment %}
             <div class="btn-group">
                 <button class="btn">Side-by-side</button>
                 <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
@@ -22,11 +45,38 @@
                     <li><a href="#">English (Bill Neise)</a></li>
                 </ul>
             </div>
+            {% endcomment %}
         </div>
+        
+        {% if sections %}
+        <div class="table_of_contents ">
+            {% comment %}<h2><small>Table of Contents</small></h2>{% endcomment %}
+	        <ul class="nav nav-list">
+	            {% comment %}<li class="nav-header">Table of Contents</li>{% endcomment %}
+	            {% for work_section in sections.all %}
+	               {% if section.id == work_section.id %}
+	            <li class="division_{{work_section.level}} active">
+	                <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number  %}"><i class="icon-book icon-white"></i>{{work_section}}</a>
+	            </li>
+	               {% else %}
+                <li class="division_{{work_section.level}}">
+                    <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number  %}"><i class="icon-book"></i>{{work_section}}</a>
+                </li>
+	               {% endif %}
+	            {% endfor %}
+	        </ul>
+        </div>
+        
+        {% endif %}
+        
+        {% if section %}
+        <h2>{{section}}</h2>
+        {% endif %}
+        
         {% for verse in verses.all %}
-        <span class="verse_container {% if verse.indicator == verse_to_highlight %}highlighted{% endif %}">
+        <span id="verse_{{verse.indicator}}" class="verse_container {% if verse.indicator == verse_to_highlight %}highlighted{% endif %}">
             {% if verse.indicator|length > 0 %}
-            <span class="label {% if verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span>
+            <a class="verse_link" href="?verse={{verse.indicator}}"><span class="label {% if verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
 	        {% endif %}
 	        <span class="verse content">{{verse.content}}</span>
         </span>
@@ -51,17 +101,15 @@
 
 {% block javascript %}
 <script language="javascript">
-function setFormatBreakLine(){
-	$('.verse_container').addClass("block");
-}
 
-function unSetFormatBreakLine(){
-	$('.verse_container').removeClass("block");
-}
-
-require(["jquery"], function($) {
-    $('#align_inline').click(unSetFormatBreakLine);
-    $('#align_break').click(setFormatBreakLine);
+require(["jquery", "store", "app"], function($) {
+    loadStoreSettings();
+    $('#align_break').click(toggleVerseBreak);
+    $('#show_table_of_contents').click( toggleTOC );
+    {% if verse_to_highlight %}
+    //window.location.hash = "verse_{{verse_to_highlight}}";
+    scrolltoAnchor("verse_{{verse_to_highlight}}");
+    {% endif %}
 });
 </script>
 {% endblock %}
