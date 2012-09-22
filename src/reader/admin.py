@@ -1,4 +1,4 @@
-from reader.models import Author, Work, WorkSource, WorkType, Chapter, Verse
+from reader.models import Author, Work, WorkSource, WorkType, Chapter, Verse, Section
 from django.contrib import admin
 
 class AuthorAdmin(admin.ModelAdmin):
@@ -65,3 +65,11 @@ class ChapterModel(admin.ModelAdmin):
     ]
     
 admin.site.register(Chapter, ChapterModel)
+
+class SectionModel(admin.ModelAdmin):
+    
+    list_display = ('title', 'type', 'level')
+    list_filter = ('level', 'type',)
+    search_fields = ('title',)
+    
+admin.site.register(Section, SectionModel)
