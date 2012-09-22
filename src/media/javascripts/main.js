@@ -17,6 +17,10 @@ require.config({
         
         bootstrap: [
             "libs/bootstrap"
+        ],
+        
+        store: [
+                "libs/store"
         ]
     },
     shim: {
