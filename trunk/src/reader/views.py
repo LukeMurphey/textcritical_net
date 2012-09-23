@@ -65,7 +65,8 @@ def read_work(request, title=None, first_number=None, second_number=None, **kwar
     has_next_chapter = Chapter.objects.filter(work=work, sequence_number=next_chapter).count() > 0
     
     return render_to_response('read_work.html',
-                             {'work'    : work,
+                             {'title'   : work.title,
+                              'work'    : work,
                               'chapter' : chapter,
                               'verses'  : verses,
                               'sections': sections,
