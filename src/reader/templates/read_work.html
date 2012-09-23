@@ -22,11 +22,11 @@
 	                {% for work_section in sections.all %}
 	                   {% if section.id == work_section.id %}
 	                <li class="division_{{work_section.level}} active">
-	                    <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number  %}"><i class="icon-book icon-white"></i>{{work_section}}</a>
+	                    <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number %}"><i class="icon-book icon-white"></i>{{work_section}}</a>
 	                </li>
 	                   {% else %}
 	                <li class="division_{{work_section.level}}">
-	                    <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number  %}"><i class="icon-book"></i>{{work_section}}</a>
+	                    <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number %}"><i class="icon-book"></i>{{work_section}}</a>
 	                </li>
 	                   {% endif %}
 	                {% endfor %}
@@ -56,11 +56,11 @@
 	            {% for work_section in sections.all %}
 	               {% if section.id == work_section.id %}
 	            <li class="division_{{work_section.level}} active">
-	                <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number  %}"><i class="icon-book icon-white"></i>{{work_section}}</a>
+	                <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number %}"><i class="icon-book icon-white"></i>{{work_section}}</a>
 	            </li>
 	               {% else %}
                 <li class="division_{{work_section.level}}">
-                    <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number  %}"><i class="icon-book"></i>{{work_section}}</a>
+                    <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number %}"><i class="icon-book"></i>{{work_section}}</a>
                 </li>
 	               {% endif %}
 	            {% endfor %}
@@ -76,7 +76,7 @@
         {% for verse in verses.all %}
         <span id="verse_{{verse.indicator}}" class="verse_container {% if verse.indicator == verse_to_highlight %}highlighted{% endif %}">
             {% if verse.indicator|length > 0 %}
-            <a class="verse_link" href="?verse={{verse.indicator}}"><span class="label {% if verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
+            <a class="verse_link" id="verse_link_{{verse.indicator}}" href="?verse={{verse.indicator}}"><span class="label {% if verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
 	        {% endif %}
 	        <span class="verse content">{{verse.content}}</span>
         </span>
@@ -106,8 +106,9 @@ require(["jquery", "store", "app"], function($) {
     loadStoreSettings();
     $('#align_break').click(toggleVerseBreak);
     $('#show_table_of_contents').click( toggleTOC );
+    {% for verse in verses.all %}
+    $('#verse_{{verse.indicator}} a').click( function(j) { return function() { return scrollToVerse(j+''); }; }({{verse.indicator}}) );{% endfor %}
     {% if verse_to_highlight %}
-    //window.location.hash = "verse_{{verse_to_highlight}}";
     scrolltoAnchor("verse_{{verse_to_highlight}}");
     {% endif %}
 });

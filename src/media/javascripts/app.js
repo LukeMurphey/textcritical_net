@@ -3,9 +3,6 @@
 */
 
 
-
-
-
 function setFormatBreakLine(){
 	$('.verse_container').addClass("block");
 	$('#align_break').addClass('active');
@@ -38,19 +35,25 @@ function scrolltoAnchor(id){
 }
 
 function scrollToVerse(verse_number){
+	/*
+	 * This function allows users to highlight a verse without performing a request to the server. 
+	 */
 	
+	// The ID of the verse number element
 	var id = "verse_" + verse_number
 	
 	// Update the URL
+	title = document.title;
+	path = window.location.pathname;
+	history.pushState( {verse: verse_number}, title, path + "?verse=" + verse_number);
 	
 	// Remove existing highlights
 	$('.verse_container').removeClass('highlighted');
 	$('.verse.number').removeClass('label-info');
 	
-	
-	// Highlight the verse
+	// Highlight the new verse
 	$('#' + id).addClass('highlighted');
-	$('#' + id + '.verse.number').addClass('label-info');
+	$('#' + id + ' .label').addClass('label-info');
 	
 	// Scroll to the verse
 	scrolltoAnchor(id);
@@ -60,6 +63,9 @@ function scrollToVerse(verse_number){
 }
 
 function loadStoreSettings(){
+	/*
+	 * Load the user's settings from local storage.
+	 */
 	
 	var defaults = {
 		"break_verses": false
