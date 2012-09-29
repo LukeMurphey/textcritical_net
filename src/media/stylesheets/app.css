@@ -26,7 +26,8 @@
 
 .verse_container {
   display: inline;
-  line-height: 25px; }
+  line-height: 25px;
+  padding: 5px; }
 
 .block {
   display: block;
@@ -49,7 +50,6 @@
 
 .highlighted {
   background-color: #EEE;
-  padding: 5px;
   border-radius: 3px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px; }
