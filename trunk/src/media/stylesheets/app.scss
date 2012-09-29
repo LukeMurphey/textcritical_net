@@ -45,6 +45,7 @@
 .verse_container{
     display: inline;
     line-height: 25px;
+    padding: 5px;
 }
 
 .block{
@@ -69,7 +70,6 @@
 
 .highlighted{
     background-color: #EEE;
-    padding: 5px;
     @include rounded(3px);
 }
 
