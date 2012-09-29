@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.template.defaultfilters import slugify
 
 class Author(models.Model):
     name = models.CharField(max_length=200)
@@ -26,6 +26,8 @@ class Work(models.Model):
     list_display = ('title', 'authors', 'language')
     
     title = models.CharField(max_length=200)
+    title_slug = models.SlugField()
+    
     work_type = models.ForeignKey(WorkType, blank=True, null=True)
     authors = models.ManyToManyField(Author, blank=True)
     translators = models.ManyToManyField(Author, blank=True, related_name="translators")
@@ -36,6 +38,14 @@ class Work(models.Model):
     
     def __unicode__(self):
         return self.title
+    
+    def save(self, *args, **kwargs):
+        
+        if not self.id and not self.title_slug:
+            # Newly created object, so set slug
+            self.title_slug = slugify(self.title)
+
+        super(Work, self).save(*args, **kwargs)
     
 class Chapter(models.Model):
     work = models.ForeignKey(Work)
@@ -82,6 +92,7 @@ class Section(models.Model):
     level = models.IntegerField()
     chapters = models.ManyToManyField(Chapter)
     super_section = models.ForeignKey('self', blank=True, null=True)
+    #sequence_number = models.IntegerField()
     
     def __unicode__(self):
         if self.title is not None and len(self.title) > 0:

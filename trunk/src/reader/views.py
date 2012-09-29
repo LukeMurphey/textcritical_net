@@ -31,7 +31,7 @@ def read_work(request, title=None, first_number=None, second_number=None, **kwar
     verse_to_highlight = request.GET.get('verse', None)
     
     # Try to get the work
-    work = Work.objects.filter(title=title)[0]
+    work = Work.objects.filter(title_slug=title)[0]
     
     # Get the chapter
     if first_number is not None:
