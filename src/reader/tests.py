@@ -238,7 +238,7 @@ class TestPerseusImport(TestCase):
         finally:
             if f is not None:
                 f.close()
-    '''
+    
     def test_load_book(self):
         
         # Pre-make the author in order to see if the importer is smart enough to not create a duplicate
@@ -259,6 +259,9 @@ class TestPerseusImport(TestCase):
         self.assertEquals( verses.count(), 7)
         self.assertEquals( verses[0].indicator, "1")
         self.assertEquals( verses[1].indicator, "2")
+        
+        # Make sure we slugified the title accordingly
+        self.assertEquals(self.importer.work.title_slug, "josephi-vita")
         
         # Make sure the original content
         expected_content = r"""<?xml version="1.0" ?><verse><p>*)emoi\ de\ ge/nos e)sti\n ou)k a)/shmon, a)ll' e)c i(ere/wn a)/nwqen
@@ -293,7 +296,7 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         self.assertEquals( chapters.count(), 2)
         self.assertEquals( Verse.objects.filter(chapter=chapters[0]).count(), 6)
         self.assertEquals( Verse.objects.filter(chapter=chapters[1]).count(), 1)
-    '''
+    
     def test_load_book_with_sections(self):
         book_xml = self.load_test_resource('j.aj_gk_portion.xml')
         book_doc = parseString(book_xml)

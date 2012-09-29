@@ -19,7 +19,7 @@
 		    <tbody>
 		    {% for work in works %}
 			    <tr>
-			        <td><i class="icon-book"></i> <a href="{% url read_work work.title %}">{{work.title}}</a></td>
+			        <td><i class="icon-book"></i> <a href="{% url read_work work.title_slug %}">{{work.title}}</a></td>
 			        <td>{{work.language}}</td>
 			        <td>{{work.authors.all|join:", "}}</td>
 			        <td>{{work.translators.all|join:", "}}</td>

@@ -22,6 +22,8 @@ class ChapterInline(admin.StackedInline):
 
 class WorkAdmin(admin.ModelAdmin):
     
+    prepopulated_fields = {"title_slug": ("title",)}
+    
     list_display = ('title', 'language', 'work_type')
     list_editable = ('work_type',)
     list_filter = ('language', 'work_type', 'authors')
