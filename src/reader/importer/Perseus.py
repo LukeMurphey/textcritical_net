@@ -8,7 +8,7 @@ import logging
 import re
 
 from reader.importer import TextImporter
-from reader.models import Author, Work, WorkSource, Verse, Chapter, Section
+from reader.models import Author, Work, WorkSource, Verse, Division
 from reader.language_tools.greek import Greek
 
 from django.db import transaction
@@ -47,38 +47,6 @@ class PerseusTextImporter(TextImporter):
     VERSE_TAG_NAME = "verse"
     CHAPTER_TAG_NAME = "chapter"
     
-    class ImportContext():
-        """
-        Represents the context that used during the process of importing. This is necessary so that
-        the verse are associated with the correct books and chapters.
-        """
-        
-        def __init__(self, tag_name, book=None, chapter=None, verse=None, section = None):
-            self.book = book
-            self.chapter = chapter
-            self.verse= verse
-            self.section = section
-            
-            self.initialize_xml_doc(tag_name)
-            
-            self.chapters = []
-            
-        def initialize_xml_doc(self, tag_name):
-            self.document = Document()
-            
-            self.current_node = self.document.createElement(tag_name)
-            
-            self.document.appendChild(self.current_node)
-            
-            return self.document
-        
-        def append_xml(self, src_node, dst_node):
-            
-            if dst_node is None:
-                dst_node = self.current_node
-                
-            return TextImporter.copy_node(src_node, self.document, dst_node, True, False)
-            
     def import_xml_string(self, xml_string, state_set=0 ):
         """
         Import the work from the string provided.
@@ -109,44 +77,62 @@ class PerseusTextImporter(TextImporter):
         doc = parse(file_name)
         return self.import_xml_document(doc, state_set)
     
-    def make_section(self, level, import_context, section_type=None, title=None, original_title=None):
+    def make_division(self, import_context, level=1, sequence_number=None, division_type=None, title=None, original_title=None, descriptor=None):
         
-        new_section = None
+        # Save the XML content for the previous chapter
+        self.save_original_content(import_context)
         
-        if import_context.section is not None:
+        import_context.initialize_xml_doc(PerseusTextImporter.CHAPTER_TAG_NAME)
+        
+        new_division = None
+        
+        if import_context.division is not None:
             
-            # If this level is the at the same level, then replace the section with the current one
-            if import_context.section.level <= level:
-                new_section = Section()
-                new_section.level = level
-                new_section.super_section = import_context.section.super_section
+            # Populate the sequence number from the previous division is available
+            if sequence_number is None:
+                sequence_number = import_context.division.sequence_number + 1
+            
+            # If this level is the at the same level, then replace the division with the current one
+            if import_context.division.level <= level:
+                new_division = Division()
+                new_division.level = level
+                new_division.parent_division = import_context.division.parent_division
                 
             # If the current level is one higher than the new one, then move the current section under it
-            elif import_context.section.level == (level + 1):
-                new_section = Section()
-                new_section.level = level
-                new_section.super_section = import_context.section
+            elif import_context.division.level == (level + 1):
+                new_division = Division()
+                new_division.level = level
+                new_division.parent_division = import_context.division
                 
             else:
-                logger.warning("Did not make section for level %i in %s" %(level, self.work.title) )
+                logger.warning("Did not make division for level %i in %s" %(level, self.work.title) )
                 
         # Make the section 
         else:
-            new_section = Section()
-            new_section.level = level
+            
+            # Start the sequence number at 1 if a number was not provided
+            if sequence_number is None:
+                sequence_number = 1
+            
+            new_division = Division()
+            new_division.level = level
             
         # Save the newly created section
-        if new_section is not None:
-            new_section.type = section_type
-            new_section.title = title
-            new_section.original_title = original_title
-            new_section.save()
+        if new_division is not None:
+            new_division.descriptor = descriptor
+            new_division.type = division_type
+            new_division.title = title
+            new_division.original_title = original_title
+            new_division.work = self.work
+            new_division.sequence_number = sequence_number
+            new_division.save()
         
-        # Set the created section as the new one
-        import_context.section = new_section
-        return new_section
+        # Set the created division as the new one
+        import_context.divisions.append(new_division)
+        import_context.division = new_division
+        return new_division
     
-    def make_chapter(self, save=True, import_context=None, descriptor="", **kwargs):
+    def make_chapter_OLD(self, save=True, import_context=None, descriptor="", **kwargs):
         """
         This method overrides the TextImporter.make_chapter and adds a call to save the original content section
         if necessary.
@@ -159,7 +145,7 @@ class PerseusTextImporter(TextImporter):
         # Save the XML content for the previous chapter
         self.save_original_content(import_context)
         
-        import_context.chapter = TextImporter.make_chapter(self, import_context.chapter, save)
+        #import_context.chapter = TextImporter.make_chapter(self, import_context.chapter, save)
         import_context.chapter.descriptor = descriptor
         import_context.chapters.append(import_context.chapter)
         import_context.initialize_xml_doc(PerseusTextImporter.CHAPTER_TAG_NAME)
@@ -183,7 +169,7 @@ class PerseusTextImporter(TextImporter):
         # Save the XML content for the previous verse
         self.save_original_verse_content(import_context)
         
-        import_context.verse = TextImporter.make_verse(self, import_context.verse, import_context.chapter, save)
+        import_context.verse = TextImporter.make_verse(self, import_context.verse, import_context.division, save)
         import_context.initialize_xml_doc(PerseusTextImporter.VERSE_TAG_NAME)
         
         return import_context.verse
@@ -191,15 +177,15 @@ class PerseusTextImporter(TextImporter):
     def save_original_content(self, import_context):
         """
         This function takes the content from the XML node, converts it to a string and saves it in the current
-        chapter as the original content.
+        division as the original content.
         
         Arguments:
         import_context -- The import context being used to import the document
         """
         
-        if import_context is not None and import_context.chapter is not None and import_context.document is not None:
-            import_context.chapter.original_content = import_context.document.toxml()
-            import_context.chapter.save()
+        if import_context is not None and import_context.division is not None and import_context.document is not None:
+            import_context.division.original_content = import_context.document.toxml()
+            import_context.division.save()
             
     def save_original_verse_content(self, import_context):
         """
@@ -438,48 +424,53 @@ class PerseusTextImporter(TextImporter):
         # Import the text
         body_node = document.getElementsByTagName("body")[0]
         
-        # Chunk the text into chapters
-        chapters = self.import_body_sub_node(body_node, current_state_set)
+        # Chunk the text into divisions
+        divisions = self.import_body_sub_node(body_node, current_state_set)
         
         # Make the verses
-        logger.info("Successfully imported %i chapters of %s" % (len(chapters), self.work.title)) 
-        verses_created = self.make_verses(chapters, current_state_set)
+        logger.info("Successfully imported %i divisions of %s" % (len(divisions), self.work.title)) 
+        verses_created = self.make_verses(divisions, current_state_set)
         
         logger.info("Successfully imported %i verses of %s" % (verses_created, self.work.title)) 
         
         return self.work
         
-    def make_verses(self, chapters, state_set):
+    def make_verses(self, divisions, state_set):
         """
-        Parse out the verses from the chapters provided and create the individual verses.
+        Parse out the verses from the divisions provided and create the individual verses.
         
         Arguments:
-        chapters -- A list of chapters with the original content to get the verses from.
+        divisions -- A list of divisions with the original content to get the verses from.
         state_set -- The state set to use for splitting the verses.
         """
         
         verses_created = 0
         
-        for chapter in chapters:
-            verses_created = verses_created + self.make_verses_for_chapter(chapter, state_set)
-            
+        for division in divisions:
+            verses_created = verses_created + self.make_verses_for_division(division, state_set)
+        
         return verses_created
 
-    def make_verses_for_chapter(self, chapter, state_set):
+    def make_verses_for_division(self, division, state_set):
         """
-        Parse out the verses from the chapter content and create the individual verses.
+        Parse out the verses from the division content and create the individual verses.
         
         Arguments:
-        chapter -- The chapter with the original content to get the verses from.
+        division -- The division with the original content to get the verses from.
         state_set -- The state set to use for splitting the verses.
         """
         
-        # Parse the XML
-        chapter_doc = parseString(chapter.original_content)
+        # Parse the original content if it is available
+        if division.original_content:
+            
+            division_doc = parseString(division.original_content)
+            
+            root_node = division_doc.getElementsByTagName(PerseusTextImporter.CHAPTER_TAG_NAME)[0]
+            
+            return self.import_verse_content( division, root_node, state_set)
         
-        root_node = chapter_doc.getElementsByTagName(PerseusTextImporter.CHAPTER_TAG_NAME)[0]
-        
-        return self.import_verse_content( chapter, root_node, state_set)
+        else:
+            return 0
         
     def process_original_verse_content(self, original_content, persist_nodes_as_spans=False):
         """
@@ -503,12 +494,12 @@ class PerseusTextImporter(TextImporter):
         return resulting_content
         
         
-    def import_verse_content(self, chapter, content_node, state_set, import_context = None, parent_node = None, recurse = True):
+    def import_verse_content(self, division, content_node, state_set, import_context = None, parent_node = None, recurse = True):
         
         # Setup an import context if this is the first, top level call
         if import_context is None:
             import_context = PerseusTextImporter.ImportContext(PerseusTextImporter.VERSE_TAG_NAME)
-            import_context.chapter = chapter
+            import_context.division = division
             is_top_level_call = True
         else:
             is_top_level_call = False
@@ -522,26 +513,29 @@ class PerseusTextImporter(TextImporter):
         # This node will be populated if we create a new verse. This is necessary so that we tell upstream importers to assign content to this node.
         new_verse_node = None
         
+        # Process each node
         for node in content_node.childNodes:
             
-            is_new_verse_node = False
+            # This determines if the content is ought to be attached to a verse
+            attach_xml_content = True
             
             if node.nodeType == node.TEXT_NODE:
                 
                 # We need to see a milestone before we can set the text for a verse
+                """
                 if len(node.data.strip()) > 0:
                     
                     if import_context.verse is None:
                         import_context.verse = self.make_verse(import_context, save=False)
                         verses_created = verses_created + 1
                     
-                        #import_context.verse = self.make_verse(save=False, chapter=chapter)
-                        logger.debug("Making new verse (since we have content for a verse but no verse itself) for chapter %s of %s" % ( str(chapter.sequence_number), self.work.title))
+                        #import_context.verse = self.make_verse(save=False, division=division)
+                        logger.debug("Making new verse (since we have content for a verse but no verse itself) for division %s of %s" % ( str(division.sequence_number), self.work.title))
                     
                     import_context.verse.content = import_context.verse.content + self.process_text(node.data)
-                    import_context.verse.chapter = chapter
                     import_context.verse.save()
-                    
+                """
+                
             # Is a verse marker?
             elif node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node):
                 
@@ -552,7 +546,7 @@ class PerseusTextImporter(TextImporter):
                 import_context.verse.indicator = node.attributes["n"].value
                 import_context.verse.save()
                 
-                is_new_verse_node = True
+                attach_xml_content = False
                 verses_created = verses_created + 1
                 
                 # Start adding the content to the new verse
@@ -560,16 +554,20 @@ class PerseusTextImporter(TextImporter):
                 parent_node = new_verse_node
                 next_level_node = new_verse_node
                 
-                logger.debug("Making verse %s in chapter %s of %s" % (node.attributes["n"].value, str(import_context.chapter.sequence_number), self.work.title) )
+                logger.debug("Making verse %s in division %s of %s" % (node.attributes["n"].value, str(import_context.division.sequence_number), self.work.title) )
                 
-            # Attach the content to the chapter if it is for the current verse
-            if not is_new_verse_node:
+            elif node.tagName == "milestone":
+                # Don't include milestone nodes that are not in the current state set in the XML
+                attach_xml_content = True
+                
+            # Attach the content to the division if it is for the current verse
+            if attach_xml_content:
                 next_level_node = import_context.append_xml(node, parent_node)
                 
             # Recurse on the child-nodes
             if recurse:
-                verses_created_temp, created_verse_node = self.import_verse_content(chapter, node, state_set, import_context, next_level_node, True)
-                verses_created = verses_created_temp
+                verses_created_temp, created_verse_node = self.import_verse_content(division, node, state_set, import_context, next_level_node, True)
+                verses_created = verses_created + verses_created_temp
                 
                 if created_verse_node is not None:
                     new_verse_node = created_verse_node # Let's save this save so that we pass it up the upstream calls
@@ -590,6 +588,10 @@ class PerseusTextImporter(TextImporter):
         Arguments:
         text -- The content from the XML text node
         """
+        
+        # Don't try to process a null string as this will fail
+        if text is None:
+            return None
         
         # Convert Greek beta code
         if self.work is not None and self.work.language == "Greek":
@@ -623,8 +625,8 @@ class PerseusTextImporter(TextImporter):
         
         Arguments:
         content_node -- The XML node containing the content; needs to be the body node or one of its the sub-nodes
-        state_set -- A set of units that ought to be used to create the chapters and verse divisions.
-        import_context -- An ImportContext instance; used for determining which book, chapter, and verse is being imported
+        state_set -- A set of units that ought to be used to create the divisions and verse divisions.
+        import_context -- An ImportContext instance; used for determining which book, division, and verse is being imported
         recurse -- Indicates if the sub-nodes of the given
         """
         
@@ -638,45 +640,47 @@ class PerseusTextImporter(TextImporter):
         # By default, we will attach content to the parent node.
         next_level_node = parent_node
         
-        # This node will be populated if we create a new chapter. This is necessary so that we tell upstream importers to assign content to this node.
-        new_chapter_node = None
+        # This node will be populated if we create a new division. This is necessary so that we tell upstream importers to assign content to this node.
+        new_division_node = None
         
-        # Let's go through each node and pull in the content until we find the next chapter marker
+        # Let's go through each node and pull in the content until we find the next division marker
         for node in content_node.childNodes:
             
+            # Determines if we are going to merge the XML content to the original content for the given section
+            append_xml_content = True
+            
             # We have to handle several nodes here:
-            #    * milestone: if a chapter divider, then split accordingly
+            #    * milestone: if a division divider, then split accordingly
             #    * div1: indicates a new book, make a section accordingly
-            #    * everything else: add it to the current chapter XML content
+            #    * everything else: add it to the current division XML content
             
-            # Determine if the node is a chapter marker
-            is_new_chapter_marker = not node.nodeType == node.TEXT_NODE and node.tagName == "milestone" and self.is_milestone_chunk(state_set, node)
-            
-            # If the content is a text-node, then attach it the current chapter
+            # If the content is a text-node, then attach it the current division
             if node.nodeType == node.TEXT_NODE:
                 
-                if import_context.chapter is None:
-                    # No chapter exists yet, skipping this verse
-                    logger.debug("No chapter exists yet, skipping this content: %s of %s" % (node.data, self.work.title))
-                    
-            # If the content is a new chapter marker
-            elif is_new_chapter_marker:
+                if import_context.division is None:
+                    # No division exists yet, skipping this verse
+                    logger.debug("No division exists yet, skipping this content: %s of %s" % (node.data, self.work.title))
+            
+            # If the content is a new milestone marker
+            elif node.tagName == "milestone" and self.is_milestone_chunk(state_set, node):
+                
+                append_xml_content = False
                 
                 descriptor = ""
                 
                 if 'n' in node.attributes.keys():
                     descriptor = node.attributes["n"].value
                 
-                # Make the chapter
-                self.make_chapter(import_context=import_context, descriptor=descriptor)
-                logger.debug("Making chapter %s (since it is a chunk) of %s" % ( str(import_context.chapter.sequence_number), self.work.title))
+                # Make the division
+                self.make_division(import_context=import_context, descriptor=descriptor)
+                logger.debug("Making division %s (since it is a chunk) of %s" % ( str(import_context.division.sequence_number), self.work.title))
                 
-                # Start adding the content to the new chapter
-                new_chapter_node = import_context.current_node
-                parent_node = new_chapter_node
-                next_level_node = new_chapter_node
+                # Start adding the content to the new division
+                new_division_node = import_context.current_node
+                parent_node = new_division_node
+                next_level_node = new_division_node
                 
-            # If the content is a verse marker and we don't have a chapter, then create one
+            # If the content is a verse marker and we don't have a division, then create one
             elif node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node):
                 
                 descriptor = ""
@@ -684,56 +688,64 @@ class PerseusTextImporter(TextImporter):
                 if 'n' in node.attributes.keys():
                     descriptor = node.attributes["n"].value
                 
-                # If we have a verse without a chapter, then go ahead and make one
-                if import_context.chapter is None:
-                    self.make_chapter(import_context=import_context, descriptor=descriptor)
-                    new_chapter_node = import_context.current_node
-                    parent_node = new_chapter_node
-                    next_level_node = new_chapter_node
+                # If we have a verse without a division, then go ahead and make one
+                if import_context.division is None:
+                    self.make_division(import_context=import_context, descriptor=descriptor)
+                    logger.debug("Making a division for %s since once does not exist yet (so that we can add a verse)" % (self.work.title))
                     
-                    # We just below away the existing chapter is carry the content over
-                    
-                    logger.debug("Making a chapter for %s since once does not exist yet (so that we can add a verse)" % (self.work.title))
-            
-            elif PerseusTextImporter.DIV_PARSE_REGEX.match( node.tagName):
+                    # Start adding the content to the new division
+                    new_division_node = import_context.current_node
+                    parent_node = new_division_node
+                    next_level_node = new_division_node
+                
+            elif PerseusTextImporter.DIV_PARSE_REGEX.match( node.tagName ):
                 
                 # Get the level from the tag name
                 m = PerseusTextImporter.DIV_PARSE_REGEX.search( node.tagName )
                 level = int(m.groupdict()['level'] )
                 
                 # Get the type of the section
-                section_type = None
+                division_type = None
+                descriptor = None
                 
                 if "type" in node.attributes.keys():
-                    section_type = node.attributes["type"].value
+                    division_type = node.attributes["type"].value
+                    
+                if "n" in node.attributes.keys():
+                    descriptor = node.attributes["n"].value
                 
                 original_title = self.getSectionTitle(node)
                 title = self.process_text(original_title)
                 
-                self.make_section(level, import_context, section_type, title=title, original_title=original_title)
+                self.make_division(import_context, level, division_type=division_type, title=title, original_title=original_title, descriptor=descriptor)
                 
-                logger.debug("Making section at level %i in %s" % (level, self.work.title))
+                # Start adding the content to the new division
+                new_division_node = import_context.current_node
+                parent_node = new_division_node
+                next_level_node = new_division_node
+                
+                logger.debug("Making division at level %i in %s" % (level, self.work.title))
                 
             #elif node.tagName == "note":
                 # We don't yet handle these types of nodes so don't try to get the text under them
                 #recurse = False
                 
-            # Attach the content to the chapter if it is for the current chapter
-            if not is_new_chapter_marker:
+            # Attach the content to the division if it is for the current division
+            if append_xml_content:
                 next_level_node = import_context.append_xml(node, parent_node)
                 
             # Recurse on the child-nodes
             if recurse:
-                created_chapter_node = self.import_body_sub_node(node, state_set, import_context, True, parent_node=next_level_node)
+                created_division_node = self.import_body_sub_node(node, state_set, import_context, True, parent_node=next_level_node)
                 
-                if created_chapter_node is not None:
-                    new_chapter_node = created_chapter_node # Let's save this save so that we pass it up the upstream calls
-                    parent_node = new_chapter_node
-                    next_level_node = new_chapter_node
+                if created_division_node is not None:
+                    new_division_node = created_division_node # Let's save this save so that we pass it up the upstream calls
+                    parent_node = new_division_node
+                    next_level_node = new_division_node
                     
-        # We may have content left for the final chapter. Go ahead and persist it.
+        # We may have content left for the final division. Go ahead and persist it.
         if is_top_level_call:
             self.save_original_content(import_context)
-            return import_context.chapters
+            return import_context.divisions
             
-        return new_chapter_node
+        return new_division_node

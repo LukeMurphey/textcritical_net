@@ -1,4 +1,4 @@
-from reader.models import Author, Work, WorkSource, WorkType, Chapter, Verse, Section
+from reader.models import Author, Work, WorkSource, WorkType, Division, Verse
 from django.contrib import admin
 
 class AuthorAdmin(admin.ModelAdmin):
@@ -10,8 +10,28 @@ class AuthorAdmin(admin.ModelAdmin):
 
 admin.site.register(Author, AuthorAdmin)
 
-class ChapterInline(admin.StackedInline):
-    model = Chapter
+class VerseInline(admin.StackedInline):
+    model = Verse
+    extra = 0
+    
+    fieldsets = (
+        (None, {
+            'fields': ( ('indicator', 'sequence_number'), 'content', 'original_content'),
+        }),
+    )
+
+class DivisionModel(admin.ModelAdmin):
+    
+    list_display = ('work', 'descriptor', 'sequence_number', 'title', 'type', 'level')
+    list_filter = ('work', 'level', 'type',)
+    search_fields = ('title','original_content',)
+    
+    inlines = [
+        VerseInline,
+    ]
+    
+class DivisionInline(admin.StackedInline):
+    model = Division
     extra = 0
     
     fieldsets = (
@@ -22,7 +42,7 @@ class ChapterInline(admin.StackedInline):
 
 class WorkAdmin(admin.ModelAdmin):
     
-    prepopulated_fields = {"title_slug": ("title",)}
+    #prepopulated_fields = {"title_slug": ("title",)}
     
     list_display = ('title', 'language', 'work_type')
     list_editable = ('work_type',)
@@ -36,7 +56,7 @@ class WorkAdmin(admin.ModelAdmin):
     )
     
     inlines = [
-        ChapterInline,
+        DivisionInline,
     ]
 
 admin.site.register(Work, WorkAdmin)
@@ -46,32 +66,7 @@ class WorkTypeAdmin(admin.ModelAdmin):
 
 admin.site.register(WorkType, WorkTypeAdmin)
 
-class VerseInline(admin.StackedInline):
-    model = Verse
-    extra = 0
-    
-    fieldsets = (
-        (None, {
-            'fields': ( ('indicator', 'sequence_number'), 'content', 'original_content'),
-        }),
-    )
 
-class ChapterModel(admin.ModelAdmin):
-    
-    list_display = ('work', 'descriptor', 'sequence_number')
-    list_filter = ('work', )
-    search_fields = ('original_content',)
-    
-    inlines = [
-        VerseInline,
-    ]
-    
-admin.site.register(Chapter, ChapterModel)
 
-class SectionModel(admin.ModelAdmin):
-    
-    list_display = ('title', 'type', 'level')
-    list_filter = ('level', 'type',)
-    search_fields = ('title',)
-    
-admin.site.register(Section, SectionModel)
+
+admin.site.register(Division, DivisionModel)

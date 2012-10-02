@@ -47,13 +47,26 @@ class Work(models.Model):
 
         super(Work, self).save(*args, **kwargs)
     
-class Chapter(models.Model):
+class Division(models.Model):
+    """
+    Represents a collection of verses for the purpose of providing a structure
+    of documents.
+    """
+    
     work = models.ForeignKey(Work)
     sequence_number = models.IntegerField()
-    title = models.CharField(max_length=200, blank=True)
+    
+    title = models.CharField(max_length=200, blank=True, null=True)
+    original_title = models.CharField(max_length=200, blank=True, null=True)
     subtitle = models.CharField(max_length=200, blank=True)
     descriptor = models.CharField(max_length=10, blank=True)
+    
+    type = models.CharField(max_length=50, blank=True, null=True)
+    level = models.IntegerField()
+    
     original_content = models.TextField(blank=True)
+    
+    parent_division = models.ForeignKey('self', blank=True, null=True)
     
     def __unicode__(self):
         if self.title is not None and len(self.title) > 0:
@@ -63,10 +76,10 @@ class Chapter(models.Model):
         elif self.sequence_number is not None:
             return str(self.sequence_number)
         else:
-            return "Chapter object"
+            return "Division object"
     
 class Verse(models.Model):
-    chapter = models.ForeignKey(Chapter)
+    division = models.ForeignKey(Division)
     sequence_number = models.IntegerField()
     indicator = models.CharField(max_length=10)
     
@@ -85,9 +98,11 @@ class WorkSource(models.Model):
     description = models.TextField(blank=True)
     work = models.ForeignKey(Work)
     
+"""
 class Section(models.Model):
-    title = models.CharField(max_length=200)
-    original_title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, blank=True, null=True)
+    original_title = models.CharField(max_length=200, blank=True, null=True)
+    indicator = models.CharField(max_length=10, blank=True, null=True)
     type = models.CharField(max_length=50, blank=True, null=True)
     level = models.IntegerField()
     chapters = models.ManyToManyField(Chapter)
@@ -101,3 +116,4 @@ class Section(models.Model):
             return self.type + " " + str(self.level)
         else:
             return str(self.level)
+"""
