@@ -31,10 +31,10 @@ def import_perseus_file(request):
                 overwrite = True
             """
                 
-            if 'state_set' in request.POST and form.cleaned_data['state_set'] != '':
+            if 'state_set' in request.POST and len(form.cleaned_data['state_set']) > 0:
                 state_set = form.cleaned_data['state_set']
             else:
-                state_set = 1
+                state_set = 0
                 
             # Convert the state set indicator to a boolean
             try:

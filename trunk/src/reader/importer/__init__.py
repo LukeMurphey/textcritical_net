@@ -1,9 +1,43 @@
 import os
+from xml.dom.minidom import Document
+
 from django.core.exceptions import ObjectDoesNotExist
 
-from reader.models import Author, Work, WorkSource, Verse, Chapter
+from reader.models import Author, Work, WorkSource, Verse, Division
 
 class TextImporter():
+    
+    class ImportContext():
+        """
+        Represents the context that used during the process of importing. This is necessary so that
+        the verse are associated with the correct books and chapters.
+        """
+        
+        def __init__(self, tag_name, book=None, division=None, verse=None):
+            self.book = book
+            self.division = division
+            self.verse= verse
+            
+            self.initialize_xml_doc(tag_name)
+            
+            self.divisions = []
+            
+        def initialize_xml_doc(self, tag_name):
+            self.document = Document()
+            
+            self.current_node = self.document.createElement(tag_name)
+            
+            self.document.appendChild(self.current_node)
+            
+            return self.document
+        
+        def append_xml(self, src_node, dst_node):
+            
+            if dst_node is None:
+                dst_node = self.current_node
+                
+            return TextImporter.copy_node(src_node, self.document, dst_node, True, False)
+            
     
     def __init__(self, work=None, work_source=None):
         
@@ -49,26 +83,26 @@ class TextImporter():
             
         return new_node
     
-    def make_chapter(self, current_chapter=None, save=True):
+    def make_division(self, current_division=None, save=True):
         
-        # Determine the sequence number (used for chapter ordering)
-        if current_chapter is None:
+        # Determine the sequence number (used for division ordering)
+        if current_division is None:
             num = 1
         else:
-            num = current_chapter.sequence_number + 1
+            num = current_division.sequence_number + 1
         
         # Make the chapter
-        chapter = Chapter()
-        chapter.sequence_number = num
-        chapter.indicator = str(num)
-        chapter.work = self.work
+        division = Division()
+        division.sequence_number = num
+        division.indicator = str(num)
+        division.work = self.work
         
         if save:
-            chapter.save()
+            division.save()
         
-        return chapter
+        return division
     
-    def make_verse(self, current_verse=None, chapter=None, save=True):
+    def make_verse(self, current_verse=None, division=None, save=True):
         
         # Determine the sequence number (used for verse ordering)
         if current_verse is None:
@@ -79,7 +113,7 @@ class TextImporter():
         # Make the verse
         verse = Verse()
         verse.sequence_number = num
-        verse.chapter = chapter
+        verse.division = division
         
         if save:
             verse.save()

@@ -16,7 +16,7 @@ from textcritical.default_settings import SITE_ROOT
 from reader.importer.Perseus import PerseusTextImporter
 from reader.importer import TextImporter
 from reader.language_tools.greek import Greek
-from reader.models import Author, Chapter, Verse, Section
+from reader.models import Author, Division, Verse
 
 class TestGreekLanguageTools(TestCase):
     def test_beta_code_conversion(self):
@@ -250,12 +250,12 @@ class TestPerseusImport(TestCase):
         book_doc = parseString(book_xml)
         self.importer.import_xml_document(book_doc)
         
-        chapters = Chapter.objects.filter(work=self.importer.work)
-        verses = Verse.objects.filter(chapter=chapters[0])
+        divisions = Division.objects.filter(work=self.importer.work)
+        verses = Verse.objects.filter(division=divisions[0])
         
         # Make sure the importer is smart enougn not to make duplicate authors
         self.assertEquals( Author.objects.filter(name="Flavius Josephus").count(), 1)
-        self.assertEquals( chapters.count(), 1)
+        self.assertEquals( divisions.count(), 1)
         self.assertEquals( verses.count(), 7)
         self.assertEquals( verses[0].indicator, "1")
         self.assertEquals( verses[1].indicator, "2")
@@ -277,13 +277,13 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         book_doc = parseString(book_xml)
         work = self.importer.import_xml_document(book_doc, state_set=1) #Using Whiston sections as opposed to the defaults
         
-        chapters = Chapter.objects.filter(work=work)
+        divisions = Division.objects.filter(work=work)
         
         #print chapters[0].original_content
         
-        self.assertEquals( chapters.count(), 2)
-        self.assertEquals( Verse.objects.filter(chapter=chapters[0]).count(), 1)
-        self.assertEquals( Verse.objects.filter(chapter=chapters[1]).count(), 1)
+        self.assertEquals( divisions.count(), 2)
+        self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 1)
+        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
     
     def test_load_book_merged_state_set(self):
         
@@ -291,33 +291,31 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         book_doc = parseString(book_xml)
         work = self.importer.import_xml_document(book_doc, state_set=None) #Using Whiston sections as opposed to the defaults
         
-        chapters = Chapter.objects.filter(work=work)
+        divisions = Division.objects.filter(work=work)
         
-        self.assertEquals( chapters.count(), 2)
-        self.assertEquals( Verse.objects.filter(chapter=chapters[0]).count(), 6)
-        self.assertEquals( Verse.objects.filter(chapter=chapters[1]).count(), 1)
+        self.assertEquals( divisions.count(), 2)
+        self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 6)
+        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
     
     def test_load_book_with_sections(self):
         book_xml = self.load_test_resource('j.aj_gk_portion.xml')
         book_doc = parseString(book_xml)
         work = self.importer.import_xml_document(book_doc, state_set=1) #Using Whiston sections as opposed to the defaults
         
-        chapters = Chapter.objects.filter(work=work)
+        divisions = Division.objects.filter(work=work).distinct()
         
-        self.assertEquals( chapters.count(), 3)
-        self.assertEquals( chapters[0].descriptor, "pr.")
-        #self.assertEquals( Verse.objects.filter(chapter=chapters[0]).count(), 6)
-
-        sections = Section.objects.filter(chapters__work=work).distinct()
+        self.assertEquals( divisions[1].descriptor, "pr.")
+        self.assertEquals( Verse.objects.filter(division__work=work).count(), 5)
+        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 2)
         
-        self.assertEquals( sections[0].original_title, r"""*ta/de e)/nestin e)n th=| prw/th| tw=n *)iwsh/pou i(storiw=n
+        self.assertEquals( divisions.count(), 5)
+        self.assertEquals( divisions[0].type, "Book")
+        self.assertEquals( divisions[0].level, 1)
+        
+        self.assertEquals( divisions[0].original_title, r"""*ta/de e)/nestin e)n th=| prw/th| tw=n *)iwsh/pou i(storiw=n
 th=s *)ioudai+kh=s a)rxaiologi/as.""" )
-        self.assertEquals( sections[1].original_title, r"""*ta/de e)/nestin e)n th=| b tw=n *)iwsh/pou i(storiw=n th=s
+        self.assertEquals( divisions[2].original_title, r"""*ta/de e)/nestin e)n th=| b tw=n *)iwsh/pou i(storiw=n th=s
 *)ioudai+kh=s a)rxaiologi/as.""" )
-        
-        self.assertEquals( sections.count(), 2)
-        self.assertEquals( sections[0].type, "Book")
-        self.assertEquals( sections[0].level, 1)
         
         # Make sure that the text from the TOC did not get included
         expected_content = r"""<?xml version="1.0" ?><verse><milestone n="1" unit="section"/><p>*meta\ de\ th\n *)isa/kou teleuth\n oi( pai=des au)tou= merisa/menoi 
@@ -338,5 +336,5 @@ th\n xw/ran ou(/tws proshgo/reusen: *(/ellhnes ga\r au)th\n e)pi\ to\
 semno/teron *)idoumai/an w)no/masan.
 </p></verse>"""
 
-        self.assertEquals( Verse.objects.filter(chapter=chapters[1])[0].original_content, expected_content)
+        self.assertEquals( Verse.objects.filter(division=divisions[3])[0].original_content, expected_content)
         
