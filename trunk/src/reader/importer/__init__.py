@@ -1,9 +1,13 @@
 import os
 from xml.dom.minidom import Document
+import logging
 
 from django.core.exceptions import ObjectDoesNotExist
 
 from reader.models import Author, Work, WorkSource, Verse, Division
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 class TextImporter():
     
@@ -16,7 +20,7 @@ class TextImporter():
         def __init__(self, tag_name, book=None, division=None, verse=None):
             self.book = book
             self.division = division
-            self.verse= verse
+            self.verse = verse
             
             self.initialize_xml_doc(tag_name)
             
@@ -36,9 +40,25 @@ class TextImporter():
             if dst_node is None:
                 dst_node = self.current_node
                 
-            return TextImporter.copy_node(src_node, self.document, dst_node, True, False)
+            """
+            if log:
+                if src_node.nodeType != src_node.TEXT_NODE:
+                    logger.debug("Attaching %r to %r" % (src_node.tagName, dst_node.tagName))
+                
+                else:
+                    logger.debug("Attaching %r to %r" % (src_node.data, dst_node.tagName))
+            """
+             
+            ret = TextImporter.copy_node(src_node, self.document, dst_node, copy_attributes=True, copy_children=False)
             
-    
+            """
+            if log:
+                logger.debug("XML is " + self.document.toxml())
+            """
+                
+            return ret
+                
+            
     def __init__(self, work=None, work_source=None):
         
         if work is not None:
@@ -80,7 +100,9 @@ class TextImporter():
                 
         if dst_node is not None:
             dst_node.appendChild(new_node)
-            
+        else:
+            logger.error("Destination node is null")
+        
         return new_node
     
     def make_division(self, current_division=None, save=True):

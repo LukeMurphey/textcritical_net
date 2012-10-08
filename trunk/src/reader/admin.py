@@ -30,6 +30,7 @@ class DivisionModel(admin.ModelAdmin):
         VerseInline,
     ]
     
+    
 class DivisionInline(admin.StackedInline):
     model = Division
     extra = 0
@@ -65,8 +66,5 @@ class WorkTypeAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(WorkType, WorkTypeAdmin)
-
-
-
 
 admin.site.register(Division, DivisionModel)

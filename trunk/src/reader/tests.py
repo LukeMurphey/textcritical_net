@@ -312,6 +312,9 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         self.assertEquals( divisions[0].type, "Book")
         self.assertEquals( divisions[0].level, 1)
         
+        self.assertEquals( divisions[1].type, "Whiston chapter")
+        self.assertEquals( divisions[1].level, 2)
+        
         self.assertEquals( divisions[0].original_title, r"""*ta/de e)/nestin e)n th=| prw/th| tw=n *)iwsh/pou i(storiw=n
 th=s *)ioudai+kh=s a)rxaiologi/as.""" )
         self.assertEquals( divisions[2].original_title, r"""*ta/de e)/nestin e)n th=| b tw=n *)iwsh/pou i(storiw=n th=s
@@ -335,6 +338,6 @@ paidia\n *)/adwmos e)piklhqei/s, a)/dwma ga\r *(ebrai=oi to\ e)ruqro\n kalou=si,
 th\n xw/ran ou(/tws proshgo/reusen: *(/ellhnes ga\r au)th\n e)pi\ to\
 semno/teron *)idoumai/an w)no/masan.
 </p></verse>"""
-
+        
         self.assertEquals( Verse.objects.filter(division=divisions[3])[0].original_content, expected_content)
         
