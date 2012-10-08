@@ -19,14 +19,14 @@
                 </a>
                 
                 <ul class="dropdown-menu">
-	                {% for work_section in sections.all %}
-	                   {% if section.id == work_section.id %}
-	                <li class="division_{{work_section.level}} active">
-	                    <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number %}"><i class="icon-book icon-white"></i>{{work_section}}</a>
+	                {% for division_part in divisions.all %}
+	                   {% if division.id == division_part.id %}
+	                <li class="division_{{division_part.level}} active">
+	                    <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book icon-white"></i>{{division_part}}</a>
 	                </li>
 	                   {% else %}
-	                <li class="division_{{work_section.level}}">
-	                    <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number %}"><i class="icon-book"></i>{{work_section}}</a>
+	                <li class="division_{{division_part.level}}">
+	                    <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book"></i>{{division_part}}</a>
 	                </li>
 	                   {% endif %}
 	                {% endfor %}
@@ -34,7 +34,7 @@
                 {% endcomment %}
                 
                 
-                <button class="btn {% if not sections %}disabled{% endif %}" data-toggle="button" id="show_table_of_contents">Table of Contents</button>
+                <button class="btn {% if not divisions %}disabled{% endif %}" data-toggle="button" id="show_table_of_contents">Table of Contents</button>
                 <button id="align_break" class="btn"><i class="icon-align-left"></i></button>
             </div>
             {% comment %}
@@ -48,19 +48,19 @@
             {% endcomment %}
         </div>
         
-        {% if sections %}
+        {% if divisions %}
         <div class="table_of_contents ">
             {% comment %}<h2><small>Table of Contents</small></h2>{% endcomment %}
 	        <ul class="nav nav-list">
 	            {% comment %}<li class="nav-header">Table of Contents</li>{% endcomment %}
-	            {% for work_section in sections.all %}
-	               {% if section.id == work_section.id %}
-	            <li class="division_{{work_section.level}} active">
-	                <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number %}"><i class="icon-book icon-white"></i>{{work_section}}</a>
+	            {% for division_part in divisions.all %}
+	               {% if section.id == division_part.id %}
+	            <li class="division_{{division_part.level}} active">
+	                <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book icon-white"></i>{{division_part}}</a>
 	            </li>
 	               {% else %}
-                <li class="division_{{work_section.level}}">
-                    <a href="{% url read_work work.title work_section.chapters.all.0.sequence_number %}"><i class="icon-book"></i>{{work_section}}</a>
+                <li class="division_{{division_part.level}}">
+                    <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book"></i>{{division_part}}</a>
                 </li>
 	               {% endif %}
 	            {% endfor %}
@@ -69,8 +69,8 @@
         
         {% endif %}
         
-        {% if section %}
-        <h2>{{section}}</h2>
+        {% if chapter.parent_division %}
+        <h2>{{chapter.parent_division}}</h2>
         {% endif %}
         
         {% for verse in verses.all %}

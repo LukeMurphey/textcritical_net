@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.template.context import RequestContext
 import json
 import logging
-from reader.models import Work, Chapter, Verse, Section
+from reader.models import Work, Division, Verse
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
 
@@ -25,6 +25,17 @@ def works_index(request):
                              {'works' : works},
                               context_instance=RequestContext(request))
     
+def get_chapter_for_division(division):
+    """
+    Get the division that
+    """
+    
+    verse = Verse.objects.filter(division__work=division.work, division__sequence_number__gte=division.sequence_number).order_by("division__sequence_number", "sequence_number")[:1]
+    
+    if len(verse) > 0:
+        return verse[0].division
+    
+    
 def read_work(request, title=None, first_number=None, second_number=None, **kwargs):
     
     # Get the verse to highlight (if provided)
@@ -35,47 +46,40 @@ def read_work(request, title=None, first_number=None, second_number=None, **kwar
     
     # Get the chapter
     if first_number is not None:
-        chapter = Chapter.objects.filter(work=work, sequence_number=first_number)[0]
+        division = Division.objects.filter(work=work, sequence_number=first_number)[0]
     else:
-        chapter = Chapter.objects.filter(work=work)[0]
+        division = Division.objects.filter(work=work)[0]
+        
+    chapter = get_chapter_for_division(division)
     
     # Get the verses to display
-    verses = Verse.objects.filter(chapter=chapter).all()
+    verses = Verse.objects.filter(division=chapter).all()
     
-    # Get the sections
-    sections = Section.objects.filter(chapters__work=work).distinct()
+    # Get the divisions that ought to be included in the table of contents
+    divisions = Division.objects.filter(work=work, level__lt=chapter.level)
     
-    if len(sections) == 0:
-        sections = None
-    
-    # Provide the section that includes this chapter
-    section = None
-    
-    chapter_sections = Section.objects.filter(chapters=chapter)[:1]
-    
-    if len(chapter_sections) > 0:
-        section = chapter_sections[0]
+    if len(divisions) == 0:
+        divisions = None
     
     # Get the next and previous chapter number
-    next_chapter = chapter.sequence_number + 1
-    previous_chapter = chapter.sequence_number - 1
+    next_chapter = division.sequence_number + 1
+    previous_chapter = division.sequence_number - 1
     
     # Determine if we should display the 
-    has_previous_chapter = Chapter.objects.filter(work=work, sequence_number=previous_chapter).count() > 0
-    has_next_chapter = Chapter.objects.filter(work=work, sequence_number=next_chapter).count() > 0
+    has_previous_chapter = Division.objects.filter(work=work, sequence_number=previous_chapter).count() > 0
+    has_next_chapter = Division.objects.filter(work=work, sequence_number=next_chapter).count() > 0
     
     return render_to_response('read_work.html',
-                             {'title'   : work.title,
-                              'work'    : work,
-                              'chapter' : chapter,
-                              'verses'  : verses,
-                              'sections': sections,
-                              'section' : section,
-                              'has_next_chapter' : has_next_chapter,
+                             {'title'                : work.title,
+                              'work'                 : work,
+                              'verses'               : verses,
+                              'divisions'            : divisions,
+                              'chapter'              : chapter,
+                              'has_next_chapter'     : has_next_chapter,
                               'has_previous_chapter' : has_previous_chapter,
-                              'next_chapter' : next_chapter,
-                              'previous_chapter' : previous_chapter,
-                              'verse_to_highlight': verse_to_highlight},
+                              'next_chapter'         : next_chapter,
+                              'previous_chapter'     : previous_chapter,
+                              'verse_to_highlight'   : verse_to_highlight},
                               context_instance=RequestContext(request))
 
 def robots_txt(request):

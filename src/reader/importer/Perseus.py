@@ -2,7 +2,16 @@
 Created on Sep 2, 2012
 
 @author: Luke
+
+The Perseus importer takes content from the TEI XML files and moves the content into the database.
+
+The importer performs the import in the three major steps:
+
+ 1) Split up the text into the logical divisions
+ 2) Create the verses
+ 3) Process the verses (convert original content to something that can be displayed)
 '''
+
 from xml.dom.minidom import parse, Document, parseString
 import logging
 import re
@@ -18,15 +27,16 @@ logger = logging.getLogger(__name__)
 
 class State():
     
-    def __init__(self, name, section_type):
+    def __init__(self, name, section_type, level):
         self.section_type = section_type
         self.name = name
+        self.level = level
         
     def is_chunk(self):
         return self.section_type is not None
         
     @staticmethod
-    def createFromStateNode( state_node ):
+    def createFromStateNode( state_node, level = None ):
         
         unit_name = state_node.attributes["unit"].value
             
@@ -35,7 +45,7 @@ class State():
         else:
             section_type = None
             
-        return State(unit_name, section_type)
+        return State(unit_name, section_type, level)
     
     def __str__(self):
         return self.name
@@ -77,7 +87,7 @@ class PerseusTextImporter(TextImporter):
         doc = parse(file_name)
         return self.import_xml_document(doc, state_set)
     
-    def make_division(self, import_context, level=1, sequence_number=None, division_type=None, title=None, original_title=None, descriptor=None):
+    def make_division(self, import_context, level=1, sequence_number=None, division_type=None, title=None, original_title=None, descriptor=None, state_info=None):
         
         # Save the XML content for the previous chapter
         self.save_original_content(import_context)
@@ -125,36 +135,17 @@ class PerseusTextImporter(TextImporter):
             new_division.original_title = original_title
             new_division.work = self.work
             new_division.sequence_number = sequence_number
+            
+            if state_info is not None:
+                new_division.level = state_info.level
+                new_division.type = state_info.name
+            
             new_division.save()
         
         # Set the created division as the new one
         import_context.divisions.append(new_division)
         import_context.division = new_division
         return new_division
-    
-    def make_chapter_OLD(self, save=True, import_context=None, descriptor="", **kwargs):
-        """
-        This method overrides the TextImporter.make_chapter and adds a call to save the original content section
-        if necessary.
-        
-        Arguments:
-        save -- Indicates if the content ought to be saved (or whether the save should be deferred)
-        import_context -- The context being used for the process of importing.
-        """
-        
-        # Save the XML content for the previous chapter
-        self.save_original_content(import_context)
-        
-        #import_context.chapter = TextImporter.make_chapter(self, import_context.chapter, save)
-        import_context.chapter.descriptor = descriptor
-        import_context.chapters.append(import_context.chapter)
-        import_context.initialize_xml_doc(PerseusTextImporter.CHAPTER_TAG_NAME)
-        
-        # Add the chapter to the section
-        if import_context.section is not None:
-            import_context.section.chapters.add(import_context.chapter)
-        
-        return import_context.chapter
     
     def make_verse(self, import_context=None, save=True, **kwargs):
         """
@@ -186,7 +177,9 @@ class PerseusTextImporter(TextImporter):
         if import_context is not None and import_context.division is not None and import_context.document is not None:
             import_context.division.original_content = import_context.document.toxml()
             import_context.division.save()
-            
+        else:
+            logger.error("Cannot save division content")
+        
     def save_original_verse_content(self, import_context):
         """
         This function takes the content from the XML node, converts it to a string and saves it in the current
@@ -199,7 +192,8 @@ class PerseusTextImporter(TextImporter):
         if import_context is not None and import_context.verse is not None and import_context.document is not None:
             import_context.verse.original_content = import_context.document.toxml()
             import_context.verse.save()
-                
+        else:
+            logger.error("Cannot save verse content %r" % (import_context.verse))
         
     @staticmethod
     def getStates( refs_decl ):
@@ -213,9 +207,11 @@ class PerseusTextImporter(TextImporter):
         states = []
         
         state_nodes = refs_decl.getElementsByTagName("state")
+        i = 1
         
         for state_node in state_nodes:
-            states.append( State.createFromStateNode(state_node) )
+            states.append( State.createFromStateNode(state_node, i) )
+            i = i + 1
 
         return states
         
@@ -501,6 +497,7 @@ class PerseusTextImporter(TextImporter):
             import_context = PerseusTextImporter.ImportContext(PerseusTextImporter.VERSE_TAG_NAME)
             import_context.division = division
             is_top_level_call = True
+        
         else:
             is_top_level_call = False
         
@@ -522,27 +519,32 @@ class PerseusTextImporter(TextImporter):
             if node.nodeType == node.TEXT_NODE:
                 
                 # We need to see a milestone before we can set the text for a verse
-                """
+                
                 if len(node.data.strip()) > 0:
                     
-                    if import_context.verse is None:
-                        import_context.verse = self.make_verse(import_context, save=False)
+                    # Start importing the verse if we got a division start but not a verse marker (which is possible)
+                    if import_context.verse is None and import_context.division is not None:
+                        self.make_verse(import_context, save=False)
+                        
+                        # Start adding the content to the new verse
+                        new_verse_node = import_context.current_node
+                        parent_node = new_verse_node
+                        next_level_node = new_verse_node
+                        
                         verses_created = verses_created + 1
                     
                         #import_context.verse = self.make_verse(save=False, division=division)
                         logger.debug("Making new verse (since we have content for a verse but no verse itself) for division %s of %s" % ( str(division.sequence_number), self.work.title))
                     
-                    import_context.verse.content = import_context.verse.content + self.process_text(node.data)
-                    import_context.verse.save()
-                """
+                    if import_context.verse is not None:
+                        import_context.verse.content = import_context.verse.content + self.process_text(node.data)
+                        import_context.verse.save()
                 
             # Is a verse marker?
             elif node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node):
                 
-                #self.save_original_verse_content(import_context)
-                
                 # Make the verse
-                import_context.verse = self.make_verse(import_context, save=False)
+                self.make_verse(import_context, save=False)
                 import_context.verse.indicator = node.attributes["n"].value
                 import_context.verse.save()
                 
@@ -556,9 +558,19 @@ class PerseusTextImporter(TextImporter):
                 
                 logger.debug("Making verse %s in division %s of %s" % (node.attributes["n"].value, str(import_context.division.sequence_number), self.work.title) )
                 
-            elif node.tagName == "milestone":
+            elif node.tagName in ["milestone"]:
                 # Don't include milestone nodes that are not in the current state set in the XML
                 attach_xml_content = True
+                
+            elif node.tagName == "list" and "type" in node.attributes.keys() and node.attributes["type"].value == "toc":
+                logger.critical("Skipping attachment of a list ")
+                attach_xml_content =  False
+                recurse = False
+                
+            elif node.tagName == "note" and "type" in node.attributes.keys() and node.attributes["type"].value == "title":
+                logger.critical("Skipping attachment of the title node")
+                attach_xml_content =  False
+                recurse = False
                 
             # Attach the content to the division if it is for the current verse
             if attach_xml_content:
@@ -566,7 +578,7 @@ class PerseusTextImporter(TextImporter):
                 
             # Recurse on the child-nodes
             if recurse:
-                verses_created_temp, created_verse_node = self.import_verse_content(division, node, state_set, import_context, next_level_node, True)
+                verses_created_temp, created_verse_node = self.import_verse_content(division, node, state_set, import_context, parent_node=next_level_node, recurse=True)
                 verses_created = verses_created + verses_created_temp
                 
                 if created_verse_node is not None:
@@ -672,7 +684,7 @@ class PerseusTextImporter(TextImporter):
                     descriptor = node.attributes["n"].value
                 
                 # Make the division
-                self.make_division(import_context=import_context, descriptor=descriptor)
+                self.make_division(import_context=import_context, descriptor=descriptor, state_info=self.get_state_for_milestone(state_set, node))
                 logger.debug("Making division %s (since it is a chunk) of %s" % ( str(import_context.division.sequence_number), self.work.title))
                 
                 # Start adding the content to the new division
@@ -690,7 +702,7 @@ class PerseusTextImporter(TextImporter):
                 
                 # If we have a verse without a division, then go ahead and make one
                 if import_context.division is None:
-                    self.make_division(import_context=import_context, descriptor=descriptor)
+                    self.make_division(import_context=import_context, descriptor=descriptor, state_info=self.get_state_for_milestone(state_set, node))
                     logger.debug("Making a division for %s since once does not exist yet (so that we can add a verse)" % (self.work.title))
                     
                     # Start adding the content to the new division
@@ -716,6 +728,12 @@ class PerseusTextImporter(TextImporter):
                 
                 original_title = self.getSectionTitle(node)
                 title = self.process_text(original_title)
+                
+                # Get the state set associated with this entry
+                for state in state_set:
+                    if state.name.lower() == division_type.lower() and state.level is not None:
+                        level = state.level
+                        break
                 
                 self.make_division(import_context, level, division_type=division_type, title=title, original_title=original_title, descriptor=descriptor)
                 
