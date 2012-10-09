@@ -89,12 +89,16 @@ class PerseusTextImporter(TextImporter):
     
     def make_division(self, import_context, level=1, sequence_number=None, division_type=None, title=None, original_title=None, descriptor=None, state_info=None):
         
+        if state_info is not None:
+            level = state_info.level
+        
         # Save the XML content for the previous chapter
         self.save_original_content(import_context)
         
         import_context.initialize_xml_doc(PerseusTextImporter.CHAPTER_TAG_NAME)
         
-        new_division = None
+        new_division = Division()
+        new_division.level = level
         
         if import_context.division is not None:
             
@@ -102,20 +106,35 @@ class PerseusTextImporter(TextImporter):
             if sequence_number is None:
                 sequence_number = import_context.division.sequence_number + 1
             
-            # If this level is the at the same level, then replace the division with the current one
-            if import_context.division.level <= level:
-                new_division = Division()
-                new_division.level = level
+            # If this level is the at the same level as the current one, then replace the division with the current one
+            if level == import_context.division.level:
                 new_division.parent_division = import_context.division.parent_division
+                print "Replacing current level at %i" % (level)
                 
-            # If the current level is one higher than the new one, then move the current section under it
-            elif import_context.division.level == (level + 1):
-                new_division = Division()
-                new_division.level = level
+            # If the new level is lower than the current one, then shim in the new one at the appropriate level
+            elif level <= import_context.division.level:
+                
+                same_level_division = import_context.division
+                
+                # Move down the levels until we find one at the same level
+                while same_level_division is not None and level < same_level_division.level:
+                    print "Looking for new level %i: %i" % (level, same_level_division.level)
+                    same_level_division = same_level_division.parent_division
+                
+                if same_level_division is not None:
+                    new_division.parent_division = same_level_division.parent_division
+                    print "Assigning division at level %i under parent %r" % (level, same_level_division.parent_division)
+                else:
+                    print "Unable to find parent division for level %i" % (level)
+            
+            # If the new level is higher than the current one, then add
+            else:
                 new_division.parent_division = import_context.division
                 
-            else:
-                logger.warning("Did not make division for level %i in %s" %(level, self.work.title) )
+                print "Creating new division at level %i with parent at level %i" % (level, import_context.division.level)
+                
+            #else:
+            #    logger.warning("Did not make division for level %i in %s" %(level, self.work.title) )
                 
         # Make the section 
         else:
@@ -124,8 +143,7 @@ class PerseusTextImporter(TextImporter):
             if sequence_number is None:
                 sequence_number = 1
             
-            new_division = Division()
-            new_division.level = level
+            print "Creating new division at level %i" % (new_division.level)
             
         # Save the newly created section
         if new_division is not None:
@@ -139,8 +157,13 @@ class PerseusTextImporter(TextImporter):
             if state_info is not None:
                 new_division.level = state_info.level
                 new_division.type = state_info.name
+                new_division.readable_unit = state_info.is_chunk()
+                
+                print "\tstate_info.is_chunk() = ", state_info.is_chunk()
             
             new_division.save()
+        
+        print "Successfully created: ", new_division.descriptor, new_division.original_title
         
         # Set the created division as the new one
         import_context.divisions.append(new_division)

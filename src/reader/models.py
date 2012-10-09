@@ -67,6 +67,7 @@ class Division(models.Model):
     original_content = models.TextField(blank=True)
     
     parent_division  = models.ForeignKey('self', blank=True, null=True)
+    readable_unit    = models.BooleanField(default=False)
     
     def __unicode__(self):
         if self.title is not None and len(self.title) > 0:
