@@ -30,11 +30,17 @@ def get_chapter_for_division(division):
     Get the division that
     """
     
+    divisions = Division.objects.filter(work=division.work, readable_unit=True, sequence_number__gte=division.sequence_number).order_by("sequence_number")[:1]
+    
+    if len(divisions) > 0:
+        return divisions[0]
+    
+    """
     verse = Verse.objects.filter(division__work=division.work, division__sequence_number__gte=division.sequence_number).order_by("division__sequence_number", "sequence_number")[:1]
     
     if len(verse) > 0:
         return verse[0].division
-    
+    """
     
 def read_work(request, title=None, first_number=None, second_number=None, **kwargs):
     
@@ -56,7 +62,7 @@ def read_work(request, title=None, first_number=None, second_number=None, **kwar
     verses = Verse.objects.filter(division=chapter).all()
     
     # Get the divisions that ought to be included in the table of contents
-    divisions = Division.objects.filter(work=work, level__lt=chapter.level)
+    divisions = Division.objects.filter(work=work, readable_unit=False)
     
     if len(divisions) == 0:
         divisions = None

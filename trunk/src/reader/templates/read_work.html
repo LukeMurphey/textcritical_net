@@ -54,7 +54,7 @@
 	        <ul class="nav nav-list">
 	            {% comment %}<li class="nav-header">Table of Contents</li>{% endcomment %}
 	            {% for division_part in divisions.all %}
-	               {% if section.id == division_part.id %}
+	               {% if chapter.parent_division.id == division_part.id %}
 	            <li class="division_{{division_part.level}} active">
 	                <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book icon-white"></i>{{division_part}}</a>
 	            </li>
