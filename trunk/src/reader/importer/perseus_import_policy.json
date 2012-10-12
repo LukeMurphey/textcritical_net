@@ -1,0 +1,10 @@
+[
+    {
+        "author" : "Flavius Josephus",
+        "title" : "Antiquitates Judaicae",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 1
+        }
+    }
+]
