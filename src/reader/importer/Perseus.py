@@ -12,12 +12,12 @@ The importer performs the import in the three major steps:
  3) Process the verses (convert original content to something that can be displayed)
 '''
 
-from xml.dom.minidom import parse, Document, parseString
+from xml.dom.minidom import parse, parseString
 import logging
 import re
 
 from reader.importer import TextImporter
-from reader.models import Author, Work, WorkSource, Verse, Division
+from reader.models import Division
 from reader.language_tools.greek import Greek
 
 from django.db import transaction
@@ -109,7 +109,6 @@ class PerseusTextImporter(TextImporter):
             # If this level is the at the same level as the current one, then replace the division with the current one
             if level == import_context.division.level:
                 new_division.parent_division = import_context.division.parent_division
-                print "Replacing current level at %i" % (level)
                 
             # If the new level is lower than the current one, then shim in the new one at the appropriate level
             elif level <= import_context.division.level:
@@ -118,20 +117,16 @@ class PerseusTextImporter(TextImporter):
                 
                 # Move down the levels until we find one at the same level
                 while same_level_division is not None and level < same_level_division.level:
-                    print "Looking for new level %i: %i" % (level, same_level_division.level)
                     same_level_division = same_level_division.parent_division
                 
                 if same_level_division is not None:
                     new_division.parent_division = same_level_division.parent_division
-                    print "Assigning division at level %i under parent %r" % (level, same_level_division.parent_division)
                 else:
-                    print "Unable to find parent division for level %i" % (level)
+                    logger.warn( "Unable to find parent division for level %i" % (level) )
             
             # If the new level is higher than the current one, then add
             else:
                 new_division.parent_division = import_context.division
-                
-                print "Creating new division at level %i with parent at level %i" % (level, import_context.division.level)
                 
             #else:
             #    logger.warning("Did not make division for level %i in %s" %(level, self.work.title) )
@@ -142,8 +137,6 @@ class PerseusTextImporter(TextImporter):
             # Start the sequence number at 1 if a number was not provided
             if sequence_number is None:
                 sequence_number = 1
-            
-            print "Creating new division at level %i" % (new_division.level)
             
         # Save the newly created section
         if new_division is not None:
@@ -158,12 +151,10 @@ class PerseusTextImporter(TextImporter):
                 new_division.level = state_info.level
                 new_division.type = state_info.name
                 new_division.readable_unit = state_info.is_chunk()
-                
-                print "\tstate_info.is_chunk() = ", state_info.is_chunk()
             
             new_division.save()
         
-        print "Successfully created: ", new_division.descriptor, new_division.original_title
+        logger.debug( "Successfully created: %s %s" % (new_division.descriptor, new_division.original_title) )
         
         # Set the created division as the new one
         import_context.divisions.append(new_division)
@@ -292,11 +283,12 @@ class PerseusTextImporter(TextImporter):
         doc -- An XML document containing a language node
         """
         
-        lang_node = doc.getElementsByTagName("language")[0]
+        lang_nodes = doc.getElementsByTagName("language")
         
-        language = PerseusTextImporter.getText(lang_node.childNodes).strip()
-        
-        return language
+        if len(lang_nodes) > 0:
+            return PerseusTextImporter.getText(lang_nodes[0].childNodes).strip()
+        else:
+            return None
     
     @staticmethod
     def get_author_from_bibl_struct(bibl_struct):
@@ -307,8 +299,12 @@ class PerseusTextImporter(TextImporter):
         bibl_struct -- A 'biblStruct' node
         """
         
-        author_node = bibl_struct.getElementsByTagName("author")[0]
-        return PerseusTextImporter.getText(author_node.childNodes)
+        author_nodes = bibl_struct.getElementsByTagName("author")
+        
+        if len(author_nodes) > 0:
+            return PerseusTextImporter.getText(author_nodes[0].childNodes)
+        else:
+            return None
     
     @staticmethod
     def get_title_from_bibl_struct(bibl_struct):
