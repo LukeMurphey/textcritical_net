@@ -68,12 +68,18 @@ def read_work(request, title=None, first_number=None, second_number=None, **kwar
         divisions = None
     
     # Get the next and previous chapter number
-    next_chapter = division.sequence_number + 1
-    previous_chapter = division.sequence_number - 1
+    previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).values('id')[:1]
+    next_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__gt=chapter.sequence_number).values('id')[:1]
     
-    # Determine if we should display the 
-    has_previous_chapter = Division.objects.filter(work=work, sequence_number=previous_chapter).count() > 0
-    has_next_chapter = Division.objects.filter(work=work, sequence_number=next_chapter).count() > 0
+    if len(previous_chapter) > 0:
+        previous_chapter = previous_chapter[0]['id']
+    else:
+        previous_chapter = None
+        
+    if len(next_chapter) > 0:
+        next_chapter = next_chapter[0]['id']
+    else:
+        next_chapter = None
     
     return render_to_response('read_work.html',
                              {'title'                : work.title,
@@ -81,8 +87,6 @@ def read_work(request, title=None, first_number=None, second_number=None, **kwar
                               'verses'               : verses,
                               'divisions'            : divisions,
                               'chapter'              : chapter,
-                              'has_next_chapter'     : has_next_chapter,
-                              'has_previous_chapter' : has_previous_chapter,
                               'next_chapter'         : next_chapter,
                               'previous_chapter'     : previous_chapter,
                               'verse_to_highlight'   : verse_to_highlight},
