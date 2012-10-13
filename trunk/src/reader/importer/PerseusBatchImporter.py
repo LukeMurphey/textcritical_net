@@ -6,8 +6,13 @@ Created on Oct 11, 2012
 
 import os
 import json
+import logging
 from xml.dom.minidom import parse
 from reader.importer.Perseus import PerseusTextImporter
+from reader.models import Work
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 class WorkDescriptor():
     """
@@ -120,7 +125,7 @@ class PerseusBatchImporter():
         if len(tei_header_nodes) > 0:
             return PerseusTextImporter.get_title_from_tei_header(tei_header_nodes[0])
         else:
-            print "No TEI header found"
+            logger.debug("No TEI header found, title could not be retrieved")
     
     def get_author(self, document_xml):
         """
@@ -142,18 +147,23 @@ class PerseusBatchImporter():
         
         return PerseusTextImporter.get_language(document_xml)
     
-    def get_import_parameters(self, document_xml, file_path):
+    def get_import_parameters(self, document_xml, file_path, title, author, language):
         """
         Get the language of the work.
         """
-        
-        title = self.get_title(document_xml)
-        author = self.get_author(document_xml)
-        language = self.get_language(document_xml)
-        
-        print "Analyzing %s by %s (%s) to determine if it ought to be imported" % (title, author, language )
+                
+        logger.debug("Analyzing %s by %s (%s) to determine if it ought to be imported" % (title, author, language ) )
         
         return self.book_selection_policy( document=document_xml, title=title, author=author, language=language, file_path=file_path )
+    
+    def does_work_exist(self, title, author, language):
+        """
+        Determines if the given work already exists.
+        """
+        
+        works = Work.objects.filter( title=title, authors__name=author, language=language)
+        
+        return works.count() > 0
     
     def process_file(self, file_path):
         """
@@ -163,24 +173,33 @@ class PerseusBatchImporter():
         # Get the document XML
         document_xml = parse(file_path)
         
-        perseus_importer = None
-        import_parameters = self.get_import_parameters(document_xml, file_path)
+        # Get the information we need to get the import policy
+        title = self.get_title(document_xml)
+        author = self.get_author(document_xml)
+        language = self.get_language(document_xml)
         
-        if import_parameters is None:
+        perseus_importer = None
+        import_parameters = self.get_import_parameters(document_xml, file_path, title, author, language)
+        
+        if self.does_work_exist(title, author, language):
+            logger.info( 'Work already exists, skipping it, title="%s"', title)
+            
+        elif import_parameters is None:
             # We are not going to import this work
             pass
+        
         elif import_parameters is True:
             # Import this work
-            print "Importing the file: ", file_path
+            logger.info( 'Importing a Perseus XML file, file_path="%s"', file_path)
             perseus_importer = PerseusTextImporter()
             perseus_importer.import_file(file_path)
         else:
-            print "Importing the file: ", file_path
+            logger.info( 'Importing a Perseus XML file, file_path="%s"', file_path)
             perseus_importer = PerseusTextImporter()
             perseus_importer.import_file(file_path, **import_parameters)
             
         if perseus_importer is not None:
-            print "Successfully imported work:", perseus_importer.work.title_slug, perseus_importer.work.id
+            logger.info('Successfully imported work title="%s", work.id=%i', perseus_importer.work.title_slug, perseus_importer.work.id)
     
     def do_import(self, directory=None):
         """
@@ -191,7 +210,7 @@ class PerseusBatchImporter():
         if directory is None:
             directory = self.perseus_directory
             
-        print "Analyzing", directory, "for files to import"
+        logger.debug("Analyzing %s for files to import", directory )
         
         # Walk the directory and import the files
         for root, dirs, files in os.walk(directory):
