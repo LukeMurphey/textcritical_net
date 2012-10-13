@@ -83,12 +83,12 @@
         {% endfor %}
         
         <ul class="pager">
-        {% if has_previous_chapter %}
+        {% if previous_chapter %}
             <li class="previous">
                 <a href="{% url read_work work.title_slug previous_chapter %}">&larr; Previous</a>
             </li>
         {% endif %}
-        {% if has_next_chapter %}
+        {% if next_chapter %}
             <li class="next">
                 <a href="{% url read_work work.title_slug next_chapter %}">Next &rarr;</a>
             </li>
