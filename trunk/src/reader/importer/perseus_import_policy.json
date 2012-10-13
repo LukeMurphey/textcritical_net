@@ -6,5 +6,29 @@
         "import_parameters" : {
             "state_set" : 1
         }
+    },
+    {
+        "author" : "Flavius Josephus",
+        "title" : "Contra Apionem",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : "*"
+        }
+    },
+    {
+        "author" : "Flavius Josephus",
+        "title" : "De bello Judaico libri vii",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 1
+        }
+    },
+    {
+        "author" : "Flavius Josephus",
+        "title" : "Josephi vita",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : "*"
+        }
     }
 ]
