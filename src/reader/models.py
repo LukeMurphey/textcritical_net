@@ -3,6 +3,7 @@ from django.template.defaultfilters import slugify
 
 class Author(models.Model):
     name        = models.CharField(max_length=200)
+    name_slug   = models.SlugField()
     first_name  = models.CharField(max_length=200, blank=True)
     last_name   = models.CharField(max_length=200, blank=True)
     date_born   = models.DateTimeField('date of birth', blank=True, null=True)
@@ -14,6 +15,14 @@ class Author(models.Model):
     
     def __unicode__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        
+        if not self.id and not self.name_slug:
+            # Newly created object, so set slug
+            self.name_slug = slugify(self.name)
+
+        super(Author, self).save(*args, **kwargs)
 
 class WorkType(models.Model):
     title = models.CharField(max_length=40)
@@ -72,8 +81,8 @@ class Division(models.Model):
     def __unicode__(self):
         if self.title is not None and len(self.title) > 0:
             return self.title
-        elif self.descriptor is not None and len(self.descriptor) > 0:
-            return self.descriptor
+        elif self.descriptor is not None and len(str(self.descriptor)) > 0:
+            return str(self.descriptor)
         elif self.sequence_number is not None:
             return str(self.sequence_number)
         else:

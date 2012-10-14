@@ -4,7 +4,7 @@ from django.contrib import admin
 class AuthorAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ('name', 'date_born', 'date_died', 'meta_author'),
+            'fields': ('name', 'name_slug', 'date_born', 'date_died', 'meta_author'),
         }),
     )
 
@@ -45,14 +45,14 @@ class WorkAdmin(admin.ModelAdmin):
     
     #prepopulated_fields = {"title_slug": ("title",)}
     
-    list_display = ('title', 'language', 'work_type')
-    list_editable = ('work_type',)
+    list_display = ('title', 'language', 'work_type', 'title_slug')
+    list_editable = ('work_type', 'title_slug')
     list_filter = ('language', 'work_type', 'authors')
     search_fields = ('title',)
     
     fieldsets = (
         (None, {
-            'fields': ( ('title', 'language'), 'work_type', ('authors', 'translators'), 'descriptor', 'date_written'),
+            'fields': ( ('title', 'title_slug'), 'language', 'work_type', ('authors', 'translators'), 'descriptor', 'date_written'),
         }),
     )
     
