@@ -96,10 +96,10 @@ class ImportTransforms():
                 # Execute the function
                 if args is not None:
                     fx(work=work, **args)
-                    logger.debug("Successfuly executed transforms with arguments, transform=%s", fx_name)
+                    logger.debug("Successfully executed transforms with arguments, transform=%s", fx_name)
                 else:
                     fx(work=work)
-                    logger.debug("Successfuly executed transforms without arguments, transform=%s", fx_name)
+                    logger.debug("Successfully executed transforms without arguments, transform=%s", fx_name)
                     
             else:
                 logger.warn("Transform function could not be found, transform=%s", fx_name)
