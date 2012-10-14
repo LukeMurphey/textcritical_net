@@ -272,10 +272,10 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         self.assertEquals( verses[0].original_content, expected_content)
     
     def test_load_book_alternate_state_set(self):
-        
+        self.importer.state_set = 1  #Using Whiston sections as opposed to the defaults
         book_xml = self.load_test_resource('j.vit_gk_portion.xml')
         book_doc = parseString(book_xml)
-        work = self.importer.import_xml_document(book_doc, state_set=1) #Using Whiston sections as opposed to the defaults
+        work = self.importer.import_xml_document(book_doc)
         
         divisions = Division.objects.filter(work=work)
         
@@ -287,9 +287,10 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
     
     def test_load_book_merged_state_set(self):
         
+        self.importer.state_set = None
         book_xml = self.load_test_resource('j.vit_gk_portion.xml')
         book_doc = parseString(book_xml)
-        work = self.importer.import_xml_document(book_doc, state_set=None) #Using Whiston sections as opposed to the defaults
+        work = self.importer.import_xml_document(book_doc)
         
         divisions = Division.objects.filter(work=work)
         
@@ -298,9 +299,11 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
     
     def test_load_book_with_sections(self):
+        
+        self.importer.state_set = 1 #Using Whiston sections as opposed to the defaults
         book_xml = self.load_test_resource('j.aj_gk_portion.xml')
         book_doc = parseString(book_xml)
-        work = self.importer.import_xml_document(book_doc, state_set=1) #Using Whiston sections as opposed to the defaults
+        work = self.importer.import_xml_document(book_doc)
         
         divisions = Division.objects.filter(work=work).distinct()
         

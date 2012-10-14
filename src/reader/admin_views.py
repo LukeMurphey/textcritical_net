@@ -51,11 +51,10 @@ def import_perseus_file(request):
             perseus_xml_string = ''
                  
             for chunk in f.chunks():
-                perseus_xml_string = perseus_xml_string + str(chunk)
+                perseus_xml_string = perseus_xml_string + str(chunk)  
                 
-                
-            importer = PerseusTextImporter()
-            work = importer.import_xml_string(perseus_xml_string, state_set)
+            importer = PerseusTextImporter(state_set=state_set)
+            work = importer.import_xml_string(perseus_xml_string)
                 
             messages.add_message(request, messages.INFO, 'Work successfully imported')
         else:
