@@ -30,5 +30,32 @@
         "import_parameters" : {
             "state_set" : "*"
         }
+    },
+    {
+        "author" : "Aeschines",
+        "title" : "Speeches (Greek). Machine readable text",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+            	"set_meta_data" : {
+            		"title_slug" : "speeches-aeschines"
+            	}
+            }
+        }
+    },
+    {
+        "author" : "Aeschylus",
+        "title" : "Agamemnon",
+        "language" : "Greek_",
+        "import_parameters" : {
+            "state_set" : 1
+        }
+    }, 
+    {
+        "language" : "Greek_DISABLED",
+        "import_parameters" : {
+            "state_set" : 0
+        }
     }
 ]
