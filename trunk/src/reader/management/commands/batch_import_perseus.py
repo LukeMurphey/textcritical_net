@@ -11,6 +11,7 @@ class Command(BaseCommand):
 
     option_list = BaseCommand.option_list + (
         make_option("-d", "--directory", dest="directory", help="The directory containing the files to import"),
+        make_option("-o", "--overwrite", action="store_false", dest="overwrite", default=False, help="Overwrite and replace existing items"),
     )
 
     def handle(self, *args, **options):
@@ -25,6 +26,13 @@ class Command(BaseCommand):
             print "No directory was provided to import"
             return
         
+        overwrite = options['overwrite']
+        
+        if overwrite is None:
+            overwrite = False
+        else:
+            overwrite = True
+        
         print "Importing files from", os.path.basename(directory)
         
         selection_policy = JSONImportPolicy()
@@ -32,7 +40,8 @@ class Command(BaseCommand):
                 
         perseus_batch_importer = PerseusBatchImporter(
                                                       perseus_directory     = directory,
-                                                      book_selection_policy = selection_policy.should_be_imported )
+                                                      book_selection_policy = selection_policy.should_be_imported,
+                                                      overwrite_existing    = overwrite )
         
         perseus_batch_importer.do_import()
         

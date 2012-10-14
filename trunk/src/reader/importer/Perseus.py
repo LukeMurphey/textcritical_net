@@ -12,15 +12,17 @@ The importer performs the import in the three major steps:
  3) Process the verses (convert original content to something that can be displayed)
 '''
 
+from xml.dom import minidom
 from xml.dom.minidom import parse, parseString
 import logging
 import re
 
 from reader.importer import TextImporter
-from reader.models import Division
+from reader.models import Division, Work
 from reader.language_tools.greek import Greek
 
 from django.db import transaction
+from django.template.defaultfilters import slugify
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -57,6 +59,17 @@ class PerseusTextImporter(TextImporter):
     VERSE_TAG_NAME = "verse"
     CHAPTER_TAG_NAME = "chapter"
     
+    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None):
+        self.overwrite_existing = overwrite_existing
+        
+        self.state_set = state_set
+        
+        if state_set != "*":
+            self.state_set = int(self.state_set)
+        
+        TextImporter.__init__(self, work, work_source)
+        #super(PerseusTextImporter, self).__init__(work, work_source)
+    
     def import_xml_string(self, xml_string, state_set=0 ):
         """
         Import the work from the string provided.
@@ -69,7 +82,7 @@ class PerseusTextImporter(TextImporter):
         doc = parseString(xml_string)
         return self.import_xml_document(doc, state_set)
          
-    def import_file( self, file_name, state_set=0 ):
+    def import_file( self, file_name):
         """
         Import the provided XML file.
         
@@ -85,7 +98,7 @@ class PerseusTextImporter(TextImporter):
         
         # Import the document
         doc = parse(file_name)
-        return self.import_xml_document(doc, state_set)
+        return self.import_xml_document(doc)
     
     def make_division(self, import_context, level=1, sequence_number=None, division_type=None, title=None, original_title=None, descriptor=None, state_info=None):
         
@@ -138,11 +151,20 @@ class PerseusTextImporter(TextImporter):
             if sequence_number is None:
                 sequence_number = 1
             
+        if descriptor is None:
+            descriptor = sequence_number
+            
         # Save the newly created section
         if new_division is not None:
-            new_division.descriptor = descriptor
+            
             new_division.type = division_type
             new_division.title = title
+            
+            if title is not None:
+                new_division.descriptor = slugify(title)
+            else:
+                new_division.descriptor = descriptor
+            
             new_division.original_title = original_title
             new_division.work = self.work
             new_division.sequence_number = sequence_number
@@ -398,15 +420,26 @@ class PerseusTextImporter(TextImporter):
         else:
             return False
     
+    def delete_equivalent_works(self):
+        """
+        Deletes works that are equivalent to the one we are importing or have imported.
+        """
+        
+        equivalent_works = Work.objects.exclude(id=self.work.id).filter( title=self.work.title, language=self.work.language, authors=self.work.authors.all() )
+        
+        for work in equivalent_works:
+            logger.info("Deleting work so that new copy can replace it, title=%s, work.id=%i", work.title, work.id)
+            work.delete()
+    
     @transaction.commit_on_success
-    def import_xml_document(self, document, state_set=0):
+    def import_xml_document(self, document):
         """
         Import the given TEI document into the database.
         
         Arguments:
         document -- A parsed TEI XML document
         state_set -- The state set to use for splitting the verses.
-        """
+        """            
         
         # Obtain references to the nodes that contain meta-data about the book
         tei_header = document.getElementsByTagName("teiHeader")[0]
@@ -423,13 +456,17 @@ class PerseusTextImporter(TextImporter):
         author_name = PerseusTextImporter.get_author_from_bibl_struct(bibl_struct_node)
         author = self.make_author(author_name)
         self.work.authors.add(author)
+          
+        # Delete pre-existing works if they exist
+        if self.overwrite_existing:
+            self.delete_equivalent_works()
         
         # Get the sectioning information
-        if state_set is None or state_set == "*":
+        if self.state_set is None or self.state_set == "*":
             current_state_set = PerseusTextImporter.getStateSets(document, merge_all=True)
         else:
             state_sets = PerseusTextImporter.getStateSets(document)
-            current_state_set = state_sets[state_set]
+            current_state_set = state_sets[self.state_set]
         
         #Save save the information about where we got the work from
         if self.work_source is not None:
@@ -591,6 +628,11 @@ class PerseusTextImporter(TextImporter):
                 attach_xml_content =  False
                 recurse = False
                 
+            # Don't recurse on the head tag since we alredy pulled this in when we got the division tag
+            elif node.tagName == "head":
+                attach_xml_content =  False
+                recurse = False
+                
             # Attach the content to the division if it is for the current verse
             if attach_xml_content:
                 next_level_node = import_context.append_xml(node, parent_node)
@@ -691,6 +733,9 @@ class PerseusTextImporter(TextImporter):
                 if import_context.division is None:
                     # No division exists yet, skipping this verse
                     logger.debug("No division exists yet, skipping this content: %s of %s" % (node.data, self.work.title))
+            
+            elif node.nodeType == minidom.Node.COMMENT_NODE:
+                append_xml_content = False # Skip comments
             
             # If the content is a new milestone marker
             elif node.tagName == "milestone" and self.is_milestone_chunk(state_set, node):

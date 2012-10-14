@@ -35,7 +35,7 @@ class Command(BaseCommand):
             return
         
         print "Importing ", os.path.basename(filename)
-        importer = PerseusTextImporter()
-        importer.import_file(filename, state_set)
+        importer = PerseusTextImporter(state_set=state_set)
+        importer.import_file(filename)
         
         print os.path.basename(filename), "successfully imported"
