@@ -20,7 +20,11 @@ require.config({
         ],
         
         store: [
-                "libs/store"
+             "libs/store"
+        ],
+        
+        bootbox: [
+             "libs/bootbox"
         ]
     },
     shim: {
