@@ -62,6 +62,49 @@ class WorkDescriptor():
         else:
             return True
 
+class ImportTransforms():
+    
+    @staticmethod
+    def set_meta_data(work=None, title=None, title_slug=None, **kwargs):
+        changes = 0
+        
+        if title is not None:
+            work.title = title
+            changes = changes + 1
+            
+        if title_slug is not None:
+            work.title_slug = title_slug
+            changes = changes + 1
+            
+        if changes > 0:
+            work.save()
+        
+    @staticmethod
+    def run_transforms( work, transforms ):
+        
+        fxs = dir(ImportTransforms)
+        
+        # Execute each of the transform functions
+        for fx_name, args in transforms.items():
+            
+            # Make sure the function is present
+            if fx_name in fxs and fx_name != 'run_transforms':
+                
+                # Get the function to call
+                fx = getattr(ImportTransforms, fx_name)
+                
+                # Execute the function
+                if args is not None:
+                    fx(work=work, **args)
+                    logger.debug("Successfuly executed transforms with arguments, transform=%s", fx_name)
+                else:
+                    fx(work=work)
+                    logger.debug("Successfuly executed transforms without arguments, transform=%s", fx_name)
+                    
+            else:
+                logger.warn("Transform function could not be found, transform=%s", fx_name)
+        
+
 class JSONImportPolicy():
     """
     This class represents a selection policy 
@@ -110,9 +153,9 @@ class PerseusBatchImporter():
     A batch importer for walking a directory and importing all of the files if they match an import policy.
     """
     
-    def __init__(self, perseus_directory, overwrite=False, book_selection_policy=None):
+    def __init__(self, perseus_directory, overwrite_existing=False, book_selection_policy=None):
         self.perseus_directory = perseus_directory
-        self.overwrite = overwrite
+        self.overwrite_existing = overwrite_existing
         self.book_selection_policy = book_selection_policy
         
     def get_title(self, document_xml):
@@ -181,7 +224,14 @@ class PerseusBatchImporter():
         perseus_importer = None
         import_parameters = self.get_import_parameters(document_xml, file_path, title, author, language)
         
-        if self.does_work_exist(title, author, language):
+        # Get the transforms to be executed
+        if import_parameters is not None and 'transforms' in import_parameters:
+            transforms = import_parameters.get('transforms', None)
+            del import_parameters['transforms']
+        else:
+            transforms = None
+        
+        if self.overwrite_existing == False and self.does_work_exist(title, author, language):
             logger.info( 'Work already exists, skipping it, title="%s"', title)
             
         elif import_parameters is None:
@@ -191,14 +241,22 @@ class PerseusBatchImporter():
         elif import_parameters is True:
             # Import this work
             logger.info( 'Importing a Perseus XML file, file_path="%s"', file_path)
-            perseus_importer = PerseusTextImporter()
+            perseus_importer = PerseusTextImporter(overwrite_existing=self.overwrite_existing)
             perseus_importer.import_file(file_path)
         else:
             logger.info( 'Importing a Perseus XML file, file_path="%s"', file_path)
-            perseus_importer = PerseusTextImporter()
-            perseus_importer.import_file(file_path, **import_parameters)
+            perseus_importer = PerseusTextImporter(overwrite_existing=self.overwrite_existing, **import_parameters)
+            perseus_importer.import_file(file_path)
             
         if perseus_importer is not None:
+            
+            # Run the transforms
+            if transforms is not None:
+                logger.debug("Running transforms")
+                ImportTransforms.run_transforms(perseus_importer.work, transforms)
+            else:
+                logger.debug("No transforms found")
+            
             logger.info('Successfully imported work title="%s", work.id=%i', perseus_importer.work.title_slug, perseus_importer.work.id)
     
     def do_import(self, directory=None):
