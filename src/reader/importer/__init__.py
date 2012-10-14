@@ -137,6 +137,11 @@ class TextImporter():
         verse.sequence_number = num
         verse.division = division
         
+        if division is not None and division.readable_unit == False:
+            division.readable_unit = True
+            division.save()
+            logger.info("Marking division as a readable unit because it contains a verse, division=%r", division)
+        
         if save:
             verse.save()
         
