@@ -42,7 +42,7 @@ def get_chapter_for_division(division):
         return verse[0].division
     """
     
-def read_work(request, title=None, first_number=None, second_number=None, **kwargs):
+def read_work(request, author=None, language=None, title=None, first_number=None, second_number=None, **kwargs):
     
     # Get the verse to highlight (if provided)
     verse_to_highlight = request.GET.get('verse', None)
@@ -68,16 +68,16 @@ def read_work(request, title=None, first_number=None, second_number=None, **kwar
         divisions = None
     
     # Get the next and previous chapter number
-    previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).values('id')[:1]
-    next_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__gt=chapter.sequence_number).values('id')[:1]
+    previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).values('sequence_number')[:1]
+    next_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__gt=chapter.sequence_number).values('sequence_number')[:1]
     
     if len(previous_chapter) > 0:
-        previous_chapter = previous_chapter[0]['id']
+        previous_chapter = previous_chapter[0]['sequence_number']
     else:
         previous_chapter = None
         
     if len(next_chapter) > 0:
-        next_chapter = next_chapter[0]['id']
+        next_chapter = next_chapter[0]['sequence_number']
     else:
         next_chapter = None
     
