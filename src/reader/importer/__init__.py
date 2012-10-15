@@ -149,11 +149,19 @@ class TextImporter():
     
     def make_author(self, name, save_if_new=True):
         
+        # If the name is none, then assume the user is unknown
+        if name is None:
+            name = "Unknown"
+        
+        # Save the author
         try:
             author = Author.objects.get(name=name)
         except ObjectDoesNotExist:
             author = Author()
             author.name = name
+            
+            if name in ["Unknown", "Various"]:
+                author.meta_author = True
             
             if save_if_new:
                 author.save()
