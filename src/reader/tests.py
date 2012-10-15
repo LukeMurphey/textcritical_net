@@ -169,6 +169,31 @@ class TestPerseusImport(TestCase):
         
         self.assertEquals(language, "Greek")
         
+    def write_out_test_file(self, content):
+        
+        fname = 'C:\\Users\\Luke\\Desktop\\output.txt'
+        f = open(fname, 'w')
+        f.write(content)
+        f.close()
+        
+    def test_process_text(self):
+        
+        original_content = r"""
+<verse>
+    <head>*(ikanw=s <num ref="some_ref">d</num> me\n </head>
+</verse>"""
+
+        language = "Greek"
+        expected_result = r"""<?xml version="1.0" encoding="utf-8"?><verse><span data-tagname="verse">
+    <span data-tagname="head">Ἱκανῶς <span data-ref="some_ref" data-tagname="num">δ</span> μὲν </span>
+</span></verse>"""
+
+        actual_result = PerseusTextImporter.convert_to_html(original_content, language)
+        
+        #self.write_out_test_file( expected_result + "\n\n" + actual_result )
+        
+        self.assertEqual(expected_result, actual_result)
+        
     def test_get_text(self):
         
         sample_xml = r"<head>*ta/de e)/nestin e)n th=| <num>b</num> tw=n *)iwsh/pou i(storiw=n th=s *)ioudai+kh=s a)rxaiologi/as.</head>"
