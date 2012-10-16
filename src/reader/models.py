@@ -35,7 +35,7 @@ class Work(models.Model):
     list_display = ('title', 'authors', 'language')
     
     title        = models.CharField(max_length=200)
-    title_slug   = models.SlugField()
+    title_slug   = models.SlugField(unique=True)
     
     work_type    = models.ForeignKey(WorkType, blank=True, null=True)
     authors      = models.ManyToManyField(Author, blank=True)
