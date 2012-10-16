@@ -35,13 +35,6 @@ def get_chapter_for_division(division):
     if len(divisions) > 0:
         return divisions[0]
     
-    """
-    verse = Verse.objects.filter(division__work=division.work, division__sequence_number__gte=division.sequence_number).order_by("division__sequence_number", "sequence_number")[:1]
-    
-    if len(verse) > 0:
-        return verse[0].division
-    """
-    
 def read_work(request, author=None, language=None, title=None, first_number=None, second_number=None, **kwargs):
     
     # Get the verse to highlight (if provided)
