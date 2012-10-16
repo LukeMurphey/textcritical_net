@@ -3,6 +3,7 @@ from xml.dom.minidom import Document
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.template.defaultfilters import slugify
 
 from reader.models import Author, Work, WorkSource, Verse, Division
 
@@ -175,6 +176,13 @@ class TextImporter():
         except ObjectDoesNotExist:
             work = Work()
             work.title = title
+            work.title_slug = slugify(title)
+            
+            # Set the slug to the next free one if the name is not unique
+            i = 1
+            while Work.objects.filter(title_slug=self.title_slug).count() > 0:
+                self.title_slug = slugify(self.title) + "-" + str(i)
+                i = i + 1  
             
         return work
     
