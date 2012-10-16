@@ -13,6 +13,7 @@ from xml.dom.minidom import parse, parseString
 import os
 
 from textcritical.default_settings import SITE_ROOT
+from reader.shortcuts import convert_xml_to_html5
 from reader.importer.Perseus import PerseusTextImporter
 from reader.importer import TextImporter
 from reader.language_tools.greek import Greek
@@ -132,6 +133,43 @@ class TestImport(TestCase):
         
         self.assertEquals(expected, dst_dom.toxml())
         
+class TestShortcuts(TestCase):
+    
+    def test_process_text(self):
+        
+        original_content = r"""
+<verse>
+    <head>*(ikanw=s <num ref="some_ref">d</num> me\n </head>
+</verse>"""
+
+        expected_result = r"""<?xml version="1.0" encoding="utf-8"?><verse>
+    <span class="head">*(ikanw=s <span class="num" data-ref="some_ref">d</span> me\n </span>
+</verse>"""
+
+        actual_result = convert_xml_to_html5(parseString(original_content), new_root_node_tag_name="verse", return_as_str=True)
+        
+        #self.write_out_test_file( expected_result + "\n\n" + actual_result )
+        
+        self.assertEqual(expected_result, actual_result)
+        
+    def test_process_text_with_transform(self):
+        
+        original_content = r"""
+<verse>
+    <head>*(ikanw=s <num ref="some_ref">d</num> me\n </head>
+</verse>"""
+
+        language = "Greek"
+        expected_result = r"""<?xml version="1.0" encoding="utf-8"?><span class="verse">
+    <span class="head">Ἱκανῶς <span class="num" data-ref="some_ref">δ</span> μὲν </span>
+</span>"""
+
+        actual_result = convert_xml_to_html5( parseString(original_content), language=language, return_as_str=True)
+        
+        #self.write_out_test_file( expected_result + "\n\n" + actual_result )
+        
+        self.assertEqual(expected_result, actual_result)
+        
 class TestPerseusImport(TestCase):
     
     def setUp(self):
@@ -175,24 +213,6 @@ class TestPerseusImport(TestCase):
         f = open(fname, 'w')
         f.write(content)
         f.close()
-        
-    def test_process_text(self):
-        
-        original_content = r"""
-<verse>
-    <head>*(ikanw=s <num ref="some_ref">d</num> me\n </head>
-</verse>"""
-
-        language = "Greek"
-        expected_result = r"""<?xml version="1.0" encoding="utf-8"?><verse><span data-tagname="verse">
-    <span data-tagname="head">Ἱκανῶς <span data-ref="some_ref" data-tagname="num">δ</span> μὲν </span>
-</span></verse>"""
-
-        actual_result = PerseusTextImporter.convert_to_html(original_content, language)
-        
-        #self.write_out_test_file( expected_result + "\n\n" + actual_result )
-        
-        self.assertEqual(expected_result, actual_result)
         
     def test_get_text(self):
         

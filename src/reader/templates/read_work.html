@@ -48,6 +48,7 @@
             {% endcomment %}
         </div>
         
+        {% load reader_extras %}
         {% if divisions %}
         <div class="table_of_contents ">
             {% comment %}<h2><small>Table of Contents</small></h2>{% endcomment %}
@@ -78,7 +79,7 @@
             {% if verse.indicator|length > 0 %}
             <a class="verse_link" id="verse_link_{{verse.indicator}}" href="?verse={{verse.indicator}}"><span class="label {% if verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
 	        {% endif %}
-	        <span class="verse content">{{verse.content}}</span>
+	        {{verse.original_content|xml_to_html5:chapter.work.language|safe}}
         </span>
         {% endfor %}
         

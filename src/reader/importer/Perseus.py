@@ -19,7 +19,7 @@ import re
 
 from reader.importer import TextImporter
 from reader.models import Division, Work
-from reader.language_tools.greek import Greek
+from reader.shortcuts import transform_text
 
 from django.db import transaction
 from django.template.defaultfilters import slugify
@@ -523,57 +523,6 @@ class PerseusTextImporter(TextImporter):
         
         else:
             return 0
-        
-    @staticmethod
-    def convert_to_html( original_content, language):
-        
-        # Parse the original content
-        src_doc = minidom.parseString(original_content)
-        
-        # Make the new document
-        dst_doc = minidom.Document( )
-        root_node_dst = dst_doc.createElement(PerseusTextImporter.VERSE_TAG_NAME)
-        dst_doc.appendChild(root_node_dst)
-        
-        # Convert it
-        root_node_src = src_doc.getElementsByTagName(PerseusTextImporter.VERSE_TAG_NAME)[0]
-        PerseusTextImporter.convert_to_html_recursive(src_doc, root_node_src, dst_doc, root_node_dst, language)
-        
-        # Return the string
-        return dst_doc.toxml( encoding="utf-8" )
-        
-    @staticmethod
-    def convert_attribute_name( attribute_name ):
-        return "data-" + attribute_name
-        
-    @staticmethod
-    def convert_to_html_recursive( src_doc, parent_src_node, dst_doc, parent_dst_node, language ):
-        new_dst_node = None
-        
-        # Handle the text node
-        if parent_src_node.nodeType == minidom.Node.TEXT_NODE:
-            new_dst_node = dst_doc.createTextNode( PerseusTextImporter.convert_text( parent_src_node.data, language ).decode( "utf-8" ) )
-            parent_dst_node.appendChild(new_dst_node)
-            
-        # Handle the comment node (skip it)
-        elif parent_src_node.nodeType == minidom.Node.COMMENT_NODE:
-            pass # Don't copy these over
-        
-        # Copy the other nodes
-        else:
-            new_dst_node = dst_doc.createElement( "span" )
-            new_dst_node.setAttribute( "data-tagname", parent_src_node.tagName)
-            
-            # Copy over the attributes
-            for name, value in parent_src_node.attributes.items():
-                new_dst_node.setAttribute( PerseusTextImporter.convert_attribute_name(name), value)
-            
-            # Add the node
-            parent_dst_node.appendChild(new_dst_node)
-            
-        # Recurse on the child nodes
-        for child_node in parent_src_node.childNodes:
-            PerseusTextImporter.convert_to_html_recursive(src_doc, child_node, dst_doc, new_dst_node, language)
     
     def process_original_verse_content(self, original_content, persist_nodes_as_spans=False):
         """
@@ -707,23 +656,6 @@ class PerseusTextImporter(TextImporter):
         else:
             return verses_created, new_verse_node
         
-    @staticmethod
-    def convert_text( text, language):
-        
-        # Don't try to process a null string as this will fail
-        if text is None:
-            return None
-        
-        # Convert Greek beta code
-        if language == "Greek":
-            text_unicode = Greek.beta_code_to_unicode(text)
-            
-            return text_unicode.encode('utf-8')
-        
-        # By default, just return the text
-        else:
-            return text
-        
     def process_text(self, text):
         """
         Convert the text if necessary. This is useful for texts that are provided in
@@ -733,7 +665,7 @@ class PerseusTextImporter(TextImporter):
         text -- The content from the XML text node
         """
         if self.work is not None:
-            return PerseusTextImporter.convert_text(text, self.work.language)
+            return transform_text(text, self.work.language)
         else:
             return text
         
