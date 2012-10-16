@@ -46,7 +46,7 @@ class WorkAdmin(admin.ModelAdmin):
     #prepopulated_fields = {"title_slug": ("title",)}
     
     list_display = ('title', 'language', 'work_type', 'title_slug')
-    list_editable = ('work_type', 'title_slug')
+    list_editable = ('work_type',)
     list_filter = ('language', 'work_type', 'authors')
     search_fields = ('title',)
     
