@@ -1,28 +1,6 @@
 import xml.dom.minidom as minidom
 from reader.language_tools.greek import Greek
-
-def transform_text( text, language ):
-    """
-    Convert the content according to the rules necessary to make the content work for the given language.
-    
-    Arguments:
-    text -- the text to convert
-    language -- the language to use for applying the conversion rules
-    """
-    
-    # Don't try to process a null string as this will fail
-    if text is None:
-        return None
-    
-    # Convert Greek beta code
-    if language == "Greek":
-        text_unicode = Greek.beta_code_to_unicode(text)
-        
-        return text_unicode.encode('utf-8')
-    
-    # By default, just return the text
-    else:
-        return text
+from reader.language_tools import transform_text
 
 def convert_xml_to_html5( src_doc, new_root_node_tag_name=None, text_transformation_fx=None, language=None, return_as_str=False, allow_closing_in_start_tag=False):
     """
