@@ -191,7 +191,8 @@ class TestPerseusImport(TestCase):
                             </biblStruct>"""
     
         bible_struct_document = parseString(bibl_struct_xml)
-    
+        self.importer.make_work("test_bibl_struct_import", try_to_get_existing_work=False)
+        
         self.importer.import_info_from_bibl_struct(bible_struct_document)
         
         self.assertEquals(self.importer.work.authors.all()[0].name,"Flavius Josephus")
@@ -329,6 +330,23 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         self.assertEquals( divisions.count(), 2)
         self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 1)
         self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
+        
+    def test_load_book_empty_sub_divisions(self):
+        self.importer.state_set = 0
+        
+        book_xml = self.load_test_resource('aesch.lib_gk.xml')
+        book_doc = parseString(book_xml)
+        
+        work = self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=work)
+        
+        #print chapters[0].original_content
+        
+        self.assertEquals( divisions.count(), 3)
+        self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 1)
+        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 0)
+        self.assertEquals( Verse.objects.filter(division=divisions[2]).count(), 1)
     
     def test_load_book_merged_state_set(self):
         

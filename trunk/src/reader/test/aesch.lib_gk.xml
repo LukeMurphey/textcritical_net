@@ -1,0 +1,162 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersDrama PUBLIC "-//Perseus P4//DTD Perseus Drama//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersDrama.dtd" >
+%PersDrama;
+]>
+<TEI.2>
+<teiHeader type="text" status="new">
+<fileDesc>
+<titleStmt>
+<title type="work" n="Lib.">Libation Bearers</title>
+<title type="sub">Machine readable text</title>
+<author n="Aesch.">Aeschylus</author>
+<editor role="editor" n="Smyth">Herbert Weir Smyth, Ph.D.</editor>
+&responsibility;
+&fund.AnnCPB;
+</titleStmt>
+<extent>About 70Kb</extent>
+&Perseus.publish;
+<sourceDesc>
+<biblStruct>
+<monogr>
+<author>Aeschylus</author>
+<title>Aeschylus, with an English translation by Herbert Weir Smyth, Ph. D. in two volumes. 2.Libation Bearers</title>
+<imprint>
+<pubPlace>Cambridge</pubPlace>
+<publisher>Cambridge, Mass., Harvard University Press; London, William Heinemann, Ltd.</publisher>
+<date>1926</date>
+</imprint>
+</monogr>
+</biblStruct>
+</sourceDesc>
+</fileDesc>
+
+<encodingDesc>
+<refsDecl doctype="TEI.2">
+<step refunit="line" from="DESCENDANT (1 L N%1)"/>
+</refsDecl>
+<refsDecl doctype="TEI.2">
+<state unit="card"/>
+</refsDecl>
+</encodingDesc>
+
+<profileDesc>
+<langUsage>
+<language id="greek">Greek</language>
+</langUsage>
+</profileDesc>
+<revisionDesc>
+<change><date>1988</date>
+<respStmt><name>EM, Scott Ettinger and Roger Travis</name><resp>tagging</resp></respStmt>
+<item>Text scanned at U. Chicago in 1988. Basic SGML tagging by EM, Scott Ettinger and Roger Travis.</item>
+</change>
+<change><date>9/19/90</date>
+<respStmt><name>EM</name><resp>ed.</resp></respStmt>
+<item>Final check of cardbreaks, tags, and linenumbers.</item>
+</change>
+<change><date>8/91</date>
+<respStmt><name>EM</name><resp>ed.</resp></respStmt>
+<item>Revise DTDs and recheck texts.</item>
+</change>
+<change><date>8/91</date>
+<respStmt><name>Bill Merrill</name><resp>ed.</resp></respStmt>
+<item>Compare with TLG text for missing words or other scanner omissions.</item>
+</change>
+<change><date>5/92</date>
+<respStmt><name>David Smith</name><resp>ed.</resp></respStmt>
+<item>tagged corrupt words with the NOPARSE tag; see the text log for a list</item>
+</change>
+<change><date>8/91</date>
+<respStmt><name>Bill Merrill</name><resp>ed.</resp></respStmt>
+<item>Fixed card breaks at 84, 650 and 1010 for lines affected by metrics.</item>
+</change>
+<change><date>22-Dec-99</date>
+<respStmt><name>Anne Mahoney</name><resp>Markup</resp></respStmt>
+<item>
+$Log: aesch.lib_gk.xml,v $
+Revision 1.1  2009-10-09 19:49:18  rsingh04
+more reorganizing of texts module by collection
+
+Revision 1.1  2009/10/07 20:59:53  rsingh04
+began reorganizing texts module by collection.  created separate work directory in texts module to keep hopper files separate from in progress files
+
+Revision 1.3  2005/08/01 15:44:56  packel
+really removed item tags
+
+Revision 1.2  2005/08/01 15:32:41  packel
+removed stray item tags
+
+Revision 1.1  2005/07/25 14:27:08  packel
+Converted to XML
+
+Revision 1.8  2004/04/21 20:28:10  mimno
+added card 1s
+
+Revision 1.7  2003/07/01 22:14:25  yorkc
+Updated texts to TEI P4 and Perseus P4 extensions; minor cleanup (esp. character encodings and typos.)
+
+Revision 1.6  2000/03/04 20:33:49  dasmith
+Added separate funder entity to TEI header.
+
+Revision 1.5  2000/02/17 17:46:03  amahoney
+use n on sp for speeches interrupted by cardbreaks;  put cards at ends of
+such speeches after the close tag;  put sp and speaker tags on the divs
+of the choruses, which were not marked at all (but div2 closes sp, so
+we lost the speaker info)
+
+Revision 1.4  1999/12/22 22:20:25  amahoney
+convert to p3
+
+</item></change>
+</revisionDesc>
+</teiHeader>
+
+<text lang="greek">
+<body>
+<div1 type="episode">
+<milestone ed="p" n="1" unit="card"/>
+<sp>
+<speaker>*)ore/sths</speaker>
+<l>&lt;*(ermh= xqo/nie, patrw=|' e)popteu/wn kra/th,</l>
+<l>swth\r genou= moi cu/mmaxo/s t' ai)toume/nw|:</l>
+<l>h(/kw ga\r e)s gh=n th/nde kai\ kate/rxomai.</l>
+<l>tu/mbou d' e)p' o)/xqw| tw=|de khru/ssw patri\</l>
+<l n="5">klu/ein, a)kou=sai . . .</l>
+<l><gap desc="*"/></l>
+<l>.  .  .  plo/kamon *)ina/xw| qrepth/rion.</l>
+<l>to\n deu/teron de\ to/nde penqhth/rion</l>
+<l><gap desc="*"/></l>
+<l>ou) ga\r parw\n w)/|mwca so/n, pa/ter, mo/ron</l>
+<l>ou)d' e)ce/teina xei=r' e)p' e)kfora=|  nekrou=.&gt;</l>
+<l><gap desc="*"/></l>
+<l n="10">ti/ xrh=ma leu/ssw; ti/s poq' h(/d' o(mh/guris</l>
+<l>stei/xei gunaikw=n fa/resin melagxi/mois</l>
+<l>pre/pousa; poi/a| cumfora=| proseika/sw;</l>
+<l>po/tera do/moisi ph=ma proskurei= ne/on;</l>
+<l>h)\ patri\ tw)mw=| ta/sd' e)peika/sas tu/xw</l>
+<l n="15">xoa\s ferou/sas nerte/rois meili/gmata;</l>
+<l>ou)de/n pot' a)/llo: kai\ ga\r *)hle/ktran dokw=</l>
+<l>stei/xein a)delfh\n th\n e)mh\n pe/nqei lugrw=|</l>
+<l>pre/pousan.  w)= *zeu=, do/s me tei/sasqai  mo/ron</l>
+<l>patro/s, genou= de\ su/mmaxos qe/lwn e)moi/.</l>
+<l n="20"><milestone ed="P" unit="para"/>*pula/dh, staqw=men e)kpodw/n, w(s a)\n safw=s</l>
+<l>ma/qw gunaikw=n h(/tis h(/de prostroph/.</l>
+<milestone ed="p" n="22" unit="card"/>
+</sp>
+</div1>
+<div1 type="choral">
+<div2 type="strophe" n="1">
+<sp><speaker>*xoro/s</speaker>
+<l>i)alto\s e)k do/mwn e)/ban</l>
+<l>xoa\s propompo\s o)cu/xeiri su\n ktu/pw|.</l>
+<l>pre/pei parhi\s foini/ois a)mugmoi=s</l>
+<l n="25">o)/nuxos a)/loki neoto/mw|:</l>
+<l>di' ai)w=nos d' i)ugmoi=si  bo/sketai ke/ar.</l>
+<l>linofqo/roi d' u(fasma/twn</l>
+<l>laki/des e)/fladon u(p' a)/lgesin,</l>
+<l>proste/rnw| stolmw=|</l>
+<l n="30">pe/plwn a)gela/stois</l>
+<l>cumforai=s peplhgme/nwn.</l>
+<milestone ed="p" n="32" unit="card"/></sp></div2>
+</div1></body></text></TEI.2>
