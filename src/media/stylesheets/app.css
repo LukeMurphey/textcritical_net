@@ -19,6 +19,12 @@
   background-image: linear-gradient(to top, #ededed 0%, #fefefe 100%); }
 
 /* -----------------------------------------
+   Homepage
+----------------------------------------- */
+#title_section {
+  text-align: center; }
+
+/* -----------------------------------------
    Read work
 ----------------------------------------- */
 .verse.number {
@@ -53,6 +59,13 @@
   border-radius: 3px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px; }
+
+.verse .speaker {
+  font-weight: bold;
+  display: block;
+  margin-top: 12px; }
+.verse .l {
+  display: block; }
 
 /* -----------------------------------------
    Page Name 2

@@ -35,6 +35,14 @@
 }
 
 /* -----------------------------------------
+   Homepage
+----------------------------------------- */
+
+#title_section{
+	text-align: center;
+}
+
+/* -----------------------------------------
    Read work
 ----------------------------------------- */
 
@@ -71,6 +79,23 @@
 .highlighted{
     background-color: #EEE;
     @include rounded(3px);
+}
+
+.verse{
+	
+	.speaker {
+        font-weight: bold;
+        display: block;
+        margin-top: 12px;
+    }
+    
+    .l {
+        display: block;
+    }
+    
+    .gap{
+        
+    }
 }
 
 /* -----------------------------------------
