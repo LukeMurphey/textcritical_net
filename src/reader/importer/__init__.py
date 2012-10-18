@@ -22,12 +22,18 @@ class TextImporter():
             self.book = book
             self.division = division
             self.verse = verse
+            self.tag_name = tag_name
             
+            self.document = None
             self.initialize_xml_doc(tag_name)
             
             self.divisions = []
             
-        def initialize_xml_doc(self, tag_name):
+        def initialize_xml_doc(self, tag_name=None):
+            
+            if tag_name is None:
+                tag_name = self.tag_name
+            
             self.document = Document()
             
             self.current_node = self.document.createElement(tag_name)
@@ -37,6 +43,9 @@ class TextImporter():
             return self.document
         
         def append_xml(self, src_node, dst_node):
+            
+            #if self.document is None:
+            #    self.initialize_xml_doc()
             
             if dst_node is None:
                 dst_node = self.current_node
@@ -65,7 +74,7 @@ class TextImporter():
         if work is not None:
             self.work = work
         else:
-            self.work = Work()
+            self.work = None
             
         if work_source is not None:
             self.work_source = work_source
@@ -169,21 +178,29 @@ class TextImporter():
             
         return author
     
-    def make_work(self, title):
+    def make_work(self, title, try_to_get_existing_work=False):
         
-        try:
-            work = Work.objects.get(title=title)
-        except ObjectDoesNotExist:
-            work = Work()
-            work.title = title
-            work.title_slug = slugify(title)
+        # Try to get the existing work if it exists
+        if try_to_get_existing_work:
+            try:
+                work = Work.objects.get(title=title)
+                self.work = work
+                return work
+            except ObjectDoesNotExist:
+                pass
+        
+        # Create a new work
+        work = Work()
+        work.title = title
+        work.title_slug = slugify(title)
+        
+        # Set the slug to the next free one if the name is not unique
+        i = 1
+        while Work.objects.filter(title_slug=work.title_slug).count() > 0:
+            work.title_slug = slugify(work.title) + "-" + str(i)
+            i = i + 1  
             
-            # Set the slug to the next free one if the name is not unique
-            i = 1
-            while Work.objects.filter(title_slug=self.title_slug).count() > 0:
-                self.title_slug = slugify(self.title) + "-" + str(i)
-                i = i + 1  
-            
+        self.work = work
         return work
     
     def import_file(self, file_name):
