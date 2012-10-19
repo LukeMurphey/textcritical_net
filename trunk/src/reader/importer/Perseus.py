@@ -70,7 +70,7 @@ class PerseusTextImporter(TextImporter):
         TextImporter.__init__(self, work, work_source)
         #super(PerseusTextImporter, self).__init__(work, work_source)
     
-    def import_xml_string(self, xml_string, state_set=0 ):
+    def import_xml_string(self, xml_string ):
         """
         Import the work from the string provided.
         
@@ -80,7 +80,7 @@ class PerseusTextImporter(TextImporter):
         """
         
         doc = parseString(xml_string)
-        return self.import_xml_document(doc, state_set)
+        return self.import_xml_document(doc)
          
     def import_file( self, file_name):
         """
@@ -176,7 +176,7 @@ class PerseusTextImporter(TextImporter):
             
             new_division.save()
         
-        logger.debug( "Successfully created: %s %s" % (new_division.descriptor, new_division.original_title) )
+        logger.debug( "Successfully created division: %s %s" % (new_division.descriptor, new_division.original_title) )
         
         # Set the created division as the new one
         import_context.divisions.append(new_division)
@@ -196,8 +196,10 @@ class PerseusTextImporter(TextImporter):
         # Save the XML content for the previous verse
         self.save_original_verse_content(import_context)
         
+        if import_context.verse is not None:
+            import_context.initialize_xml_doc()
+        
         import_context.verse = TextImporter.make_verse(self, import_context.verse, import_context.division, save)
-        import_context.initialize_xml_doc(PerseusTextImporter.VERSE_TAG_NAME)
         
         return import_context.verse
     
@@ -446,7 +448,12 @@ class PerseusTextImporter(TextImporter):
         bibl_struct_node = tei_header.getElementsByTagName("biblStruct")[0]
         
         # Get the title
-        self.work.title = PerseusTextImporter.get_title_from_tei_header(tei_header)
+        title = PerseusTextImporter.get_title_from_tei_header(tei_header)
+        
+        if self.work is None:
+            self.make_work(title)
+        else:
+            self.work.title = title
         
         # Get the language
         self.work.language = PerseusTextImporter.get_language(tei_header)
@@ -595,6 +602,11 @@ class PerseusTextImporter(TextImporter):
                     if import_context.verse is not None:
                         import_context.verse.content = import_context.verse.content + self.process_text(node.data)
                         import_context.verse.save()
+                    else:
+                        attach_xml_content = False
+                
+                #elif import_context.verse is None:
+                #    attach_xml_content = False
                 
             # Is a verse marker?
             elif node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node):
@@ -629,12 +641,15 @@ class PerseusTextImporter(TextImporter):
                 attach_xml_content =  False
                 recurse = False
                 
-            elif node.tagName in ["head", "note"]:
+            elif node.tagName in ["head"]:
                 # Don't include: 
                 #  1) head tag since we already pulled this in when we got the division tag
                 #  2) notes since we don't handle them yet
                 attach_xml_content =  False
                 recurse = False
+                
+            elif node.tagName.startswith("div"):
+                attach_xml_content =  False
                 
             # Attach the content to the division if it is for the current verse
             if attach_xml_content:
@@ -801,6 +816,7 @@ class PerseusTextImporter(TextImporter):
                 
                 logger.debug("Making division at level %i in %s" % (level, self.work.title))
                 
+                append_xml_content = False
             #elif node.tagName == "note":
                 # We don't yet handle these types of nodes so don't try to get the text under them
                 #recurse = False
