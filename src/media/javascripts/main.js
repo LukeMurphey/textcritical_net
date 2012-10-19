@@ -25,6 +25,10 @@ require.config({
         
         bootbox: [
              "libs/bootbox"
+        ],
+        
+        app: [
+             "app"
         ]
     },
     shim: {

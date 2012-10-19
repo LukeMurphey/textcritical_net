@@ -15,13 +15,13 @@
     <!-- ================================= 
           target: compile
          ================================= -->
-	<target name="compile" description="Compile the application" depends="compile_scss"></target>
+	<target name="compile" description="Compile the application" depends="compile_scss,minify_js"></target>
 	
 	
     <!-- ================================= 
           target: package
          ================================= -->
-	<target name="package" description="Create the package" depends="compile"></target>
+	<target name="package" description="Create the package"></target>
 	
     <!-- ================================= 
           target: verify
@@ -61,4 +61,30 @@
         <echo message="Done compiling scss files!" />
     </target>
 
+    <!-- ================================= 
+          target: Minify JavaScript
+         ================================= -->
+	<target name="minify_js" description="Minifies the application JavaScript">
+		
+		<!-- The mapper to add "min" to the file name -->
+		<mapper id="minified_js_mapper" type="glob" from="*.js" to="*.min.js" />
+		
+		<!-- Pattern set to match all of the application files -->
+		<patternset id="minify_js_files">
+		    <include name="src/media/javascripts/app.js" />
+		</patternset>
+		
+	    <apply executable="java" parallel="false">
+	        <fileset dir="." includes="src/media/javascripts/app.js">
+	        	<patternset refid="minify_js_files" />
+	        </fileset>
+	        <arg line="-jar" />
+	        <arg path="lib/yuicompressor-2.4.7.jar" />
+	        <srcfile />
+	        <arg line="-o"/>
+	    	<mapper refid="minified_js_mapper" />
+	        <targetfile />
+	    </apply>
+	</target>
+	
 </project>
