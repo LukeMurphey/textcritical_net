@@ -42,6 +42,18 @@ def import_perseus_file(request):
             except ValueError:
                 pass
                 
+            # Determine if we are to ignore division markers
+            if 'ignore_divisions' in request.POST:
+                ignore_divisions = form.cleaned_data['ignore_divisions']
+            else:
+                ignore_divisions = False
+            
+            # Determine if we ought to 
+            if 'overwrite' in request.POST:
+                overwrite = form.cleaned_data['overwrite']
+            else:
+                overwrite = False
+                
             # Get the file contents
             if request.FILES['perseus_file'].multiple_chunks():
                 pass
@@ -49,11 +61,11 @@ def import_perseus_file(request):
             f = request.FILES['perseus_file']
                 
             perseus_xml_string = ''
-                 
+            
             for chunk in f.chunks():
                 perseus_xml_string = perseus_xml_string + str(chunk)  
                 
-            importer = PerseusTextImporter(state_set=state_set)
+            importer = PerseusTextImporter(state_set=state_set, ignore_division_markers=ignore_divisions, overwrite_existing=overwrite)
             work = importer.import_xml_string(perseus_xml_string)
                 
             messages.add_message(request, messages.INFO, 'Work successfully imported')
