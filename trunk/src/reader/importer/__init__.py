@@ -94,17 +94,7 @@ class TextImporter():
         copy_attributes -- Determines if the attributes ought to be copied
         copy_children -- Determines if the children from the src_node will be copied
         concatenate_child_text_nodes -- If true, then the contents of a text node will be attached to the destination node if both are text nodes
-        handle_inappropriate_text_node_children -- If true, then this class will attempt to recover nicely from the attempt to attach a node under a text node by attaching the node to the text node's parent
-        """
-        
-        """
-        if dst_node.nodeType == minidom.Element.TEXT_NODE:
-            
-            
-            if src_node.nodeType != minidom.Element.TEXT_NODE:
-                logger.debug( "Cannot attach to text node [%s] from node [%s]", str(dst_node.data), str(src_node.tagName) )
-            else:
-                logger.debug( "Cannot attach to text node [%s] from text node [%s]", str(dst_node.data), str(src_node.data) )
+        handle_inappropriate_text_node_children -- If true, then this function will attempt to recover nicely from the attempt to attach a node under a text node by attaching the node to the text node's parent
         """
         
         # Make the copy of the node
