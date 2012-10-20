@@ -39,7 +39,8 @@
             "state_set" : 0,
             "transforms" : {
             	"set_meta_data" : {
-            		"title_slug" : "speeches-aeschines"
+            		"title_slug" : "speeches-aeschines",
+            		"title" : "Speeches (Aeschines)"
             	}
             }
         }
