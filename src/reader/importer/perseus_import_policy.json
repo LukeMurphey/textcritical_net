@@ -46,12 +46,21 @@
     },
     {
         "author" : "Aeschylus",
+        "title" : "Eumenides",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 1,
+            "ignore_division_markers" : true
+        }
+    }, 
+    {
+        "author" : "Aeschylus",
         "title" : "Agamemnon",
         "language" : "Greek_",
         "import_parameters" : {
             "state_set" : 1
         }
-    }, 
+    },
     {
         "language" : "Greek_DISABLED",
         "import_parameters" : {
