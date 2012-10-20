@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.template.defaultfilters import slugify
 
 from reader.models import Author, Work, WorkSource, Verse, Division
+from xml.dom import minidom
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -58,7 +59,7 @@ class TextImporter():
                 else:
                     logger.debug("Attaching %r to %r" % (src_node.data, dst_node.tagName))
             """
-             
+            
             ret = TextImporter.copy_node(src_node, self.document, dst_node, copy_attributes=True, copy_children=False)
             
             """
@@ -82,7 +83,7 @@ class TextImporter():
             self.work_source = WorkSource()
     
     @staticmethod
-    def copy_node(src_node, dst_doc, dst_node, copy_attributes=True, copy_children=False):
+    def copy_node(src_node, dst_doc, dst_node, copy_attributes=True, copy_children=False, concatenate_child_text_nodes=True, handle_inappropriate_text_node_children=True):
         """
         Copy a node from one document to another and returns the newly created node.
         
@@ -92,12 +93,25 @@ class TextImporter():
         dst_node -- The location to copy the node under
         copy_attributes -- Determines if the attributes ought to be copied
         copy_children -- Determines if the children from the src_node will be copied
+        concatenate_child_text_nodes -- If true, then the contents of a text node will be attached to the destination node if both are text nodes
+        handle_inappropriate_text_node_children -- If true, then this class will attempt to recover nicely from the attempt to attach a node under a text node by attaching the node to the text node's parent
         """
         
+        """
+        if dst_node.nodeType == minidom.Element.TEXT_NODE:
+            
+            
+            if src_node.nodeType != minidom.Element.TEXT_NODE:
+                logger.debug( "Cannot attach to text node [%s] from node [%s]", str(dst_node.data), str(src_node.tagName) )
+            else:
+                logger.debug( "Cannot attach to text node [%s] from text node [%s]", str(dst_node.data), str(src_node.data) )
+        """
+        
+        # Make the copy of the node
         if copy_attributes and copy_children:
             new_node = dst_doc.importNode(src_node, True)
         
-        elif src_node.nodeType == src_node.TEXT_NODE:
+        elif src_node.nodeType == minidom.Element.TEXT_NODE:
             new_node = dst_doc.createTextNode(src_node.data)
             
         else:
@@ -108,8 +122,21 @@ class TextImporter():
                 for name, value in src_node.attributes.items():
                     new_node.setAttribute(name, value)
                 
+        # Append the content
         if dst_node is not None:
-            dst_node.appendChild(new_node)
+            
+            # If both are text nodes, then attach the content if allowed
+            if concatenate_child_text_nodes and src_node.nodeType == minidom.Element.TEXT_NODE and dst_node.nodeType == minidom.Element.TEXT_NODE:
+                dst_node.data = dst_node.data + src_node.data
+                new_node = dst_node
+                
+            # If this is an attempt to attach a node to a text node, then fit this node at the same level as the text node
+            elif handle_inappropriate_text_node_children and dst_node.nodeType == minidom.Element.TEXT_NODE:
+                dst_node.parentNode.appendChild(new_node)
+                
+            # Attach the node as a child of the destination
+            else:
+                dst_node.appendChild(new_node)
         else:
             logger.error("Destination node is null")
         
