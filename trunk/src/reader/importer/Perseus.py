@@ -35,7 +35,12 @@ class State():
         self.level = level
         
     def is_chunk(self):
-        return self.section_type is not None
+        if self.section_type is not None:
+            return True
+        elif self.name in ["card"]:
+            return True
+        else:
+            return False
         
     @staticmethod
     def createFromStateNode( state_node, level = None ):
@@ -59,7 +64,18 @@ class PerseusTextImporter(TextImporter):
     VERSE_TAG_NAME = "verse"
     CHAPTER_TAG_NAME = "chapter"
     
-    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None):
+    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False):
+        """
+        Constructs a Perseus text importer.
+        
+        Arguments:
+        overwrite_existing -- indicates if an existing work ought to be deleted
+        state_set -- indicates which state set to use
+        work -- the work to populate (one will be created otherwise)
+        work_source -- the work source associated with this work
+        ignore_division_markers -- if true, division markers will be ignored
+        """
+        
         self.overwrite_existing = overwrite_existing
         
         self.state_set = state_set
@@ -68,6 +84,8 @@ class PerseusTextImporter(TextImporter):
             self.state_set = int(self.state_set)
         
         TextImporter.__init__(self, work, work_source)
+        
+        self.ignore_division_markers = ignore_division_markers
         #super(PerseusTextImporter, self).__init__(work, work_source)
     
     def import_xml_string(self, xml_string ):
@@ -230,8 +248,6 @@ class PerseusTextImporter(TextImporter):
         if import_context is not None and import_context.verse is not None and import_context.document is not None:
             import_context.verse.original_content = import_context.document.toxml()
             import_context.verse.save()
-        else:
-            logger.error("Cannot save verse content %r" % (import_context.verse))
         
     @staticmethod
     def getStates( refs_decl ):
@@ -573,6 +589,12 @@ class PerseusTextImporter(TextImporter):
         # This node will be populated if we create a new verse. This is necessary so that we tell upstream importers to assign content to this node.
         new_verse_node = None
         
+        # At this point, we have three variables that are important for keeping straight in order to ensure that the correct content gets appended:
+        # 
+        #   new_verse_node:  a new verse node. If not null, then it will become the next parent
+        #   parent_node:     the node to attach the XML to
+        #   next_level_node: the node that is passed to recursive calls as the next parent
+        
         # Process each node
         for node in content_node.childNodes:
             
@@ -588,11 +610,6 @@ class PerseusTextImporter(TextImporter):
                     # Start importing the verse if we got a division start but not a verse marker (which is possible)
                     if import_context.verse is None and import_context.division is not None:
                         self.make_verse(import_context, save=False)
-                        
-                        # Start adding the content to the new verse
-                        new_verse_node = import_context.current_node
-                        parent_node = new_verse_node
-                        next_level_node = new_verse_node
                         
                         verses_created = verses_created + 1
                     
@@ -627,7 +644,7 @@ class PerseusTextImporter(TextImporter):
                 logger.debug("Making verse %s in division %s of %s" % (node.attributes["n"].value, str(import_context.division.sequence_number), self.work.title) )
                 
             elif node.tagName in ["milestone"]:
-                # Don't include:
+                # Include:
                 #  1) milestone nodes that are not in the current state set in the XML
                 attach_xml_content = True
                 
@@ -649,7 +666,7 @@ class PerseusTextImporter(TextImporter):
                 recurse = False
                 
             elif node.tagName.startswith("div"):
-                attach_xml_content =  False
+                attach_xml_content =  True
                 
             # Attach the content to the division if it is for the current verse
             if attach_xml_content:
@@ -782,7 +799,7 @@ class PerseusTextImporter(TextImporter):
                     parent_node = new_division_node
                     next_level_node = new_division_node
                 
-            elif PerseusTextImporter.DIV_PARSE_REGEX.match( node.tagName ):
+            elif not self.ignore_division_markers and PerseusTextImporter.DIV_PARSE_REGEX.match( node.tagName ):
                 
                 # Get the level from the tag name
                 m = PerseusTextImporter.DIV_PARSE_REGEX.search( node.tagName )
