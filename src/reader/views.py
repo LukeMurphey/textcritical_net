@@ -35,7 +35,7 @@ def get_chapter_for_division(division):
     if len(divisions) > 0:
         return divisions[0]
     
-def read_work(request, author=None, language=None, title=None, first_number=None, second_number=None, **kwargs):
+def read_work(request, author=None, language=None, title=None, chapter=None, sub_division=None, **kwargs):
     
     # Get the verse to highlight (if provided)
     verse_to_highlight = request.GET.get('verse', None)
@@ -44,8 +44,8 @@ def read_work(request, author=None, language=None, title=None, first_number=None
     work = Work.objects.filter(title_slug=title)[0]
     
     # Get the chapter
-    if first_number is not None:
-        division = Division.objects.filter(work=work, sequence_number=first_number)[0]
+    if chapter is not None:
+        division = Division.objects.filter(work=work, sequence_number=chapter)[0]
     else:
         division = Division.objects.filter(work=work)[0]
         
