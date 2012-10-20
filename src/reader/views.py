@@ -3,6 +3,7 @@ from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.template.context import RequestContext
+
 import json
 import logging
 from reader.models import Work, Division, Verse
@@ -61,8 +62,8 @@ def read_work(request, author=None, language=None, title=None, chapter=None, sub
         divisions = None
     
     # Get the next and previous chapter number
-    previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).values('sequence_number')[:1]
-    next_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__gt=chapter.sequence_number).values('sequence_number')[:1]
+    previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).order_by('-sequence_number').values('sequence_number')[:1]
+    next_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__gt=chapter.sequence_number).order_by('sequence_number').values('sequence_number')[:1]
     
     if len(previous_chapter) > 0:
         previous_chapter = previous_chapter[0]['sequence_number']
