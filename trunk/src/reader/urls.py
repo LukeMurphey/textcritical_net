@@ -8,7 +8,8 @@ urlpatterns = patterns('',
     
     url(r'^/?$', 'reader.views.home', name='home' ),
     url(r'^works/?$', 'reader.views.works_index', name='works_index' ),
-    url(r'^work/(?P<title>.*)/(?P<first_number>.+)/?$', 'reader.views.read_work', name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division>.+)/(?P<chapter>.+)/?$', 'reader.views.read_work', name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<chapter>.+)/?$', 'reader.views.read_work', name='read_work' ),
     url(r'^work/(?P<title>[^/]*)/?$', 'reader.views.read_work', name='read_work' ),
     
     # API views
