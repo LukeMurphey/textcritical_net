@@ -1,23 +1,10 @@
-/* Artfully masterminded by ZURB  */
-
-@mixin rounded_side($side, $radius: 10px) {
-  border-#{$side}-radius: $radius;
-  -moz-border-radius-#{$side}: $radius;
-  -webkit-border-#{$side}-radius: $radius;
-}
-
-@mixin rounded($radius: 10px) {
-  border-radius: $radius;
-  -moz-border-radius: $radius;
-  -webkit-border-radius: $radius;
-}
 
 /* -------------------------------------------------- 
    Table of Contents
 -----------------------------------------------------
 :: Shared Styles
-:: Page Name 1
-:: Page Name 2
+:: Home page
+:: Read Work
 */
 
 
@@ -34,72 +21,5 @@
     background-image: linear-gradient(to top, #EDEDED 0%, #FEFEFE 100%);
 }
 
-/* -----------------------------------------
-   Homepage
------------------------------------------ */
-
-#title_section{
-	text-align: center;
-}
-
-/* -----------------------------------------
-   Read work
------------------------------------------ */
-
-.verse.number{
-    font-weight: bold;
-}
-
-.verse_container{
-    display: inline;
-    line-height: 25px;
-    padding: 5px;
-}
-
-.block{
-    display: block;
-    margin-top: 16px;
-}
-
-.table_of_contents{
-    display: none;
-    padding: 0px;
-    margin: 0px;
-    overflow: hidden;
-}
-
-.verse_link{
-    &:visited { color: #EEE; }
-    &:active { color: #EEE; }
-    &:link { color: #EEE; }
-    &:hover { color: #08C; }
-}
-
-
-.highlighted{
-    background-color: #EEE;
-    @include rounded(3px);
-}
-
-.verse{
-	
-	.speaker {
-        font-weight: bold;
-        display: block;
-        margin-top: 12px;
-    }
-    
-    .l {
-        display: block;
-    }
-    
-    .gap{
-        
-    }
-}
-
-/* -----------------------------------------
-   Page Name 2
------------------------------------------ */
-
-
+@import "home";
+@import "read_work";
