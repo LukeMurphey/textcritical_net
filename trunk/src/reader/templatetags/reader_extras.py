@@ -12,7 +12,7 @@ def xml_to_html5(value, language=None):
     doc = minidom.parseString(value)
     converted_doc = convert_xml_to_html5( doc, language=language )
     
-    return converted_doc.toxml( encoding="utf-8" )
+    return converted_doc.firstChild.toxml( encoding="utf-8" )
 
 def perseus_xml_to_html5(value, language=None):
     

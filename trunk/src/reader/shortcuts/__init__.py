@@ -70,6 +70,10 @@ def add_xml_as_html( src_doc, src_node, dst_doc, parent_dst_node, language, text
     elif src_node.nodeType == minidom.Node.COMMENT_NODE:
         pass # Don't copy comments over
     
+    # Handle the processing node (skip it)
+    elif src_node.nodeType == minidom.Node.PROCESSING_INSTRUCTION_NODE:
+        pass # Don't copy processing instructions over
+    
     # Copy the other nodes
     else:
         new_dst_node = dst_doc.createElement( "span" )
