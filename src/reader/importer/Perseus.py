@@ -64,7 +64,7 @@ class PerseusTextImporter(TextImporter):
     VERSE_TAG_NAME = "verse"
     CHAPTER_TAG_NAME = "chapter"
     
-    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False):
+    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None):
         """
         Constructs a Perseus text importer.
         
@@ -74,6 +74,7 @@ class PerseusTextImporter(TextImporter):
         work -- the work to populate (one will be created otherwise)
         work_source -- the work source associated with this work
         ignore_division_markers -- if true, division markers will be ignored
+        use_line_count_for_divisions -- if true, then the titles of the readable units will be the line count range
         """
         
         self.overwrite_existing = overwrite_existing
@@ -86,6 +87,7 @@ class PerseusTextImporter(TextImporter):
         TextImporter.__init__(self, work, work_source)
         
         self.ignore_division_markers = ignore_division_markers
+        self.use_line_count_for_divisions = use_line_count_for_divisions
         #super(PerseusTextImporter, self).__init__(work, work_source)
     
     def import_xml_string(self, xml_string ):
@@ -118,19 +120,39 @@ class PerseusTextImporter(TextImporter):
         doc = parse(file_name)
         return self.import_xml_document(doc)
     
+    def close_division(self, import_context):
+        
+        # If the readable units ought to be assigned a title including the line counts
+        if self.use_line_count_for_divisions == True and len(import_context.document.getElementsByTagName("l")) > 0:
+            self.update_line_count_info(import_context, reset_start_line_count=False)
+            
+            # Set the division title if we have a division to update
+            if import_context.division is not None:
+                import_context.division.title = import_context.get_line_count_title()
+                
+            # Restart the line count for the next division
+            import_context.reset_start_line_count()
+            
+        # Save the XML content for the previous chapter
+        self.save_original_content(import_context)
+    
     def make_division(self, import_context, level=1, sequence_number=None, division_type=None, title=None, original_title=None, descriptor=None, state_info=None):
         
+        # Get the level from the state info object unless the level was already provided
         if state_info is not None:
             level = state_info.level
         
-        # Save the XML content for the previous chapter
-        self.save_original_content(import_context)
+        # Close the existing division
+        self.close_division(import_context)
         
+        # Start the XML document for the new division
         import_context.initialize_xml_doc(PerseusTextImporter.CHAPTER_TAG_NAME)
         
+        # Create the new division
         new_division = Division()
         new_division.level = level
         
+        # Save the existing division if one exists
         if import_context.division is not None:
             
             # Populate the sequence number from the previous division is available
@@ -568,6 +590,54 @@ class PerseusTextImporter(TextImporter):
                 
         return resulting_content
         
+    @staticmethod
+    def get_line_count(verse_doc, count=0):
+        """
+        Get the line count from the provided verse element.
+        
+        Arguments:
+        verse_doc -- The verse element to count up the lint elements
+        count -- The current count
+        """
+        
+        # Get the line count nodes
+        line_nodes = verse_doc.getElementsByTagName("l")
+        
+        # Handle each line count element
+        for line_node in line_nodes:
+            
+            count = count + 1
+            
+            # If the line indicates which number it is, then load this value
+            if line_node.hasAttribute("n"):
+                
+                # Get the specified value
+                new_line_count = int(line_node.attributes["n"].value)
+                
+                # Log if the value is not was is expected. This may indicate that a line element was not found that should have been.
+                if new_line_count != count:
+                    logger.warning("A line element indicated the current line number and it did not match the expected value, line_number=%i, expected_line_number=%i" % (count, new_line_count) )
+            
+                # Update the line count
+                count = new_line_count
+            
+        # Return the line count
+        return count
+    
+    def update_line_count_info(self, import_context, reset_start_line_count=False):
+        """
+        Update the line count in case the readable units are to be named after the lines included.
+        """
+        
+        # Get the updated line count
+        new_line_count = PerseusTextImporter.get_line_count(import_context.document, import_context.total_lines)
+        
+        # Set the updated line count
+        import_context.total_lines = new_line_count
+        
+        # Reset the line count if requested
+        if reset_start_line_count:
+            import_context.reset_start_line_count()
         
     def import_verse_content(self, division, content_node, state_set, import_context = None, parent_node = None, recurse = True):
         
@@ -853,7 +923,7 @@ class PerseusTextImporter(TextImporter):
                     
         # We may have content left for the final division. Go ahead and persist it.
         if is_top_level_call:
-            self.save_original_content(import_context)
+            self.close_division(import_context)
             return import_context.divisions
             
         return new_division_node

@@ -30,6 +30,24 @@ class TextImporter():
             
             self.divisions = []
             
+            self.total_lines = 0
+            self.start_line_count = 0
+            
+        def increment_line_count(self):
+            self.total_lines = self.total_lines + 1
+        
+        def reset_start_line_count(self):
+            self.start_line_count = self.total_lines + 1
+            
+        def get_line_count_title(self):
+            
+            if self.start_line_count == 0:
+                start_line_count = 1
+            else:
+                start_line_count = self.start_line_count
+            
+            return "%i-%i" % (start_line_count, self.total_lines)
+            
         def initialize_xml_doc(self, tag_name=None):
             
             if tag_name is None:

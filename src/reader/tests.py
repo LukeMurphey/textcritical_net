@@ -331,6 +331,20 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 1)
         self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
         
+    def test_load_book_line_count_division_titles(self):
+        self.importer.state_set = 1
+        self.importer.use_line_count_for_divisions = True
+        book_xml = self.load_test_resource('aesch.eum_gk.xml')
+        book_doc = parseString(book_xml)
+        work = self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=work)
+        
+        #self.assertEquals( divisions.count(), 3)
+        #self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 1)
+        self.assertEquals( divisions[1].title, "1-33")
+        self.assertEquals( divisions[2].title, "34-38")
+        
     def test_load_book_empty_sub_divisions(self):
         self.importer.state_set = 0
         
@@ -406,4 +420,55 @@ semno/teron *)idoumai/an w)no/masan.
 </p></verse>"""
         
         self.assertEquals( Verse.objects.filter(division=divisions[3])[0].original_content, expected_content)
+        
+    def test_line_count_update(self):
+        
+        verse_xml = """
+        <verse>
+            <l>One</l>
+            <l>Two</l>
+            <l>Three</l>
+            <l>Four</l>
+        </verse>
+        """
+        
+        verse_doc = parseString( verse_xml )
+        
+        line_count = PerseusTextImporter.get_line_count(verse_doc)
+        
+        self.assertEquals(line_count, 4)
+        
+    def test_line_count_update_with_start(self):
+        
+        verse_xml = """
+        <verse>
+            <l>Six</l>
+            <l>Seven</l>
+            <l>Eight</l>
+            <l>Nine</l>
+        </verse>
+        """
+        
+        verse_doc = parseString( verse_xml)
+        
+        line_count = PerseusTextImporter.get_line_count(verse_doc, count = 5)
+        
+        self.assertEquals(line_count, 9)
+        
+    def test_line_count_update_with_specifier(self):
+        
+        verse_xml = """
+        <verse>
+            <l>Six</l>
+            <l n="7">Seven</l>
+            <l>Eight</l>
+            <l>Nine</l>
+        </verse>
+        """
+        
+        verse_doc = parseString( verse_xml)
+        
+        line_count = PerseusTextImporter.get_line_count(verse_doc)
+        
+        self.assertEquals(line_count, 9)
         
