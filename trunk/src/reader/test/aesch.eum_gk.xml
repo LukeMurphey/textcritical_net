@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersDrama PUBLIC "-//Perseus P4//DTD Perseus Drama//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersDrama.dtd" >
+%PersDrama;
+]>
+<TEI.2>
+<teiHeader type="text" status="new">
+<fileDesc>
+<titleStmt>
+<title type="work" n="Eum.">Eumenides</title>
+<title type="sub">Machine readable text</title>
+<author n="Aesch.">Aeschylus</author>
+<editor role="editor" n="Smyth">Herbert Weir Smyth, Ph.D.</editor>
+&responsibility;
+&fund.AnnCPB;
+</titleStmt>
+<extent>About 70Kb</extent>
+&Perseus.publish;
+<sourceDesc>
+<biblStruct>
+<monogr>
+<author>Aeschylus</author>
+<title>Aeschylus, with an English translation by Herbert Weir Smyth, Ph. D. in two volumes. 2.Eumenides</title>
+<imprint>
+<pubPlace>Cambridge</pubPlace>
+<publisher>Cambridge, Mass., Harvard University Press; London, William Heinemann, Ltd.</publisher>
+<date>1926</date>
+</imprint>
+</monogr>
+</biblStruct>
+</sourceDesc>
+</fileDesc>
+
+<encodingDesc>
+<refsDecl doctype="TEI.2">
+<step refunit="line" from="DESCENDANT (1 L N%1)"/>
+</refsDecl>
+<refsDecl doctype="TEI.2">
+<state unit="card"/>
+</refsDecl>
+</encodingDesc>
+
+<profileDesc>
+<langUsage>
+<language id="greek">Greek</language>
+</langUsage>
+</profileDesc>
+<revisionDesc>
+<change><date>1988</date>
+<respStmt><name>EM, Scott Ettinger and Roger Travis</name><resp>tagging</resp></respStmt>
+<item>Text scanned at U. Chicago in 1988. Basic SGML tagging by EM, Scott Ettinger and Roger Travis.</item>
+</change>
+<change><date>9/19/90</date>
+<respStmt><name>EM</name><resp>ed.</resp></respStmt>
+<item>Final check of cardbreaks, tags, and linenumbers.</item>
+</change>
+<change><date>8/91</date>
+<respStmt><name>EM</name><resp>ed.</resp></respStmt>
+<item>Revise DTDs and recheck texts.</item>
+</change>
+<change><date>8/91</date>
+<respStmt><name>Bill Merrill</name><resp>ed.</resp></respStmt>
+<item>Compare with TLG text for missing words or other scanner omissions.</item>
+</change>
+<change><date>22-Dec-99</date>
+<respStmt><name>Anne Mahoney</name><resp>Markup</resp></respStmt>
+<item>
+$Log: aesch.eum_gk.xml,v $
+Revision 1.1  2009-10-09 19:49:18  rsingh04
+more reorganizing of texts module by collection
+
+Revision 1.1  2009/10/07 20:59:53  rsingh04
+began reorganizing texts module by collection.  created separate work directory in texts module to keep hopper files separate from in progress files
+
+Revision 1.3  2005/08/01 15:44:56  packel
+really removed item tags
+
+Revision 1.2  2005/08/01 15:32:41  packel
+removed stray item tags
+
+Revision 1.1  2005/07/25 14:27:02  packel
+Converted to XML
+
+Revision 1.9  2004/04/21 20:28:10  mimno
+added card 1s
+
+Revision 1.8  2003/07/01 22:14:25  yorkc
+Updated texts to TEI P4 and Perseus P4 extensions; minor cleanup (esp. character encodings and typos.)
+
+Revision 1.7  2000/03/04 20:33:49  dasmith
+Added separate funder entity to TEI header.
+
+Revision 1.6  2000/02/17 17:46:03  amahoney
+use n on sp for speeches interrupted by cardbreaks;  put cards at ends of
+such speeches after the close tag;  put sp and speaker tags on the divs
+of the choruses, which were not marked at all (but div2 closes sp, so
+we lost the speaker info)
+
+Revision 1.5  1999/12/22 22:12:18  amahoney
+convert to P3
+
+</item></change>
+</revisionDesc>
+</teiHeader>
+
+<text lang="greek">
+<body>
+<div1 type="episode">
+<milestone ed="p" n="1" unit="card"/>
+<sp n="*puqia/s">
+<speaker>*puqia/s</speaker>
+<l>prw=ton me\n eu)xh=| th=|de presbeu/w qew=n</l>
+<l>th\n prwto/mantin *gai=an: e)k de\ th=s *qe/min,</l>
+<l>h(\ dh\ to\ mhtro\s deute/ra to/d' e(/zeto</l>
+<l>mantei=on, w(s lo/gos tis: e)n de\ tw=| tri/tw|</l>
+<l n="5">la/xei, qelou/shs, ou)de\ pro\s bi/an tino/s,</l>
+<l>*titani\s a)/llh pai=s *xqono\s kaqe/zeto,</l>
+<l>*foi/bh: di/dwsi d' h(\ gene/qlion do/sin</l>
+<l>*foi/bw|: to\ *foi/bhs d' o)/nom' e)/xei parw/numon.</l>
+<l>lipw\n de\ li/mnhn *dhli/an te xoira/da,</l>
+<l n="10">ke/lsas e)p' a)kta\s naupo/rous ta\s *palla/dos,</l>
+<l>e)s th/nde gai=an h)=lqe *parnhsou= q' e(/dras.</l>
+<l>pe/mpousi d' au)to\n kai\ sebi/zousin me/ga</l>
+<l>keleuqopoioi\ pai=des *(hfai/stou, xqo/na</l>
+<l>a)nh/meron tiqe/ntes h(merwme/nhn.</l>
+<l n="15">molo/nta d' au)to\n ka/rta timalfei= lew/s,</l>
+<l>*delfo/s te xw/ras th=sde prumnh/ths a)/nac.</l>
+<l>te/xnhs de/ nin *zeu\s e)/nqeon kti/sas fre/na</l>
+<l>i(/zei te/tarton toi=sde ma/ntin e)n qro/nois:</l>
+<l>*dio\s profh/ths d' e)sti\ *loci/as patro/s.</l>
+<l n="20"><milestone ed="P" unit="para"/>tou/tous e)n eu)xai=s froimia/zomai qeou/s.</l>
+<l>*palla\s pronai/a d' e)n lo/gois presbeu/etai:</l>
+<l>se/bw de\ nu/mfas, e)/nqa *kwruki\s pe/tra</l>
+<l>koi/lh, fi/lornis, daimo/nwn a)nastrofh/:</l>
+<l>*bro/mios e)/xei to\n xw=ron, ou)d' a)mnhmonw=,</l>
+<l n="25">e)c ou(=te *ba/kxais e)strath/ghsen qeo/s,</l>
+<l>lagw\ di/khn *penqei= katarra/yas mo/ron:</l>
+<l>*pleistou= te phga\s kai\ *poseidw=nos kra/tos</l>
+<l>kalou=sa kai\ te/leion u(/yiston *di/a,</l>
+<l>e)/peita ma/ntis e)s qro/nous kaqiza/nw.</l>
+<l n="30">kai\ nu=n tuxei=n me tw=n pri\n ei)so/dwn makrw=|</l>
+<l>a)/rista doi=en: kei) par' *(ellh/nwn tine/s,</l>
+<l>i)/twn pa/lw| laxo/ntes, w(s nomi/zetai.</l>
+<l>manteu/omai ga\r w(s a)\n h(gh=tai qeo/s.</l>
+<milestone ed="p" n="34" unit="card"/>
+<l>h)= deina\ le/cai, deina\ d' o)fqalmoi=s drakei=n,</l>
+<l n="35">pa/lin m' e)/pemyen e)k do/mwn tw=n *loci/ou,</l>
+<l>w(s mh/te swkei=n mh/te m' a)ktai/nein ba/sin,</l>
+<l>tre/xw de\ xersi/n, ou) podwkei/a| skelw=n:</l>
+<l>dei/sasa ga\r grau=s ou)de/n, a)nti/pais me\n ou)=n.</l>
+</sp>
+</div1>
+</body>
+</text>
+</TEI.2>
