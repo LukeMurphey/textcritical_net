@@ -17,7 +17,7 @@ from xml.dom.minidom import parse, parseString
 import logging
 import re
 
-from reader.importer import TextImporter
+from reader.importer import TextImporter, LineNumber
 from reader.models import Division, Work
 from reader.shortcuts import transform_text
 
@@ -124,6 +124,7 @@ class PerseusTextImporter(TextImporter):
         
         # If the readable units ought to be assigned a title including the line counts
         if self.use_line_count_for_divisions == True and len(import_context.document.getElementsByTagName("l")) > 0:
+            
             self.update_line_count_info(import_context, reset_start_line_count=False)
             
             # Set the division title if we have a division to update
@@ -381,6 +382,22 @@ class PerseusTextImporter(TextImporter):
         return PerseusTextImporter.getText(title_node.childNodes)
         
     @staticmethod
+    def use_line_numbers_for_division_titles(tei_header_node):
+        """
+        Determines if the readable unit divisions ought to beset to the line numbers.
+        
+        Arguments:
+        tei_header_node -- A node representing the TEI header
+        """
+        
+        for step_node in tei_header_node.getElementsByTagName("step"):
+            
+            if "refunit" in step_node.attributes.keys() and step_node.attributes["refunit"].value == "line":
+                return True
+            else:
+                return False
+        
+    @staticmethod
     def get_title_from_tei_header(tei_header_node):
         """
         Get the title from the TEI header node.
@@ -497,6 +514,10 @@ class PerseusTextImporter(TextImporter):
         self.work.language = PerseusTextImporter.get_language(tei_header)
         self.work.save()
         
+        # Determine if the division titles should be set to the line numbers
+        if self.use_line_count_for_divisions is None:
+            self.use_line_count_for_divisions = PerseusTextImporter.use_line_numbers_for_division_titles(tei_header)
+        
         # Get the author
         author_name = PerseusTextImporter.get_author_from_bibl_struct(bibl_struct_node)
         author = self.make_author(author_name)
@@ -591,7 +612,7 @@ class PerseusTextImporter(TextImporter):
         return resulting_content
         
     @staticmethod
-    def get_line_count(verse_doc, count=0):
+    def get_line_count(verse_doc, count=None):
         """
         Get the line count from the provided verse element.
         
@@ -600,29 +621,36 @@ class PerseusTextImporter(TextImporter):
         count -- The current count
         """
         
+        if count is not None:
+            line_number = LineNumber(value=str(count))
+        else:
+            line_number = LineNumber()
+        
         # Get the line count nodes
         line_nodes = verse_doc.getElementsByTagName("l")
         
         # Handle each line count element
         for line_node in line_nodes:
             
-            count = count + 1
+            line_number.increment()
             
             # If the line indicates which number it is, then load this value
             if line_node.hasAttribute("n"):
                 
                 # Get the specified value
-                new_line_count = int(line_node.attributes["n"].value)
+                new_line_count = line_node.attributes["n"].value
                 
                 # Log if the value is not was is expected. This may indicate that a line element was not found that should have been.
-                if new_line_count != count:
-                    logger.warning("A line element indicated the current line number and it did not match the expected value, line_number=%i, expected_line_number=%i" % (count, new_line_count) )
+                new_line_number = LineNumber(value=new_line_count)
+                
+                if str(new_line_number) != line_number:
+                    logger.warning("A line element indicated the current line number and it did not match the expected value, line_number=%r, expected_line_number=%r" % (count, new_line_count) )
             
-                # Update the line count
-                count = new_line_count
+                # Update the line number
+                line_number = new_line_number
             
-        # Return the line count
-        return count
+        # Return the line number
+        return line_number
     
     def update_line_count_info(self, import_context, reset_start_line_count=False):
         """
@@ -630,10 +658,10 @@ class PerseusTextImporter(TextImporter):
         """
         
         # Get the updated line count
-        new_line_count = PerseusTextImporter.get_line_count(import_context.document, import_context.total_lines)
+        new_line_number = PerseusTextImporter.get_line_count(import_context.document, import_context.line_number_end)
         
         # Set the updated line count
-        import_context.total_lines = new_line_count
+        import_context.line_number_end = new_line_number
         
         # Reset the line count if requested
         if reset_start_line_count:
