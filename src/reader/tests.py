@@ -15,7 +15,7 @@ import os
 from textcritical.default_settings import SITE_ROOT
 from reader.shortcuts import convert_xml_to_html5
 from reader.importer.Perseus import PerseusTextImporter
-from reader.importer import TextImporter
+from reader.importer import TextImporter, LineNumber
 from reader.language_tools.greek import Greek
 from reader.models import Author, Division, Verse
 
@@ -169,6 +169,34 @@ class TestShortcuts(TestCase):
         #self.write_out_test_file( expected_result + "\n\n" + actual_result )
         
         self.assertEqual(expected_result, actual_result)
+        
+class TestLineNumber(TestCase):
+    
+    def test_parse(self):
+        line_number = LineNumber()
+        line_number.set("354a")
+        
+        self.assertEquals( line_number.post, "a" )
+        self.assertEquals( line_number.number, 354 )
+        self.assertEquals( str(line_number), "354a" )
+    
+    def test_increment(self):
+        line_number = LineNumber()
+        line_number.set("354a")
+        line_number.increment()
+        
+        self.assertEquals( line_number.number, 355 )
+        self.assertEquals( str(line_number), "355a" )
+        
+    def test_copy(self):
+        line_number = LineNumber()
+        line_number.set("354a")
+        
+        new_line_number = line_number.copy()
+        
+        line_number.pre = "_"
+        
+        self.assertEquals( str(new_line_number), "354a" )
         
 class TestPerseusImport(TestCase):
     
@@ -421,6 +449,42 @@ semno/teron *)idoumai/an w)no/masan.
         
         self.assertEquals( Verse.objects.filter(division=divisions[3])[0].original_content, expected_content)
         
+    def test_xml_use_line_numbers(self):
+        
+        tei_node_portion_xml = """
+        <teiHeader type="text" status="new">
+            <encodingDesc>
+                <refsDecl doctype="TEI.2">
+                <step refunit="line" from="DESCENDANT (1 L N%1)"/>
+                </refsDecl>
+                <refsDecl doctype="TEI.2">
+                <state unit="card"/>
+                </refsDecl>
+            </encodingDesc>
+        </teiHeader>
+        """
+        
+        tei_node_portion_doc = parseString( tei_node_portion_xml )
+        
+        self.assertTrue( PerseusTextImporter.use_line_numbers_for_division_titles(tei_node_portion_doc) )
+        
+        
+    def test_xml_dont_use_line_numbers(self):
+        
+        tei_node_portion_xml = """
+        <teiHeader type="text" status="new">
+            <encodingDesc>
+                <refsDecl doctype="TEI.2">
+                <state unit="card"/>
+                </refsDecl>
+            </encodingDesc>
+        </teiHeader>
+        """
+        
+        tei_node_portion_doc = parseString( tei_node_portion_xml )
+        
+        self.assertFalse( PerseusTextImporter.use_line_numbers_for_division_titles(tei_node_portion_doc) )
+        
     def test_line_count_update(self):
         
         verse_xml = """
@@ -436,7 +500,7 @@ semno/teron *)idoumai/an w)no/masan.
         
         line_count = PerseusTextImporter.get_line_count(verse_doc)
         
-        self.assertEquals(line_count, 4)
+        self.assertEquals( str(line_count), "4")
         
     def test_line_count_update_with_start(self):
         
@@ -453,7 +517,7 @@ semno/teron *)idoumai/an w)no/masan.
         
         line_count = PerseusTextImporter.get_line_count(verse_doc, count = 5)
         
-        self.assertEquals(line_count, 9)
+        self.assertEquals( str(line_count), "9")
         
     def test_line_count_update_with_specifier(self):
         
@@ -470,5 +534,5 @@ semno/teron *)idoumai/an w)no/masan.
         
         line_count = PerseusTextImporter.get_line_count(verse_doc)
         
-        self.assertEquals(line_count, 9)
+        self.assertEquals( str(line_count), "9")
         

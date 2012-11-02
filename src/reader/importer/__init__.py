@@ -1,4 +1,5 @@
 import os
+import re
 from xml.dom.minidom import Document
 import logging
 
@@ -10,6 +11,70 @@ from xml.dom import minidom
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
+
+class LineNumber():
+    """
+    Represents a line number in a document.
+    """
+    
+    NUMBER_RE = re.compile(r"(?P<pre>.*?)(?P<number>[0-9]+)(?P<post>.*)")
+    
+    def __init__(self, value=None, number=0):
+        self.pre = None
+        self.post = None
+        self.number = number
+        
+        if value is not None:
+            self.set(value)
+    
+    def copy(self):
+        """
+        Create a copy.
+        """
+        
+        new_line_number = LineNumber()
+        
+        new_line_number.pre = self.pre
+        new_line_number.post = self.post
+        new_line_number.number = self.number
+        
+        return new_line_number
+    
+    def set(self, value):
+        """
+        Setteh value of the line number based on the provided string.
+        """
+        
+        r = LineNumber.NUMBER_RE.search(value)
+        d = r.groupdict()
+        
+        self.pre    = d["pre"]
+        self.number = int(d["number"])
+        self.post   = d["post"]
+        
+    def __str__(self):
+        """
+        Return the line number as a string.
+        """
+        
+        if self.pre is None:
+            pre = ""
+        else:
+            pre = self.pre
+        
+        if self.post is None:
+            post = ""
+        else:
+            post = self.post
+        
+        return "%s%i%s" % (pre, self.number, post)
+
+    def increment(self):
+        """
+        Increment the line number
+        """
+        
+        self.number = self.number + 1
 
 class TextImporter():
     
@@ -30,23 +95,22 @@ class TextImporter():
             
             self.divisions = []
             
-            self.total_lines = 0
-            self.start_line_count = 0
+            self.line_number_end = LineNumber()
+            self.line_number_start = LineNumber()
             
         def increment_line_count(self):
-            self.total_lines = self.total_lines + 1
+            self.line_number_end.increment()
         
         def reset_start_line_count(self):
-            self.start_line_count = self.total_lines + 1
+            self.line_number_start = self.line_number_end.copy()
+            self.line_number_start.increment()
             
         def get_line_count_title(self):
             
-            if self.start_line_count == 0:
-                start_line_count = 1
-            else:
-                start_line_count = self.start_line_count
+            if self.line_number_start.number == 0:
+                self.line_number_start.number = 1
             
-            return "%i-%i" % (start_line_count, self.total_lines)
+            return "%s-%s" % ( str(self.line_number_start), str(self.line_number_end) )
             
         def initialize_xml_doc(self, tag_name=None):
             
@@ -68,25 +132,10 @@ class TextImporter():
             
             if dst_node is None:
                 dst_node = self.current_node
-                
-            """
-            if log:
-                if src_node.nodeType != src_node.TEXT_NODE:
-                    logger.debug("Attaching %r to %r" % (src_node.tagName, dst_node.tagName))
-                
-                else:
-                    logger.debug("Attaching %r to %r" % (src_node.data, dst_node.tagName))
-            """
             
             ret = TextImporter.copy_node(src_node, self.document, dst_node, copy_attributes=True, copy_children=False)
-            
-            """
-            if log:
-                logger.debug("XML is " + self.document.toxml())
-            """
                 
-            return ret
-                
+            return ret   
             
     def __init__(self, work=None, work_source=None):
         
