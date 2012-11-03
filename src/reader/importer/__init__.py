@@ -110,7 +110,7 @@ class TextImporter():
             if self.line_number_start.number == 0:
                 self.line_number_start.number = 1
             
-            return "%s-%s" % ( str(self.line_number_start), str(self.line_number_end) )
+            return "lines %s-%s" % ( str(self.line_number_start), str(self.line_number_end) )
             
         def initialize_xml_doc(self, tag_name=None):
             
