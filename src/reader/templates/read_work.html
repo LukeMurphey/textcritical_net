@@ -7,7 +7,7 @@
             <li class="active">{{work.title}}:{{chapter}}</li>
         </ul>
         
-        <h1>{{work.title}} {{chapter}} <small>By {{work.authors.all|join:", "}}</small></h1>
+        <h1>{{work.title}} {% if chapters|length > 1 %}{{chapter}}{% endif %} <small>By {{work.authors.all|join:", "}}</small></h1>
         
         <div class="btn-toolbar">
             <div class="btn-group">
@@ -83,6 +83,7 @@
         </span>
         {% endfor %}        
         
+        {% if chapters|length > 1 %}
         <div class="pagination">
         	<ul>
         {% if previous_chapter %}
@@ -106,7 +107,7 @@
         {% endif %}
         	</ul>
         </div>
-        
+        {% endif %}
     </div>
 
 {% endblock %}
