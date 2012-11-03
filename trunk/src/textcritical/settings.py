@@ -46,7 +46,7 @@ LOGGING = {
     'loggers': {
         'django.db': {
             'handlers': ['db'],
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'propagate': False,
         },
         '': {
