@@ -7,6 +7,7 @@ Created on Oct 11, 2012
 import os
 import json
 import logging
+from time import time
 from xml.dom.minidom import parse
 from reader.importer.Perseus import PerseusTextImporter
 from reader.models import Work
@@ -211,6 +212,11 @@ class PerseusBatchImporter():
     def process_file(self, file_path):
         """
         Determine if the provided file ought to be imported and import it if necessary.
+        
+        Returns a boolean indicating if the file was imported
+        
+        Arguments:
+        file_path -- The path to the file to import
         """
         
         # Get the document XML
@@ -258,8 +264,12 @@ class PerseusBatchImporter():
                 logger.debug("No transforms found")
             
             logger.info('Successfully imported work title="%s", work.id=%i', perseus_importer.work.title_slug, perseus_importer.work.id)
-    
-    def do_import(self, directory=None):
+            return True
+        
+        else:
+            return False
+        
+    def do_import(self, directory=None, dont_stop_on_errors=True):
         """
         Examine the provided directory and import the files that match a policy.
         """
@@ -268,11 +278,30 @@ class PerseusBatchImporter():
         if directory is None:
             directory = self.perseus_directory
             
-        logger.debug("Analyzing %s for files to import", directory )
+        logger.debug("Analyzing directory for files to import, directory=%s", directory )
+        
+        # Record the start time so that we can measure performance
+        start_time = time()
+        
+        # Keep a count of the files imported
+        files_imported = 0
+        files_not_imported_due_to_errors = 0
         
         # Walk the directory and import the files
         for root, dirs, files in os.walk(directory):
             
             # Process each file
             for f in files:
-                self.process_file( os.path.join( root, f) )
+                try:
+                    if self.process_file( os.path.join( root, f) ):
+                        files_imported = files_imported + 1
+                        
+                except Exception:
+                    logger.exception('Exception generated when attempting to import file="%s"', f)
+                    
+                    files_not_imported_due_to_errors = files_not_imported_due_to_errors + 1
+                    
+                    if not dont_stop_on_errors:
+                        raise
+                    
+        logger.info("Import complete, files_imported=%i, import_errors=%i, duration=%i", files_imported, files_not_imported_due_to_errors, time() - start_time )
