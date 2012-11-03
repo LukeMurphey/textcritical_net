@@ -65,3 +65,44 @@
   margin-top: 12px; }
 .verse .l {
   display: block; }
+
+/* -----------------------------------------
+   jQuery data tables
+   ----------------------------------------- */
+#works_list_info {
+  padding-bottom: 12px; }
+
+.paginate_enabled_next, .paginate_enabled_previous, .paginate_disabled_next, .paginate_disabled_previous {
+  background-color: #FFFFFF;
+  border: 1px solid #DDDDDD;
+  border-radius: 15px 15px 15px 15px;
+  display: inline-block;
+  padding: 5px 14px; }
+
+#works_list_next {
+  float: right; }
+  #works_list_next:after {
+    content: " \2192"; }
+
+#works_list_previous {
+  float: left; }
+  #works_list_previous:before {
+    content: "\2190  "; }
+
+.paginate_enabled_next:hover, .paginate_enabled_previous:hover {
+  background-color: whitesmoke;
+  color: #005580;
+  text-decoration: none;
+  cursor: pointer;
+  cursor: hand; }
+
+.paginate_disabled_previous, .paginate_disabled_next {
+  color: #999999;
+  cursor: default; }
+  .paginate_disabled_previous:hover, .paginate_disabled_next:hover {
+    background-color: whitesmoke;
+    text-decoration: none; }
+
+.tree {
+  cursor: pointer;
+  cursor: hand; }
