@@ -6,6 +6,7 @@ from django.template.context import RequestContext
 
 import json
 import logging
+import math
 from reader.models import Work, Division, Verse
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
@@ -28,13 +29,37 @@ def works_index(request):
     
 def get_chapter_for_division(division):
     """
-    Get the division that
+    Get the division that contains the next part of readable content.
     """
     
     divisions = Division.objects.filter(work=division.work, readable_unit=True, sequence_number__gte=division.sequence_number).order_by("sequence_number")[:1]
     
     if len(divisions) > 0:
         return divisions[0]
+    
+def get_chapters_list( division, count=9):
+    
+    pages_before = math.ceil( (count - 1.0) / 2 )
+    pages_after = math.floor( (count - 1.0) / 2 )
+    
+    # Filter down the list to ones within the given work that are readable units
+    divisions = Division.objects.filter(work=division.work, readable_unit=True)
+    
+    # Filter down the list to those in the same parent division
+    if division.parent_division is not None:
+        divisions = divisions.filter(parent_division=division.parent_division)
+    
+    # Get the number of pages before
+    divisions_before = divisions.filter(sequence_number__lte=division.sequence_number).order_by("-sequence_number")[:pages_before]
+    
+    divisions_after = divisions.filter(sequence_number__gt=division.sequence_number).order_by("sequence_number")[:pages_after]
+    
+    final_list = []
+    final_list.extend(divisions_before)
+    final_list.reverse()
+    final_list.extend(divisions_after)
+    
+    return final_list
     
 def read_work(request, author=None, language=None, title=None, chapter=None, sub_division=None, **kwargs):
     
@@ -49,7 +74,7 @@ def read_work(request, author=None, language=None, title=None, chapter=None, sub
         division = Division.objects.filter(work=work, sequence_number=chapter)[0]
     else:
         division = Division.objects.filter(work=work)[0]
-        
+    
     chapter = get_chapter_for_division(division)
     
     # Get the verses to display
@@ -60,6 +85,9 @@ def read_work(request, author=None, language=None, title=None, chapter=None, sub
     
     if len(divisions) == 0:
         divisions = None
+    
+    # Get the list of chapters for pagination
+    chapters = get_chapters_list(chapter)
     
     # Get the next and previous chapter number
     previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).order_by('-sequence_number').values('sequence_number')[:1]
@@ -81,6 +109,7 @@ def read_work(request, author=None, language=None, title=None, chapter=None, sub
                               'verses'               : verses,
                               'divisions'            : divisions,
                               'chapter'              : chapter,
+                              'chapters'             : chapters,
                               'next_chapter'         : next_chapter,
                               'previous_chapter'     : previous_chapter,
                               'verse_to_highlight'   : verse_to_highlight},

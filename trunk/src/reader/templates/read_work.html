@@ -81,20 +81,31 @@
 	        {% endif %}
 	        {{verse.original_content|xml_to_html5:chapter.work.language|safe}}
         </span>
-        {% endfor %}
+        {% endfor %}        
         
-        <ul class="pager">
+        <div class="pagination">
+        	<ul>
         {% if previous_chapter %}
-            <li class="previous">
-                <a href="{% url read_work work.title_slug previous_chapter %}">&larr; Previous</a>
-            </li>
+	            <li class="previous">
+	                <a href="{% url read_work work.title_slug previous_chapter %}">&larr; Previous</a>
+	            </li>
         {% endif %}
+        {% for c in chapters %}
+        		{% if c == chapter %}
+        		<li class="active" >
+        		{% else %}
+        		<li>
+        		{% endif %}
+        			<a href="{% url read_work work.title_slug c.sequence_number %}">{{c}}</a>
+        		</li>
+        {% endfor %}
         {% if next_chapter %}
             <li class="next">
                 <a href="{% url read_work work.title_slug next_chapter %}">Next &rarr;</a>
             </li>
         {% endif %}
-        </ul>
+        	</ul>
+        </div>
         
     </div>
 
