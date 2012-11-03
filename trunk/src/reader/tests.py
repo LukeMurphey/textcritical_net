@@ -370,8 +370,8 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         #self.assertEquals( divisions.count(), 3)
         #self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 1)
-        self.assertEquals( divisions[1].title, "1-33")
-        self.assertEquals( divisions[2].title, "34-38")
+        self.assertEquals( divisions[1].title, "lines 1-33")
+        self.assertEquals( divisions[2].title, "lines 34-38")
         
     def test_load_book_empty_sub_divisions(self):
         self.importer.state_set = 0
