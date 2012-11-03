@@ -747,12 +747,12 @@ class PerseusTextImporter(TextImporter):
                 attach_xml_content = True
                 
             elif node.tagName == "list" and "type" in node.attributes.keys() and node.attributes["type"].value == "toc":
-                logger.critical("Skipping attachment of a list ")
+                logger.debug("Skipping attachment of a %s node", node.tagName)
                 attach_xml_content =  False
                 recurse = False
                 
             elif node.tagName == "note" and "type" in node.attributes.keys() and node.attributes["type"].value == "title":
-                logger.critical("Skipping attachment of the title node")
+                logger.debug("Skipping attachment of a %s node", node.tagName)
                 attach_xml_content =  False
                 recurse = False
                 
