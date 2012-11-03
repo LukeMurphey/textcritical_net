@@ -71,9 +71,9 @@ def read_work(request, author=None, language=None, title=None, chapter=None, sub
     
     # Get the chapter
     if chapter is not None:
-        division = Division.objects.filter(work=work, sequence_number=chapter)[0]
+        division = Division.objects.filter(work=work, sequence_number=chapter)[:1][0]
     else:
-        division = Division.objects.filter(work=work)[0]
+        division = Division.objects.filter(work=work).order_by("sequence_number")[:1][0]
     
     chapter = get_chapter_for_division(division)
     
@@ -88,6 +88,12 @@ def read_work(request, author=None, language=None, title=None, chapter=None, sub
     
     # Get the list of chapters for pagination
     chapters = get_chapters_list(chapter)
+    
+    # Get the amount of progress (based on chapters)
+    total_chapters     = Division.objects.filter(work=division.work, readable_unit=True).count()
+    completed_chapters = Division.objects.filter(work=division.work, readable_unit=True, sequence_number__lte=chapter.sequence_number).count()
+    remaining_chapters = total_chapters - completed_chapters
+    progress = ((1.0 * completed_chapters ) / total_chapters) * 100
     
     # Get the next and previous chapter number
     previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).order_by('-sequence_number').values('sequence_number')[:1]
@@ -112,7 +118,11 @@ def read_work(request, author=None, language=None, title=None, chapter=None, sub
                               'chapters'             : chapters,
                               'next_chapter'         : next_chapter,
                               'previous_chapter'     : previous_chapter,
-                              'verse_to_highlight'   : verse_to_highlight},
+                              'verse_to_highlight'   : verse_to_highlight,
+                              'total_chapters'       : total_chapters,
+                              'completed_chapters'   : completed_chapters,
+                              'remaining_chapters'   : remaining_chapters,
+                              'progress'             : progress},
                               context_instance=RequestContext(request))
 
 def robots_txt(request):
