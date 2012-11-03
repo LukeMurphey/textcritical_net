@@ -1,0 +1,50 @@
+/* -----------------------------------------
+   jQuery data tables
+   ----------------------------------------- */
+$hover_background_color: #F5F5F5;
+
+#works_list_info{
+    padding-bottom: 12px;
+}
+
+.paginate_enabled_next, .paginate_enabled_previous, .paginate_disabled_next, .paginate_disabled_previous {
+    background-color: #FFFFFF;
+    border: 1px solid #DDDDDD;
+    border-radius: 15px 15px 15px 15px;
+    display: inline-block;
+    padding: 5px 14px;
+}
+
+#works_list_next{
+    float: right;
+    &:after { content: " \2192"; }
+}
+
+#works_list_previous{
+	float: left;
+	&:before { content: "\2190  "; }
+}
+
+.paginate_enabled_next, .paginate_enabled_previous{
+	&:hover {
+	   background-color: $hover_background_color;
+	   color: #005580;
+	   text-decoration: none;
+	   cursor: pointer;
+       cursor: hand;
+	}
+}
+
+.paginate_disabled_previous, .paginate_disabled_next{
+    color: #999999;
+    cursor: default;
+    &:hover {
+	   background-color: $hover_background_color;
+	   text-decoration: none;
+    }
+}
+
+.tree{
+    cursor: pointer;
+    cursor: hand;
+}
