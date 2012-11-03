@@ -1,4 +1,8 @@
 {% extends "base_with_nav.html" %}
+{% block style %}
+  <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/jquery_ui_bootstrap/jquery-ui-1.8.16.custom.css">
+{% endblock %}
+
 {% block content %}
     <div class="container">
 
@@ -14,7 +18,7 @@
 		        <th>Title</th>
 		        <th>Language</th>
 		        <th>Author</th>
-		        <th>Translator</th>
+		        <th class="hidden-phone">Translator</th>
 		    </thead>
 		    <tbody>
 		    {% for work in works %}
@@ -22,7 +26,7 @@
 			        <td><i class="icon-book"></i> <a href="{% url read_work work.title_slug %}">{{work.title}}</a></td>
 			        <td>{{work.language}}</td>
 			        <td>{{work.authors.all|join:", "}}</td>
-			        <td>{{work.translators.all|join:", "}}</td>
+			        <td class="hidden-phone">{{work.translators.all|join:", "}}</td>
 			    </tr>
 		    {% endfor %}
 		    </tbody>
@@ -38,12 +42,12 @@
 require(["jquery", "datatables"], function($) {
     $(document).ready(function() {
         $('#works_list').dataTable( {
-            "bPaginate": false,
+            "bPaginate": true,
             "bLengthChange": false,
             "bJQueryUI": false,
             "bFilter": true,
-            "bSort": false,
-            "bInfo": false,
+            "bSort": true,
+            "bInfo": true,
             "bAutoWidth": false
         } );
     } );
