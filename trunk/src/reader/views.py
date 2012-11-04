@@ -3,6 +3,7 @@ from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.template.context import RequestContext
+from django.db.models import Q
 
 import json
 import logging
@@ -60,7 +61,7 @@ def get_chapters_list( division, count=9):
     final_list.extend(divisions_after)
     
     return final_list
-    
+        
 def read_work(request, author=None, language=None, title=None, chapter=None, sub_division=None, **kwargs):
     
     # Get the verse to highlight (if provided)
@@ -70,8 +71,16 @@ def read_work(request, author=None, language=None, title=None, chapter=None, sub
     work = Work.objects.filter(title_slug=title)[0]
     
     # Get the chapter
-    if chapter is not None:
-        division = Division.objects.filter(work=work, sequence_number=chapter)[:1][0]
+    division = None
+    
+    if chapter is not None and sub_division is not None:
+        division = Division.objects.filter(work=work, title_slug=chapter, parent_division__title_slug=sub_division)[:1][0]
+       
+    elif chapter is not None:
+        division = Division.objects.filter(work=work, title_slug=chapter)[:1][0]
+    
+    #if chapter is not None:
+    #    division = Division.objects.filter(work=work, sequence_number=chapter)[:1][0]
     else:
         division = Division.objects.filter(work=work).order_by("sequence_number")[:1][0]
     

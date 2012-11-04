@@ -67,11 +67,11 @@
 	            {% for division_part in divisions.all %}
 	               {% if chapter.parent_division.id == division_part.id %}
 	            <li class="division_{{division_part.level}} active">
-	                <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book icon-white"></i>{{division_part}}</a>
+	                <a href="{% url read_work work.title_slug division_part.title_slug %}"><i class="icon-book icon-white"></i>{{division_part}}</a>
 	            </li>
 	               {% else %}
                 <li class="division_{{division_part.level}}">
-                    <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book"></i>{{division_part}}</a>
+                    <a href="{% url read_work work.title_slug division_part.title_slug %}"><i class="icon-book"></i>{{division_part}}</a>
                 </li>
 	               {% endif %}
 	            {% endfor %}
@@ -131,7 +131,12 @@
         		{% else %}
         		<li>
         		{% endif %}
-        			<a href="{% url read_work work.title_slug c.sequence_number %}">{{c}}</a>
+        		
+        		{% if chapter.parent_division %}
+        			<a href="{% url read_work work.title_slug chapter.parent_division.title_slug c.title_slug %}">{{c}}</a>
+        		{% else %}
+        			<a href="{% url read_work work.title_slug c.title_slug %}">{{c}}</a>
+        		{% endif %}
         		</li>
         {% endfor %}
         {% if next_chapter %}
