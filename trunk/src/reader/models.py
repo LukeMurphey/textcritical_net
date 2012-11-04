@@ -1,5 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import slugify
+import re
 
 class Author(models.Model):
     name        = models.CharField(max_length=200)
@@ -66,6 +67,7 @@ class Division(models.Model):
     sequence_number  = models.IntegerField()
     
     title            = models.CharField(max_length=200, blank=True, null=True)
+    title_slug       = models.SlugField()
     original_title   = models.CharField(max_length=200, blank=True, null=True)
     subtitle         = models.CharField(max_length=200, blank=True)
     descriptor       = models.CharField(max_length=10, blank=True)
@@ -87,6 +89,24 @@ class Division(models.Model):
             return str(self.sequence_number)
         else:
             return "Division object"
+    
+    def get_slug_title(self):
+        
+        if self.original_title is not None:
+            return slugify( re.sub("[)'(+*=|/\\\\]", "", self.original_title) )
+        elif self.descriptor is not None:
+            return slugify( self.descriptor )
+        else:
+            return slugify( self.sequence_number )
+        
+    def save(self, *args, **kwargs):
+        
+        if not self.id and not self.title_slug:
+            
+            # Newly created object, so set slug
+            self.title_slug = self.get_slug_title()
+
+        super(Division, self).save(*args, **kwargs)
     
 class Verse(models.Model):
     division          = models.ForeignKey(Division)
