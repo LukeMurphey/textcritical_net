@@ -16,28 +16,27 @@
         {% endcomment %}
         <div class="btn-toolbar">
             <div class="btn-group">
-                
+            
                 {% comment %}
                 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                     Table of Contents
                     <span class="caret"></span>
                 </a>
                 
-                <ul class="dropdown-menu">
-	                {% for division_part in divisions.all %}
-	                   {% if division.id == division_part.id %}
-	                <li class="division_{{division_part.level}} active">
-	                    <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book icon-white"></i>{{division_part}}</a>
-	                </li>
-	                   {% else %}
-	                <li class="division_{{division_part.level}}">
-	                    <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book"></i>{{division_part}}</a>
-	                </li>
-	                   {% endif %}
-	                {% endfor %}
-                </ul>
+		            <ul class="dropdown-menu">		                  
+		                {% for division_part in divisions.all %}
+		                   {% if chapter.parent_division.id == division_part.id %}
+		                <li class="division_{{division_part.level}} active">
+		                    <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book icon-white"></i>{{division_part}}</a>
+		                </li>
+		                   {% else %}
+		                <li class="division_{{division_part.level}}">
+		                    <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book"></i>{{division_part}}</a>
+		                </li>
+		                   {% endif %}
+		                {% endfor %}
+                    </ul>
                 {% endcomment %}
-                
                 
                 <button class="btn {% if not divisions %}disabled{% endif %}" data-toggle="button" id="show_table_of_contents">Table of Contents</button>
                 <button id="align_break" class="btn"><i class="icon-align-left"></i></button>
@@ -67,11 +66,11 @@
 	            {% for division_part in divisions.all %}
 	               {% if chapter.parent_division.id == division_part.id %}
 	            <li class="division_{{division_part.level}} active">
-	                <a href="{% url read_work work.title_slug division_part.title_slug %}"><i class="icon-book icon-white"></i>{{division_part}}</a>
+	                <a href="{% url read_work work.title_slug division_part.descriptor %}"><i class="icon-book icon-white"></i>{{division_part}}</a>
 	            </li>
 	               {% else %}
                 <li class="division_{{division_part.level}}">
-                    <a href="{% url read_work work.title_slug division_part.title_slug %}"><i class="icon-book"></i>{{division_part}}</a>
+                    <a href="{% url read_work work.title_slug division_part.descriptor %}"><i class="icon-book"></i>{{division_part}}</a>
                 </li>
 	               {% endif %}
 	            {% endfor %}
@@ -122,7 +121,11 @@
         	<ul>
         {% if previous_chapter %}
 	            <li class="previous">
-	                <a href="{% url read_work work.title_slug previous_chapter %}">&larr; Previous</a>
+                {% if chapter.parent_division %}
+                    <a href="{% url read_work work.title_slug chapter.parent_division.descriptor previous_chapter.descriptor %}">&larr; Previous</a>
+                {% else %}
+                    <a href="{% url read_work work.title_slug previous_chapter.descriptor %}">&larr; Previous</a>
+                {% endif %}
 	            </li>
         {% endif %}
         {% for c in chapters %}
@@ -131,18 +134,21 @@
         		{% else %}
         		<li>
         		{% endif %}
-        		
         		{% if chapter.parent_division %}
-        			<a href="{% url read_work work.title_slug chapter.parent_division.title_slug c.title_slug %}">{{c}}</a>
+                   <a href="{% url read_work work.title_slug chapter.parent_division.descriptor c.descriptor %}">{{c}}</a>
         		{% else %}
-        			<a href="{% url read_work work.title_slug c.title_slug %}">{{c}}</a>
+                   <a href="{% url read_work work.title_slug c.descriptor %}">{{c}}</a>
         		{% endif %}
         		</li>
         {% endfor %}
         {% if next_chapter %}
-            <li class="next">
-                <a href="{% url read_work work.title_slug next_chapter %}">Next &rarr;</a>
-            </li>
+	            <li class="next">
+	            {% if chapter.parent_division %}
+	                <a href="{% url read_work work.title_slug chapter.parent_division.descriptor next_chapter.descriptor %}">Next &rarr;</a>
+	            {% else %}
+	                <a href="{% url read_work work.title_slug next_chapter.descriptor %}">Next &rarr;</a>
+	            {% endif %}
+	            </li>
         {% endif %}
         	</ul>
         </div>
