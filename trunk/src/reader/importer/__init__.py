@@ -98,6 +98,17 @@ class TextImporter():
             self.line_number_end = LineNumber()
             self.line_number_start = LineNumber()
             
+            self.levels = {}
+            
+        def increment_division_level(self, level, count=1):
+            if level in self.levels:
+                self.levels[level] = self.levels[level] + count
+            else:
+                self.levels[level] = count
+            
+        def get_division_level_count(self, level):
+            return self.levels.get(level, 0)
+            
         def increment_line_count(self):
             self.line_number_end.increment()
         
@@ -199,7 +210,7 @@ class TextImporter():
         
         return new_node
     
-    def make_division(self, current_division=None, save=True):
+    def make_division(self, descriptor, current_division=None, save=True):
         
         # Determine the sequence number (used for division ordering)
         if current_division is None:
@@ -211,6 +222,7 @@ class TextImporter():
         division = Division()
         division.sequence_number = num
         division.indicator = str(num)
+        division.descriptor = descriptor
         division.work = self.work
         
         if save:

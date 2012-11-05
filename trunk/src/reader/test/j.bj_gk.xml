@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+  <teiHeader type="text" status="new">
+    <fileDesc>
+      <titleStmt>
+    <title type="work" n="BJ">De bello Judaico libri vii</title>
+    <title type="sub">Machine readable text</title>
+    <author n="J.">Flavius Josephus</author>
+    <editor role="editor" n="Niese">B. Niese</editor>
+      &responsibility;
+      &fund.Tufts;
+      </titleStmt>
+    &Perseus.publish;
+      <sourceDesc>
+    <biblStruct>
+      <monogr>
+        <author>Flavius Josephus</author>
+        <title>Flavii Iosephi opera</title>
+        <editor role="editor">B. Niese</editor>
+        <imprint>
+          <pubPlace>Berlin</pubPlace>
+          <publisher>Weidmann</publisher>
+          <date>1895</date>
+        </imprint>
+      </monogr>
+    </biblStruct>
+      </sourceDesc>
+    </fileDesc>
+    
+    <encodingDesc>
+      <refsDecl doctype="TEI.2">
+    <state delim="." unit="book"/>
+    <state unit="section"/>
+      </refsDecl>
+      <refsDecl doctype="TEI.2">
+    <state delim="." unit="book"/>
+    <state delim="." n="chunk" unit="Whiston chapter"/>
+    <state unit="Whiston section"/>
+      </refsDecl>
+    </encodingDesc>
+    
+    <profileDesc>
+      <langUsage>
+    <language id="greek">Greek
+      </language></langUsage>
+    </profileDesc>
+    
+    <revisionDesc>
+      <change><date>11/19/97</date>
+    <respStmt><name>DAS</name><resp>ed.</resp></respStmt>
+    <item>
+$Log: j.bj_gk.xml,v $
+Revision 1.1  2009-11-24 20:08:28  rsingh04
+moved more xml files around based on copyright status
+
+Revision 1.2  2005/08/01 16:16:04  packel
+removed stray item tags
+
+    Revision 1.1  2005/07/25 14:38:03  packel
+    Converted to XML
+    
+Revision 1.9  2005/03/30 20:29:10  packel
+fixed milestone units
+
+Revision 1.8  2003/07/01 22:17:11  yorkc
+Updated texts to TEI P4 and Perseus P4 extensions; minor cleanup (esp. character encodings and typos.)
+
+Revision 1.7  2000/03/08 16:40:18  dasmith
+Funded by Tufts, not NEH.
+
+Revision 1.6  2000/03/04 20:34:46  dasmith
+Added separate funder entity to TEI header.
+
+Revision 1.5  2000/01/31 19:59:16  dasmith
+Use ED attribute in STATE.
+
+Revision 1.4  1999/08/04 23:56:57  dasmith
+Mark chunking milestones.
+
+Revision 1.3  1999/07/20 22:43:53  dasmith
+Regularized resDecl
+
+Revision 1.2  1997/11/21 23:18:13  textgod
+Removed codes. Removed duplicate ending.
+
+Revision 1.1  1997/11/21 19:38:03  textgod
+Added to repository. Passed SGML parse. Lined up sections.
+
+
+</item></change>
+</revisionDesc>
+</teiHeader>
+<text n="BJ">
+<body>
+<div1 type="Book" n="1">
+<head>*flaui/ou *)iwsh/pou i(stori/a *)ioudai+kou= pole/mou
+pro\s *(rwmai/ous bibli/on <num>a</num>.</head>
+<milestone n="pr." unit="Whiston chapter"/><milestone n="1" unit="Whiston section"/><milestone n="1" unit="section"/><p>*)epeidh\ to\n *)ioudai/wn pro\s *(rwmai/ous po/lemon susta/nta me/giston
+ou) mo/non tw=n kaq' h(ma=s, sxedo\n de\ kai\ w(=n a)koh=| pareilh/famen h)\
+po/lewn pro\s po/leis h)\ e)qnw=n e)/qnesi surrage/ntwn, oi( me\n ou) paratuxo/ntes 
+toi=s pra/gmasin, a)ll' a)koh=| sulle/gontes ei)kai=a kai\ a)su/mfwna 
+dihgh/mata sofistikw=s a)nagra/fousin, <milestone n="2" unit="section"/>oi( parageno/menoi de\
+h)\ kolakei/a| th=| pro\s *(rwmai/ous h)\ mi/sei tw=| pro\s *)ioudai/ous katayeu/dontai 
+tw=n pragma/twn, perie/xei de\ au)toi=s o(/pou me\n kathgori/an
+o(/pou de\ e)gkw/mion ta\ suggra/mmata, to\ d' a)kribe\s th=s i(stori/as
+ou)damou=, <milestone n="3" unit="section"/>prouqe/mhn e)gw\ toi=s kata\ th\n *(rwmai/wn h(gemoni/an *(ella/di
+glw/ssh| metabalw\n a(\ toi=s a)/nw barba/rois th=| patri/w| sunta/cas
+a)ne/pemya pro/teron a)fhgh/sasqai *)iw/shpos *matqi/ou pai=s e)c
+*(ierosolu/mwn i(ereu/s, au)to/s te *(rwmai/ous polemh/sas ta\ prw=ta kai\
+toi=s u(/steron paratuxw\n e)c a)na/gkhs: <pb/>
+<milestone n="2" unit="Whiston section"/><milestone n="4" unit="section"/></p><p>genome/nou ga/r, w(s e)/fhn, megi/stou tou=de tou= kinh/matos e)n
+*(rwmai/ois me\n e)no/sei ta\ oi)kei=a, *)ioudai/wn de\ to\ newteri/zon to/te
+tetaragme/nois e)pane/sth toi=s kairoi=s a)kma/zon kata/ te xei=ra kai\
+xrh/masin, w(s di' u(perbolh\n qoru/bwn toi=s me\n e)n e)lpi/di kth/sews
+toi=s d' e)n a)faire/sews de/ei gi/nesqai ta\ pro\s th\n a)natolh/n, <milestone n="5" unit="section"/>e)peidh\
+*)ioudai=oi me\n a(/pan to\ u(pe\r *eu)fra/thn o(mo/fulon suneparqh/sesqai
+sfi/sin h)/lpisan, *(rwmai/ous de\ oi(/ te gei/tones *gala/tai pareki/noun
+kai\ to\ *keltiko\n ou)k h)re/mei, mesta\ d' h)=n pa/nta qoru/bwn meta\
+*ne/rwna, kai\ pollou\s me\n basileia=n o( kairo\s a)ne/peiqen, ta\ stratiwtika\ 
+de\ h)/ra metabolh=s e)lpi/di lhmma/twn: <milestone n="6" unit="section"/>
+
+</p>
+</div1>
+</body>
+</text>
+</TEI.2>

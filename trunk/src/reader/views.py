@@ -3,7 +3,6 @@ from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.template.context import RequestContext
-from django.db.models import Q
 
 import json
 import logging
@@ -62,7 +61,7 @@ def get_chapters_list( division, count=9):
     
     return final_list
         
-def read_work(request, author=None, language=None, title=None, chapter=None, sub_division=None, **kwargs):
+def read_work(request, author=None, language=None, title=None, chapter_indicator=None, division_indicator=None, **kwargs):
     
     # Get the verse to highlight (if provided)
     verse_to_highlight = request.GET.get('verse', None)
@@ -73,14 +72,12 @@ def read_work(request, author=None, language=None, title=None, chapter=None, sub
     # Get the chapter
     division = None
     
-    if chapter is not None and sub_division is not None:
-        division = Division.objects.filter(work=work, title_slug=chapter, parent_division__title_slug=sub_division)[:1][0]
-       
-    elif chapter is not None:
-        division = Division.objects.filter(work=work, title_slug=chapter)[:1][0]
+    if chapter_indicator is not None and division_indicator is not None:
+        division = Division.objects.filter(work=work, descriptor=chapter_indicator, parent_division__descriptor=division_indicator).order_by("level")[:1][0]
     
-    #if chapter is not None:
-    #    division = Division.objects.filter(work=work, sequence_number=chapter)[:1][0]
+    elif chapter_indicator is not None:
+        division = Division.objects.filter(work=work, descriptor=chapter_indicator).order_by("level")[:1][0]
+    
     else:
         division = Division.objects.filter(work=work).order_by("sequence_number")[:1][0]
     
@@ -105,16 +102,16 @@ def read_work(request, author=None, language=None, title=None, chapter=None, sub
     progress = ((1.0 * completed_chapters ) / total_chapters) * 100
     
     # Get the next and previous chapter number
-    previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).order_by('-sequence_number').values('sequence_number')[:1]
-    next_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__gt=chapter.sequence_number).order_by('sequence_number').values('sequence_number')[:1]
+    previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).order_by('-sequence_number').values('descriptor')[:1]
+    next_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__gt=chapter.sequence_number).order_by('sequence_number').values('descriptor')[:1]
     
     if len(previous_chapter) > 0:
-        previous_chapter = previous_chapter[0]['sequence_number']
+        previous_chapter = previous_chapter[0]
     else:
         previous_chapter = None
         
     if len(next_chapter) > 0:
-        next_chapter = next_chapter[0]['sequence_number']
+        next_chapter = next_chapter[0]
     else:
         next_chapter = None
     

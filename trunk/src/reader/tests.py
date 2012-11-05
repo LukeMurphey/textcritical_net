@@ -80,11 +80,22 @@ fwnh=s sunegraya/mhn."""
             
             self.assertEqual( beta_original, beta_actual )
             
+class TestImportContext(TestCase):
+        
+    def test_division_level(self):
+        context = TextImporter.ImportContext("TestCase")
+        
+        self.assertEquals( context.get_division_level_count(2), 0 )
+        
+        context.increment_division_level(2)
+        self.assertEquals( context.get_division_level_count(2), 1 )
+        
+        
 class TestImport(TestCase):
      
     def setUp(self):
         self.importer = TextImporter()
-     
+    
     def test_make_author(self):
         
         name = "Luke Murphey"
@@ -358,6 +369,20 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         self.assertEquals( divisions.count(), 2)
         self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 1)
         self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
+        
+    def test_load_book_division_descriptors(self):
+        self.importer.state_set = 1
+        self.importer.use_line_count_for_divisions = True
+        book_xml = self.load_test_resource('j.bj_gk.xml')
+        book_doc = parseString(book_xml)
+        work = self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=work)
+        
+        #self.assertEquals( divisions.count(), 3)
+        #self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 1)
+        self.assertEquals( divisions[0].descriptor, "1")
+        #self.assertEquals( divisions[0].descriptor, "1")
         
     def test_load_book_line_count_division_titles(self):
         self.importer.state_set = 1

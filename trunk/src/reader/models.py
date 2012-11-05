@@ -70,7 +70,7 @@ class Division(models.Model):
     title_slug       = models.SlugField()
     original_title   = models.CharField(max_length=200, blank=True, null=True)
     subtitle         = models.CharField(max_length=200, blank=True)
-    descriptor       = models.CharField(max_length=10, blank=True)
+    descriptor       = models.CharField(max_length=10)
     
     type             = models.CharField(max_length=50, blank=True, null=True)
     level            = models.IntegerField()
