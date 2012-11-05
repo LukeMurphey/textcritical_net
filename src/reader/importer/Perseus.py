@@ -191,21 +191,20 @@ class PerseusTextImporter(TextImporter):
             # Start the sequence number at 1 if a number was not provided
             if sequence_number is None:
                 sequence_number = 1
-            
+        
+        # Update the count of divisions observed at the given level    
+        import_context.increment_division_level(level)
+        
+        # Assign the descriptor if one was not provided
         if descriptor is None:
-            descriptor = sequence_number
+            descriptor = import_context.get_division_level_count(level)
             
         # Save the newly created section
         if new_division is not None:
             
             new_division.type = division_type
             new_division.title = title
-            
-            if title is not None:
-                new_division.descriptor = slugify(title)
-            else:
-                new_division.descriptor = descriptor
-            
+            new_division.descriptor = descriptor
             new_division.original_title = original_title
             new_division.work = self.work
             new_division.sequence_number = sequence_number
@@ -502,6 +501,10 @@ class PerseusTextImporter(TextImporter):
         tei_header = document.getElementsByTagName("teiHeader")[0]
         bibl_struct_node = tei_header.getElementsByTagName("biblStruct")[0]
         
+        # Delete pre-existing works if they exist
+        if self.overwrite_existing:
+            self.delete_equivalent_works()
+        
         # Get the title
         title = PerseusTextImporter.get_title_from_tei_header(tei_header)
         
@@ -522,10 +525,6 @@ class PerseusTextImporter(TextImporter):
         author_name = PerseusTextImporter.get_author_from_bibl_struct(bibl_struct_node)
         author = self.make_author(author_name)
         self.work.authors.add(author)
-          
-        # Delete pre-existing works if they exist
-        if self.overwrite_existing:
-            self.delete_equivalent_works()
         
         # Get the sectioning information
         if self.state_set is None or self.state_set == "*":

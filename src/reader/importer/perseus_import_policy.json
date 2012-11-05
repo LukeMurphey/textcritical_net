@@ -70,7 +70,11 @@
         }
     },
     {
-        "language" : "Greek",
+        "author" : "Arrian",
+        "language" : "Greek"
+    },
+    {
+        "language" : "Greek_",
         "import_parameters" : {
             "state_set" : 0
         }
