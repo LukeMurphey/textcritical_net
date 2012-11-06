@@ -1,6 +1,15 @@
 {% extends "base_with_nav.html" %}
 {% block content %}
     <div class="container">
+        
+           {% for warning in warnings %}
+           <div class="alert alert-block">
+		    <button type="button" class="close" data-dismiss="alert">x</button>
+		    <h4>Warning!</h4>
+		    {{warning}}
+		   </div>
+           {% endfor %}
+    
         <ul class="breadcrumb">
             <li><a href="{% url home %}">Home</a> <span class="divider">/</span></li>
             <li><a href="{% url works_index %}">Library</a> <span class="divider">/</span></li>
