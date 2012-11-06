@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render_to_response
 from django.core import serializers
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.template.context import RequestContext
 
 import json
@@ -67,19 +67,25 @@ def read_work(request, author=None, language=None, title=None, chapter_indicator
     verse_to_highlight = request.GET.get('verse', None)
     
     # Try to get the work
-    work = Work.objects.filter(title_slug=title)[0]
+    work = get_object_or_404(Work, title_slug=title)
     
     # Get the chapter
     division = None
     
     if chapter_indicator is not None and division_indicator is not None:
-        division = Division.objects.filter(work=work, descriptor=chapter_indicator, parent_division__descriptor=division_indicator).order_by("level")[:1][0]
+        division = Division.objects.filter(work=work, descriptor=chapter_indicator, parent_division__descriptor=division_indicator).order_by("level")[:1]
     
     elif chapter_indicator is not None:
-        division = Division.objects.filter(work=work, descriptor=chapter_indicator).order_by("level")[:1][0]
+        division = Division.objects.filter(work=work, descriptor=chapter_indicator).order_by("level")[:1]
     
     else:
-        division = Division.objects.filter(work=work).order_by("sequence_number")[:1][0]
+        division = Division.objects.filter(work=work).order_by("sequence_number")[:1]
+    
+    # Stop if we couldn't find the division
+    if len(division) == 0:
+        raise Http404('Division could not be found.')
+    else:
+        division = division[0]
     
     chapter = get_chapter_for_division(division)
     
@@ -139,6 +145,8 @@ def humans_txt(request):
     return render_to_response('humans.txt',
                               context_instance=RequestContext(request))
     
+def not_found_404(request):
+    pass
     
 # -----------------------------------
 # API views are defined below
