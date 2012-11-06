@@ -63,6 +63,9 @@ def get_chapters_list( division, count=9):
         
 def read_work(request, author=None, language=None, title=None, chapter_indicator=None, division_indicator=None, **kwargs):
     
+    # Some warnings that should be psoted to the user
+    warnings = []
+    
     # Get the verse to highlight (if provided)
     verse_to_highlight = request.GET.get('verse', None)
     
@@ -77,8 +80,13 @@ def read_work(request, author=None, language=None, title=None, chapter_indicator
     
     elif chapter_indicator is not None:
         division = Division.objects.filter(work=work, descriptor=chapter_indicator).order_by("level")[:1]
+        
+    # Note a warning if were unable to find the given chapter
+    if division is not None and len(division) == 0 and (chapter_indicator is not None or division_indicator is not None):
+        warnings.append("The place in the text you asked for could not be found.")
     
-    else:
+    # Start the user off at the beginning of the work
+    if division is None or len(division) == 0:
         division = Division.objects.filter(work=work).order_by("sequence_number")[:1]
     
     # Stop if we couldn't find the division
@@ -123,6 +131,7 @@ def read_work(request, author=None, language=None, title=None, chapter_indicator
     
     return render_to_response('read_work.html',
                              {'title'                : work.title,
+                              'warnings'             : warnings,
                               'work'                 : work,
                               'verses'               : verses,
                               'divisions'            : divisions,
