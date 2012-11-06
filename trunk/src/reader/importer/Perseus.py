@@ -476,12 +476,15 @@ class PerseusTextImporter(TextImporter):
         else:
             return False
     
-    def delete_equivalent_works(self):
+    def delete_equivalent_works(self, title=None, language=None):
         """
         Deletes works that are equivalent to the one we are importing or have imported.
         """
         
-        equivalent_works = Work.objects.exclude(id=self.work.id).filter( title=self.work.title, language=self.work.language, authors=self.work.authors.all() )
+        if self.work.id is not None:
+            equivalent_works = Work.objects.exclude(id=self.work.id).filter( title=self.work.title, language=self.work.language) #, authors=self.work.authors.all() )
+        else:
+            equivalent_works = Work.objects.filter( title=self.work.title, language=self.work.language) #, authors=self.work.authors.all() )
         
         for work in equivalent_works:
             logger.info("Deleting work so that new copy can replace it, title=%s, work.id=%i", work.title, work.id)
@@ -501,10 +504,6 @@ class PerseusTextImporter(TextImporter):
         tei_header = document.getElementsByTagName("teiHeader")[0]
         bibl_struct_node = tei_header.getElementsByTagName("biblStruct")[0]
         
-        # Delete pre-existing works if they exist
-        if self.overwrite_existing:
-            self.delete_equivalent_works()
-        
         # Get the title
         title = PerseusTextImporter.get_title_from_tei_header(tei_header)
         
@@ -514,7 +513,14 @@ class PerseusTextImporter(TextImporter):
             self.work.title = title
         
         # Get the language
-        self.work.language = PerseusTextImporter.get_language(tei_header)
+        language = PerseusTextImporter.get_language(tei_header)
+        self.work.language = language
+        
+        # Delete pre-existing works if they exist
+        if self.overwrite_existing:
+            self.delete_equivalent_works(title=title, language=language)
+        
+        # Save the work
         self.work.save()
         
         # Determine if the division titles should be set to the line numbers
@@ -533,7 +539,7 @@ class PerseusTextImporter(TextImporter):
             state_sets = PerseusTextImporter.getStateSets(document)
             current_state_set = state_sets[self.state_set]
         
-        #Save save the information about where we got the work from
+        # Save the information about where we got the work from
         if self.work_source is not None:
             self.work_source.work = self.work
             self.work_source.save()
