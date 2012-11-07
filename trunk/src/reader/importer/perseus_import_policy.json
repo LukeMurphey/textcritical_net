@@ -74,6 +74,85 @@
         "language" : "Greek"
     },
     {
+        "author" : "Apollonius Rhodius",
+        "language" : "Greek"
+    },
+    {
+        "author" : "Aratus Solensis",
+        "language" : "Greek"
+    },
+    {
+        "title" : "Economics (Greek). Machine readable text",
+        "import_parameters" : {
+            "transforms" : {
+            	"set_meta_data" : {
+            		"title_slug" : "economics",
+            		"title" : "Economics"
+            	}
+            }
+        }
+    },
+    {
+        "title" : "Eudemian Ethics (Greek). Machine readable text",
+        "import_parameters" : {
+            "transforms" : {
+            	"set_meta_data" : {
+            		"title_slug" : "eudemian-ethics",
+            		"title" : "Eudemian Ethics"
+            	}
+            }
+        }
+    },
+    {
+        "title" : "Metaphysics (Greek). Machine readable text",
+        "import_parameters" : {
+            "transforms" : {
+            	"set_meta_data" : {
+            		"title_slug" : "metaphysics",
+            		"title" : "Metaphysics"
+            	}
+            }
+        }
+    },
+    {
+        "title" : "Politics (Greek). Machine readable text",
+        "import_parameters" : {
+            "transforms" : {
+            	"set_meta_data" : {
+            		"title_slug" : "politics",
+            		"title" : "Politics"
+            	}
+            }
+        }
+    },
+    {
+        "author" : "Aristotle",
+        "language" : "Greek"
+    },
+    {
+        "author" : "Callimachus",
+        "title"  : "Epigrams, Fragmenta",
+        "language" : "Greek"
+    },
+    {
+        "author" : "Callimachus",
+        "title"  : "Hymns and Epigrams",
+        "language" : "Greek"
+    },
+    {
+        "author" : "Colluthus",
+        "language" : "Greek"
+    },
+    {
+        "author" : "Diodorus Siculus",
+        "title"  : "Bibliotheca Historica, Books I-V",
+        "language" : "Greek"
+    },
+    {
+        "author" : "Dionysius of Halicarnassus",
+        "language" : "Greek"
+    },
+    {
         "language" : "Greek_",
         "import_parameters" : {
             "state_set" : 0
