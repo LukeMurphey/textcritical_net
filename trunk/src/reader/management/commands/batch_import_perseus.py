@@ -12,6 +12,7 @@ class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option("-d", "--directory", dest="directory", help="The directory containing the files to import"),
         make_option("-o", "--overwrite", action="store_false", dest="overwrite", default=False, help="Overwrite and replace existing items"),
+        make_option("-c", "--count", action="store_false", dest="count", default=False, help="Count the number of items that would be imported but don't import them"),
     )
 
     def handle(self, *args, **options):
@@ -32,8 +33,13 @@ class Command(BaseCommand):
             overwrite = False
         else:
             overwrite = True
+            
+        count_only = options['count']
         
-        print "Importing files from", os.path.basename(directory)
+        if count_only is None:
+            count_only = False
+        else:
+            count_only = True
         
         selection_policy = JSONImportPolicy()
         selection_policy.load_policy("reader/importer/perseus_import_policy.json")
@@ -43,6 +49,11 @@ class Command(BaseCommand):
                                                       book_selection_policy = selection_policy.should_be_imported,
                                                       overwrite_existing    = overwrite )
         
-        perseus_batch_importer.do_import()
-        
-        print "Files from the", os.path.basename(directory), "directory successfully imported"
+        if count_only:
+            print "Counting the importable files from", os.path.basename(directory)
+            files_to_import, errors = perseus_batch_importer.count_files()
+            print "%i files are imported under the current policy, errors=%i" % (files_to_import, errors)
+        else:
+            print "Importing files from", os.path.basename(directory)
+            perseus_batch_importer.do_import()
+            print "Files from the", os.path.basename(directory), "directory successfully imported"
