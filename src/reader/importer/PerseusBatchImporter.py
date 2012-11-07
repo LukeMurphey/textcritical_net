@@ -269,6 +269,45 @@ class PerseusBatchImporter():
         else:
             return False
         
+    def count_files(self, directory=None, dont_stop_on_errors=True):
+        
+        # Use the directory assigned in the constructor if one is not provided
+        if directory is None:
+            directory = self.perseus_directory
+            
+        # Keep a count of the files imported
+        files_to_import = 0
+        errors          = 0
+        
+        # Walk the directory and import the files
+        for root, dirs, files in os.walk(directory):
+            
+            # Process each file
+            for f in files:
+                try:
+                    
+                    # Get the document XML
+                    file_path =  os.path.join( root, f)
+                    document_xml = parse(file_path)
+                    
+                    # Get the information we need to get the import policy
+                    title = self.get_title(document_xml)
+                    author = self.get_author(document_xml)
+                    language = self.get_language(document_xml)
+                    
+                    if self.get_import_parameters(document_xml, file_path, title, author, language) is not None:
+                        files_to_import = files_to_import + 1
+                        
+                except Exception:
+                    logger.exception('Exception generated when attempting to examine file for import, file="%s"', f)
+                    
+                    errors = errors + 1
+                    
+                    if not dont_stop_on_errors:
+                        raise
+                    
+        return files_to_import, errors
+        
     def do_import(self, directory=None, dont_stop_on_errors=True):
         """
         Examine the provided directory and import the files that match a policy.
