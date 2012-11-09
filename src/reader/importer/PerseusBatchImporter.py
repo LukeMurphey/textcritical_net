@@ -7,6 +7,7 @@ Created on Oct 11, 2012
 import os
 import json
 import logging
+import csv
 from time import time
 from xml.dom.minidom import parse
 from reader.importer.Perseus import PerseusTextImporter
@@ -37,7 +38,7 @@ class WorkDescriptor():
         else:
             return False
         
-    def should_be_imported(self, author, title, file_path, language):
+    def should_be_processed(self, author, title, file_path, language):
         """
         Determines if the work ought to be imported and provides the import parameters or
         true if it ought to be.
@@ -105,14 +106,29 @@ class ImportTransforms():
             else:
                 logger.warn("Transform function could not be found, transform=%s", fx_name)
         
-
-class JSONImportPolicy():
-    """
-    This class represents a selection policy 
-    """
+class ImportPolicy():
     
     def __init__(self):
         self.descriptors = []
+        
+    def should_be_processed(self, author=None, title=None, language=None, file_path=None, **kwargs ):
+        """
+        Indicates if the work denoted by the provided parameters ought to be imported. Returns true or import
+        parameters if it ought to be imported.
+        """
+        
+        # Go through each descriptor until one returns non-none (which indicates that is supports importing)
+        for desc in self.descriptors:
+            
+            return_value = desc.should_be_processed( author, title, file_path, language )
+        
+            if return_value is not None:
+                return return_value
+
+class JSONImportPolicy(ImportPolicy):
+    """
+    This class represents a selection policy 
+    """
     
     def load_policy(self, file_name):
         """
@@ -134,29 +150,14 @@ class JSONImportPolicy():
             
         # Save the descriptors
         self.descriptors = descriptors
-    
-    def should_be_imported(self, author=None, title=None, language=None, file_path=None, **kwargs ):
-        """
-        Indicates if the work denoted by the provided parameters ought to be imported. Returns true or import
-        parameters if it ought to be imported.
-        """
-        
-        # Go through each descriptor until one returns non-none (which indicates that is supports importing)
-        for desc in self.descriptors:
-            
-            return_value = desc.should_be_imported( author, title, file_path, language )
-        
-            if return_value is not None:
-                return return_value
 
-class PerseusBatchImporter():
+class PerseusFileProcessor():
     """
-    A batch importer for walking a directory and importing all of the files if they match an import policy.
+    This class provides mechanisms for visiting a series of Perseus files and performing batch operations on them.
     """
     
-    def __init__(self, perseus_directory, overwrite_existing=False, book_selection_policy=None):
+    def __init__(self, perseus_directory, book_selection_policy=None):
         self.perseus_directory = perseus_directory
-        self.overwrite_existing = overwrite_existing
         self.book_selection_policy = book_selection_policy
         
     def get_title(self, document_xml):
@@ -191,7 +192,7 @@ class PerseusBatchImporter():
         
         return PerseusTextImporter.get_language(document_xml)
     
-    def get_import_parameters(self, document_xml, file_path, title, author, language):
+    def get_processing_parameters(self, document_xml, file_path, title, author, language):
         """
         Get the language of the work.
         """
@@ -199,17 +200,9 @@ class PerseusBatchImporter():
         logger.debug("Analyzing %s by %s (%s) to determine if it ought to be imported" % (title, author, language ) )
         
         return self.book_selection_policy( document=document_xml, title=title, author=author, language=language, file_path=file_path )
-    
-    def does_work_exist(self, title, author, language):
-        """
-        Determines if the given work already exists.
-        """
         
-        works = Work.objects.filter( title=title, authors__name=author, language=language)
-        
-        return works.count() > 0
     
-    def process_file(self, file_path):
+    def __process_file__(self, file_path):
         """
         Determine if the provided file ought to be imported and import it if necessary.
         
@@ -226,12 +219,160 @@ class PerseusBatchImporter():
         title = self.get_title(document_xml)
         author = self.get_author(document_xml)
         language = self.get_language(document_xml)
+
+        return self.process_file(file_path, document_xml, title, author, language)
         
-        perseus_importer = None
-        import_parameters = self.get_import_parameters(document_xml, file_path, title, author, language)
+    def process_file(self, file_path, document_xml, title, author, language, **kwargs):
+        """
+        Process a Perseus file.
+        
+        Arguments:
+        file_path -- The path to the file to import
+        document_xml -- The document XML
+        title -- The title of the document
+        author -- the author of the document
+        language -- The language of the document
+        """
+        
+        raise Exception("Not implemented!")
+    
+    def set_up(self):
+        pass
+    
+    def tear_down(self):
+        pass
+    
+    def process_directory(self, directory=None, dont_stop_on_errors=True):
+        """
+        Examine the provided directory and import the files that match the policy.
+        """
+        
+        # Use the directory assigned in the constructor if one is not provided
+        if directory is None:
+            directory = self.perseus_directory
+            
+        logger.debug("Analyzing directory for files to processing, directory=%s", directory )
+        
+        # Keep a count of the files imported
+        files_processed = 0
+        files_not_processed_due_to_errors = 0
+        
+        self.set_up()
+        
+        try:
+            # Walk the directory and import the files
+            for root, dirs, files in os.walk(directory):
+                
+                # Process each file
+                for f in files:
+                    try:
+                        if self.__process_file__( os.path.join( root, f) ):
+                            files_processed = files_processed + 1
+                            
+                    except Exception:
+                        logger.exception('Exception generated when attempting to process file="%s"', f)
+                        
+                        files_not_processed_due_to_errors = files_not_processed_due_to_errors + 1
+                        
+                        if not dont_stop_on_errors:
+                            raise
+        finally:
+            self.tear_down()
+        
+        return files_processed, files_not_processed_due_to_errors
+
+class PerseusDataGatherer(PerseusFileProcessor):
+    
+    def __init__(self, perseus_directory, output_file="perseus_stats.csv", book_selection_policy=None):
+        self.perseus_directory = perseus_directory
+        self.output_file = output_file
+        
+        self.book_selection_policy = book_selection_policy
+        
+    def set_up(self):
+        
+        if self.output_file is not None:
+            self.output_file_h = open(self.output_file, 'wb')
+            self.csv_writer = csv.writer(self.output_file_h)
+            self.csv_writer.writerow( [ "title", "author", "language", "file" ] )
+        else:
+            self.output_file_h = None
+            self.csv_writer = None
+    
+    def tear_down(self):
+        
+        if self.output_file_h is not None:
+            self.output_file_h.close()
+
+        
+    def process_file(self, file_path, document_xml, title, author, language, **kwargs):
+        """
+        Determine if the provided file ought to be imported and import it if necessary.
+        
+        Returns a boolean indicating if the file was imported
+        
+        Arguments:
+        file_path -- The path to the file to import
+        document_xml -- The document XML
+        title -- The title of the document
+        author -- the author of the document
+        language -- The language of the document
+        """
+        
+        processing_parameters = self.get_processing_parameters(document_xml, file_path, title, author, language)
         
         # Get the transforms to be executed
-        if import_parameters is not None and 'transforms' in import_parameters:
+        if processing_parameters is not None:
+            
+            if self.csv_writer is not None:
+                self.csv_writer.writerow( [ title, author, language, file_path ] )
+                
+            return True
+        
+        else:
+            return False
+        
+    def get_stats(self, directory=None, dont_stop_on_errors=True):
+        self.process_directory(directory, dont_stop_on_errors)
+        
+class PerseusBatchImporter(PerseusFileProcessor):
+    """
+    A batch importer for walking a directory and importing all of the files if they match an import policy.
+    """
+    
+    def __init__(self, perseus_directory, overwrite_existing=False, book_selection_policy=None):
+        self.perseus_directory = perseus_directory
+        self.overwrite_existing = overwrite_existing
+        self.book_selection_policy = book_selection_policy
+    
+    def does_work_exist(self, title, author, language):
+        """
+        Determines if the given work already exists.
+        """
+        
+        works = Work.objects.filter( title=title, authors__name=author, language=language)
+        
+        return works.count() > 0
+    
+    def process_file(self, file_path, document_xml, title, author, language, **kwargs):
+        """
+        Determine if the provided file ought to be imported and import it if necessary.
+        
+        Returns a boolean indicating if the file was imported
+        
+        Arguments:
+        file_path -- The path to the file to import
+        document_xml -- The document XML
+        title -- The title of the document
+        author -- the author of the document
+        language -- The language of the document
+        """
+        
+        perseus_importer = None
+        import_parameters = self.get_processing_parameters(document_xml, file_path, title, author, language)
+        
+        # Get the transforms to be executed
+        if import_parameters not in [None, True, False] and 'transforms' in import_parameters:
             transforms = import_parameters.get('transforms', None)
             del import_parameters['transforms']
         else:
@@ -295,7 +436,7 @@ class PerseusBatchImporter():
                     author = self.get_author(document_xml)
                     language = self.get_language(document_xml)
                     
-                    if self.get_import_parameters(document_xml, file_path, title, author, language) is not None:
+                    if self.get_processing_parameters(document_xml, file_path, title, author, language) is not None:
                         files_to_import = files_to_import + 1
                         
                 except Exception:
@@ -322,25 +463,9 @@ class PerseusBatchImporter():
         # Record the start time so that we can measure performance
         start_time = time()
         
-        # Keep a count of the files imported
-        files_imported = 0
-        files_not_imported_due_to_errors = 0
-        
-        # Walk the directory and import the files
-        for root, dirs, files in os.walk(directory):
-            
-            # Process each file
-            for f in files:
-                try:
-                    if self.process_file( os.path.join( root, f) ):
-                        files_imported = files_imported + 1
-                        
-                except Exception:
-                    logger.exception('Exception generated when attempting to import file="%s"', f)
-                    
-                    files_not_imported_due_to_errors = files_not_imported_due_to_errors + 1
-                    
-                    if not dont_stop_on_errors:
-                        raise
+        # Process the directory
+        files_imported, files_not_imported_due_to_errors = self.process_directory(directory, dont_stop_on_errors)
                     
         logger.info("Import complete, files_imported=%i, import_errors=%i, duration=%i", files_imported, files_not_imported_due_to_errors, time() - start_time )
+        
+        return files_imported

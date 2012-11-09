@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2
+  PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+   <teiHeader type="text" status="new">
+      <fileDesc>
+         <titleStmt>
+            <title>Conjugalia Praecepta</title>
+            <title type="sub">Machine readable text</title>
+            <author n="Plut.">Plutarch</author>
+            <editor role="editor" n="Teubner">Gregorius N. Bernardakis</editor>&responsibility;&fund.NEH;</titleStmt>
+         <extent/>&Perseus.publish;<sourceDesc>
+            <biblStruct>
+               <analytic/>
+               <monogr>
+                  <author>Plutarch</author>
+                  <title>Moralia</title>
+                  <editor role="editor">Gregorius N. Bernardakis</editor>
+                  <imprint>
+                     <pubPlace>Leipzig</pubPlace>
+                     <publisher>Teubner</publisher>
+                     <date>1888</date>
+                  </imprint>
+                  <biblScope type="volume">1</biblScope>
+               </monogr>
+            </biblStruct>
+         </sourceDesc>
+      </fileDesc>
+      <encodingDesc>
+         <editorialDecl>
+            <correction status="high" method="silent">
+               <p>optical character recognition</p>
+            </correction>
+         </editorialDecl>
+         <refsDecl doctype="TEI.2">
+            <state unit="chapter" delim="."/>
+            <state unit="section"/>
+         </refsDecl>
+         <refsDecl doctype="TEI.2">
+            <state unit="stephpage" n="chunk"/>
+         </refsDecl>
+      </encodingDesc>
+      <profileDesc>
+         <langUsage>
+            <language id="greek">Greek</language>
+         </langUsage>
+      </profileDesc>
+      <revisionDesc>
+         <change>
+            <date>5/10</date>
+            <respStmt>
+               <name>RS</name>
+               <resp/>
+            </respStmt>
+            <item>tagged and parsed</item>
+         </change>
+      </revisionDesc>
+   </teiHeader>
+   <text>
+      <body>
+         <pb id="v.1.p.337"/>
+         <milestone unit="stephpage" id="stephpage-138a" n="138a"/>
+         <div1 type="chapter">
+            <div2 type="section" n="0">
+               <milestone unit="stephpage" id="stephpage-138b" n="138b"/>
+               <p>meta\ to\n pa/trion qesmo/n, o(\n u(mi=n h( th=s *dh/mhtros i(e/reia suneirgnume/nois e)fh/rmosen, oi)=mai kai\ to\n lo/gon o(mou= sunefapto/menon u(mw=n kai\ sunumenaiou=nta
+xrh/simon a)/n ti poih=sai kai\ tw=| no/mw|
+<milestone unit="tlnum" n="5"/> prosw|do/n. e)n me\n ga\r toi=s mousikoi=s e(/na tw=n au)lhtikw=n no/mwn i(ppo/qoron e)ka/loun, me/los; ti toi=s : i(/ppois o(rmh=s e)pegertiko\n w(s e)/oiken e)ndido/nta pro\s
+<milestone unit="stephpage" id="stephpage-138c" n="138c"/>
+</p>
+</div2>
+</div1>
+</body>
+</text>
+</TEI.2>
