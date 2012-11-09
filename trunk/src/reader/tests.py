@@ -15,6 +15,7 @@ import os
 from textcritical.default_settings import SITE_ROOT
 from reader.shortcuts import convert_xml_to_html5
 from reader.importer.Perseus import PerseusTextImporter
+from reader.importer.PerseusBatchImporter import ImportPolicy, PerseusBatchImporter, WorkDescriptor
 from reader.importer import TextImporter, LineNumber
 from reader.language_tools.greek import Greek
 from reader.models import Author, Division, Verse
@@ -209,6 +210,21 @@ class TestLineNumber(TestCase):
         
         self.assertEquals( str(new_line_number), "354a" )
         
+class TestPerseusBatchImporter(TestCase):
+    
+    def test_import(self):
+        
+        dir = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'test')
+        
+        work_descriptor = WorkDescriptor(title="Eumenides")
+        
+        import_policy = ImportPolicy()
+        import_policy.descriptors.append( work_descriptor )
+        
+        importer = PerseusBatchImporter( perseus_directory=dir, book_selection_policy=import_policy.should_be_processed )
+        
+        self.assertEqual( importer.do_import(), 1 )
+        
 class TestPerseusImport(TestCase):
     
     def setUp(self):
@@ -323,6 +339,28 @@ class TestPerseusImport(TestCase):
         finally:
             if f is not None:
                 f.close()
+    
+    def test_get_title(self):
+        
+        book_xml = self.load_test_resource('plut.078_teubner_gk.xml')
+        book_doc = parseString(book_xml)
+        
+        tei_header_node = book_doc.getElementsByTagName("teiHeader")[0]
+        
+        title = PerseusTextImporter.get_title_from_tei_header(tei_header_node)
+        
+        self.assertEquals( title, "Conjugalia Praecepta")
+        
+    def test_get_title_not_sub(self):
+        
+        book_xml = self.load_test_resource('plut.gal_gk.xml')
+        book_doc = parseString(book_xml)
+        
+        tei_header_node = book_doc.getElementsByTagName("teiHeader")[0]
+        
+        title = PerseusTextImporter.get_title_from_tei_header(tei_header_node)
+        
+        self.assertEquals( title, "Galba")
     
     def test_load_book(self):
         
