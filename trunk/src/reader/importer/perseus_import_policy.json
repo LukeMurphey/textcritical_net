@@ -38,10 +38,10 @@
         "import_parameters" : {
             "state_set" : 0,
             "transforms" : {
-            	"set_meta_data" : {
-            		"title_slug" : "speeches-aeschines",
-            		"title" : "Speeches (Aeschines)"
-            	}
+                "set_meta_data" : {
+                    "title_slug" : "speeches-aeschines",
+                    "title" : "Speeches (Aeschines)"
+                }
             }
         }
     },
@@ -85,10 +85,10 @@
         "title" : "Economics (Greek). Machine readable text",
         "import_parameters" : {
             "transforms" : {
-            	"set_meta_data" : {
-            		"title_slug" : "economics",
-            		"title" : "Economics"
-            	}
+                "set_meta_data" : {
+                    "title_slug" : "economics",
+                    "title" : "Economics"
+                }
             }
         }
     },
@@ -96,10 +96,10 @@
         "title" : "Eudemian Ethics (Greek). Machine readable text",
         "import_parameters" : {
             "transforms" : {
-            	"set_meta_data" : {
-            		"title_slug" : "eudemian-ethics",
-            		"title" : "Eudemian Ethics"
-            	}
+                "set_meta_data" : {
+                    "title_slug" : "eudemian-ethics",
+                    "title" : "Eudemian Ethics"
+                }
             }
         }
     },
@@ -107,10 +107,10 @@
         "title" : "Metaphysics (Greek). Machine readable text",
         "import_parameters" : {
             "transforms" : {
-            	"set_meta_data" : {
-            		"title_slug" : "metaphysics",
-            		"title" : "Metaphysics"
-            	}
+                "set_meta_data" : {
+                    "title_slug" : "metaphysics",
+                    "title" : "Metaphysics"
+                }
             }
         }
     },
@@ -118,10 +118,10 @@
         "title" : "Politics (Greek). Machine readable text",
         "import_parameters" : {
             "transforms" : {
-            	"set_meta_data" : {
-            		"title_slug" : "politics",
-            		"title" : "Politics"
-            	}
+                "set_meta_data" : {
+                    "title_slug" : "politics",
+                    "title" : "Politics"
+                }
             }
         }
     },
@@ -152,6 +152,84 @@
         "author" : "Dionysius of Halicarnassus",
         "language" : "Greek"
     },
+    {
+        "author" : "Euripides",
+        "language" : "Greek",
+        "import_parameters" : {
+            "use_line_count_for_divisions" : true
+        }
+    },
+    {
+        "author" : "Hesiod",
+        "language" : "Greek",
+        "import_parameters" : {
+            "use_line_count_for_divisions" : true,
+            "ignore_division_markers" : true
+        }
+    },
+    {
+        "author" : "Homer",
+        "language" : "Greek",
+        "import_parameters" : {
+            "use_line_count_for_divisions" : true
+        }
+    },
+    {
+        "author" : "Nigrinus",
+        "language" : "Greek",
+        "import_parameters" : {
+            "ignore_division_markers" : true
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "language" : "Greek",
+        "title" : "Quomodo adolescens poetas audire debeat",
+        "import_parameters" : {
+            "ignore_division_markers" : true
+        }
+    },
+    {
+        "author" : "Sophocles",
+        "language" : "Greek",
+        "title" : "Antigone",
+        "import_parameters" : {
+            "ignore_division_markers" : true
+        }
+    },
+    {
+        "author" : "Sophocles",
+        "language" : "Greek",
+        "title" : "Electra",
+        "import_parameters" : {
+            "ignore_division_markers" : true
+        }
+    },
+    {
+        "author" : "Sophocles",
+        "language" : "Greek",
+        "title" : "Oedipus at Colonus",
+        "import_parameters" : {
+            "ignore_division_markers" : true
+        }
+    },
+    {
+        "author" : "Sophocles",
+        "language" : "Greek",
+        "title" : "Oedipus Tyrannus",
+        "import_parameters" : {
+            "ignore_division_markers" : true
+        }
+    },
+    {
+        "author" : "Sophocles",
+        "language" : "Greek",
+        "title" : "Philoctetes",
+        "import_parameters" : {
+            "ignore_division_markers" : true
+        }
+    },
+    
     {
         "language" : "Greek_",
         "import_parameters" : {
