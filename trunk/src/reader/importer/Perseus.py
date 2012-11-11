@@ -378,7 +378,7 @@ class PerseusTextImporter(TextImporter):
         """
         
         title_node = bibl_struct.getElementsByTagName("title")[0]
-        return PerseusTextImporter.getText(title_node.childNodes)
+        return PerseusTextImporter.process_title( PerseusTextImporter.getText(title_node.childNodes) )
         
     @staticmethod
     def use_line_numbers_for_division_titles(tei_header_node):
@@ -397,6 +397,14 @@ class PerseusTextImporter(TextImporter):
                 return False
         
     @staticmethod
+    def process_title(title):
+        
+        title = title.replace("(Greek). Machine readable text", "")
+        title = title.strip()
+        
+        return title
+        
+    @staticmethod
     def get_title_from_tei_header(tei_header_node):
         """
         Get the title from the TEI header node.
@@ -407,11 +415,11 @@ class PerseusTextImporter(TextImporter):
         
         for node in tei_header_node.getElementsByTagName("title"):
             if "type" in node.attributes.keys() and node.attributes["type"].value != "sub":
-                return PerseusTextImporter.getText(node.childNodes)
+                return PerseusTextImporter.process_title( PerseusTextImporter.getText(node.childNodes) )
             elif "type" in node.attributes.keys() and node.attributes["type"].value == "sub":
                 pass # Don't include sub-titles
             else:
-                return PerseusTextImporter.getText(node.childNodes)
+                return PerseusTextImporter.process_title( PerseusTextImporter.getText(node.childNodes) )
         
     
     def import_info_from_bibl_struct(self, bibl_struct_node):

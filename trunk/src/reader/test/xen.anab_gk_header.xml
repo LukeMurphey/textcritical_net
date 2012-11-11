@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+<teiHeader type="text" status="new">
+<fileDesc>
+<titleStmt>
+<title>Anabasis (Greek). Machine readable text</title>
+<author>Xenophon</author>
+&responsibility;
+&fund.AnnCPB;
+</titleStmt>
+<extent>about 464Kb</extent>
+&Perseus.publish;
+<sourceDesc>
+<biblStruct>
+	<monogr>
+		<author>Xenophon</author><title>Xenophontis opera omnia, vol. 3</title>
+	
+		<imprint><publisher>Oxford, Clarendon Press</publisher><date>1904 (repr. 1961)</date></imprint>
+	</monogr>
+</biblStruct>
+</sourceDesc>
+
+</fileDesc>
+<encodingDesc>
+<refsDecl doctype="TEI.2">
+<state unit="book"/>
+<state unit="chapter"/>
+<state unit="section"/>
+</refsDecl>
+</encodingDesc>
+<profileDesc>
+<langUsage>
+<language id="greek">Greek</language>
+<language id="en">English</language>
+</langUsage>
+</profileDesc>
+<revisionDesc>
+<change>
+<date>6/92</date><respStmt><name>em &amp; wpm</name><resp>(n/a)</resp></respStmt><item>chopped into files</item>
+</change>
+<change>
+<date>6/92 - 7/92</date><respStmt><name>das</name><resp>(n/a)</resp></respStmt><item>inserted section and chapter tags and TEI header; CheckMarked</item>
+</change>
+<change>
+<date>8/11/92</date><respStmt><name>das</name><resp>(n/a)</resp></respStmt><item>changed chapters to div2's</item>
+</change>
+</revisionDesc>
+</teiHeader>
+
+<text><body>
+<div1 n="1" type="book">
+<head>*ku/rou *)anaba/sews *a</head><p>
+<milestone n="1" unit="chapter"/><milestone n="1" unit="section"/><milestone unit="para" ed="P"/>*darei/ou kai\ *parusa/tidos gi/gnontai pai=des du/o, presbu/teros me\n *)artace/rchs, new/teros de\ *ku=ros: e)pei\ de\ h)sqe/nei *darei=os kai\ u(pw/pteue teleuth\n tou= bi/ou, e)bou/leto tw\ pai=de a)mfote/rw parei=nai.
+<milestone n="2" unit="section"/>o( me\n ou)=n presbu/teros parw\n e)tu/gxane: *ku=ron de\ metape/mpetai a)po\ th=s a)rxh=s h(=s au)to\n satra/phn e)poi/hse, kai\ strathgo\n de\ au)to\n a)pe/deice pa/ntwn o(/soi e)s *kastwlou= pedi/on a(qroi/zontai. a)nabai/nei ou)=n o( *ku=ros labw\n *tissafe/rnhn w(s fi/lon, kai\ tw=n *(ellh/nwn e)/xwn o(pli/tas a)ne/bh triakosi/ous, a)/rxonta de\ au)tw=n *ceni/an *parra/sion.
+</p>
+</div1>
+</body>
+</text>
+</TEI.2>

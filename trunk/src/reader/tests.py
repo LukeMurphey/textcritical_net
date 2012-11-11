@@ -351,6 +351,17 @@ class TestPerseusImport(TestCase):
         
         self.assertEquals( title, "Conjugalia Praecepta")
         
+    def test_get_title_for_processing(self):
+        
+        book_xml = self.load_test_resource('xen.anab_gk_header.xml')
+        book_doc = parseString(book_xml)
+        
+        tei_header_node = book_doc.getElementsByTagName("teiHeader")[0]
+        
+        title = PerseusTextImporter.get_title_from_tei_header(tei_header_node)
+        
+        self.assertEquals( title, "Anabasis")
+        
     def test_get_title_not_sub(self):
         
         book_xml = self.load_test_resource('plut.gal_gk.xml')
