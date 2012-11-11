@@ -21,7 +21,7 @@ def home(request):
 
 def works_index(request):
     
-    works = Work.objects.all()
+    works = Work.objects.all().order_by("title")
     
     return render_to_response('works_index.html',
                              {'works' : works},
