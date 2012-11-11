@@ -39,6 +39,10 @@
     @include rounded(3px);
 }
 
+@for $i from 2 through 5 {
+    .division_#{$i} { padding-left: 24px * ($i - 1); }
+}
+
 .verse{
     
     .speaker {
