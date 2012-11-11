@@ -229,7 +229,40 @@
             "ignore_division_markers" : true
         }
     },
-    
+    {
+        "author" : "Hesiod",
+        "language" : "Greek",
+        "import_parameters" : {
+            "use_line_count_for_divisions" : true,
+            "ignore_division_markers" : true
+        }
+    },
+    {
+        "author" : "Homer",
+        "language" : "Greek",
+        "import_parameters" : {
+            "use_line_count_for_divisions" : true
+        }
+    },
+    {
+        "author" : "Nigrinus",
+        "language" : "Greek",
+        "import_parameters" : {
+            "ignore_division_markers" : true
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "language" : "Greek",
+        "title" : "Quomodo adolescens poetas audire debeat",
+        "import_parameters" : {
+            "ignore_division_markers" : true
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "language" : "Greek"
+    },
     {
         "language" : "Greek_",
         "import_parameters" : {
