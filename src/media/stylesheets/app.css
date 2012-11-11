@@ -59,6 +59,18 @@
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px; }
 
+.division_2 {
+  padding-left: 24px; }
+
+.division_3 {
+  padding-left: 48px; }
+
+.division_4 {
+  padding-left: 72px; }
+
+.division_5 {
+  padding-left: 96px; }
+
 .verse .speaker {
   font-weight: bold;
   display: block;
