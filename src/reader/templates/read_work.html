@@ -130,8 +130,8 @@
         	<ul>
         {% if previous_chapter %}
 	            <li class="previous">
-                {% if chapter.parent_division %}
-                    <a href="{% url read_work work.title_slug chapter.parent_division.descriptor previous_chapter.descriptor %}">&larr; Previous</a>
+                {% if previous_chapter.parent_division__descriptor %}
+                    <a href="{% url read_work work.title_slug previous_chapter.parent_division__descriptor previous_chapter.descriptor %}">&larr; Previous</a>
                 {% else %}
                     <a href="{% url read_work work.title_slug previous_chapter.descriptor %}">&larr; Previous</a>
                 {% endif %}
@@ -152,8 +152,8 @@
         {% endfor %}
         {% if next_chapter %}
 	            <li class="next">
-	            {% if chapter.parent_division %}
-	                <a href="{% url read_work work.title_slug chapter.parent_division.descriptor next_chapter.descriptor %}">Next &rarr;</a>
+	            {% if next_chapter.parent_division__descriptor %}
+	                <a href="{% url read_work work.title_slug next_chapter.parent_division__descriptor next_chapter.descriptor %}">Next &rarr;</a>
 	            {% else %}
 	                <a href="{% url read_work work.title_slug next_chapter.descriptor %}">Next &rarr;</a>
 	            {% endif %}
