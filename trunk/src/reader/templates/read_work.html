@@ -112,7 +112,7 @@
         {% for verse in verses.all %}
         <span id="verse_{{verse.indicator}}" class="verse_container {% if verse.indicator == verse_to_highlight %}highlighted{% endif %}">
             {% if verse.indicator|length > 0 %}
-            <a class="verse_link" id="verse_link_{{verse.indicator}}" href="?verse={{verse.indicator}}"><span class="label {% if verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
+            <a class="verse_link" data-verse="{{verse.indicator}}" id="verse_link_{{verse.indicator}}" href="?verse={{verse.indicator}}"><span class="label {% if verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
 	        {% endif %}
 	        {{verse.original_content|xml_to_html5:chapter.work.language|safe}}
         </span>
@@ -173,8 +173,11 @@ require(["jquery", "store", "app"], function($) {
     loadStoreSettings();
     $('#align_break').click(toggleVerseBreak);
     $('#show_table_of_contents').click( toggleTOC );
-    {% for verse in verses.all %}
-    $('#verse_{{verse.indicator}} a').click( function(j) { return function() { return scrollToVerse(j+''); }; }({{verse.indicator}}) );{% endfor %}
+    
+    $(".verse_link").click(function() {
+    	return scrollToVerse( $(this).attr("data-verse") );
+    });
+    
     {% if verse_to_highlight %}
     scrolltoAnchor("verse_{{verse_to_highlight}}");
     {% endif %}
