@@ -215,12 +215,16 @@ class PerseusFileProcessor():
         # Get the document XML
         document_xml = parse(file_path)
         
-        # Get the information we need to get the import policy
-        title = self.get_title(document_xml)
-        author = self.get_author(document_xml)
-        language = self.get_language(document_xml)
-
-        return self.process_file(file_path, document_xml, title, author, language)
+        try:
+            # Get the information we need to get the import policy
+            title = self.get_title(document_xml)
+            author = self.get_author(document_xml)
+            language = self.get_language(document_xml)
+            
+            return self.process_file(file_path, document_xml, title, author, language)
+        finally:
+            document_xml.unlink() 
+            del(document_xml)
         
     def process_file(self, file_path, document_xml, title, author, language, **kwargs):
         """
@@ -266,6 +270,7 @@ class PerseusFileProcessor():
                 # Process each file
                 for f in files:
                     try:
+                        print "Processing file", f
                         if self.__process_file__( os.path.join( root, f) ):
                             files_processed = files_processed + 1
                             
@@ -395,7 +400,7 @@ class PerseusBatchImporter(PerseusFileProcessor):
             perseus_importer = PerseusTextImporter(overwrite_existing=self.overwrite_existing, **import_parameters)
             perseus_importer.import_file(file_path)
             
-        if perseus_importer is not None:
+        if perseus_importer is not None and perseus_importer.work is not None:
             
             # Run the transforms
             if transforms is not None:

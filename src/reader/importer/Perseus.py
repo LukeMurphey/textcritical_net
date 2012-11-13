@@ -23,6 +23,7 @@ from reader.shortcuts import transform_text
 
 from django.db import transaction
 from django.template.defaultfilters import slugify
+import codecs
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -100,9 +101,14 @@ class PerseusTextImporter(TextImporter):
         """
         
         doc = parseString(xml_string)
-        return self.import_xml_document(doc)
+        
+        try:
+            return self.import_xml_document(doc)
+        finally:
+            doc.unlink() 
+            del(doc)
          
-    def import_file( self, file_name):
+    def import_file( self, file_name, encoding='utf-8'):
         """
         Import the provided XML file.
         
@@ -117,8 +123,23 @@ class PerseusTextImporter(TextImporter):
         #self.work_source.resource = os.path.basename(file_name)
         
         # Import the document
-        doc = parse(file_name)
-        return self.import_xml_document(doc)
+        # Read the file into a string
+        try:
+            f = codecs.open( file_name, 'r', 'utf-8' )
+
+            file_string = f.read()
+        finally:
+            if f:
+                f.close()
+        
+        file_string = file_string.encode('utf-8')
+        doc = parseString(file_string)
+        
+        try:
+            return self.import_xml_document(doc)
+        finally:
+            doc.unlink()
+            del(doc)
     
     def close_division(self, import_context):
         
@@ -596,11 +617,18 @@ class PerseusTextImporter(TextImporter):
         # Parse the original content if it is available
         if division.original_content:
             
-            division_doc = parseString(division.original_content)
+            original_content = division.original_content.encode('utf-8')
+            
+            division_doc = parseString(original_content)
             
             root_node = division_doc.getElementsByTagName(PerseusTextImporter.CHAPTER_TAG_NAME)[0]
             
-            return self.import_verse_content( division, root_node, state_set)
+            try:
+                return self.import_verse_content( division, root_node, state_set)
+        
+            finally:
+                division_doc.unlink()
+                del(division_doc)
         
         else:
             return 0
@@ -623,8 +651,12 @@ class PerseusTextImporter(TextImporter):
         for node in content_node.childNodes:
             if node.nodeType == node.TEXT_NODE:
                 resulting_content = resulting_content + self.process_text(node.data)
-                
-        return resulting_content
+        
+        try:
+            return resulting_content
+        finally:
+            verse_doc.unlink()
+            del(verse_doc)
         
     @staticmethod
     def get_line_count(verse_doc, count=None):

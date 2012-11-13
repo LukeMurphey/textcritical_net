@@ -329,12 +329,15 @@ class TestPerseusImport(TestCase):
         self.assertEquals(chunks[1][0].name, "Whiston section")
         self.assertEquals(chunks[1][0].section_type, "chunk")
     
+    def get_test_resource_file_name(self, file_name):
+        return os.path.join(os.path.realpath(os.path.dirname(__file__)), 'test', file_name)
+    
     def load_test_resource(self, file_name):
         
         f = None
         
         try:
-            f = open(os.path.join(os.path.realpath(os.path.dirname(__file__)), 'test', file_name), 'r')
+            f = open( self.get_test_resource_file_name(file_name), 'r')
             return f.read()
         finally:
             if f is not None:
@@ -372,6 +375,16 @@ class TestPerseusImport(TestCase):
         title = PerseusTextImporter.get_title_from_tei_header(tei_header_node)
         
         self.assertEquals( title, "Galba")
+        
+    def test_load_bad_chars(self):
+        
+        book_xml = self.load_test_resource('plut.cat.ma_gk_portion.xml')
+        #book_xml = self.load_test_resource('plut.cat.ma_gk.xml')
+        self.importer.import_xml_string(book_xml)
+        
+    def test_load_bad_chars2(self):
+        file_name = self.get_test_resource_file_name('plut.cat.ma_gk_portion.xml')
+        self.importer.import_file(file_name)
     
     def test_load_book(self):
         
