@@ -15,7 +15,7 @@ import os
 from textcritical.default_settings import SITE_ROOT
 from reader.shortcuts import convert_xml_to_html5
 from reader.importer.Perseus import PerseusTextImporter
-from reader.importer.PerseusBatchImporter import ImportPolicy, PerseusBatchImporter, WorkDescriptor
+from reader.importer.PerseusBatchImporter import ImportPolicy, PerseusBatchImporter, WorkDescriptor, wildcard_to_re
 from reader.importer import TextImporter, LineNumber
 from reader.language_tools.greek import Greek
 from reader.models import Author, Division, Verse
@@ -211,6 +211,25 @@ class TestLineNumber(TestCase):
         self.assertEquals( str(new_line_number), "354a" )
         
 class TestPerseusBatchImporter(TestCase):
+    
+    def test_wildcard(self):
+        
+        wc_re = wildcard_to_re("*tree*")
+        
+        self.assertTrue( wc_re.match("pine tree") is not None )
+        self.assertTrue( wc_re.match("tree bark") is not None )
+        self.assertTrue( wc_re.match("pine tree bark") is not None )
+        
+        self.assertTrue( wc_re.match("oak") is None )
+        self.assertTrue( wc_re.match("oakland") is None )
+        self.assertTrue( wc_re.match("bark") is None )
+        
+    def test_WorkDescriptor(self):
+        
+        desc = WorkDescriptor(file_name="*gk.xml")
+        
+        self.assertFalse( desc.rejects( desc.file_name, "/Users/Luke/Downloads/test_gk.xml" ) )
+        self.assertTrue( desc.rejects( desc.file_name, "/Users/Luke/Downloads/test_eng.xml" ) )
     
     def test_import(self):
         
