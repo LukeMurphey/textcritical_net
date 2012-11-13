@@ -8,6 +8,7 @@ import os
 import json
 import logging
 import csv
+import re
 from time import time
 from xml.dom.minidom import parse
 from reader.importer.Perseus import PerseusTextImporter
@@ -15,6 +16,24 @@ from reader.models import Work
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
+
+def wildcard_to_re( wildcard_str ):
+    """
+    Take a wildcarded string (like "tree*") and create a regular expression for it.
+    
+    Arguments:
+    wildcard_str -- A string which represents a wildcard
+    """
+    
+    # Split by the * and put the pieces back together as a wildcard
+    wc_split = wildcard_str.split("*")
+    
+    wc_re = ""
+    
+    for s in wc_split:
+        wc_re = wc_re + ".*" + re.escape(s)
+    
+    return re.compile(wc_re)
 
 class WorkDescriptor():
     """
@@ -24,16 +43,50 @@ class WorkDescriptor():
     def __init__(self, author=None, title=None, file_name=None, language=None, import_parameters=None, **kwargs):
         self.author = author
         self.title = title
-        self.file_name = file_name
+        self.file_name = self.convert_to_re_if_necessary(file_name)
         self.language = language
         self.import_parameters = import_parameters
         
+    def convert_to_re_if_necessary(self, wildcard):
+        """
+        Convert the provided string which may be an wildcard to an re. If it is a wildcard (contains a *) then a re will be
+        returned. Otherwise, the item will be returned unchanged.
+        
+        Arguments:
+        wildcard -- The item that may be a wildcard which ought to be converted to an re
+        """
+        
+        if wildcard is None:
+            return None
+        elif wildcard.find("*") >= 0:
+            return wildcard_to_re(wildcard)
+        else:
+            return wildcard
+        
+    def matches(self, field_filter, item):
+        """
+        Determine if the given item matches the provided field filter. The field_filter can be a str or an re.
+        
+        Arguments:
+        field_filter -- A string or an an object that declares a match function (which takes an str)
+        item -- The item to be determined if it matches
+        """
+        
+        try:
+            return field_filter.match(item)
+        except AttributeError:
+            return field_filter == item
+            
     def rejects(self, field_filter, item):
         """
         Determines if the work descriptor does not match the work based on the field provided.
+        
+        Arguments:
+        field_filter -- A string or an an object that declares a match function (which takes an str)
+        item -- The item to be determined if it matches
         """
         
-        if field_filter is not None and item != field_filter:
+        if field_filter is not None and not self.matches( field_filter, item ):
             return True
         else:
             return False
@@ -270,7 +323,6 @@ class PerseusFileProcessor():
                 # Process each file
                 for f in files:
                     try:
-                        print "Processing file", f
                         if self.__process_file__( os.path.join( root, f) ):
                             files_processed = files_processed + 1
                             
