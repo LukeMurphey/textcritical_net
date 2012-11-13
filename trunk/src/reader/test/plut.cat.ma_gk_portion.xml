@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2
+  PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+   <teiHeader type="text" status="new">
+      <fileDesc>
+         <titleStmt>
+            <title type="sub">Machine readable text</title>
+            <title n="Cat.Ma." type="work">Marcus Cato</title>
+            <author n="Plut.">Plutarch</author>
+            <editor n="Perrin" role="editor">Bernadotte Perrin</editor>&responsibility;&fund.NEH;</titleStmt>
+         <extent/>&Perseus.publish;<sourceDesc>
+            <biblStruct>
+               <analytic n="Cat.Ma."/>
+               <monogr>
+                  <author>Plutarch</author>
+                  <title>Plutarch's Lives</title>
+                  <respStmt>
+                     <resp>with an English Translation by</resp>
+                     <name>Bernadotte Perrin</name>
+                  </respStmt>
+                  <imprint>
+                     <pubPlace>Cambridge, MA</pubPlace>
+                     <publisher>Harvard University Press</publisher>
+                     <pubPlace>London</pubPlace>
+                     <publisher>William Heinemann Ltd.</publisher>
+                     <date>1914</date>
+                  </imprint>
+                  <biblScope type="volume">2</biblScope>
+               </monogr>
+               <idno type="ISBN">0674990536</idno>
+            </biblStruct>
+         </sourceDesc>
+      </fileDesc>
+      <encodingDesc>
+         <editorialDecl>
+            <correction status="high" method="silent">
+               <p>optical character recognition</p>
+            </correction>
+         </editorialDecl>
+         <refsDecl doctype="TEI.2">
+            <state unit="chapter" delim="."/>
+            <state unit="section"/>
+         </refsDecl>
+      </encodingDesc>
+      <profileDesc>
+         <langUsage>
+            <language id="greek">Greek</language>
+         </langUsage>
+      </profileDesc>
+      <revisionDesc>
+         <change>
+            <date>03/10</date>
+            <respStmt>
+               <name>RS</name>
+               <resp/>
+            </respStmt>
+            <item>tagged and parsed</item>
+         </change>
+      </revisionDesc>
+   </teiHeader>
+   <text>
+      <body>
+         <pb id="p.302"/>
+         <div1 type="chapter" n="13">
+            <p>
+               <milestone unit="section" n="1"/>e)pei\ d' *)anti/oxos e)mfra/cas ta\ peri\ *qermopu/las stena\ tw=| stratope/dw|, kai\ toi=s au)tofue/si tw=n to/pwn e)ru/masi prosbalw\n xarakw/mata kai\ diateixi/smata, kaqh=sto to\n po/lemon e)kkekleike/nai nomi/zwn, to\ me\n kata\ sto/ma bia/zesqai panta/pasin a)pegi/nwskon oi( *(rwmai=oi, th\n de\ *persikh\n e)kei/nhn perih/lusin kai\ ku/klwsin o( 
+<pb id="p.338"/>
+*ka/twn ei)s nou=n balo/menos e)cw/deuse nu/ktwr, 
+<milestone unit="section" n="2"/>
+a)nalabw\n me/ros ti th=s stratia=s, e)pei\ d' a)/nw proelqo/ntwn o( kaqodhgw=n ai)xma/lwtos e)ce/pese th=s o(dou= kai\ planw/menos e)n to/pois a)po/rois kai\ krhmnw/desi deinh\n a)qumi/an kai\ fo/bon e)neirga/sato toi=s stratiw/tais, o(rw=n o( *ka/twn to\n ki/ndunon e)ke/leuse tou\s a)/llous a(/pantas a)tremei=n kai\ perime/nein, 
+<milestone unit="section" n="3"/>
+au)to\s de\ *leu/kio/n tina *ma/llion, a)/ndra deino\n o)reibatei=n, paralabw\n e)xw/rei polupo/nws kai\ parabo/lws e)n a)selh/nw| nukti\ kai\ baqei/a|, koti/nois<note anchored="yes" place="unspecified" resp="ed">
+                  <foreign lang="greek">koti/nois</foreign> MSS.; <foreign lang="greek">kolwnoi=s</foreign>(hills' Bekker, adopting the correction of Coraës.</note>  kai\ pa/gois a)natetame/nois diaspa/smata polla\ th=s o)/yews kai\ a)sa/feian e)xou/shs, e(/ws e)mbalo/ntes ei)s a)trapo/n, w(s w)/|onto, ka/tw perai/nousan e)pi\ to\ strato/pedon tw=n polemi/wn e)/qento shmei=a pro/s tinas eu)sko/pous kerai/as u(pe\r to\ *kalli/dromon a)nexou/sas. 
+<milestone unit="section" n="4"/>
+ou(/tw de\ pa/lin e)panelqo/ntes o)pi/sw th\n stratia\n a)ne/labon, kai\ pro/s ta\ shmei=a proa/gontes h(/yanto me\n e)kei/nhs th=s a)trapou= kai\ katesth/santo th\n porei/an, mikro\n de\ proelqou=sin au)toi=s e)pe/lipe fa/raggos u(polambanou/shs. kai\ pa/lin h)=n a)pori/a kai\ de/os ou)k e)pistame/nwn ou)de\ sunorw/ntwn o(/ti plhsi/on e)tu/gxanon tw=n polemi/wn gegono/tes. h)/dh de\ die/lampen h(me/ra, kai\ fqoggh=s ti/s e)/docen e)pakou=sai, ta/xa de\ kai\ kaqora=n *(ellhniko\n xa/raka kai\ profulakh\n u(po\ to\ krhmnw=des, 
+
+            </p>
+         </div1>
+      </body>
+   </text>
+</TEI.2>

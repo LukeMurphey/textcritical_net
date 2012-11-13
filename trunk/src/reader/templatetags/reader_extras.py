@@ -12,7 +12,11 @@ def xml_to_html5(value, language=None):
     doc = minidom.parseString(value)
     converted_doc = convert_xml_to_html5( doc, language=language )
     
-    return converted_doc.firstChild.toxml( encoding="utf-8" )
+    try:
+        return converted_doc.firstChild.toxml( encoding="utf-8" )
+    finally:
+        converted_doc.unlink()
+        del(converted_doc)
 
 def perseus_xml_to_html5(value, language=None):
     
@@ -22,7 +26,11 @@ def perseus_xml_to_html5(value, language=None):
     doc = minidom.parseString(value)
     converted_doc = convert_xml_to_html5( doc, language=language,  text_transformation_fx=text_transformation_fx )
     
-    return converted_doc.toxml( encoding="utf-8" )
+    try:
+        return converted_doc.toxml( encoding="utf-8" )
+    finally:
+        converted_doc.unlink()
+        del(converted_doc)
     
 def transform_perseus_text(text, parent_node, language):
     
