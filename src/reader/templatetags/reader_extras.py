@@ -9,6 +9,8 @@ register = template.Library()
 def xml_to_html5(value, language=None):
     """Converts the provided XML to HTML5 custom data attributes."""
     
+    value = value.encode('utf-8')
+    
     doc = minidom.parseString(value)
     converted_doc = convert_xml_to_html5( doc, language=language )
     
