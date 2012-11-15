@@ -206,6 +206,13 @@ class TestLineNumber(TestCase):
         
         self.assertEquals( str(new_line_number), "354a" )
         
+    def test_str(self):
+        
+        line_number = LineNumber()
+        line_number.set("354a")
+        
+        self.assertEquals( str(line_number), "354a" )
+        
 class TestPerseusBatchImporter(TestCase):
     
     def test_wildcard(self):
