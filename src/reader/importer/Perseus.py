@@ -954,7 +954,7 @@ class PerseusTextImporter(TextImporter):
                 
                 # Get the type of the section
                 division_type = None
-                descriptor = "-" # If the section has no descriptor, then just use this character
+                descriptor = None
                 
                 if "type" in node.attributes.keys():
                     division_type = node.attributes["type"].value
