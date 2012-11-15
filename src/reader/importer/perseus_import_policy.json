@@ -65,7 +65,6 @@
         "author" : "Aristophanes",
         "language" : "Greek",
         "import_parameters" : {
-            "state_set" : 1,
             "ignore_division_markers" : true
         }
     },
