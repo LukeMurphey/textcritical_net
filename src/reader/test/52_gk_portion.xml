@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE TEI.2
+  PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+   <teiHeader>
+      <fileDesc>
+         <titleStmt>
+            <title>Abdicatus</title>
+            <title type="sub">Machine readable text</title>
+            <author n="Plut.">Lucian</author>
+            <editor role="editor" n="Loeb">A. M. Harmon</editor>&responsibility;&fund.NEH;&fund.Google;</titleStmt>
+         <extent/>&Perseus.publish;<sourceDesc>
+            <listBibl>
+               <biblStruct>
+                  <monogr>
+                     <author>Lucian</author>
+                     <title>Works</title>
+                     <respStmt>
+                        <resp>with an English Translation by</resp>
+                        <name>A. M. Harmon</name>
+                     </respStmt>
+                     <imprint>
+                        <pubPlace>Cambridge, MA</pubPlace>
+                        <publisher>Harvard University Press</publisher>
+                        <pubPlace>London</pubPlace>
+                        <publisher>William Heinemann Ltd.</publisher>
+                        <date>1936</date>
+                     </imprint>
+                     <biblScope type="volume">5</biblScope>
+                  </monogr>
+               </biblStruct>
+            </listBibl>
+         </sourceDesc>
+      </fileDesc>
+      <encodingDesc>
+         <editorialDecl>
+            <correction status="high" method="silent">
+               <p>optical character recognition</p>
+            </correction>
+         </editorialDecl>
+         <refsDecl doctype="TEI.2">
+            <state unit="section" n="chunk"/>
+         </refsDecl>
+      </encodingDesc>
+      <profileDesc>
+         <langUsage>
+            <language id="greek">Greek</language>
+         </langUsage>
+      </profileDesc>
+   </teiHeader>
+   <text>
+      <body>
+         <pb id="v.5.p.476"/>
+         <div1>
+            <p>
+a)pokhruxqei/s tis i)atrikh\n e)ce/maqen. mane/nta to\n pate/ra
+kai\ u(po\ tw=n a)llwn i)atrw=n a)pegnwsme/non i)asa/menos farma/kou
+do/sei a)nelh/fqh au)=qis e)s to\ ge/nos. meta\ tau=ta memhnui/an th\n
+mhtruia\n i)a/sasqai keleuo/menos <gap/> a)pokhru/ttetai.</p>
+            <p>
+               <milestone unit="section" n="1"/> ou) kaina\ me\n tau=ta, w)= a)/ndres dikastai/, ou)de\ para/doca ta\ ^ u(po\ tou= patro\s e)n tw=| paro/nti gigno/mena, ou)de\ nu=n prw=ton ta\ toiau=ta o)rgi/zetai, a)lla\ pro/xeiros ou(=tos o( no/mos au)tw=| kai\ sunh/qws e)pi\ tou=t' a)fiknei=tai to\ dikasth/rion. e)kei=no de\ kaino/teron nu=n dustuxw=, o(/ti e)/gklhma me\n i)/dion
+ou)k e)/xw, kinduneu/w de\ timwri/an u(posxei=n u(pe\r th=s te/xnhs ei) mh\ pa/nta du/natai pei/qesqai tou/tw| keleu/onti, ou(= ti/ ge/noit' a)\n a)topw/teron, qerapeu/ein e)k prosta/gmatos, ou)ke/q' w(s h( te/xnh du/natai, a)ll' w(s o( path\r bou/letai ; e)boulo/mhn me\n ou)=n th\n i)atrikh\n kai\ toiou=to/n ti e)/xein
+<pb id="v.5.p.478"/> fa/rmakon o(\ mh\ mo/non tou\s memhno/tas a)lla\ kai\ tou\s a)di/kws o)rgizome/nous pau/ein e)du/nato, i(/na kai\ tou=to tou= patro\s to\ no/shma i)asai/mhn. nuni\
+de\ ta\ me\n th=s mani/as au)tw=| te/leon pe/pautai,
+ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/llois a(/pasin swfronei=, kat' e)mou= de\ tou= qerapeu/santos mo/nou mai/netai. to\n me\n ou)=n misqo\n th=s qerapei/as o(ra=te oi(=on a)polamba/nw, a)pokhrutto/menos u(p' au)tou= pa/lin kai\ tou= ge/nous a)llotriou/menos deu/teron, w(/sper dia\ tou=t' a)nalhfqei\s pro\s o)li/gon i(/n' a)timo/teros ge/nwmai polla/kis. e)kpesw\n th=s oi)ki/as.
+</p>
+</div1>
+</body>
+</text>
+</TEI.2>

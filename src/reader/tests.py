@@ -1,13 +1,6 @@
 # -*- coding: utf8 -*-
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
 
 from django.test import TestCase
-
 
 from xml.dom.minidom import parse, parseString
 import os
@@ -21,6 +14,7 @@ from reader.language_tools.greek import Greek
 from reader.models import Author, Division, Verse
 
 class TestGreekLanguageTools(TestCase):
+    
     def test_beta_code_conversion(self):
         self.assertEqual( Greek.beta_code_str_to_unicode("H)/LIOS"), u"ἤλιος")
 
@@ -96,6 +90,8 @@ class TestImport(TestCase):
      
     def setUp(self):
         self.importer = TextImporter()
+        
+        return super(TestImport, self).setUp()
     
     def test_make_author(self):
         
@@ -403,6 +399,10 @@ class TestPerseusImport(TestCase):
         
     def test_load_bad_chars2(self):
         file_name = self.get_test_resource_file_name('plut.cat.ma_gk_portion.xml')
+        self.importer.import_file(file_name)
+    
+    def test_load_book_with_basic_div(self):
+        file_name = self.get_test_resource_file_name('52_gk_portion.xml')
         self.importer.import_file(file_name)
     
     def test_load_book(self):
