@@ -292,9 +292,16 @@ class TextImporter():
         
         # Set the slug to the next free one if the name is not unique
         i = 1
+        slug_was_already_taken = False
+        
         while Work.objects.filter(title_slug=work.title_slug).count() > 0:
+            slug_was_already_taken = True
             work.title_slug = slugify(work.title) + "-" + str(i)
             i = i + 1  
+            
+        # Make a log message noting that the slug title was already taken
+        if slug_was_already_taken:
+            logger.info("The slug for the given work was already used so another was assigned, title=%s, new_slug=%s", work.title, work.title_slug)
             
         self.work = work
         return work
