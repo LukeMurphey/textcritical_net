@@ -29,9 +29,14 @@ DATABASES = {
     }
 }
 
+# Determine if tests are being executed.
+import sys
+TESTING = ['manage.py', 'test'] == [os.path.basename(sys.argv[0]), sys.argv[1],]
+
 # Setup the database routers that allow the use of works provided in a
 # separate database.
-DATABASE_ROUTERS = ['textcritical.routers.PreLoadedWorksRouter']
+if not TESTING:
+    DATABASE_ROUTERS = ['textcritical.routers.PreLoadedWorksRouter']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
