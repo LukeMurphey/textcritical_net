@@ -124,6 +124,8 @@ class PerseusTextImporter(TextImporter):
         
         # Import the document
         # Read the file into a string
+        f = None
+        
         try:
             f = codecs.open( file_name, 'r', 'utf-8' )
 
