@@ -31,7 +31,10 @@ DATABASES = {
 
 # Determine if tests are being executed.
 import sys
-TESTING = ['manage.py', 'test'] == [os.path.basename(sys.argv[0]), sys.argv[1],]
+if len(sys.argv) >= 2:
+    TESTING = ['manage.py', 'test'] == [os.path.basename(sys.argv[0]), sys.argv[1],]
+else:
+    TESTING = False
 
 # Setup the database routers that allow the use of works provided in a
 # separate database.
