@@ -952,7 +952,7 @@ class PerseusTextImporter(TextImporter):
                 
                 # Get the type of the section
                 division_type = None
-                descriptor = None
+                descriptor = "-" # If the section has no descriptor, then just use this character
                 
                 if "type" in node.attributes.keys():
                     division_type = node.attributes["type"].value
@@ -965,7 +965,7 @@ class PerseusTextImporter(TextImporter):
                 
                 # Get the state set associated with this entry
                 for state in state_set:
-                    if state.name.lower() == division_type.lower() and state.level is not None:
+                    if division_type is not None and state.name.lower() == division_type.lower() and state.level is not None:
                         level = state.level
                         break
                 
