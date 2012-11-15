@@ -691,7 +691,7 @@ class PerseusTextImporter(TextImporter):
                 new_line_number = LineNumber(value=new_line_count)
                 
                 if str(new_line_number) != line_number:
-                    logger.warning("A line element indicated the current line number and it did not match the expected value, line_number=%r, expected_line_number=%r" % (count, new_line_count) )
+                    logger.warning("A line element indicated the current line number and it did not match the expected value, line_number=%s, expected_line_number=%r" % ( str(count), new_line_count) )
             
                 # Update the line number
                 line_number = new_line_number
