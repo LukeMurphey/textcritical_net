@@ -376,6 +376,50 @@ class PerseusTextImporter(TextImporter):
             return None
     
     @staticmethod
+    def get_author_from_tei_header(tei_header_node):
+        """
+        Get the author from the TEI header node.
+        
+        Arguments:
+        tei_header_node -- A node representing the TEI header
+        """
+        
+        author_nodes = tei_header_node.getElementsByTagName("author")
+        
+        if len(author_nodes) > 0:
+            return PerseusTextImporter.getText(author_nodes[0].childNodes)
+        else:
+            return None
+    
+    @staticmethod
+    def get_author( tei_document ):
+        """
+        Get the author from the TEI document.
+        
+        Arguments:
+        tei_document -- A TEI document
+        """
+        
+        tei_header = tei_document.getElementsByTagName("teiHeader")
+        bibl_struct_node = None
+        
+        if tei_header is not None and len(tei_header) > 0:
+            bibl_struct_node = tei_header[0].getElementsByTagName("biblStruct")
+        
+        # Try to get the author from the biblStruct
+        if bibl_struct_node is not None and len(bibl_struct_node) > 0:
+            author = PerseusTextImporter.get_author_from_bibl_struct(bibl_struct_node[0])
+        
+            if author is not None:
+                return author
+        
+        # Otherwise, try to get the author from the titleStmt
+        if tei_header is not None and len(tei_header) > 0:
+            author = PerseusTextImporter.get_author_from_tei_header(tei_header[0])
+            
+            return author
+        
+    @staticmethod
     def get_author_from_bibl_struct(bibl_struct):
         """
         Get the author from the bibleStruct node.
@@ -535,7 +579,6 @@ class PerseusTextImporter(TextImporter):
         
         # Obtain references to the nodes that contain meta-data about the book
         tei_header = document.getElementsByTagName("teiHeader")[0]
-        bibl_struct_node = tei_header.getElementsByTagName("biblStruct")[0]
         
         # Get the title
         title = PerseusTextImporter.get_title_from_tei_header(tei_header)
@@ -561,7 +604,7 @@ class PerseusTextImporter(TextImporter):
             self.use_line_count_for_divisions = PerseusTextImporter.use_line_numbers_for_division_titles(tei_header)
         
         # Get the author
-        author_name = PerseusTextImporter.get_author_from_bibl_struct(bibl_struct_node)
+        author_name = PerseusTextImporter.get_author(document)
         author = self.make_author(author_name)
         self.work.authors.add(author)
         
