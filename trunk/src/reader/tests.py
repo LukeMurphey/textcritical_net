@@ -398,6 +398,29 @@ class TestPerseusImport(TestCase):
         
         self.assertEquals( title, "Galba")
         
+    def test_get_author_from_tei_header(self):
+        
+        book_xml = self.load_test_resource('aristot.vir_gk.xml')
+        book_doc = parseString(book_xml)
+        
+        tei_header_node = book_doc.getElementsByTagName("teiHeader")[0]
+        
+        author = PerseusTextImporter.get_author_from_tei_header(tei_header_node)
+        
+        self.assertEquals( author, "Aristotle")
+        
+    def test_get_author_no_title_stmt(self):
+        
+        book_xml = self.load_test_resource('aristot.vir_gk.xml')
+        book_doc = parseString(book_xml)
+        self.assertEquals( PerseusTextImporter.get_author(book_doc), "Aristotle")
+        
+    def test_get_author_no_bibl_struct(self):
+        
+        book_xml = self.load_test_resource('plut.cat.ma_gk_portion.xml')
+        book_doc = parseString(book_xml)
+        self.assertEquals( PerseusTextImporter.get_author(book_doc), "Plutarch")
+        
     def test_load_bad_chars(self):
         
         book_xml = self.load_test_resource('plut.cat.ma_gk_portion.xml')
@@ -410,6 +433,12 @@ class TestPerseusImport(TestCase):
     
     def test_load_book_with_basic_div(self):
         file_name = self.get_test_resource_file_name('52_gk_portion.xml')
+        self.importer.import_file(file_name)
+    
+    def test_load_book_no_bibl_struct(self):
+        # See issue #438 (http://lukemurphey.net/issues/438)
+        self.importer.state_set = 0
+        file_name = self.get_test_resource_file_name('aristot.vir_gk.xml')
         self.importer.import_file(file_name)
     
     def test_load_book(self):
