@@ -415,6 +415,16 @@ class TestPerseusImport(TestCase):
         book_doc = parseString(book_xml)
         self.assertEquals( PerseusTextImporter.get_author(book_doc), "Aristotle")
         
+    def test_load_book_descriptorless_milestone(self):
+        # See issue #440 (http://lukemurphey.net/issues/440)
+        self.importer.state_set = 0
+        file_name = self.get_test_resource_file_name('dh.hist04_gk.xml')
+        self.importer.import_file(file_name)
+        
+        verse = Verse.objects.filter(division__work=self.importer.work).order_by("sequence_number")[0]
+        
+        self.assertEqual(verse.indicator, "1")
+        
     def test_get_author_no_bibl_struct(self):
         
         book_xml = self.load_test_resource('plut.cat.ma_gk_portion.xml')

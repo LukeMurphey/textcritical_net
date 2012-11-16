@@ -820,7 +820,14 @@ class PerseusTextImporter(TextImporter):
                 
                 # Make the verse
                 self.make_verse(import_context, save=False)
-                import_context.verse.indicator = node.attributes["n"].value
+                
+                # Get the verse indicator
+                if "n" in node.attributes.keys():
+                    import_context.verse.indicator = node.attributes["n"].value
+                else:
+                    import_context.verse.indicator = str(verses_created + 1)
+                    logger.warn('Milestone observed that did not have an associated unit, the sequence number will be used instead, division=%s, verse=%s', import_context.division.sequence_number, import_context.verse.indicator)
+                
                 import_context.verse.save()
                 
                 attach_xml_content = False
@@ -831,7 +838,9 @@ class PerseusTextImporter(TextImporter):
                 parent_node = new_verse_node
                 next_level_node = new_verse_node
                 
-                logger.debug("Making verse %s in division %s of %s" % (node.attributes["n"].value, str(import_context.division.sequence_number), self.work.title) )
+                logger.debug("Making verse %s in division %s of %s" % (import_context.verse.indicator, str(import_context.division.sequence_number), self.work.title) )
+                
+                
                 
             elif node.tagName in ["milestone"]:
                 # Include:
