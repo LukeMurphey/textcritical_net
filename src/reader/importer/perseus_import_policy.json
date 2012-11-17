@@ -65,24 +65,14 @@
         "author" : "Aristophanes",
         "language" : "Greek",
         "import_parameters" : {
+        	"state_set" : 0,
             "ignore_division_markers" : true
         }
     },
     {
-        "author" : "Arrian",
-        "language" : "Greek"
-    },
-    {
-        "author" : "Apollonius Rhodius",
-        "language" : "Greek"
-    },
-    {
-        "author" : "Aratus Solensis",
-        "language" : "Greek"
-    },
-    {
         "title" : "Economics (Greek). Machine readable text",
         "import_parameters" : {
+        	"state_set" : 0,
             "transforms" : {
                 "set_meta_data" : {
                     "title_slug" : "economics",
@@ -94,6 +84,7 @@
     {
         "title" : "Eudemian Ethics (Greek). Machine readable text",
         "import_parameters" : {
+        	"state_set" : 0,
             "transforms" : {
                 "set_meta_data" : {
                     "title_slug" : "eudemian-ethics",
@@ -105,6 +96,7 @@
     {
         "title" : "Metaphysics (Greek). Machine readable text",
         "import_parameters" : {
+        	"state_set" : 0,
             "transforms" : {
                 "set_meta_data" : {
                     "title_slug" : "metaphysics",
@@ -116,6 +108,7 @@
     {
         "title" : "Politics (Greek). Machine readable text",
         "import_parameters" : {
+        	"state_set" : 0,
             "transforms" : {
                 "set_meta_data" : {
                     "title_slug" : "politics",
@@ -125,37 +118,11 @@
         }
     },
     {
-        "author" : "Aristotle",
-        "language" : "Greek"
-    },
-    {
-        "author" : "Callimachus",
-        "title"  : "Epigrams, Fragmenta",
-        "language" : "Greek"
-    },
-    {
-        "author" : "Callimachus",
-        "title"  : "Hymns and Epigrams",
-        "language" : "Greek"
-    },
-    {
-        "author" : "Colluthus",
-        "language" : "Greek"
-    },
-    {
-        "author" : "Diodorus Siculus",
-        "title"  : "Bibliotheca Historica, Books I-V",
-        "language" : "Greek"
-    },
-    {
-        "author" : "Dionysius of Halicarnassus",
-        "language" : "Greek"
-    },
-    {
         "author" : "Euripides",
         "language" : "Greek",
         "import_parameters" : {
-            "use_line_count_for_divisions" : true
+            "use_line_count_for_divisions" : true,
+            "state_set" : 0
         }
     },
     {
@@ -163,21 +130,24 @@
         "language" : "Greek",
         "import_parameters" : {
             "use_line_count_for_divisions" : true,
-            "ignore_division_markers" : true
+            "ignore_division_markers" : true,
+            "state_set" : 0
         }
     },
     {
         "author" : "Homer",
         "language" : "Greek",
         "import_parameters" : {
-            "use_line_count_for_divisions" : true
+            "use_line_count_for_divisions" : true,
+            "state_set" : 0
         }
     },
     {
         "author" : "Nigrinus",
         "language" : "Greek",
         "import_parameters" : {
-            "ignore_division_markers" : true
+            "ignore_division_markers" : true,
+            "state_set" : 0
         }
     },
     {
@@ -185,7 +155,8 @@
         "language" : "Greek",
         "title" : "Quomodo adolescens poetas audire debeat",
         "import_parameters" : {
-            "ignore_division_markers" : true
+            "ignore_division_markers" : true,
+            "state_set" : 0
         }
     },
     {
@@ -193,7 +164,8 @@
         "language" : "Greek",
         "title" : "Antigone",
         "import_parameters" : {
-            "ignore_division_markers" : true
+            "ignore_division_markers" : true,
+            "state_set" : 0
         }
     },
     {
@@ -201,7 +173,8 @@
         "language" : "Greek",
         "title" : "Electra",
         "import_parameters" : {
-            "ignore_division_markers" : true
+            "ignore_division_markers" : true,
+            "state_set" : 0
         }
     },
     {
@@ -209,7 +182,8 @@
         "language" : "Greek",
         "title" : "Oedipus at Colonus",
         "import_parameters" : {
-            "ignore_division_markers" : true
+            "ignore_division_markers" : true,
+            "state_set" : 0
         }
     },
     {
@@ -217,7 +191,8 @@
         "language" : "Greek",
         "title" : "Oedipus Tyrannus",
         "import_parameters" : {
-            "ignore_division_markers" : true
+            "ignore_division_markers" : true,
+            "state_set" : 0
         }
     },
     {
@@ -225,7 +200,8 @@
         "language" : "Greek",
         "title" : "Philoctetes",
         "import_parameters" : {
-            "ignore_division_markers" : true
+            "ignore_division_markers" : true,
+            "state_set" : 0
         }
     },
     {
@@ -233,21 +209,24 @@
         "language" : "Greek",
         "import_parameters" : {
             "use_line_count_for_divisions" : true,
-            "ignore_division_markers" : true
+            "ignore_division_markers" : true,
+            "state_set" : 0
         }
     },
     {
         "author" : "Homer",
         "language" : "Greek",
         "import_parameters" : {
-            "use_line_count_for_divisions" : true
+            "use_line_count_for_divisions" : true,
+            "state_set" : 0
         }
     },
     {
         "author" : "Nigrinus",
         "language" : "Greek",
         "import_parameters" : {
-            "ignore_division_markers" : true
+            "ignore_division_markers" : true,
+            "state_set" : 0
         }
     },
     {
@@ -255,12 +234,9 @@
         "language" : "Greek",
         "title" : "Quomodo adolescens poetas audire debeat",
         "import_parameters" : {
-            "ignore_division_markers" : true
+            "ignore_division_markers" : true,
+            "state_set" : 0
         }
-    },
-    {
-        "author" : "Plutarch",
-        "language" : "Greek"
     },
     {
         "language" : "Greek",
