@@ -308,7 +308,7 @@ class PerseusFileProcessor():
         if directory is None:
             directory = self.perseus_directory
             
-        logger.debug("Analyzing directory for files to processing, directory=%s", directory )
+        #logger.debug("Analyzing directory for files to process, directory=%s", directory )
         
         # Keep a count of the files imported
         files_processed = 0
