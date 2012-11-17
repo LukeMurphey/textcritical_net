@@ -504,8 +504,11 @@ class PerseusTextImporter(TextImporter):
         
         # Get the author
         author_name = PerseusTextImporter.get_author_from_bibl_struct(bibl_struct_node)
-        author = self.make_author(author_name)
-        self.work.authors.add(author)
+        
+        # Add the author only if not blank
+        if author_name is not None and len(author_name) > 0:
+            author = self.make_author(author_name)
+            self.work.authors.add(author)
     
     def is_milestone_in_state_set(self, state_set, milestone_node):
         """
@@ -605,8 +608,11 @@ class PerseusTextImporter(TextImporter):
         
         # Get the author
         author_name = PerseusTextImporter.get_author(document)
-        author = self.make_author(author_name)
-        self.work.authors.add(author)
+        
+        # Add the author only if not blank
+        if author_name is not None and len(author_name) > 0:
+            author = self.make_author(author_name)
+            self.work.authors.add(author)
         
         # Get the sectioning information
         if self.state_set is None or self.state_set == "*":
