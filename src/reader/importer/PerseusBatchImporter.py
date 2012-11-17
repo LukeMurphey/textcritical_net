@@ -397,10 +397,12 @@ class PerseusBatchImporter(PerseusFileProcessor):
     A batch importer for walking a directory and importing all of the files if they match an import policy.
     """
     
-    def __init__(self, perseus_directory, overwrite_existing=False, book_selection_policy=None):
+    def __init__(self, perseus_directory, overwrite_existing=False, book_selection_policy=None, import_even_if_already_existing=True):
         self.perseus_directory = perseus_directory
         self.overwrite_existing = overwrite_existing
         self.book_selection_policy = book_selection_policy
+        
+        self.import_even_if_already_existing = import_even_if_already_existing
     
     def does_work_exist(self, title, author, language):
         """
@@ -435,7 +437,7 @@ class PerseusBatchImporter(PerseusFileProcessor):
         else:
             transforms = None
         
-        if self.overwrite_existing == False and self.does_work_exist(title, author, language):
+        if not self.import_even_if_already_existing and self.overwrite_existing == False and self.does_work_exist(title, author, language):
             logger.info( 'Work already exists, skipping it, title="%s"', title)
             
         elif import_parameters is None:
