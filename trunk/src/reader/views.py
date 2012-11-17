@@ -63,7 +63,7 @@ def get_chapters_list( division, count=9):
         
 def read_work(request, author=None, language=None, title=None, chapter_indicator=None, division_indicator=None, **kwargs):
     
-    # Some warnings that should be psoted to the user
+    # Some warnings that should be posted to the user
     warnings = []
     
     # Get the verse to highlight (if provided)
@@ -137,6 +137,7 @@ def read_work(request, author=None, language=None, title=None, chapter_indicator
                               'divisions'            : divisions,
                               'chapter'              : chapter,
                               'chapters'             : chapters,
+                              'authors'              : work.authors.filter(meta_author=False),
                               'next_chapter'         : next_chapter,
                               'previous_chapter'     : previous_chapter,
                               'verse_to_highlight'   : verse_to_highlight,

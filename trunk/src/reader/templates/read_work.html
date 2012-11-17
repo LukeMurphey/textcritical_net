@@ -16,7 +16,7 @@
             <li class="active">{{work.title}}:{{chapter}}</li>
         </ul>
         
-        <h1>{{work.title}} {% if chapters|length > 1 %}{{chapter}}{% endif %} <small>By {{work.authors.all|join:", "}}</small></h1>
+        <h1>{{work.title}} {% if chapters|length > 1 %}{{chapter}}{% endif %}{{authors|length}}{% if authors|length > 0 %} <small>By {{authors|join:", "}}</small>{% endif %}</h1>
         
         {% comment %}
         ##############################
