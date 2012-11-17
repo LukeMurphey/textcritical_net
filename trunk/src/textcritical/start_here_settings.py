@@ -1,9 +1,18 @@
+# Below is a basic settings file.
+# Copy this to settings.py and edit as necessary for your installation
+#
+# See http://lukemurphey.net/projects/ancient-text-reader/wiki/SetupAndInstall
+
+# Import the default settings so the you do not have to redefine everything
 from textcritical.default_settings import *
 
+# Define where the media will be served from.
 MEDIA_URL = '/media'
 
+# Define the absolute path to the media on the file-system
 MEDIA_ROOT = 'C:/Users/Luke/Workspace/TextCritical.com/src/media/'
 
+# Set up logging. Below is a good start (though you may have to change the paths).
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
