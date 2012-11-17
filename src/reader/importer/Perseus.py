@@ -638,11 +638,11 @@ class PerseusTextImporter(TextImporter):
         # Chunk the text into divisions
         divisions = self.import_body_sub_node(body_node, current_state_set)
         
-        if divisions == 0:
+        if len(divisions) == 0:
             raise Exception("No division were discovered, title=%s", self.work.title)
         
         # Make the verses
-        logger.info("Successfully imported divisions of work, division_count=%i, title=%s", (len(divisions), self.work.title)) 
+        logger.info("Successfully imported divisions of work, division_count=%i, title=%s", len(divisions), self.work.title)
         verses_created = self.make_verses(divisions, current_state_set)
         
         if verses_created == 0:
