@@ -256,7 +256,7 @@ class TextImporter():
     def make_author(self, name, save_if_new=True):
         
         # If the name is none, then assume the user is unknown
-        if name is None:
+        if name is None or len(name.strip()) == 0:
             name = "Unknown"
         
         # Save the author
