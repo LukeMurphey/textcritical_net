@@ -639,14 +639,17 @@ class PerseusTextImporter(TextImporter):
         divisions = self.import_body_sub_node(body_node, current_state_set)
         
         if len(divisions) == 0:
-            raise Exception("No division were discovered, title=%s", self.work.title)
-        
+            self.work.delete() # Delete the work just in case the transaction doesn't get rolled back 
+            raise Exception("No divisions were discovered, title=%s" % (self.work.title) )
+        else:
+            logger.info("Successfully imported divisions of work, division_count=%i, title=%s", len(divisions), self.work.title)
+            
         # Make the verses
-        logger.info("Successfully imported divisions of work, division_count=%i, title=%s", len(divisions), self.work.title)
         verses_created = self.make_verses(divisions, current_state_set)
         
         if verses_created == 0:
-            raise Exception("No division were discovered, title=%s", self.work.title)
+            self.work.delete() # Delete the work just in case the transaction doesn't get rolled back
+            raise Exception("No divisions were discovered, title=%s" % (self.work.title) )
         else:
             logger.info("Successfully imported verse of work, verse_count=%i, title=%s", verses_created, self.work.title) 
         
