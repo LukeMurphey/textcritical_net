@@ -275,6 +275,22 @@ class TestPerseusImport(TestCase):
         self.assertEquals(self.importer.work.authors.all()[0].name,"Flavius Josephus")
         self.assertEquals(self.importer.work.title,"Flavii Iosephi opera")
         
+    def test_findTagInDivision(self):
+        
+        xml = r"""<div1 type="Book" n="1">
+<note anchored="yes" type="title" place="inline">*prooi/mion peri\ th=s o(/lhs pragmatei/as.
+<list type="toc">
+<head>*ta/de e)/nestin e)n th=| prw/th| tw=n *)iwsh/pou i(storiw=n
+th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
+
+        document = parseString(xml)
+        
+        div_node = document.getElementsByTagName("div1")[0]
+        
+        head = self.importer.findTagInDivision(div_node, "head")
+    
+        self.assertEquals(head.tagName, "head")
+        
     def test_get_language(self):
         
         language_xml = """<language id="greek">Greek</language>"""
@@ -424,6 +440,18 @@ class TestPerseusImport(TestCase):
         verse = Verse.objects.filter(division__work=self.importer.work).order_by("sequence_number")[0]
         
         self.assertEqual(verse.indicator, "1")
+        
+    def test_load_book_multilevel_divisions(self):
+        # See issue #430 (http://lukemurphey.net/issues/430)
+        self.importer.state_set = 0
+        file_name = self.get_test_resource_file_name('1_gk.xml')
+        self.importer.import_file(file_name)
+        
+        divisions = Division.objects.filter(work=self.importer.work).order_by("sequence_number")
+        
+        self.assertEqual(divisions[0].title, None)
+        self.assertEqual(divisions[0].descriptor, u"1")
+        self.assertEqual(divisions[1].title, u"Καλλίνου")
         
     def test_get_author_no_bibl_struct(self):
         
