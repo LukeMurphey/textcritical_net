@@ -1,0 +1,82 @@
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PERSEUS.BIBLSTRUCT 'INCLUDE'>
+<!ENTITY % PersVerse PUBLIC "-//Perseus P4//DTD Perseus Verse//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersVerse.dtd" >
+%PersVerse;
+]>
+<TEI.2>
+  <teiHeader type="text" status="new">
+    <fileDesc>
+      <titleStmt>
+    <title>Elegy and Iambus, Volume I</title>
+    <title type="sub">Machine readable text</title> 
+    <editor role="editor" n="Loeb">J. M. Edmonds</editor>
+    &responsibility;
+    &fund.NEH;&fund.Google;
+      </titleStmt>
+      <extent></extent>
+    &Perseus.publish;    
+      <sourceDesc>
+    <listBibl>
+      <biblStruct>
+        <analytic></analytic>
+        <monogr>
+          <author></author>
+          <title>Elegy and Iambus</title>
+          <respStmt><resp>with an English Translation by</resp>
+        <name>J. M. Edmonds</name>
+          </respStmt>
+          <imprint>
+        <pubPlace>Cambridge, MA</pubPlace>
+        <publisher>Harvard University Press</publisher>
+        <pubPlace>London</pubPlace>
+        <publisher>William Heinemann Ltd.</publisher>
+        <date>1931</date>
+          </imprint>
+          <biblScope type="volume">1</biblScope>
+        </monogr>
+      </biblStruct>
+    </listBibl>
+      </sourceDesc>
+    </fileDesc>
+    <encodingDesc>
+         <editorialDecl>
+            <correction status="high" method="silent">
+               <p>optical character recognition</p>
+            </correction>
+         </editorialDecl>
+       <refsDecl doctype="TEI.2">
+          <state unit="volume" delim="."/>
+          <state unit="text" delim="."/>
+          <state unit="section"/>
+       </refsDecl>
+       </encodingDesc>    
+     <profileDesc>
+        <langUsage> 
+           <language id="greek">Greek</language> 
+           <language id="en">English</language> 
+           <language id="la">Latin</language> 
+        </langUsage>
+     </profileDesc>
+  </teiHeader>
+<text><body>
+<div0 type="volume" n="1">
+<div1 type="text" id="tlg-0243"><head>*kalli/nou</head>
+
+
+<div2 type="section"><!--testimonia-->
+
+<div3 type="biodata">
+<cit id="tlg-0243.cit.1"><quote><title lang="greek">p. i(ero\n to\ tou= *sminqe/ws *)apo/llwnos:</title> toi=s e)k th=s *krh/ths a)figme/nois *teu/krois, ou(\s prw=tos pare/dwke *kalli=nos o( th=s e)legei/as poihth/s, h)kolou/qhsan de\ polloi/, xrhsmo\s h)=n ktl.</quote> <bibl>Str. 13. 604</bibl></cit>
+</div3>
+
+
+<div3 type="biodata">
+<cit id="tlg-0243.cit.2"><quote>fhsi\ de\ *kallisqe/nhs a(lw=nai ta\s *sa/rdeis u(po\ *kimmeri/wn prw=ton, ei)=q' u(po\ *trhrw=n kai\ *luki/wn, o(/per kai\ *kalli=non dhlou=n to\n th=s e)legei/as poihth/n, u(/stata de\ th\n e)pi\ *ku/rou kai\ *kroi/sou gene/sqai a(/lwsin. le/gontos de\ tou= *kalli/nou th\n e)/fodon tw=n *kimmeri/wn e)pi\ tou\s *)hsionh=as gegone/nai kaq' h(\n ai( *sa/rdeis e(a/lwsan, ei)ka/zousin oi( peri\ to\n *skh/yion i)asti\ le/gesqai *)hsionei=s tou\s *)asionei=s: <q>ta/xa ga\r &lt;h( *)hsioni/a w(/sper&gt; h( *mh|oni/a</q> fhsi/n <q>*)asi/a e)le/geto, kaq' o(\ kai\ *(/omhros e)/ihken: *)asi/w| e)n leimw=ni *kau+stri/ou a)mfi\ r(e/eqra.</q> a)nalhfqei=sa d' a)ciolo/gws u(/steron dia\ th\n a)reth\n th=s xw/ras h( po/lis kai\ ou)demia=s leipome/nh tw=n a)stugeito/nwn, newsti\ u(po\ seismw=n a)pe/bale pollh\n th=s katoiki/as.</quote> <bibl>Str. 13. 627</bibl></cit>
+</div3>
+</div2>
+</div1>
+</div0>
+</body>
+</text>
+</TEI.2>

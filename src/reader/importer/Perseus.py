@@ -30,6 +30,8 @@ logger = logging.getLogger(__name__)
 
 class State():
     
+    CHUNK_TYPES = ["card"]
+    
     def __init__(self, name, section_type, level):
         self.section_type = section_type
         self.name = name
@@ -38,7 +40,7 @@ class State():
     def is_chunk(self):
         if self.section_type is not None:
             return True
-        elif self.name in ["card"]:
+        elif self.name in State.CHUNK_TYPES:
             return True
         else:
             return False
@@ -549,6 +551,10 @@ class PerseusTextImporter(TextImporter):
         milestone_node -- The XML node representing the milestone
         """
         
+        # Determine if this is one of the nodes we always treat as a chunk
+        if milestone_node.attributes["unit"].value in State.CHUNK_TYPES:
+            return True
+        
         state = self.get_state_for_milestone(state_set, milestone_node)
         
         if state is not None:
@@ -914,14 +920,34 @@ class PerseusTextImporter(TextImporter):
         div_node -- A div node
         """
         
-        head = div_node.getElementsByTagName("head")
-        
-        if len(head) > 0:
-            head = head[0]
+        head = self.findTagInDivision(div_node, "head")
             
+        if head is not None:
             return self.getText(head.childNodes, True)
         
+    def findTagInDivision(self, node, tag_name, depth_limit=5, current_depth=0):
         
+        # Recursion base case:
+        if current_depth >= depth_limit:
+            return
+        
+        # Look through the children
+        for child in node.childNodes:
+            
+            if child.nodeType == minidom.Element.ELEMENT_NODE and child.tagName == tag_name:
+                return child
+            
+            elif child.nodeType == minidom.Element.ELEMENT_NODE and (child.tagName in ["milestone"] or child.tagName.startswith("div")):
+                pass #This is in a different division, so skip it
+            
+            elif len(child.childNodes) > 0:
+                # Recurse:
+                for grandchild in child.childNodes:
+                    result = self.findTagInDivision( grandchild, tag_name, depth_limit, current_depth + 1)
+                    
+                    if result:
+                        return result
+                    
     def import_body_sub_node(self, content_node, state_set, import_context=None, recurse=True, parent_node=None):
         """
         Imports the content from the children of the given node (which ought to be in the body).
