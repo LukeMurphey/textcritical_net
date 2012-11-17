@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     option_list = BaseCommand.option_list + (
         make_option("-d", "--directory", dest="directory", help="The directory containing the files to import"),
-        make_option("-o", "--overwrite", action="store_false", dest="overwrite", default=False, help="Overwrite and replace existing items")
+        make_option("-o", "--overwrite", action="store_true", dest="overwrite", default=False, help="Overwrite and replace existing items")
     )
 
     def handle(self, *args, **options):
@@ -30,8 +30,12 @@ class Command(BaseCommand):
         
         if overwrite is None:
             overwrite = False
-        else:
+        elif overwrite in [True, False]:
+            pass # Already a boolean
+        elif overwrite.lower() in ["true", "1"]:
             overwrite = True
+        else:
+            overwrite = False
         
         selection_policy = JSONImportPolicy()
         selection_policy.load_policy("reader/importer/perseus_import_policy.json")
