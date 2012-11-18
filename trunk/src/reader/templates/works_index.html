@@ -42,18 +42,25 @@
 {% block javascript %}
 <script language="javascript">
 require(["jquery", "datatables"], function($) {
+	
+	function updateFilter(){
+		textcritical.datatable.fnFilter( $('input.search-query').val() );
+	}
+	
     $(document).ready(function() {
-        datatable = $('#works_list').dataTable( {
-			            "bPaginate": true,
-			            "bLengthChange": false,
-			            "bJQueryUI": false,
-			            "bFilter": true,
-			            "bSort": true,
-			            "bInfo": true,
-			            "bAutoWidth": false
+    	textcritical.datatable = $('#works_list').dataTable( {
+						            "bPaginate": true,
+						            "bLengthChange": false,
+						            "bJQueryUI": false,
+						            "bFilter": true,
+						            "bSort": true,
+						            "bInfo": true,
+						            "bAutoWidth": false
         } );
         
-        {% if filter %}datatable.fnFilter( "{{filter|escapejs}}" );{% endif %}
+        {% if filter %}textcritical.datatable.fnFilter( "{{filter|escapejs}}" );{% endif %}
+        $('input.search-query').keyup(updateFilter);
+        $('#search').submit( function() { return false; });
         
         $('#loading').hide();
         $('#works_list').show();
