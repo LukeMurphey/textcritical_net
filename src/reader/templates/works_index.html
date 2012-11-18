@@ -47,6 +47,10 @@ require(["jquery", "datatables"], function($) {
 		textcritical.datatable.fnFilter( $('input.search-query').val() );
 	}
 	
+	function updateMainFilter(){
+		$('input.search-query').val( $('input[aria-controls="works_list"]').val() );
+	}
+	
     $(document).ready(function() {
     	textcritical.datatable = $('#works_list').dataTable( {
 						            "bPaginate": true,
@@ -61,6 +65,8 @@ require(["jquery", "datatables"], function($) {
         {% if filter %}textcritical.datatable.fnFilter( "{{filter|escapejs}}" );{% endif %}
         $('input.search-query').keyup(updateFilter);
         $('#search').submit( function() { return false; });
+        
+        $('input[aria-controls="works_list"]').keyup(updateMainFilter);
         
         $('#loading').hide();
         $('#works_list').show();
