@@ -40,7 +40,7 @@
 		                </li>
 		                   {% else %}
 		                <li class="division_{{division_part.level}}">
-		                    <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book"></i>{{division_part}}</a>
+		                    <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book {% if not USE_DARK_THEME|default:0 %}icon-white{% endif %}"></i>{{division_part}}</a>
 		                </li>
 		                   {% endif %}
 		                {% endfor %}
@@ -79,7 +79,7 @@
 	            </li>
 	               {% else %}
                 <li class="division_{{division_part.level}}">
-                    <a href="{% url read_work work.title_slug division_part.descriptor %}"><i class="icon-book"></i>{{division_part}}</a>
+                    <a href="{% url read_work work.title_slug division_part.descriptor %}"><i class="icon-book {% if USE_DARK_THEME|default:0 %}icon-white{% endif %}"></i>{{division_part}}</a>
                 </li>
 	               {% endif %}
 	            {% endfor %}

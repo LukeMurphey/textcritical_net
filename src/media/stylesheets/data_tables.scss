@@ -49,3 +49,28 @@ $hover_background_color: #F5F5F5;
     cursor: pointer;
     cursor: hand;
 }
+
+/* The following is necessary to work with darkstrap */
+$hover_background_color_dark: #222222;
+body.dark .paginate_disabled_previous, body.dark .paginate_disabled_next{
+    border-color: #666;
+    background-color: transparent;
+    &:hover {
+       background-color: $hover_background_color_dark;
+       color: #00aaff;
+    }
+}
+
+body.dark .paginate_enabled_next, body.dark .paginate_enabled_previous{
+    border-color: #666;
+    background-color: transparent;
+    &:hover {
+       background-color: $hover_background_color_dark;
+       color: #00aaff;
+    }
+}
+
+body.dark .table-hover tbody tr:hover td,
+body.dark .table-hover tbody tr:hover th {
+  background-color: #3A3A3A;
+}
