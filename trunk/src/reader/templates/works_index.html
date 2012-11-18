@@ -43,15 +43,17 @@
 <script language="javascript">
 require(["jquery", "datatables"], function($) {
     $(document).ready(function() {
-        $('#works_list').dataTable( {
-            "bPaginate": true,
-            "bLengthChange": false,
-            "bJQueryUI": false,
-            "bFilter": true,
-            "bSort": true,
-            "bInfo": true,
-            "bAutoWidth": false
+        datatable = $('#works_list').dataTable( {
+			            "bPaginate": true,
+			            "bLengthChange": false,
+			            "bJQueryUI": false,
+			            "bFilter": true,
+			            "bSort": true,
+			            "bInfo": true,
+			            "bAutoWidth": false
         } );
+        
+        {% if filter %}datatable.fnFilter( "{{filter|escapejs}}" );{% endif %}
         
         $('#loading').hide();
         $('#works_list').show();

@@ -23,8 +23,14 @@ def works_index(request):
     
     works = Work.objects.all().order_by("title")
     
+    if 'search' in request.GET:
+        search_filter = request.GET['search']
+    else:
+        search_filter = None
+    
     return render_to_response('works_index.html',
-                             {'works' : works},
+                             {'works' : works,
+                              'filter': search_filter},
                               context_instance=RequestContext(request))
     
 def get_chapter_for_division(division):
