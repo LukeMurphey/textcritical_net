@@ -7,7 +7,7 @@
 */
 /* -----------------------------------------
    Shared Styles
------------------------------------------ */
+   ----------------------------------------- */
 .header {
   background-color: #ededed;
   background-image: -ms-linear-gradient(bottom, #ededed 0%, #fefefe 100%);
@@ -17,6 +17,21 @@
   background-image: -webkit-linear-gradient(bottom, #ededed 0%, #fefefe 100%);
   background-image: linear-gradient(to top, #ededed 0%, #fefefe 100%); }
 
+/* The following is necessary to work with darkstrap */
+body.dark .pagination ul > li > a, body.dark .pagination ul > li > span {
+  background-color: transparent; }
+
+body.dark .pagination ul > li > a:hover {
+  background-color: #222222;
+  color: #00aaff; }
+
+body.dark .pagination .active a {
+  color: #fff;
+  background-color: #222222; }
+
+body.dark .pagination a {
+  border-color: #666; }
+
 /* -----------------------------------------
    Homepage
 ----------------------------------------- */
@@ -25,7 +40,7 @@
 
 /* -----------------------------------------
    Read work
------------------------------------------ */
+   ----------------------------------------- */
 .verse.number {
   font-weight: bold; }
 
@@ -120,9 +135,28 @@
   cursor: pointer;
   cursor: hand; }
 
+/* The following is necessary to work with darkstrap */
+body.dark .paginate_disabled_previous, body.dark .paginate_disabled_next {
+  border-color: #666;
+  background-color: transparent; }
+  body.dark .paginate_disabled_previous:hover, body.dark .paginate_disabled_next:hover {
+    background-color: #222222;
+    color: #00aaff; }
+
+body.dark .paginate_enabled_next, body.dark .paginate_enabled_previous {
+  border-color: #666;
+  background-color: transparent; }
+  body.dark .paginate_enabled_next:hover, body.dark .paginate_enabled_previous:hover {
+    background-color: #222222;
+    color: #00aaff; }
+
+body.dark .table-hover tbody tr:hover td,
+body.dark .table-hover tbody tr:hover th {
+  background-color: #3A3A3A; }
+
 /* -----------------------------------------
    Works index
------------------------------------------ */
+   ----------------------------------------- */
 .loading_animation {
   margin-left: auto;
   margin-right: auto;

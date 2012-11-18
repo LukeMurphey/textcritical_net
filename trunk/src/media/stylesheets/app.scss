@@ -10,7 +10,7 @@
 
 /* -----------------------------------------
    Shared Styles
------------------------------------------ */
+   ----------------------------------------- */
 .header{
     background-color: #ededed;
     background-image: -ms-linear-gradient(bottom, #EDEDED 0%, #FEFEFE 100%);
@@ -19,6 +19,25 @@
     background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #EDEDED), color-stop(1, #FEFEFE));
     background-image: -webkit-linear-gradient(bottom, #EDEDED 0%, #FEFEFE 100%);
     background-image: linear-gradient(to top, #EDEDED 0%, #FEFEFE 100%);
+}
+
+/* The following is necessary to work with darkstrap */
+body.dark .pagination ul > li > a,body.dark .pagination ul > li > span{
+	background-color: transparent;
+}
+
+body.dark .pagination ul > li > a:hover{
+	background-color: #222222;
+	color: #00aaff;
+}
+
+body.dark .pagination .active a {
+    color: #fff;
+    background-color: #222222;
+}
+
+body.dark .pagination a {
+    border-color: #666;
 }
 
 @import "home";
