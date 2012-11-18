@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from reader.importer.PerseusBatchImporter import JSONImportPolicy, PerseusBatchImporter
 
 import os
+import sys
 from optparse import make_option
 
 class Command(BaseCommand):
@@ -37,14 +38,17 @@ class Command(BaseCommand):
         else:
             overwrite = False
         
+        # Get the path to the import policy accounting for the fact that the command may be run outside of the path where manage.py resides
+        import_policy_file = os.path.join( os.path.split(sys.argv[0])[0], "reader", "importer", "perseus_import_policy.json")
+        
         selection_policy = JSONImportPolicy()
-        selection_policy.load_policy("reader/importer/perseus_import_policy.json")
-                
+        selection_policy.load_policy( import_policy_file )
+        
         perseus_batch_importer = PerseusBatchImporter(
                                                       perseus_directory     = directory,
                                                       book_selection_policy = selection_policy.should_be_processed,
                                                       overwrite_existing    = overwrite )
         
-        print "Importing files from", os.path.basename(directory)
+        print "Importing files from", directory
         perseus_batch_importer.do_import()
-        print "Files from the", os.path.basename(directory), "directory successfully imported"
+        print "Files from the", directory, "directory successfully imported"
