@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY ulcrop "" >
+<!ENTITY urcrop "" >
+<!ENTITY lpress "" >
+<!ENTITY rpress "" >
+<!ENTITY top  "" >
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+ <teiHeader type="text" status="new">
+  <fileDesc>
+   <titleStmt>
+    <title>New Testament</title>
+    <title type="sub">Machine readable text</title>
+    <editor role="editor">Brooke Foss Westcott</editor>
+    <editor role="editor"
+    >Fenton John Anthony Hort</editor>
+
+    &responsibility;
+
+    &fund.Tufts;
+
+   </titleStmt>
+
+   &Perseus.publish;
+
+   <sourceDesc>
+    <biblStruct>
+     <monogr>
+      <title>The New Testament in the original Greek</title>
+      <respStmt>
+       <resp>The text revised by</resp>
+       <name>Brooke Foss Westcott, D.D.</name>
+       <name>Fenton John Anthony Hort, D.D.</name>
+      </respStmt>
+      <imprint>
+       <pubPlace>New York</pubPlace>
+       <publisher>Harper &amp; Brothers, Franklin Square</publisher>
+       <date>1885</date>
+      </imprint>
+     </monogr>
+     <idno type="LC">26007333</idno>
+    </biblStruct>
+   </sourceDesc>
+  </fileDesc>
+  <encodingDesc>
+   <tagsDecl>
+    <rendition id="large"> </rendition>
+    <rendition id="blockquote"> </rendition>
+    <rendition id="header"> </rendition>
+    <tagUsage render="header" gi="head"> </tagUsage>
+    <tagUsage render="blockquote" gi="q"
+     >   Marks poetical language. within the running text.
+
+    </tagUsage>
+    <tagUsage render="large" gi="quote"
+     >   Marks material quoted from other biblical texts.
+
+    </tagUsage>
+   </tagsDecl>
+   <refsDecl doctype="TEI.2">
+    <state delim=" " unit="book"/>
+    <state delim=":" unit="chapter"/>
+    <state unit="verse"/>
+   </refsDecl>
+   <classDecl>
+
+    &Perseus.class;
+
+    &TLG.canon;
+
+   </classDecl>
+  </encodingDesc>
+  <profileDesc>
+   <langUsage>
+    <language id="greek" usage="100">Greek
+
+    </language>
+    <language id="en">English
+
+   </language>
+   </langUsage>
+  </profileDesc>
+  <revisionDesc>
+   <change>
+    <date>5/27/09</date>
+    <respStmt>
+     <name>RS</name>
+     <resp>(n/a)</resp>
+    </respStmt>
+    <item>  
+            $Log: nt_gk.xml,v $
+            Revision 1.1  2009-10-08 19:10:56  rsingh04
+            began reorganizing texts module by collection.  created separate work directory in texts module to keep hopper files separate from in progress files
+
+            Revision 1.16  2009/09/08 20:30:41  lcerrato
+            fixed typo
+
+            Revision 1.15  2009/06/17 14:32:20  student
+            *** empty log message ***
+
+            Revision 1.14  2009/05/27 16:11:31  rsingh04
+            added/fixed cvs log keyword
+        </item>
+   </change>
+  </revisionDesc>
+ </teiHeader>
+ <text lang="greek">
+  <body>
+   <!--<div0 type="">-->
+   <div1 type="Book" n="Matthew">
+    <pb n="3"/>
+    <head>*k*a*t*a *m*a*q*q*a*i*o*n</head>
+    <p>
+     <milestone n="1" unit="chapter"/><milestone n="1" unit="verse"/>
+     <milestone unit="para"
+      />*b*i*b*l*o*s gene/sews *)ihsou= *xristou= ui(ou= *dauei\d ui(ou= *)abraam.
+
+<milestone n="2"
+      unit="verse"/>
+     <milestone unit="para"/>*)abraa\m e)ge/nnhsen to\n *)isaa/k,
+
+<milestone unit="para"
+      />*)isaa\k de\ e)ge/nnhsen to\n *)iakw/b,
+
+<milestone unit="para"
+      />*)iakw\b de\ e)ge/nnhsen to\n *)iou/dan kai\ tou\s a)delfou\s au)tou=,
+
+<milestone n="3"
+      unit="verse"/>
+     <milestone unit="para"
+      />*)iou/das de\ e)ge/nnhsen to\n *fare\s kai\ to\n *zara\ e)k th=s *qa/mar,
+
+<milestone
+      unit="para"/>*fare\s de\ e)ge/nnhsen to\n *(esrw/m,
+
+<milestone unit="para"
+      />*(esrw\m de\ e)ge/nnhsen to\n *)ara/m,
+
+<milestone n="4" unit="verse"/>
+     <milestone unit="para"/>*)ara\m de\ e)ge/nnhsen to\n *)aminada/b,
+
+<milestone unit="para"
+      />*)aminada\b de\ e)ge/nnhsen to\n *naassw/n,
+</p>
+</div1>
+</body>
+</text>
+</TEI.2>
