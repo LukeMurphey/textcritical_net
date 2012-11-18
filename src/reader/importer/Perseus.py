@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 class State():
     
-    CHUNK_TYPES = ["card"]
+    CHUNK_TYPES = ["card", "chapter"]
     
     def __init__(self, name, section_type, level):
         self.section_type = section_type

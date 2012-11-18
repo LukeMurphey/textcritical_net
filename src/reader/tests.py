@@ -563,12 +563,28 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        #print chapters[0].original_content
+        self.assertEquals( divisions.count(), 6) # Was 3 before cards are always treated as chunks
+        self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 0)
+        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
+        self.assertEquals( Verse.objects.filter(division=divisions[2]).count(), 0)
+    
+    def test_load_book_no_chunks(self):
+        # See bug #446, http://lukemurphey.net/issues/446
+        self.importer.state_set = 0
         
-        self.assertEquals( divisions.count(), 3)
-        self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 1)
-        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 0)
-        self.assertEquals( Verse.objects.filter(division=divisions[2]).count(), 1)
+        book_xml = self.load_test_resource('nt_gk.xml')
+        book_doc = parseString(book_xml)
+        
+        work = self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=work)
+        
+        self.assertEquals( divisions[0].original_title, "*k*a*t*a *m*a*q*q*a*i*o*n")
+        
+        self.assertEquals( divisions.count(), 2) # Was 3 before cards are always treated as chunks
+        self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 0)
+        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 4)
+    
     
     def test_load_book_merged_state_set(self):
         
