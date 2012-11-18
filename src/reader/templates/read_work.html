@@ -47,7 +47,7 @@
                     </ul>
                 {% endcomment %}
                 
-                <button class="btn {% if not divisions %}disabled{% endif %}" data-toggle="button" id="show_table_of_contents">Table of Contents</button>
+                <button class="btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show_table_of_contents">Table of Contents</button>
                 <button id="align_break" class="btn"><i class="icon-align-left"></i></button>
             </div>
             {% comment %}
@@ -67,7 +67,7 @@
         ##############################
         {% endcomment %}
         {% load reader_extras %}
-        {% if divisions %}
+        {% if divisions and divisions|length > 1 %}
         <div class="table_of_contents ">
             {% comment %}<h2><small>Table of Contents</small></h2>{% endcomment %}
 	        <ul class="nav nav-list">
