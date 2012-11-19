@@ -165,7 +165,6 @@
         "language" : "Greek",
         "title" : "Quomodo adolescens poetas audire debeat",
         "import_parameters" : {
-            "ignore_division_markers" : true,
             "state_set" : 0
         }
     },
@@ -234,15 +233,6 @@
     {
         "author" : "Nigrinus",
         "language" : "Greek",
-        "import_parameters" : {
-            "ignore_division_markers" : true,
-            "state_set" : 0
-        }
-    },
-    {
-        "author" : "Plutarch",
-        "language" : "Greek",
-        "title" : "Quomodo adolescens poetas audire debeat",
         "import_parameters" : {
             "ignore_division_markers" : true,
             "state_set" : 0
