@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2
+  PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+   <teiHeader type="text" status="new">
+      <fileDesc>
+         <titleStmt>
+            <title>Quomodo adolescens poetas audire debeat</title>
+            <title type="sub">Machine readable text</title>
+            <author n="Plut.">Plutarch</author>
+            <editor role="editor" n="Teubner">Gregorius N. Bernardakis</editor>&responsibility;&fund.NEH;</titleStmt>
+         <extent/>&Perseus.publish;<sourceDesc>
+            <biblStruct>
+               <analytic/>
+               <monogr>
+                  <author>Plutarch</author>
+                  <title>Moralia</title>
+                  <editor role="editor">Gregorius N. Bernardakis</editor>
+                  <imprint>
+                     <pubPlace>Leipzig</pubPlace>
+                     <publisher>Teubner</publisher>
+                     <date>1888</date>
+                  </imprint>
+                  <biblScope type="volume">1</biblScope>
+               </monogr>
+            </biblStruct>
+         </sourceDesc>
+      </fileDesc>
+      <encodingDesc>
+         <editorialDecl>
+            <correction status="high" method="silent">
+               <p>optical character recognition</p>
+            </correction>
+         </editorialDecl>
+         <refsDecl doctype="TEI.2">
+            <state unit="chapter" delim="."/>
+            <state unit="section"/>
+         </refsDecl>
+         <refsDecl doctype="TEI.2">
+            <state unit="stephpage" n="chunk"/>
+         </refsDecl>
+      </encodingDesc>
+      <profileDesc>
+         <langUsage>
+            <language id="greek">Greek</language>
+         </langUsage>
+      </profileDesc>
+      <revisionDesc>
+         <change>
+            <date>5/10</date>
+            <respStmt>
+               <name>RS</name>
+               <resp/>
+            </respStmt>
+            <item>tagged and parsed</item>
+         </change>
+      </revisionDesc>
+   </teiHeader>
+   <text>
+      <body>
+         <pb id="v.1.p.33"/>
+         <div1 type="chapter">
+            <div2 type="section" n="1">
+               <milestone unit="stephpage" id="stephpage-14d" n="14d"/>
+               <p>ei) me/n, w(s *filo/cenus o( poihth\s e)/legen, w)=
+*ma/rke *sh/date, tw=n krew=n ta\ mh\ kre/a h(/dista/ e)sti
+<milestone unit="stephpage" id="stephpage-14e" n="14e"/> kai\ tw=n i)xqu/wn oi( mh\ i)xqu/es, e)kei/nois a)pofai/nesqai parw=men oi(=s o( *ka/twn e)/fh th=s kardi/as th\n
+<milestone unit="tlnum" n="5"/>
+u(perw/|an eu)aisqhtote/ran u(pa/rxein. o(/ti de\ tw=n e)n filosofi/a| legome/nwn oi( sfo/dra ne/oi toi=s mh\ dokou=si
+filoso/fws mhd' a)po\ spoudh=s le/gesqai xai/rousi
+ma=llon kai\ pare/xousin u(phko/ous e(autou\s kai\ xeiroh/qeis, dh=lo/n e)stin h(mi=n. ou) ga\r mo/non ta\
+<milestone unit="tlnum" n="10"/>*ai)sw/peia muqa/ria kai\ ta\s poihtika\s u(poqe/seis a)lla\
+kai\ to\n *)/abarin to\n *(hraklei/dou kai\ to\n *lu/kwna to\n *)ari/stwnos dierxo/menoi kai\ ta\ peri\ tw=n yuxw=n do/gmata memigme/na muqologi/a| meq' h(donh=s e)nqousiw=si.
+<milestone unit="stephpage" id="stephpage-14f" n="14f"/> dio\ dei= mh\ mo/non e)n tai=s peri\ e)dwdh\n kai\
+<milestone unit="tlnum" n="15"/> po/sin h(donai=s diafula/ttein eu)sxh/monas au)tou/s, e)/ti
+de\ ma=llon e)n tai=s a)kroa/sesin kai\ a)nagnw/sesin e)qi/zein, w(/sper o)/yw| xrwme/nous metri/ws tw=| te/rponti,
+<pb id="v.1.p.34"/>
+to\ xrh/simon a)p' au)tou= kai\ to\ swth/rion diw/kein. ou)/te ga\r po/lin ai( kekleime/nai pu/lai throu=sin a)na/lwton,
+a)\n dia\ mia=s parade/chtai tou\s polemi/ous, ou)/te ne/on ai( peri\ ta\s a)/llas h(dona\s e)gkra/teiai sw/|zousin,
+<milestone unit="tlnum" n="5"/>
+                  <milestone unit="stephpage" id="stephpage-15a" n="15a"/> a)/n ge di' a)koh=s la/qh| proe/menos au(to/n, a)ll' o(/son ma=llon au(/th tou= fronei=n kai\ logi/zesqai pefuko/tos a(/ptetai, tosou=to ma=llon a)melhqei=sa bla/ptei kai\ diafqei/rei to\n paradeca/menon. e)pei\ toi/nun
+ou)/t' i)/sws dunato/n e)stin ou)/t' w)fe/limon poihma/twn
+</p>
+</div2>
+</div1>
+</body>
+</text>
+</TEI.2>

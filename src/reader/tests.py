@@ -601,7 +601,22 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         self.assertEquals( divisions.count(), 2)
         self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 5)
         self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 5)
-    
+        
+    def test_load_book_no_verses2(self):
+        # See bug #446, http://lukemurphey.net/issues/446
+        self.importer.state_set = 0
+        self.importer.ignore_division_markers = True
+        
+        book_xml = self.load_test_resource('plut.068_teubner_gk.xml')
+        book_doc = parseString(book_xml)
+        
+        work = self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=work)
+        
+        self.assertEquals( divisions.count(), 2)
+        self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 0)
+        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
     
     def test_load_book_merged_state_set(self):
         
