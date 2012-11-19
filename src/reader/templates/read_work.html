@@ -105,7 +105,7 @@
         # Chapter division indicator
         ##############################
         {% endcomment %}
-        {% if chapter.parent_division %}
+        {% if chapter.parent_division and divisions and divisions|length > 1 %}
         <h2>{{chapter.parent_division}}</h2>
         {% endif %}
         
