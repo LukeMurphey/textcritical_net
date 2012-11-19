@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+<teiHeader type="text" status="new">
+<fileDesc>
+<titleStmt>
+<title>Characters</title>
+<author>Theophrastus</author>
+&responsibility;
+&fund.Tufts;
+</titleStmt>
+&Perseus.publish;
+
+<sourceDesc>
+<biblStruct>
+<monogr>
+<title>Characters</title>
+<author>Theophrastus</author>
+<editor role="editor">Hermann Diels</editor>
+<imprint>
+<pubPlace>Oxford</pubPlace>
+<publisher>Oxford University Press</publisher>
+<date>1909</date>
+</imprint>
+</monogr>
+</biblStruct>
+</sourceDesc>
+</fileDesc>
+
+<encodingDesc>
+<editorialDecl>
+<correction method="silent" status="medium">&Perseus.DE;</correction>
+</editorialDecl>
+<refsDecl doctype="TEI.2">
+<state n="chunk" unit="chapter"/>
+<state unit="section"/>
+</refsDecl>
+</encodingDesc>
+
+<profileDesc>
+<langUsage>
+<language id="greek">Greek</language>
+<language id="en">English</language>
+<language id="la">Latin</language>
+<language id="de">German</language>
+<language id="fr">French</language>
+<language id="it">Italian</language>
+</langUsage>
+</profileDesc>
+
+<revisionDesc>
+<change><date>19-Jul-02</date>
+<respStmt><name>AEM</name><resp>markup</resp></respStmt>
+<item>Initial markup
+</item>
+</change>
+</revisionDesc>
+
+</teiHeader>
+<text lang="greek">
+<body>
+<pb/>
+<div1 type="chapter" n="0">
+<head>*Prooi/mion</head>
+<p><milestone n="1" unit="section"/>*)/hdh me\n kai\ pro/teron polla/kis e)pisth/sas th\n dia/noian
+e)qau/masa, i)/sws de\ ou)de\ pau/somai qauma/zwn, ti/ ga\r dh/pote,
+th=s *(ella/dos u(po\ to\n au)to\n a)e/ra keime/nhs kai\ pa/ntwn tw=n
+*(ellh/nwn o(moi/ws paideuome/nwn, sumbe/bhken h(mi=n ou) th\n
+<pb/><milestone n="2" unit="section"/>au)th\n ta/cin tw=n tro/pwn e)/xein. e)gw\ ga/r, w)= *polu/kleis,
+sunqewrh/sas e)k pollou= xro/nou th\n a)nqrwpi/nhn fu/sin kai\
+bebiwkw\s e)/th e)nenh/konta e)nne/a, e)/ti de\ w(milhkw\s pollai=s
+te kai\ pantodapai=s fu/sesi kai\ parateqeame/nos e)c a)kribei/as
+pollh=s tou/s te a)gaqou\s tw=n a)nqrw/pwn kai\ tou\s fau/lous
+u(pe/labon dei=n suggra/yai, a(\ e(ka/teroi au)tw=n e)pithdeu/ousin
+<milestone n="3" unit="section"/>e)n tw=| bi/w|. e)kqh/sw de/ soi kata\ ge/nos, o(/sa te tugxa/nei
+ge/nh tro/pwn tou/tois proskei/mena kai\ o(\n tro/pon th=| oi)konomi/a|
+xrw=ntai: u(polamba/nw ga/r, w)= *polu/kleis, tou\s ui(ei=s
+h(mw=n belti/ous e)/sesqai, kataleifqe/ntwn au)toi=s u(pomnhma/twn
+toiou/twn, oi(=s paradei/gmasi xrw/menoi ai(rh/sontai
+toi=s eu)sxhmonesta/tois sunei=nai/ te kai\ o(milei=n, o(/pws mh\
+<milestone n="4" unit="section"/>katadee/steroi w)=sin au)tw=n. tre/yomai de\ h)/dh e)pi\ to\n lo/gon:
+so\n de\ parakolouqh=sai/ te o)rqw=s kai\ ei)dh=sai, ei) o)rqw=s
+le/gw. prw=ton me\n ou)=n poih/somai <supplied>to\n lo/gon a)po\</supplied> tw=n
+th\n ei)rwnei/an e)zhlwko/twn, a)fei\s to\ prooimia/zesqai kai\
+<milestone n="5" unit="section"/>polla\ peri\ tou= pra/gmatos le/gein: kai\ a)/rcomai prw=ton a)po\
+th=s ei)rwnei/as kai\ o(riou=mai au)th/n, ei)=q' ou(/tws to\n ei)/rwna
+die/ceimi, poi=o/s ti/s e)sti kai\ ei)s ti/na tro/pon katenh/nektai: kai\
+ta\ a)/lla dh\ tw=n paqhma/twn, w(/sper u(peqe/mhn, peira/somai
+kata\ ge/nos fanera\ kaqista/nai.
+<pb/></p></div1>
+<div1 type="chapter" n="1">
+<head>*ei)rwnei/as *a'</head>
+<p><milestone n="1" unit="section"/>*(h me\n ou)=n ei)rwnei/a do/ceien a)\n ei)=nai, w(s tu/pw| labei=n,
+prospoi/hsis e)pi\ xei=ron pra/cewn kai\ lo/gwn, o( de\ ei)/rwn
+<milestone n="2" unit="section"/>toiou=to/s tis, oi(=os proselqw\n toi=s e)xqroi=s e)qe/lein lalei=n,
+ou) misei=n: kai\ e)painei=n paro/ntas, oi(=s e)pe/qeto la/qra, kai\
+tou/tois sullupei=sqai h(ttwme/nois: kai\ suggnw/mhn de\ e)/xein
+toi=s au(to\n kakw=s le/gousi kai\ e)pi\ toi=s kaq' e(autou= legome/nois.
+<milestone n="3" unit="section"/>kai\ pro\s tou\s a)dikoume/nous kai\ a)ganaktou=ntas pra/ws
+diale/gesqai: kai\ toi=s e)ntugxa/nein kata\ spoudh\n boulome/nois
+<milestone n="4" unit="section"/>prosta/cai e)panelqei=n. kai\ mhde\n w(=n pra/ttei o(mologh=sai,
+a)lla\ fh=sai bouleu/esqai: kai\ prospoih/sasqai a)/rti paragegone/nai
+<milestone n="5" unit="section"/>kai\ o)ye\ gene/sqai au)to\n kai\ malakisqh=nai. kai\
+pro\s tou\s daneizome/nous kai\ e)rani/zontas . . . w(s ou) pwlei=, kai\
+mh\ pwlw=n fh=sai pwlei=n: kai\ a)kou/sas ti mh\ prospoiei=sqai,
+kai\ i)dw\n fh=sai mh\ e(orake/nai, kai\ o(mologh/sas mh\ memnh=sqai:
+kai\ ta\ me\n ske/yasqai fa/skein, ta\ de\ ou)k ei)de/nai, ta\ de\
+<pb/>qauma/zein, ta\ d' h)/dh pote\ kai\ au)to\s ou(/tws dialogi/sasqai.
+</p>
+</div1>
+</body>
+</text>
+</TEI.2>

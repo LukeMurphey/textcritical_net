@@ -649,7 +649,7 @@ class PerseusTextImporter(TextImporter):
         
         if verses_created == 0:
             self.work.delete() # Delete the work just in case the transaction doesn't get rolled back
-            raise Exception("No divisions were discovered, title=%s" % (self.work.title) )
+            raise Exception("No verses were discovered, title=%s" % (self.work.title) )
         else:
             logger.info("Successfully imported verse of work, verse_count=%i, title=%s", verses_created, self.work.title) 
         
@@ -812,6 +812,9 @@ class PerseusTextImporter(TextImporter):
             # This determines if the content is ought to be attached to a verse
             attach_xml_content = True
             
+            # This indicates if we ought to recurse down this node
+            recurse_down_node = recurse
+            
             if node.nodeType == node.TEXT_NODE:
                 
                 # We need to see a milestone before we can set the text for a verse
@@ -861,8 +864,6 @@ class PerseusTextImporter(TextImporter):
                 
                 logger.debug("Making verse %s in division %s of %s" % (import_context.verse.indicator, str(import_context.division.sequence_number), self.work.title) )
                 
-                
-                
             elif node.tagName in ["milestone"]:
                 # Include:
                 #  1) milestone nodes that are not in the current state set in the XML
@@ -871,29 +872,26 @@ class PerseusTextImporter(TextImporter):
             elif node.tagName == "list" and "type" in node.attributes.keys() and node.attributes["type"].value == "toc":
                 logger.debug("Skipping attachment of a %s node", node.tagName)
                 attach_xml_content =  False
-                recurse = False
+                recurse_down_node = False
                 
             elif node.tagName == "note" and "type" in node.attributes.keys() and node.attributes["type"].value == "title":
                 logger.debug("Skipping attachment of a %s node", node.tagName)
                 attach_xml_content =  False
-                recurse = False
+                recurse_down_node = False
                 
             elif node.tagName in ["head"]:
                 # Don't include: 
                 #  1) head tag since we already pulled this in when we got the division tag
                 #  2) notes since we don't handle them yet
                 attach_xml_content =  False
-                recurse = False
-                
-            elif node.tagName.startswith("div"):
-                attach_xml_content =  True
+                recurse_down_node = False
                 
             # Attach the content to the division if it is for the current verse
             if attach_xml_content:
                 next_level_node = import_context.append_xml(node, parent_node)
                 
             # Recurse on the child-nodes
-            if recurse:
+            if recurse_down_node:
                 verses_created_temp, created_verse_node = self.import_verse_content(division, node, state_set, import_context, parent_node=next_level_node, recurse=True)
                 verses_created = verses_created + verses_created_temp
                 
@@ -1074,9 +1072,6 @@ class PerseusTextImporter(TextImporter):
                 logger.debug("Making division at level %i in %s" % (level, self.work.title))
                 
                 append_xml_content = False
-            #elif node.tagName == "note":
-                # We don't yet handle these types of nodes so don't try to get the text under them
-                #recurse = False
                 
             # Attach the content to the division if it is for the current division
             if append_xml_content:
