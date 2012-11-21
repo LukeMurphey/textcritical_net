@@ -1,9 +1,11 @@
 /* -------------------------------------------------- 
    Table of Contents
------------------------------------------------------
+   --------------------------------------------------
 :: Shared Styles
 :: Home page
 :: Read Work
+:: Data Tables
+:: Works Index
 */
 /* -----------------------------------------
    Shared Styles
@@ -34,9 +36,14 @@ body.dark .pagination a {
 
 /* -----------------------------------------
    Homepage
------------------------------------------ */
+   ----------------------------------------- */
 #title_section {
   text-align: center; }
+
+.hero-unit.main_background {
+  background-image: url("/media/images/background.png");
+  background-position: center;
+  color: white; }
 
 /* -----------------------------------------
    Read work
@@ -73,6 +80,9 @@ body.dark .pagination a {
   border-radius: 3px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px; }
+
+body.dark .highlighted {
+  background-color: #454545; }
 
 .division_2 {
   padding-left: 24px; }
@@ -175,6 +185,9 @@ body.dark .dataTables_filter > label > input {
   background-repeat: no-repeat;
   background-position: 1px 2px;
   background-image: url(../images/ajax_loader.gif); }
+
+.dark .loading_animation {
+  background-image: url(../images/ajax_loader_dark.gif); }
 
 #works_list {
   display: none; }
