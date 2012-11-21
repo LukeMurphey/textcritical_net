@@ -33,10 +33,13 @@
     &:hover { color: #08C; }
 }
 
-
 .highlighted{
     background-color: #EEE;
     @include rounded(3px);
+}
+
+body.dark .highlighted{
+    background-color: #454545;
 }
 
 @for $i from 2 through 5 {
