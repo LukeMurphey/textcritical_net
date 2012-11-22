@@ -52,7 +52,7 @@ class WorkAdmin(admin.ModelAdmin):
     
     fieldsets = (
         (None, {
-            'fields': ( ('title', 'title_slug'), 'language', 'work_type', ('authors', 'translators'), 'descriptor', 'date_written'),
+            'fields': ( ('title', 'title_slug'), 'language', 'work_type', ('authors', 'editors'), 'descriptor', 'date_written'),
         }),
     )
     
