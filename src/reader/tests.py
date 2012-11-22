@@ -425,6 +425,25 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         self.assertEquals( author, "Aristotle")
         
+    def test_get_editors(self):
+        
+        book_xml = self.load_test_resource('1_gk.xml')
+        book_doc = parseString(book_xml)
+        
+        editors = PerseusTextImporter.get_editors(book_doc)
+        
+        self.assertEquals( editors[0], "J. M. Edmonds")
+        
+    def test_get_editors_multiple(self):
+        
+        book_xml = self.load_test_resource('nt_gk.xml')
+        book_doc = parseString(book_xml)
+        
+        editors = PerseusTextImporter.get_editors(book_doc)
+        
+        self.assertEquals( editors[0], "Brooke Foss Westcott")
+        self.assertEquals( editors[1], "Fenton John Anthony Hort")
+    
     def test_get_author_no_title_stmt(self):
         
         book_xml = self.load_test_resource('aristot.vir_gk.xml')
@@ -510,6 +529,23 @@ u(po/qesis, ou(/tws par' h(mi=n h( th=s i(erwsu/nhs metousi/a tekmh/rio/n
 e)stin ge/nous lampro/thtos. </p></verse>"""
         
         self.assertEquals( verses[0].original_content, expected_content)
+    
+    def test_load_book_editors(self):
+        
+        # Pre-make the author in order to see if the importer is smart enough to not create a duplicate
+        author = Author()
+        author.name = "Fenton John Anthony Hort"
+        author.save()
+        
+        book_xml = self.load_test_resource('nt_gk.xml')
+        book_doc = parseString(book_xml)
+        self.importer.import_xml_document(book_doc)
+        
+        self.assertEquals( Author.objects.filter(name="Fenton John Anthony Hort").count(), 1)
+        
+        self.assertEquals( self.importer.work.editors.all().count(), 2 )
+        self.assertEquals( self.importer.work.editors.filter(name="Brooke Foss Westcott").count(), 1 )
+        self.assertEquals( self.importer.work.editors.filter(name="Fenton John Anthony Hort").count(), 1 )
     
     def test_load_book_alternate_state_set(self):
         self.importer.state_set = 1  #Using Whiston sections as opposed to the defaults
@@ -605,7 +641,7 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
     def test_load_book_no_verses2(self):
         # See bug #446, http://lukemurphey.net/issues/446
         self.importer.state_set = 0
-        self.importer.ignore_division_markers = True
+        self.importer.ignore_division_markers = False
         
         book_xml = self.load_test_resource('plut.068_teubner_gk.xml')
         book_doc = parseString(book_xml)

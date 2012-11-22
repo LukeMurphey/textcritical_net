@@ -40,7 +40,7 @@ class Work(models.Model):
     
     work_type    = models.ForeignKey(WorkType, blank=True, null=True)
     authors      = models.ManyToManyField(Author, blank=True)
-    translators  = models.ManyToManyField(Author, blank=True, related_name="translators")
+    editors      = models.ManyToManyField(Author, blank=True, related_name="editors")
     descriptor   = models.CharField(max_length=30, blank=True)
     copyright    = models.CharField(max_length=200, blank=True)
     date_written = models.DateTimeField('date written', blank=True, null=True)
