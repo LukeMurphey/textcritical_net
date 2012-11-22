@@ -394,6 +394,34 @@ class PerseusTextImporter(TextImporter):
             return None
     
     @staticmethod
+    def get_editors( tei_document ):
+        """
+        Get the editors from the TEI document.
+        
+        Arguments:
+        tei_document -- A TEI document
+        """
+        
+        tei_header = tei_document.getElementsByTagName("teiHeader")
+        
+        if len(tei_header) > 0:
+            tei_header = tei_header[0]
+        else:
+            return
+        
+        # Try to get the editor from the teiHeader
+        editors = []
+        editor_nodes = tei_header.getElementsByTagName("editor")
+        
+        if len(editor_nodes) > 0:
+            for ed in editor_nodes:
+                editors.append( PerseusTextImporter.getText(ed.childNodes) )
+        else:
+            return None
+        
+        return editors
+    
+    @staticmethod
     def get_author( tei_document ):
         """
         Get the author from the TEI document.
@@ -611,6 +639,16 @@ class PerseusTextImporter(TextImporter):
         # Determine if the division titles should be set to the line numbers
         if self.use_line_count_for_divisions is None:
             self.use_line_count_for_divisions = PerseusTextImporter.use_line_numbers_for_division_titles(tei_header)
+        
+        # Get the editors
+        editor_names = PerseusTextImporter.get_editors(document)
+        
+        # Add the editors only if we got some
+        if editor_names is not None:
+            
+            for editor_name in editor_names:
+                editor = self.make_author(editor_name)
+                self.work.editors.add(editor)
         
         # Get the author
         author_name = PerseusTextImporter.get_author(document)
