@@ -52,14 +52,6 @@
             "state_set" : 1,
             "ignore_division_markers" : true
         }
-    }, 
-    {
-        "author" : "Aeschylus",
-        "title" : "Agamemnon",
-        "language" : "Greek_",
-        "import_parameters" : {
-            "state_set" : 1
-        }
     },
     {
         "author" : "Aristophanes",
@@ -214,16 +206,8 @@
         }
     },
     {
-        "author" : "Hesiod",
-        "language" : "Greek",
-        "import_parameters" : {
-            "use_line_count_for_divisions" : true,
-            "ignore_division_markers" : true,
-            "state_set" : 0
-        }
-    },
-    {
-        "author" : "Homer",
+        "author" : "Apollonius Rhodius",
+        "title"  : "Argonautica",
         "language" : "Greek",
         "import_parameters" : {
             "use_line_count_for_divisions" : true,
@@ -231,10 +215,29 @@
         }
     },
     {
-        "author" : "Nigrinus",
+        "author" : "Sophocles",
+        "title"  : "Ajax",
         "language" : "Greek",
         "import_parameters" : {
             "ignore_division_markers" : true,
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Sophocles",
+        "title"  : "Trachiniae",
+        "language" : "Greek",
+        "import_parameters" : {
+            "ignore_division_markers" : true,
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Anonymous",
+        "title"  : "Homeric Hymns",
+        "language" : "Greek",
+        "import_parameters" : {
+            "use_line_count_for_divisions" : true,
             "state_set" : 0
         }
     },
