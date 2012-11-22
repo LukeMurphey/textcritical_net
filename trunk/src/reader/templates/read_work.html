@@ -5,8 +5,8 @@
            {% for warning in warnings %}
            <div class="alert alert-block">
 		    <button type="button" class="close" data-dismiss="alert">x</button>
-		    <h4>Warning!</h4>
-		    {{warning}}
+		    <strong>{{warning.0}}:</strong>
+		    {{warning.1}}
 		   </div>
            {% endfor %}
     

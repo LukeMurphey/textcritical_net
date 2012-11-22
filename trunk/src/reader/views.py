@@ -89,7 +89,7 @@ def read_work(request, author=None, language=None, title=None, chapter_indicator
         
     # Note a warning if were unable to find the given chapter
     if division is not None and len(division) == 0 and (chapter_indicator is not None or division_indicator is not None):
-        warnings.append("The place in the text you asked for could not be found.")
+        warnings.append( ("Section not found", "The place in the text you asked for could not be found.") )
     
     # Start the user off at the beginning of the work
     if division is None or len(division) == 0:
