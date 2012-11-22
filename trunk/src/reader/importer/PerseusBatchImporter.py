@@ -230,13 +230,7 @@ class PerseusFileProcessor():
         Get the author of the work.
         """
         
-        tei_header_nodes = document_xml.getElementsByTagName("teiHeader")
-        
-        if len(tei_header_nodes) > 0:
-            bibl_struct_nodes = tei_header_nodes[0].getElementsByTagName("biblStruct")
-        
-            if len(bibl_struct_nodes) > 0:
-                return PerseusTextImporter.get_author_from_bibl_struct(bibl_struct_nodes[0])
+        return PerseusTextImporter.get_author(document_xml)
     
     def get_language(self, document_xml):
         """
