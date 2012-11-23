@@ -530,6 +530,51 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         self.assertEquals( verses[0].original_content, expected_content)
     
+    def test_load_book_multiple_texts(self):
+        """
+        Make sure works that include multiple text nodes are imported correctly,
+        
+        See #459, http://lukemurphey.net/issues/459
+        """
+        
+        # This work has multiple text nodes. See if they are imported as separate units
+        self.importer.state_set = 0
+        book_xml = self.load_test_resource('apollod_gk.xml')
+        book_doc = parseString(book_xml)
+        self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=self.importer.work)
+        verses = Verse.objects.filter(division__work=self.importer.work)
+        
+        # Make sure no divisions are marked readable if they have no verses
+        for division in divisions:
+            if division.readable_unit:
+                self.assertGreater( Verse.objects.filter(division=division).count(), 0)
+        
+        self.assertEquals( divisions[0].descriptor, "Library")
+        
+        # 35: 28 sections + 2 text nodes + 3 chapters + 2 div1
+        self.assertEquals( divisions.count(), 35)
+        self.assertEquals( verses.count(), 28)
+        
+    def test_load_book_texts_with_head(self):
+        
+        # This work has multiple text nodes. See if they are imported as separate units
+        self.importer.state_set = 0
+        book_xml = self.load_test_resource('appian.fw_gk.xml')
+        book_doc = parseString(book_xml)
+        self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=self.importer.work)
+        verses = Verse.objects.filter(division__work=self.importer.work)
+        
+        self.assertEquals( divisions[0].descriptor, "Reg.")
+        self.assertEquals( divisions[0].original_title, "*e*k *t*h*s *b*a*s*i*l*i*k*h*s.")
+        
+        # 2: 1 text nodes, 0 chapters, 1 div1
+        self.assertEquals( divisions.count(), 2)
+        self.assertEquals( verses.count(), 2)
+    
     def test_load_book_editors(self):
         
         # Pre-make the author in order to see if the importer is smart enough to not create a duplicate

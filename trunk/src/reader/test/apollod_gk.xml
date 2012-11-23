@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+  <teiHeader type="text" status="new">
+    <fileDesc>
+      <titleStmt>
+    <title>Library and Epitome</title>
+    <title type="sub">Machine readable text</title>
+    <author>Apollodorus</author>
+    <editor role="editor">Sir James George Frazer</editor>
+    &responsibility;
+    &fund.AnnCPB;
+      </titleStmt>
+    &Perseus.publish;
+      <sourceDesc>
+    <bibl>
+<author>Apollodorus</author>
+<title>Apollodorus, The Library, with an English Translation by Sir James George Frazer, F.B.A., F.R.S. in 2 Volumes.</title>
+<publisher>Cambridge, MA, Harvard University Press; London, William Heinemann Ltd.</publisher>
+<date>1921</date>
+Includes Frazer's notes.
+        </bibl>
+      </sourceDesc>
+    </fileDesc>
+    <encodingDesc>
+      <refsDecl doctype="TEI.2">
+    <state unit="text"/>
+    <state delim="." unit="book"/>
+    <state delim="." unit="chapter"/>
+    <state n="chunk" unit="section"/>
+      </refsDecl>
+      <refsDecl doctype="TEI.2">
+    <state delim="." unit="volume"/>
+    <state unit="page"/>
+      </refsDecl>
+    </encodingDesc>
+    <profileDesc>
+      <langUsage>
+        <language id="greek">Greek
+        </language><language id="en">English
+      </language></langUsage>
+    </profileDesc>
+    <revisionDesc>
+      <change><date>1991</date>
+    <respStmt><resp>tagging</resp><name>Lauren Burka</name><name>Chiara Thayer</name></respStmt>
+    <item>Data keyboarded in the Philippines. Basic SGML tagging done by Lauren Burka and Chiara Thayer</item>
+      </change>
+      <change><date>8/91</date>
+    <respStmt><resp>ed.</resp><name>Elli Mylonas</name></respStmt>
+    <item>Revise DTDs and recheck texts.</item>
+      </change>
+        <change><date>5/27/09</date><respStmt><name>RS</name><resp>(n/a)</resp></respStmt>
+            <item>  
+                $Log: apollod_gk.xml,v $
+                Revision 1.1  2009-10-07 21:00:36  rsingh04
+                began reorganizing texts module by collection.  created separate work directory in texts module to keep hopper files separate from in progress files
+
+                Revision 1.4  2009/06/19 19:02:02  lcerrato
+                fixed bad bibls
+
+                Revision 1.3  2009/05/27 15:55:12  rsingh04
+                added cvs log keyword
+
+            </item>
+        </change>
+    </revisionDesc>
+  </teiHeader>
+<text lang="greek">
+    <group>
+<text n="Library">
+    <body>
+        <div1 type="book" n="b1">
+<milestone n="c1" unit="chapter"/><milestone n="m1" unit="section"/><milestone n="1" unit="volume"/><pb n="2"/><p>*ou)rano\s prw=tos tou= panto\s e)duna/steuse ko/smou. gh/mas de\ *gh=n e)te/knwse prw/tous tou\s e(kato/gxeiras prosagoreuqe/ntas, *bria/rewn *gu/hn<!--<NOTE ED="Frazer">1</NOTE>--> *ko/tton, oi(\ mege/qei te a)nupe/rblhtoi kai\ duna/mei kaqeisth/kesan, xei=ras me\n a)na\ e(kato\n kefala\s de\ a)na\ penth/konta e)/xontes.
+<milestone n="2" unit="section"/>meta\ tou/tous de\ <pb n="4"/>au)tw=| teknoi= *gh= *ku/klwpas, *)/arghn<!--<NOTE ED="Frazer">1</NOTE>--> *stero/phn *bro/nthn, w(=n e(/kastos ei)=xen e(/na o)fqalmo\n e)pi\ tou= metw/pou. a)lla\ tou/tous me\n *ou)rano\s dh/sas ei)s *ta/rtaron e)/rriye &lpar;to/pos de\ ou(=tos e)rebw/dhs e)sti\n e)n *(/aidou, tosou=ton a)po\ gh=s e)/xwn dia/sthma o(/son a)p' ou)ranou= gh=&rpar;,
+<milestone n="3" unit="section"/>teknoi= de\ au)=qis e)k *gh=s pai=das me\n tou\s *tita=nas prosagoreuqe/ntas, *)wkeano\n *koi=on *(uperi/ona *krei=on *)iapeto\n kai\ new/taton<!--<NOTE ED="Frazer">1</NOTE>--> a(pa/ntwn *kro/non, qugate/ras de\ ta\s klhqei/sas *titani/das, *thqu\n *(re/an *qe/min *mnhmosu/nhn *foi/bhn *diw/nhn *qei/an.
+<milestone n="4" unit="section"/></p><p>a)ganaktou=sa de\ *gh= e)pi\ th=| a)pwlei/a| tw=n ei)s *ta/rtaron r(ife/ntwn<!--<NOTE ED="Frazer">3</NOTE>--> pai/dwn pei/qei tou\s *tita=nas e)piqe/sqai tw=| patri/, kai\ di/dwsin a)damanti/nhn a(/rphn *kro/nw|. oi( de\ *)wkeanou= xwri\s e)piti/qentai, kai\ *kro/nos a)potemw\n ta\ ai)doi=a tou= patro\s ei)s th\n qa/lassan a)fi/hsen. e)k de\ tw=n stalagmw=n tou= r(e/ontos ai(/matos e)rinu/es e)ge/nonto, *)alhktw\ *tisifo/nh *me/gaira. th=s de\ a)rxh=s e)kbalo/ntes <pb n="6"/>tou/s te katatartarwqe/ntas a)nh/gagon a)delfou\s kai\ th\n a)rxh\n *kro/nw| pare/dosan.
+<milestone n="5" unit="section"/></p><p>o( de\ tou/tous me\n &lt;e)n&gt; tw=| *tarta/rw| pa/lin dh/sas kaqei=rce, th\n de\ a)delfh\n *(re/an gh/mas, e)peidh\ *gh= te kai\ *ou)rano\s e)qespiw/|doun au)tw=| le/gontes u(po\ paido\s i)di/ou th\n a)rxh\n a)faireqh/sesqai, kate/pine ta\ gennw/mena. kai\ prw/thn me\n gennhqei=san *(esti/an kate/pien, ei)=ta *dh/mhtran kai\ *(/hran, meq' a(\s *plou/twna kai\ *poseidw=na.
+<milestone n="6" unit="section"/>o)rgisqei=sa de\ e)pi\ tou/tois *(re/a paragi/netai me\n ei)s *krh/thn, o(phni/ka to\n *di/a e)gkumonou=sa e)tu/gxane, genna=| de\ e)n a)/ntrw| th=s *di/kths *di/a. kai\ tou=ton me\n di/dwsi tre/fesqai *kou/rhsi/ te kai\ tai=s *melisse/ws<!--<NOTE ED="Frazer">1</NOTE>--> paisi\ nu/mfais, *)adrastei/a| te kai\ *)/idh|.
+<milestone n="7" unit="section"/>au(=tai me\n ou)=n to\n pai=da e)/trefon tw=| th=s *)amalqei/as ga/lakti, oi( de\ *kou/rhtes e)/noploi e)n <pb n="8"/>tw=| a)/ntrw| to\ bre/fos fula/ssontes toi=s do/rasi ta\s a)spi/das sune/krouon, i(/na mh\ th=s tou= paido\s fwnh=s o( *kro/nos a)kou/sh|. *(re/a de\ li/qon sparganw/sasa de/dwke *kro/nw| katapiei=n w(s to\n gegennhme/non pai=da.
+<milestone n="2" unit="chapter"/><milestone n="1" unit="section"/></p><p>e)peidh\ de\ *zeu\s e)genh/qh<!--<NOTE ED="Frazer">1</NOTE>--> te/leios, lamba/nei *mh=tin th\n *)wkeanou= sunergo/n, h(\ di/dwsi *kro/nw| katapiei=n fa/rmakon, u(f' ou(= e)kei=nos a)nagkasqei\s prw=ton me\n e)cemei= to\n li/qon, e)/peita tou\s pai=das ou(\s kate/pie: meq' w(=n *zeu\s to\n pro\s *kro/non kai\ *tita=nas e)ch/negke po/lemon. maxome/nwn de\ au)tw=n <pb n="10"/>e)niautou\s de/ka h( *gh= tw=| *dii\ e)/xrhse th\n ni/khn, tou\s katatartarwqe/ntas a)\n e)/xh| summa/xous: o( de\ th\n frourou=san au)tw=n ta\ desma\ *ka/mphn a)poktei/nas e)/luse. kai\ *ku/klwpes to/te *dii\ me\n dido/asi bronth\n kai\ a)straph\n kai\ kerauno/n, *plou/twni de\ kune/hn,<!--<NOTE ED="Frazer">1</NOTE>--> *poseidw=ni de\ tri/ainan: oi( de\ tou/tois o(plisqe/ntes kratou=si *tita/nwn, kai\ kaqei/rcantes au)tou\s e)n tw=| *tarta/rw| tou\s e(kato/gxeiras kate/sthsan<!--<NOTE ED="Frazer">2</NOTE>--> fu/lakas. au)toi\ de\ diaklhrou=ntai peri\ th=s a)rxh=s, kai\ lagxa/nei *zeu\s me\n th\n e)n ou)ranw=| dunastei/an, *poseidw=n de\ th\n e)n qala/ssh|, *plou/twn de\ th\n e)n *(/aidou.
+<milestone n="2" unit="section"/></p><p>e)ge/nonto de\ *tita/nwn e)/kgonoi *)wkeanou= me\n kai\ *thqu/os *)wkeani/des,<!--<NOTE ED="Frazer">3</NOTE>--> *)asi/a *stu\c *)hle/ktra *dwri\s <pb n="12"/>*eu)rono/mh &lsqb;*)amfitri/th&rsqb; *mh=tis, *koi/ou de\ kai\ *foi/bhs *)asteri/a kai\ *lhtw/, *(uperi/onos de\ kai\ *qei/as *)hw\s *(/hlios *selh/nh, *krei/ou de\ kai\ *eu)rubi/as th=s *po/ntou *)astrai=os *pa/llas *pe/rshs,
+<milestone n="3" unit="section"/>*iapetou= de\ kai\ *)asi/as<!--<NOTE ED="Frazer">1</NOTE>--> *)/atlas, o(\s e)/xei toi=s w)/mois to\n ou)rano/n, kai\ *promhqeu\s kai\ *)epimhqeu\s kai\ *menoi/tios, o(\n keraunw/sas e)n th=| titanomaxi/a *zeu\s katetarta/rwsen.
+<milestone n="4" unit="section"/>e)ge/neto de\ kai\ *kro/nou kai\ *filu/ras *xei/rwn difuh\s *ke/ntauros, *)hou=s de\ kai\ *)astrai/ou a)/nemoi kai\ a)/stra, *pe/rsou de\ kai\ *)asteri/as *(eka/th, *pa/llantos de\ kai\ *stugo\s<!--<NOTE ED="Frazer">1</NOTE>--> *ni/kh *kra/tos *zh=los *bi/a.
+</p>
+</div1>
+</body></text>
+        <text n="Epitome">
+            <body>
+                <div1 type="book" n="E">
+<milestone n="1" unit="chapter"/><milestone n="1" unit="section"/><p><pb n="128"/><!--<NOTE ED="Frazer">1</NOTE>--><milestone ed="Frazer" n="E" unit="MSS"/>tri/thn e)/kteinen e)n *krommuw=ni su=n th\n  kaloume/nhn *faia\n a)po\<!--<NOTE ED="Frazer">2</NOTE>--> th=s qreya/shs grao\s au)th/n: tau/thn tine\s *)exi/dnhs kai\ *tufw=nos le/gousi.
+<milestone n="2" unit="section"/>te/tarton e)/kteine *skei/rwna to\n *kori/nqion tou= *pe/lopos, w(s de\ e)/nioi *poseidw=nos. ou(=tos e)n th=| *megarikh=| kate/xwn ta\s a)f' e(autou= klhqei/sas pe/tras *skeirwni/das, h)na/gkaze tou\s pario/ntas ni/zein au)tou= tou\s po/das, kai\ ni/zontas ei)s to\n buqo\n au)tou\s e)/rripte bora\n u(permege/qei xelw/nh|.
+<milestone n="3" unit="section"/>*qhseu\s de\ a(rpa/sas au)to\n tw=n podw=n e)/rriyen &lt;ei)s th\n qa/lassan&gt;.<!--<NOTE ED="Frazer">3</NOTE>--> pe/mpton e)/kteinen e)n<pb n="130"/>*)eleusi=ni *kerkuo/na to\n *bra/gxou kai\ *)argio/phs nu/mfhs. ou(=tos h)na/gkaze tou\s pario/ntas palai/ein kai\ palai/wn a)nh/|rei: *qhseu\s de\ au)to\n mete/wron a)ra/menos e)/rracen ei)s gh=n.
+<milestone n="4" unit="section"/>e(/kton a)pe/kteine  *dama/sthn, o(\n e)/nioi *poluph/mona le/gousin. ou(=tos th\n<pb n="132"/>oi)/khsin e)/xwn par' o(do\n e)sto/rese du/o kli/nas, mi/an me\n mikra/n, e(te/ran de\ mega/lhn, kai\ tou\s pario/ntas e)pi\ ce/nia<!--<NOTE ED="Frazer">1</NOTE>--> kalw=n tou\s me\n braxei=s e)pi\ th=s mega/lhs katakli/nwn sfu/rais e)/tupten, i(/n'  e)ciswqw=si<!--<NOTE ED="Frazer">2</NOTE>--> th=| kli/nh|,<!--<NOTE ED="Frazer">3</NOTE>--> tou\s de\ mega/lous e)pi\ th=s mikra=s, kai\ ta\ u(pere/xonta tou= sw/matos a)pe/prize.</p><p>kaqa/ras ou)=n *qhseu\s th\n o(do\n h(=ken ei)s *)aqh/nas.<!--<NOTE ED="Frazer">4</NOTE>-->
+<milestone n="5" unit="section"/><milestone ed="Frazer" n="ES" unit="MSS"/>*mh/deia de\ *ai)gei= to/te sunoikou=sa<!--<NOTE ED="Frazer">5</NOTE>--> e)pebou/leusen au)tw=|, kai\ pei/qei to\n *ai)ge/a fula/ttesqai w(s  e)pi/boulon au)tw=|.<!--<NOTE ED="Frazer">6</NOTE>--> *ai)geu\s de\ to\n i)/dion a)gnow=n pai=da, dei/sas<!--<NOTE ED="Frazer">7</NOTE>--> e)/pemyen e)pi\ to\n *maraqw/nion tau=ron.<!--<NOTE ED="Frazer">8</NOTE>-->
+<milestone n="6" unit="section"/>w(s de\ a)nei=len au)to/n, para\ *mhdei/as labw\n  au)qh/meron<!--<NOTE ED="Frazer">9</NOTE>--> prosh/negken au)tw=| fa/rmakon. o( de\  me/llontos au)tw=| tou= potou= prosfe/resqai e)dwrh/sato tw=| patri\ to\ ci/fos, o(/per e)pignou\s *ai)geu\s<!--<NOTE ED="Frazer">10</NOTE>--> th\n ku/lika e)ce/rriye tw=n xeirw=n au)tou=. *qhseu\s de\<pb n="134"/>a)nagnwrisqei\s tw=| patri\ kai\ th\n e)piboulh\n maqw\n e)ce/bale th\n *mh/deian.
+<milestone n="7" unit="section"/></p><p>kai\ ei)s to\n tri/ton dasmo\n tw=| *minwtau/rw|  sugkatale/getai<!--<NOTE ED="Frazer">1</NOTE>--><milestone ed="Frazer" n="E" unit="MSS"/>w(s de/ tines le/gousin, e(kw\n e(auto\n e)/dwken. e)xou/shs de\ th=s new\s me/lan i(sti/on *ai)geu\s tw=| paidi\ e)netei/lato, e)a\n u(postre/fh| zw=n, leukoi=s peta/sai th\n nau=n i(sti/ois.
+<milestone n="8" unit="section"/><milestone ed="Frazer" n="ES" unit="MSS"/>w(s de\ h(=ken ei)s *krh/thn,<!--<NOTE ED="Frazer">2</NOTE>--> *)aria/dnh quga/thr *mi/nwos e)rwtikw=s diateqei=sa pro\s au)to\n<!--<NOTE ED="Frazer">3</NOTE>--> sumpra/ssein<!--<NOTE ED="Frazer">4</NOTE>--> e)pagge/lletai,<!--<NOTE ED="Frazer">5</NOTE>-->e)a\n o(mologh/sh| gunai=ka au)th\n e(/cein a)pagagw\n ei)s *)aqh/nas. o(mologh/santos de\ su\n o(/rkois *qhse/ws dei=tai *daida/lou mhnu=sai tou= laburi/nqou th\n e)/codon.
+<milestone n="9" unit="section"/>u(poqeme/nou de\ e)kei/nou, li/non ei)sio/nti *qhsei= di/dwsi: tou=to e)ca/yas *qhseu\s th=s qu/ras<!--<NOTE ED="Frazer">6</NOTE>--> e)felko/menos ei)sh/|ei. katalabw\n de\ *minw/tauron<pb n="136"/>e)n e)sxa/tw| me/rei tou= laburi/nqou pai/wn pugmai=s a)pe/kteinen,<!--<NOTE ED="Frazer">1</NOTE>--> e)felko/menos de\ to\ li/non pa/lin e)ch/|ei. kai\ dia\ nukto\s meta\ *)aria/dnhs kai\ tw=n pai/dwn ei)s *na/con a)fiknei=tai. e)/nqa *dio/nusos e)rasqei\s *)aria/dnhs h(/rpase, kai\ komi/sas ei)s *lh=mnon e)mi/gh.<milestone ed="Frazer" n="S" unit="MSS"/>kai\ genna=| *qo/anta *sta/fulon *oi)nopi/wna kai\ *pepa/rhqon.<!--<NOTE ED="Frazer">2</NOTE>-->
+<milestone n="10" unit="section"/></p><p><milestone ed="Frazer" n="E" unit="MSS"/>lupou/menos de\ *qhseu\s e)p' *)aria/dnh| kataple/wn e)pela/qeto peta/sai th\n nau=n leukoi=s i(sti/ois. *ai)geu\s de\ a)po\ th=s a)kropo/lews th\n nau=n i)dw\n e)/xousan me/lan i(sti/on, *qhse/a nomi/sas  a)polle/nai r(i/yas e(auto\n meth/llace.
+<milestone n="11" unit="section"/><milestone ed="Frazer" n="ES" unit="MSS"/>*qhseu\s de\<pb n="138"/>pare/labe<!--<NOTE ED="Frazer">1</NOTE>--> th\n *)aqhnai/wn dunastei/an, &lt;kai\&gt;<!--<NOTE ED="Frazer">2</NOTE>--><milestone ed="Frazer" n="S" unit="MSS"/>tou\s me\n *pa/llantos pai=das penth/konta to\n a)riqmo\n a)pe/kteinen: o(moi/ws de\ kai\ o(/soi a)nta=rai h)/qelon par' au)tou= a)pekta/nqhsan, kai\ th\n a)rxh\n a(/pasan e)/sxe mo/nos.
+<milestone n="12" unit="section"/></p><p><milestone ed="Frazer" n="E" unit="MSS"/>o(/ti *mi/nws, ai)sqo/menos tou= feu/gein tou\s meta\ *qhse/ws, *dai/dalon ai)/tion e)n tw=| laburi/nqw| meta\ tou= paido\s *)ika/rou kaqei=rcen, o(\s e)gege/nnhto au)tw=| e)k dou/lhs *mi/nwos *naukra/ths. o( de\ ptera\  kataskeua/sas e(autw=| kai\ tw=| paidi\ a)napta/nti  e)netei/lato mh/te ei)s u(/yos pe/tesqai, mh\ takei/shs th=s ko/llhs u(po\ tou= h(li/ou ai( pte/ruges luqw=si, mh/te e)ggu\s qala/sshs, i(/na mh\ ta\ ptera\ u(po\ th=s  noti/dos luqh=|.
+<milestone n="13" unit="section"/>*)/ikaros de\ a)melh/sas tw=n tou= patro\s e)ntolw=n yuxagwgou/menos a)ei\ mete/wros e)fe/reto: takei/shs de\ th=s ko/llhs pesw\n ei)s th\n a)p' e)kei/nou klhqei=san *)ikari/an qa/lassan a)pe/qane. &lt;<pb n="140"/>*dai/dalos de\ diasw/zetai ei)s *ka/mikon th=s *sikeli/as&gt;<!--<NOTE ED="Frazer">1</NOTE>-->.
+<milestone n="14" unit="section"/>*dai/dalon de\ e)di/wke *mi/nws, kai\ kaq' e(ka/sthn xw/ran e)reunw=n e)ko/mize ko/xlon, kai\ polu\n  e)phgge/lleto dw/sein misqo\n tw=| dia\ tou= koxli/ou li/non diei/ranti,<!--<NOTE ED="Frazer">2</NOTE>--> dia\ tou/tou nomi/zwn eu(rh/sein *dai/dalon. e)lqw\n de\ ei)s *ka/mikon th=s *sikeli/as para\ *kw/kalon, par' w(=| *dai/dalos e)kru/pteto, dei/knusi to\n koxli/an. o( de\ labw\n e)phgge/lleto diei/rein<!--<NOTE ED="Frazer">3</NOTE>--> kai\ *daida/lw| di/dwsin:
+<milestone n="15" unit="section"/>o( de\ e)ca/yas mu/rmhkos li/non kai\ trh/sas to\n koxli/an ei)/ase di' au)tou= dielqei=n. labw\n de\ *mi/nws to\ li/non dieirme/non<!--<NOTE ED="Frazer">4</NOTE>--> h)/|sqeto o)/nta par' e)kei/nw| *dai/dalon, kai\ eu)qe/ws a)ph/|tei. *kw/kalos de\ u(posxo/menos e)kdw/sein e)ce/nisen au)to/n: o( de\<pb n="142"/>lousa/menos u(po\ tw=n *kwka/lou qugate/rwn e)/klutos e)ge/neto:<!--<NOTE ED="Frazer">1</NOTE>--> w(s de\ e)/nioi/ fasi, zestw=| kataxuqei\s &lsqb;u(/dati&rsqb;<!--<NOTE ED="Frazer">2</NOTE>--> meth/llacen.
+<milestone n="16" unit="section"/></p><p><milestone ed="Frazer" n="ES" unit="MSS"/>sustrateusa/menos de\ e)pi\ *)amazo/nas *(hraklei= h(/rpasen<!--<NOTE ED="Frazer">3</NOTE>--><milestone ed="Frazer" n="S" unit="MSS"/>*)antio/phn, w(s de/ tines *melani/pphn, *simwni/dhs de\ *(ippolu/thn.<!--<NOTE ED="Frazer">4</NOTE>--> dio\ e)stra/teusan e)p'<pb n="144"/>*)aqh/nas *)amazo/nes. kai\ stratopedeusame/nas<!--<NOTE ED="Frazer">1</NOTE>--> au)ta\s peri\ to\n *)/areion pa/gon *qhseu\s meta\  *)aqhnai/wn e)ni/khsen.<milestone ed="Frazer" n="ES" unit="MSS"/>e)/xwn de\<!--<NOTE ED="Frazer">2</NOTE>--> e)k th=s *)amazo/nos pai=da *(ippo/luton,
+<milestone n="17" unit="section"/>lamba/nei meta\ tau=ta para\
+</p>
+</div1>
+</body>
+</text>
+</group>
+</text>
+</TEI.2>

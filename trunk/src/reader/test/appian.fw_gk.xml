@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+<teiHeader type="text" status="new">
+<fileDesc>
+<titleStmt>
+<title>The Foreign Wars</title>
+<author n="Appian">Appian</author>
+<editor role="editor">L. Mendelssohn</editor>
+&responsibility;
+</titleStmt>
+&Perseus.publish;
+<sourceDesc>
+<biblStruct>
+<monogr>
+<author>Appian</author>
+<title>The Foreign Wars</title>
+<editor role="editor">L. Mendelssohn</editor>
+<imprint>
+<pubPlace>Leipzig</pubPlace>
+<publisher>Teubner</publisher>
+<date>1879</date>
+</imprint>
+</monogr>
+<idno type="lccn">04031898</idno>
+</biblStruct>
+</sourceDesc>
+</fileDesc>
+
+<encodingDesc>
+<refsDecl doctype="TEI.2">
+<state unit="text"/>
+<state unit="chapter" n="chunk"/>
+<state unit="section"/>
+</refsDecl>
+<refsDecl doctype="TEI.2" n="text=Num.">
+<state unit="text"/>
+<state unit="section"/>
+</refsDecl>
+</encodingDesc>
+<profileDesc>
+<langUsage>
+<language id="greek">Greek</language>
+<language id="en">English</language>
+<language id="la">Latin</language>
+</langUsage>
+</profileDesc>
+
+<revisionDesc>
+<change><date>6-Dec-02</date><respStmt><name>DMM</name><resp>markup</resp></respStmt>
+<item>
+$Log: appian.fw_gk.xml,v $
+Revision 1.1  2009-10-07 21:00:33  rsingh04
+began reorganizing texts module by collection.  created separate work directory in texts module to keep hopper files separate from in progress files
+
+Revision 1.4  2007/01/03 20:13:11  packel
+some cleanup on Numantine Affairs
+
+Revision 1.3  2005/01/18 21:25:37  packel
+fixed accents/breathings on capital letters
+
+Revision 1.2  2004/08/10 13:09:33  amahoney
+fix the XML files so they are valid, make the SGML obsolete so no one is confused
+
+</item>
+</change>
+</revisionDesc>
+
+</teiHeader>
+
+<text lang="greek">
+<group>
+<text lang="greek" n="Reg.">
+<body>
+<head>*e*k *t*h*s *b*a*s*i*l*i*k*h*s.</head>
+<div1 type="chapter">
+<cit n="I"><quote lang="greek"><p>
+<milestone unit="section" n="1"/>*)/arxetai th=s i(stori/as a)po\ *ai)nei/ou tou= *)agxi/sou tou= *ka/puos, o(\s e)n tw=| *trwikw=| h)/kmaze pole/mw|, meta\ de\ th\n a(/lwsin th=s *troi/as e)/fuge, kai\ meta\ makra\n pla/nhn kate/plei e)/s tina th=s *)itali/as ai)gialo/n, *lw/renton e)pikalou/menon, e)/nqa kai\ strato/pedon au)tou= dei/knutai, kai\ th\n a)kth\n a)p' e)kei/nou *troi/an kalou=sin. h)=rxe to/te *)aborigi/nwn tw=n th=|de *)italw=n *fau=nos o( tou= *)/arews, o(\s kai\ zeu/gnusin *ai)nei/a| th\n qugate/ra au(tou= *laouini/an, kai\ gh=n di/dwsin e)k perio/dou stadi/wn tetrakosi/wn. o( de\ po/lin e)/ktise kai\ a)po\ th=s gunaiko\s *laoui/nion e)pwno/mase. tri/tw| de\ e)/tei tou= *fau/nou teleuth/santos e)kde/xetai th\n a)rxh\n o( *ai)nei/as kata\ to\ kh=dos, kai\ tou\s *)aborigi/nas a)po\ tou= khdestou= *lati/nou *fau/nou *lati/nous e)pwno/mase. tri/tw| de\ e)/tei pa/lin dia\ *laouini/an th\n gunai=ka u(po\ *(routou/lwn tw=n *turrhnw=n, promnhsteuqei=san au)tw=n tw=| basilei=, a)nairei=tai pole/mou no/mw| o( *ai)nei/as, kai\ th\n a)rxh\n diede/cato *eu)rule/wn, *)aska/nios metonomasqei/s, o(\s e)gennh/qh tw=| *ai)nei/a| e)k *kreou/shs th=s *pria/mou, th=s e)n *)ili/w| genome/nhs au)tw=| gunaiko/s. oi( de\ e)k th=s *laouini/as *)aska/nion au)tw=| gennhqh=nai/ fasi, to\n dia/doxon th=s a)rxh=s.</p>
+<p><milestone unit="section" n="2"/>*)askani/ou de\ teleuth/santos e)/tei teta/rtw| meta\ th\n *)/albhs oi)/kisin (kai\ ga\r ou(=tos e)/ktise po/lin, *)/albhn kale/sas, kai\ a)po\ *laouini/ou to\n lao\n metw/|kisen) e)kde/xetai th\n a)rxh\n *si/louios. kai\ *siloui/ou pai=da *ai)nei/an *si/louio/n fasin, *ai)nei/ou de\ *lati=non *si/louion, tou= de\ *ka/pun, *ka/puos de\ *ka/peton gene/sqai, *kape/tou de\ *tiberi=non, tou= de\ *)agri/ppan, tou= de\ *(rwmu/lon. kai\ to/nde me\n blhqh=nai keraunw=|: ou(= gene/sqai pai=da *)aouenti=non, *)aouenti/nou de\ *pro/kan gene/sqai. kai\ pa=si de\ to\n *si/louion e)pw/numon ei)=nai. tw=| de\ *pro/ka| du/o e)gene/sqhn ui(oi/, presbu/teros me\n *neme/twr, new/teros de\ *)amou/lios. labo/ntos de\ tou= presbute/rou para\ tou= patro\s teleutw=ntos th\n a)rxh/n, o( new/teros u(/brei kai\ bi/a| kate/sxen a)felo/menos. kai\ to\n me\n pai=da tou= a)delfou= *)/egeston ktei/nei, th\n qugate/ra de\ *(re/an *siloui/an i(e/reian, i(/na a)/pais diamei/nh|, kaqi/sthsi: to\n me/ntoi *neme/tora th=s ei)s to\ sw=ma e)piboulh=s h( tw=n h)qw=n e)cei=le prao/ths kai\ h( pollh\ e)piei/keia. a)ll' h( *siloui/a e)/kue para\ to\n no/mon. kai\ th\n me\n *)amou/lios e)pi\ kola/sei sunela/mbane, du/o de\ pai=das e)k th=sde genome/nous poime/sin e)/dwken, ei)s to\n plhsi/on potamo\n e)mbalei=n ta\ bre/fh: *qu/bris h)=n o)/noma tw=| potamw=|, *(rw=mos de\ kai\ *(rwmu/los oi( pai=des, e)c *ai)nei/ou e(/lkontes mhtro/qen to\ ge/nos: to\ ga\r tou= fu/ntos a)/dhlon.</p></quote><bibl>Phot. Biblioth. p. 16 b 4 Bekk.</bibl>
+</cit>
+<cit n="II">
+<quote lang="greek"><p>*(o me\n prw=tos to/mos tw=n e(pta\ basile/wn, *(rwmu/lou, *nouma= *pompili/ou, *)/agkou *(ostili/ou kai\ *)/agkou e(te/rou tou= kai\ *marki/ou, e)pigo/nou *nouma=, *tarkuni/ou, *seroui/ou *tulli/ou, kai\ *tarkuni/ou *leuki/ou tou= *tarkuni/ou, tou/twn tw=n e(pta\ e)/rga te kai\ pra/ceis perie/xei. w(=n o( prw=tos kti/sths te *(rw/mhs kai\ oi)kisth\s gegonw/s, a)/rcas te patrikw=s ma=llon h)\ turannikw=s, o(/mws e)sfa/gh, h)\ w(s a)/lloi fasi/n, h)fani/sqh. o( de\ deu/teros ou)de\n h(=tton bebasileukw/s, ei) mh\ kai\ ma=llon, to\n e(autou= bi/on e)teleu/thse zh/sas . . . o( de\ tri/tos e)keraunw/qh. no/sw| de\ to\n bi/on o( te/tartos u(pech=lqen. o( de\ pe/mptos u(po\ poime/nwn e)sfa/gh, kai\ o( e(/ktos o(moi/ws sfagh=| kate/streye to\n bi/on. o( de\ e(/bdomos kai\ th=s po/lews kai\ th=s basilei/as paranomw=n e)chla/qh: e)c ou(= th=s basilei/as kataluqei/shs ei)s tou\s u(pa/tous ta\ th=s a)rxh=s metete/qh.</p></quote><bibl>id. p. 15 b 22.</bibl>
+</cit>
+<cit n="III">
+<quote lang="greek"><p>*(h de\ to\n pate/ra fula/casa a)podhmou=nta u(pisxnei=tai *tati/w| prodw/sein to\ frou/rion.</p></quote><bibl>Suid. vv. <foreign lang="greek">*ta/tios</foreign> et <foreign lang="greek">fula/casa</foreign>.</bibl></cit>
+<cit n="IV">
+<quote lang="greek"><p>*keleu/santos de\ *tati/ou to\n xruso\n e)s th\n pai=da e)li/qazon, e)/ste titrwskome/nh katexw/sqh.</p></quote> <bibl>Suid. v. <foreign lang="greek">liqa/zw</foreign>.</bibl></cit>
+</div1>
+</body>
+</text>
+</group>
+</text>
+</TEI.2>
