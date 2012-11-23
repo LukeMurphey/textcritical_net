@@ -33,13 +33,39 @@
     &:hover { color: #08C; }
 }
 
+@include keyframes(highlighted){
+    0% {
+        background: #b94a48;
+    }
+    50% {
+        background: #b94a48;
+    }
+    100% {
+        background: #EEE;
+    }
+}
+
+@include keyframes(highlighted-dark){
+    0% {
+        background: #b94a48;
+    }
+    25% {
+        background: #b94a48;
+    }
+    100% {
+        background: #454545;
+    }
+}
+
 .highlighted{
     background-color: #EEE;
     @include rounded(3px);
+    @include animation(highlighted, 2.5s);
 }
 
 body.dark .highlighted{
     background-color: #454545;
+    @include animation(highlighted-dark, 2.5s);
 }
 
 @for $i from 2 through 5 {

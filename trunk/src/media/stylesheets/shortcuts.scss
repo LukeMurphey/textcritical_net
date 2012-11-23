@@ -9,3 +9,25 @@
   -moz-border-radius: $radius;
   -webkit-border-radius: $radius;
 }
+
+@mixin keyframes($name) {
+  @-webkit-keyframes #{$name} {
+    @content; 
+  }
+  @-moz-keyframes #{$name} {
+    @content;
+  }
+  @-ms-keyframes #{$name} {
+    @content;
+  }
+  @keyframes #{$name} {
+    @content;
+  } 
+}
+
+@mixin animation($name, $timing: 1s) {
+  -moz-animation:#{$name} $timing;
+  -webkit-animation:#{$name} $timing;
+  -o-animation:#{$name} $timing;
+  animation:#{$name} $timing;
+}
