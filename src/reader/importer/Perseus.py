@@ -237,11 +237,14 @@ class PerseusTextImporter(TextImporter):
             if state_info is not None:
                 new_division.level = state_info.level
                 new_division.type = state_info.name
-                new_division.readable_unit = state_info.is_chunk()
             
             new_division.save()
         
-        logger.debug( "Successfully created division: %s %s" % (new_division.descriptor, new_division.original_title) )
+        # Log the creation of a division
+        if new_division.parent_division is not None:
+            logger.debug( "Successfully created division: descriptor=%s, title=%s, id=%i, parent=%s", new_division.descriptor, new_division.original_title, new_division.id, str(new_division.parent_division.descriptor) )
+        else:
+            logger.debug( "Successfully created division: descriptor=%s, title=%s, id=%i", new_division.descriptor, new_division.original_title, new_division.id )
         
         # Set the created division as the new one
         import_context.divisions.append(new_division)
@@ -611,7 +614,6 @@ class PerseusTextImporter(TextImporter):
         
         Arguments:
         document -- A parsed TEI XML document
-        state_set -- The state set to use for splitting the verses.
         """            
         
         # Obtain references to the nodes that contain meta-data about the book
@@ -669,9 +671,15 @@ class PerseusTextImporter(TextImporter):
         if self.work_source is not None:
             self.work_source.work = self.work
             self.work_source.save()
-            
-        # Import the text
-        body_node = document.getElementsByTagName("body")[0]
+        
+        # Look for group nodes which indicate the presence of multiple text nodes (from which we will start the import)
+        body_node = document.getElementsByTagName("group")
+        
+        # If no group nodes exist, then just import starting at the body node
+        if body_node is not None and len(body_node) > 0:
+            body_node = body_node[0]
+        else:
+            body_node = document.getElementsByTagName("body")[0]  
         
         # Chunk the text into divisions
         divisions = self.import_body_sub_node(body_node, current_state_set)
@@ -966,7 +974,7 @@ class PerseusTextImporter(TextImporter):
         """
         
         head = self.findTagInDivision(div_node, "head")
-            
+        
         if head is not None:
             return self.getText(head.childNodes, True)
         
@@ -982,17 +990,20 @@ class PerseusTextImporter(TextImporter):
             if child.nodeType == minidom.Element.ELEMENT_NODE and child.tagName == tag_name:
                 return child
             
-            elif child.nodeType == minidom.Element.ELEMENT_NODE and (child.tagName in ["milestone"] or child.tagName.startswith("div")):
+            elif child.nodeType == minidom.Element.ELEMENT_NODE and child.tagName =="milestone":
+                # We hit a milestone, none of the rest of the children are for this division
+                return
+            
+            elif child.nodeType == minidom.Element.ELEMENT_NODE and (child.tagName in ["text"] or child.tagName.startswith("div")):
                 pass #This is in a different division, so skip it
             
-            elif len(child.childNodes) > 0:
-                # Recurse:
-                for grandchild in child.childNodes:
-                    result = self.findTagInDivision( grandchild, tag_name, depth_limit, current_depth + 1)
-                    
-                    if result:
-                        return result
-                    
+            else:
+                result = self.findTagInDivision( child, tag_name, depth_limit, current_depth + 1)
+                
+                # Stop if we found a result
+                if result:
+                    return result
+                
     def import_body_sub_node(self, content_node, state_set, import_context=None, recurse=True, parent_node=None):
         """
         Imports the content from the children of the given node (which ought to be in the body).
@@ -1038,7 +1049,33 @@ class PerseusTextImporter(TextImporter):
             elif node.nodeType == minidom.Node.COMMENT_NODE:
                 append_xml_content = False # Skip comments
             
-            # If the content is a new milestone marker
+            # If the content is a text node with an "n" attribute then treat the node as a division
+            elif node.tagName == "text" and node.attributes.get("n", None) != None:
+                
+                # Get the information about the section
+                division_type = "text"
+                descriptor = None
+                
+                if "n" in node.attributes.keys():
+                    descriptor = node.attributes["n"].value
+                
+                # Try to get a title node
+                original_title = self.getSectionTitle(node)
+                title = self.process_text(original_title)
+                
+                level = 0
+                self.make_division(import_context, level, division_type=division_type, title=title, original_title=original_title, descriptor=descriptor)
+                
+                # Start adding the content to the new division
+                new_division_node = import_context.current_node
+                parent_node = new_division_node
+                next_level_node = new_division_node
+                
+                logger.debug("Making division from a text node at level %i in %s" % (level, self.work.title))
+                
+                append_xml_content = False
+            
+            # If the content is a new milestone marker, then make a milestone
             elif node.tagName == "milestone" and self.is_milestone_chunk(state_set, node):
                 
                 append_xml_content = False
