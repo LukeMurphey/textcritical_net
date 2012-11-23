@@ -20,7 +20,7 @@
 		        <th>Title</th>
 		        <th>Language</th>
 		        <th>Author</th>
-		        <th class="hidden-phone">Translator</th>
+		        <th class="hidden-phone">Editor</th>
 		    </thead>
 		    <tbody>
 		    {% for work in works %}
@@ -28,7 +28,7 @@
 			        <td><i class="icon-book {% if USE_DARK_THEME|default:0 %}icon-white{% endif %}"></i> <a href="{% url read_work work.title_slug %}">{{work.title}}</a></td>
 			        <td>{{work.language}}</td>
 			        <td>{{work.authors.all|join:", "}}</td>
-			        <td class="hidden-phone">{{work.translators.all|join:", "}}</td>
+			        <td class="hidden-phone">{{work.editors.all|join:", "}}</td>
 			    </tr>
 		    {% endfor %}
 		    </tbody>
