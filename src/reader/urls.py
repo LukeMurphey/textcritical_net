@@ -12,6 +12,9 @@ urlpatterns = patterns('',
     url(r'^work/(?P<title>.*)/(?P<chapter_indicator>.+)/?$', 'reader.views.read_work', name='read_work' ),
     url(r'^work/(?P<title>[^/]*)/?$', 'reader.views.read_work', name='read_work' ),
     
+    url(r'^about/?$', 'reader.views.about', name='about' ),
+    url(r'^contact/?$', 'reader.views.contact', name='contact' ),
+    
     # API views
     url(r'^api/?$', 'reader.views.api_index', name='api_index' ),
     url(r'^api/betacode-to-unicode/?$', 'reader.views.api_beta_code_to_unicode', name='api_beta_code_to_unicode' ),

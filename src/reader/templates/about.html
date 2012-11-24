@@ -1,0 +1,37 @@
+{% extends "base_with_nav.html" %}
+{% block style %}
+  <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/jquery_ui_bootstrap/jquery-ui-1.8.16.custom.css">
+{% endblock %}
+
+{% block content %}
+        <ul class="breadcrumb">
+            <li><a href="{% url home %}">Home</a> <span class="divider">/</span></li>
+            <li class="active">About</li>
+        </ul>
+        
+        <h1>About TextCritical.com</h1>
+        Want to know more about the project?
+        
+        <h2>Why make the site?</h2>
+        When I began to learn Koine Greek, I was surprised how difficult it was to find freely accessible ancient Greek works in the original languages online.
+        
+        It was particularly difficult to find morphologically parsed works other than the New Testament, the Septuagint and the Works of Homer.
+        These works are available but often rather expensive. For example, the works of Flavius Josephus are available from Logos, but they are <a target=_blank href="http://www.logos.com/product/5776/josephus-in-greek-niese-critical-edition-with-apparatus">nearly $200</a>!
+        
+        The most complete source of ancient Greek seemed to be <a href="http://www.Perseus.tufts.edu/">Perseus.tufts.edu</a> but the site is terribly slow at times, the design is dated and it doesn't work particularly well on mobile devices.
+        
+        Therefore, it seemed like someone needed to make a website
+        
+        <h2>Alright, what are you doing to solve the problem?</h2>
+        
+        The main goal is provide open access to ancient Greek works along with analytic tools that are useful for reading and analyzing these works (like morphological tagging).
+        
+        TextCritical.com is being designed to:
+        <ol>
+            <li>Provide a modern user interface that works on mobile devices (i.e. "responsive")</li>
+            <li>Provide useful study tools (like morphological tagging)</li>
+        </ol>
+
+        <h2>Source Code</h2>
+        This site is open source. See <a href="http://LukeMurphey.net">LukeMurphey.net</a> for information regarding how to get access to the source code and how to set up your own instance of the site for development purposes.
+{% endblock %}
