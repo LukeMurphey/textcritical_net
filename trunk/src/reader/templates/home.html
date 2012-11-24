@@ -1,39 +1,32 @@
 {% extends "base_with_nav.html" %}
 {% block content %}
-    <div class="container">
       
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="hero-unit main_background"">
-        <h1>Ancient Greek, Modern Tools</h1>
-        <p>TextCritical.com brings modern technology to ancient texts</p>
+        <h1>Ancient Greek, Modern Design</h1>
+        <p>TextCritical.com is a website that provides a library of ancient Greek works</p>
       </div>
 
       <!-- Example row of columns -->
       <div class="row">
         <div class="span4">
-          <h2>A Pretty (Inter)face</h2>
-          <p>The few sites that offer ancient documents in the original languages are ugly and are not user centered.
-             Many of these ancient works are expectional works of art and deserve more than a dull, pedestrian interface.
-             TextCritical.com uses the latest HTML5 technology and components used in websites such as Twitter.</p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
+          <h2>Get Reading</h2>
+          <p>TextCritical currently has {{works_count}} works in the library in ancient Greek.
+          New works and linguistic tools are being added as the project develops.</p>
+          <p><a class="btn" href="{% url works_index %}">Start reading &raquo;</a></p>
         </div>
         <div class="span4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
+          <h2>Get Involved</h2>
+          <p>Interested in helping the project?
+          Have a bug report or have an idea for an improvement?
+          Contact us and let us know what is on your mind.</p>
+          <p><a class="btn" href="{% url contact %}">Contact us &raquo;</a></p>
        </div>
         <div class="span4">
-          <h2>Analysis Tools</h2>
-          <p>Ever wanted to search for all instances of a neuter demonstrative pronoun touto? Of course you have. TextCritical.com will provide mechanisms to</p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
+          <h2>About the Project</h2>
+          <p>TextCritical.com exists because finding free access to ancient Greek works in the original language is surprisingly difficult.
+          The source code is open source and the project is being actively developed.</p>
+          <p><a class="btn" href="{% url about %}">More info &raquo;</a></p>
         </div>
       </div>
-
-      <hr>
-
-      <footer>
-        <p>&copy; Luke Murphey 2012</p>
-      </footer>
-
-    </div>
 {% endblock %}

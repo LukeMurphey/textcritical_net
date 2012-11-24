@@ -42,6 +42,34 @@ body.dark .pagination a {
     border-color: #666;
 }
 
+footer{
+    padding-top: 50px;	
+}
+
+footer p{
+    margin-bottom: 0px;
+    padding-top: 0px;
+}
+
+body.dark footer a{
+	color: #c6c6c6;
+    text-decoration: underline;	
+}
+
+footer ul{
+	margin-top: 0px;
+	margin-left: 0px;
+}
+
+footer .addthis_toolbox {
+	min-width: 130px;
+}
+
+.footer-links li {
+    display: inline;
+    padding: 0 0;
+}
+
 @import "home";
 @import "read_work";
 @import "data_tables";

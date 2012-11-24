@@ -15,7 +15,22 @@ JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/r
 logger = logging.getLogger(__name__)
 
 def home(request):
+    
+    works_count = Work.objects.count()
+    
     return render_to_response('home.html',
+                              {'works_count' : works_count},
+                              context_instance=RequestContext(request))
+
+def about(request):
+    
+    return render_to_response('about.html',
+                              {},
+                              context_instance=RequestContext(request)) 
+
+def contact(request):
+    
+    return render_to_response('contact.html',
                               {},
                               context_instance=RequestContext(request))
 
