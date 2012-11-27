@@ -75,6 +75,13 @@ class WorkDescriptor():
         try:
             return field_filter.match(item)
         except AttributeError:
+            
+            # If the filter is actually an array (but not a string which looks like an array), then see if the item is in the list
+            if ( isinstance(field_filter, list) or isinstance(field_filter, tuple) ) and not isinstance(field_filter, basestring):
+                for i in field_filter:
+                    if i == item:
+                        return True
+            
             return field_filter == item
             
     def rejects(self, field_filter, item):

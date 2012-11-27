@@ -234,6 +234,13 @@ class TestPerseusBatchImporter(TestCase):
         self.assertFalse( desc.rejects( desc.file_name, "/Users/Luke/Downloads/test_gk.xml" ) )
         self.assertTrue( desc.rejects( desc.file_name, "/Users/Luke/Downloads/test_eng.xml" ) )
     
+    def test_match_array(self):
+        
+        wd = WorkDescriptor(author="Lucian", title=["Abdicatus", "Anacharsis", "Bis accusatus sive tribunalia", "Cataplus"])
+        
+        self.assertTrue( wd.matches( ["Abdicatus", "Anacharsis", "Bis accusatus sive tribunalia", "Cataplus"], "Anacharsis" ) )
+        self.assertTrue( wd.should_be_processed("Lucian", "Anacharsis", "52.gk-xml", "Greek") )
+    
     def test_import(self):
         
         dir = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'test')

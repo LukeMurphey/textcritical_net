@@ -242,6 +242,18 @@
         }
     },
     {
+        "author" : "Lucian",
+        "title"  : ["Abdicatus", "Anacharsis", "Bis accusatus sive tribunalia", "Cataplus", "Contemplantes", "De morte Peregrini", "De parasito sive artem esse parasiticam", 
+                    "De saltatione", "Dearum judicium", "Deorum concilium", "Dialogi Marini", "Eunuchus", "Fugitivi", "Gallus", "Icaromenippus", "Imagines", "Juppiter confuatus",
+                    "Juppiter trageodeus", "Lexiphanes", "Necyomantia", "Nigrinus", "Philopsuedes sive incredulus", "Piscator", "Pro imaginibus", "Prometheus", "Symposium",
+                    "Timon", "Toxaris vel amicitia", "Tyrannicida", "Vitarum auctio" ]
+        "language" : "Greek",
+        "import_parameters" : {
+            "use_line_count_for_divisions" : true,
+            "state_set" : 0
+        }
+    },
+    {
         "language" : "Greek",
         "import_parameters" : {
             "state_set" : 0
