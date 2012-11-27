@@ -100,6 +100,14 @@ class TextImporter():
             
             self.levels = {}
             
+            self.custom_attributes = {}
+            
+        def get_custom_attribute(self, name, default_value=None):
+            return self.custom_attributes.get(name, default_value)
+        
+        def set_custom_attribute(self, name, value):
+            self.custom_attributes[name] = value
+            
         def increment_division_level(self, level, count=1):
             if level in self.levels:
                 self.levels[level] = self.levels[level] + count

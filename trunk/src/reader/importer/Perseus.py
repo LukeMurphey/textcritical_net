@@ -67,7 +67,7 @@ class PerseusTextImporter(TextImporter):
     VERSE_TAG_NAME = "verse"
     CHAPTER_TAG_NAME = "chapter"
     
-    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None):
+    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None, ignore_content_before_first_milestone=False):
         """
         Constructs a Perseus text importer.
         
@@ -91,6 +91,7 @@ class PerseusTextImporter(TextImporter):
         
         self.ignore_division_markers = ignore_division_markers
         self.use_line_count_for_divisions = use_line_count_for_divisions
+        self.ignore_content_before_first_milestone = ignore_content_before_first_milestone
         #super(PerseusTextImporter, self).__init__(work, work_source)
     
     def import_xml_string(self, xml_string ):
@@ -191,7 +192,7 @@ class PerseusTextImporter(TextImporter):
             if level == import_context.division.level:
                 new_division.parent_division = import_context.division.parent_division
                 
-            # If the new level is lower than the current one, then shim in the new one at the appropriate level
+            # If the new level is higher in value (i.e. lower and nearer to the bottom) than the current one, then shim in the new one at the appropriate level
             elif level <= import_context.division.level:
                 
                 same_level_division = import_context.division
@@ -237,7 +238,6 @@ class PerseusTextImporter(TextImporter):
             new_division.sequence_number = sequence_number
             
             if state_info is not None:
-                new_division.level = state_info.level
                 new_division.type = state_info.name
             
             new_division.save()
@@ -1036,9 +1036,13 @@ class PerseusTextImporter(TextImporter):
         for node in content_node.childNodes:
             
             # Determines if we are going to merge the XML content to the original content for the given section
-            append_xml_content = True
+            if self.ignore_content_before_first_milestone and not import_context.get_custom_attribute("milestone_observed", False):
+                append_xml_content = False
+            else:
+                append_xml_content = True
             
             # We have to handle several nodes here:
+            #    * text content: add to the verse if it exists
             #    * milestone: if a division divider, then split accordingly
             #    * div#: indicates a new book, make a section accordingly
             #    * text: indicates a new major section in a book, make a section accordingly
@@ -1051,8 +1055,11 @@ class PerseusTextImporter(TextImporter):
                 
                 if import_context.division is None:
                     # No division exists yet, skipping this verse
-                    logger.debug("No division exists yet, skipping this content: %s of %s" % (node.data, self.work.title))
+                    logger.debug("No division exists yet, skipping this content, title=%s, content=%s", self.work.title, node.data)
             
+            ###################################
+            # If the content is a comment, then just skip it
+            ###################################
             elif node.nodeType == minidom.Node.COMMENT_NODE:
                 append_xml_content = False # Skip comments
             
@@ -1060,6 +1067,9 @@ class PerseusTextImporter(TextImporter):
             # If the content is a text node with an "n" attribute then treat the node as a division
             ###################################
             elif node.tagName == "text" and node.attributes.get("n", None) != None:
+                
+                # Note that we have not observed a milestone yet in this division
+                import_context.set_custom_attribute("milestone_observed", False)
                 
                 # Get the information about the section
                 division_type = "text"
@@ -1089,12 +1099,15 @@ class PerseusTextImporter(TextImporter):
             ###################################
             elif node.tagName == "milestone" and self.is_milestone_chunk(state_set, node):
                 
-                append_xml_content = False
+                # Note that we observed a milestone
+                import_context.set_custom_attribute("milestone_observed", True)
                 
-                descriptor = ""
+                append_xml_content = False
                 
                 if 'n' in node.attributes.keys():
                     descriptor = node.attributes["n"].value
+                else:
+                    descriptor = ""
                 
                 # Make the division
                 self.make_division(import_context=import_context, descriptor=descriptor, state_info=self.get_state_for_milestone(state_set, node))
@@ -1104,16 +1117,20 @@ class PerseusTextImporter(TextImporter):
                 new_division_node = import_context.current_node
                 parent_node = new_division_node
                 next_level_node = new_division_node
-                
+            
             ###################################
             # If the content is a verse marker and we don't have a division, then create one
             ###################################
             elif node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node):
                 
-                descriptor = ""
+                # Note that we observed a milestone
+                import_context.set_custom_attribute("milestone_observed", True)
+                append_xml_content = True
                 
                 if 'n' in node.attributes.keys():
                     descriptor = node.attributes["n"].value
+                else:
+                    descriptor = ""
                 
                 # If we have a verse without a division, then go ahead and make one
                 if import_context.division is None:
@@ -1124,11 +1141,14 @@ class PerseusTextImporter(TextImporter):
                     new_division_node = import_context.current_node
                     parent_node = new_division_node
                     next_level_node = new_division_node
-                
+            
             ###################################
             # Handle division nodes
             ###################################
             elif not self.ignore_division_markers and PerseusTextImporter.DIV_PARSE_REGEX.match( node.tagName ):
+                
+                # Note that we have not observed a milestone yet in this division
+                import_context.set_custom_attribute("milestone_observed", False)
                 
                 # Get the level from the tag name
                 m = PerseusTextImporter.DIV_PARSE_REGEX.search( node.tagName )

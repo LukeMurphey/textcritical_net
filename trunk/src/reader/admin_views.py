@@ -48,11 +48,17 @@ def import_perseus_file(request):
             else:
                 ignore_divisions = False
             
-            # Determine if we ought to 
+            # Determine if we ought to overwrite existing works
             if 'overwrite' in request.POST:
                 overwrite = form.cleaned_data['overwrite']
             else:
                 overwrite = False
+            
+            # Determine if we ought to throw out content that exists before a milestone was observed
+            if 'ignore_content_before_milestones' in request.POST:
+                ignore_content_before_milestones = form.cleaned_data['ignore_content_before_milestones']
+            else:
+                ignore_content_before_milestones = False
                 
             # Get the file contents
             if request.FILES['perseus_file'].multiple_chunks():
@@ -65,7 +71,7 @@ def import_perseus_file(request):
             for chunk in f.chunks():
                 perseus_xml_string = perseus_xml_string + str(chunk)  
                 
-            importer = PerseusTextImporter(state_set=state_set, ignore_division_markers=ignore_divisions, overwrite_existing=overwrite)
+            importer = PerseusTextImporter(state_set=state_set, ignore_division_markers=ignore_divisions, overwrite_existing=overwrite, ignore_content_before_first_milestone=ignore_content_before_milestones)
             work = importer.import_xml_string(perseus_xml_string)
                 
             messages.add_message(request, messages.INFO, 'Work successfully imported')
