@@ -489,8 +489,36 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         self.importer.import_file(file_name)
     
     def test_load_book_with_basic_div(self):
-        file_name = self.get_test_resource_file_name('52_gk_portion.xml')
+        file_name = self.get_test_resource_file_name('52_gk.xml')
         self.importer.import_file(file_name)
+    
+    def test_load_book_with_empty_first_milestone(self):
+        file_name = self.get_test_resource_file_name('52_gk.xml')
+        
+        self.importer.ignore_content_before_first_milestone = True
+        self.importer.import_file(file_name)
+        
+        divisions = Division.objects.filter(work=self.importer.work)
+        verses = Verse.objects.filter(division__work=self.importer.work)
+        
+        # This should not be:
+        # ἀποκηρυχθείς τις ἰατρικὴν ἐξέμαθεν. μανέντα τὸν πατέρα καὶ ὑπὸ τῶν ἀλλων ἰατρῶν ἀπεγνωσμένον ἰασάμενος ...        
+        expected = r"""<?xml version="1.0" ?><verse> ou) kaina\ me\n tau=ta, w)= a)/ndres dikastai/, ou)de\ para/doca ta\ ^ u(po\ tou= patro\s e)n tw=| paro/nti gigno/mena, ou)de\ nu=n prw=ton ta\ toiau=ta o)rgi/zetai, a)lla\ pro/xeiros ou(=tos o( no/mos au)tw=| kai\ sunh/qws e)pi\ tou=t' a)fiknei=tai to\ dikasth/rion. e)kei=no de\ kaino/teron nu=n dustuxw=, o(/ti e)/gklhma me\n i)/dion
+ou)k e)/xw, kinduneu/w de\ timwri/an u(posxei=n u(pe\r th=s te/xnhs ei) mh\ pa/nta du/natai pei/qesqai tou/tw| keleu/onti, ou(= ti/ ge/noit' a)\n a)topw/teron, qerapeu/ein e)k prosta/gmatos, ou)ke/q' w(s h( te/xnh du/natai, a)ll' w(s o( path\r bou/letai ; e)boulo/mhn me\n ou)=n th\n i)atrikh\n kai\ toiou=to/n ti e)/xein
+<pb id="v.5.p.478"/> fa/rmakon o(\ mh\ mo/non tou\s memhno/tas a)lla\ kai\ tou\s a)di/kws o)rgizome/nous pau/ein e)du/nato, i(/na kai\ tou=to tou= patro\s to\ no/shma i)asai/mhn. nuni\
+de\ ta\ me\n th=s mani/as au)tw=| te/leon pe/pautai,
+ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/llois a(/pasin swfronei=, kat' e)mou= de\ tou= qerapeu/santos mo/nou mai/netai. to\n me\n ou)=n misqo\n th=s qerapei/as o(ra=te oi(=on a)polamba/nw, a)pokhrutto/menos u(p' au)tou= pa/lin kai\ tou= ge/nous a)llotriou/menos deu/teron, w(/sper dia\ tou=t' a)nalhfqei\s pro\s o)li/gon i(/n' a)timo/teros ge/nwmai polla/kis. e)kpesw\n th=s oi)ki/as.
+
+
+</verse>"""
+        
+        self.assertEquals(verses[0].original_content, expected)
+        
+        #self.assertEquals(divisions[1].parent_division.id, divisions[0].id)
+        self.assertEquals(divisions[1].descriptor, "1")
+        self.assertEquals(divisions[1].level, 2)
+        
+        
     
     def test_load_book_no_bibl_struct(self):
         # See issue #438 (http://lukemurphey.net/issues/438)

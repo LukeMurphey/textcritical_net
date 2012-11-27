@@ -22,7 +22,7 @@ class VerseInline(admin.StackedInline):
 
 class DivisionModel(admin.ModelAdmin):
     
-    list_display = ('work', 'descriptor', 'sequence_number', 'title', 'type', 'level', 'readable_unit')
+    list_display = ('work', 'descriptor', 'sequence_number', 'title', 'type', 'level', 'readable_unit', 'parent_division')
     list_filter = ('work', 'level', 'type',)
     search_fields = ('title','original_content',)
     
