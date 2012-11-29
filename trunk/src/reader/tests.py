@@ -521,11 +521,8 @@ ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/
         
         self.assertEquals(verses[0].original_content, expected)
         
-        #self.assertEquals(divisions[1].parent_division.id, divisions[0].id)
         self.assertEquals(divisions[1].descriptor, "1")
-        self.assertEquals(divisions[1].level, 2)
-        
-        
+        self.assertEquals(divisions[1].level, 1)
     
     def test_load_book_no_bibl_struct(self):
         # See issue #438 (http://lukemurphey.net/issues/438)
@@ -564,6 +561,23 @@ u(po/qesis, ou(/tws par' h(mi=n h( th=s i(erwsu/nhs metousi/a tekmh/rio/n
 e)stin ge/nous lampro/thtos. </p></verse>"""
         
         self.assertEquals( verses[0].original_content, expected_content)
+    
+    def test_load_book_division_name_from_type_field(self):
+        
+        # Pre-make the author in order to see if the importer is smart enough to not create a duplicate
+        author = Author()
+        author.name = "Flavius Josephus"
+        author.save()
+        
+        book_xml = self.load_test_resource('07_gk.xml')
+        book_doc = parseString(book_xml)
+        self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=self.importer.work)[:1]
+        
+        # Make sure the division title was set correctly
+        self.assertEquals( divisions[0].title, "Introduction")
+        self.assertEquals( divisions[0].original_title, "intro")
     
     def test_load_book_multiple_texts(self):
         """
