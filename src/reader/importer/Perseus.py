@@ -1167,6 +1167,14 @@ class PerseusTextImporter(TextImporter):
                 original_title = self.getSectionTitle(node)
                 title = self.process_text(original_title)
                 
+                # Use the division type as the title to the type (in some cases)
+                if original_title is None and division_type is not None:
+                    
+                    # Set the title for intro divisions
+                    if division_type == "intro":
+                        original_title = "intro"
+                        title = "Introduction"
+                
                 # Get the state set associated with this entry
                 for state in state_set:
                     if division_type is not None and state.name.lower() == division_type.lower() and state.level is not None:

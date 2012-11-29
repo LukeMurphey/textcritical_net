@@ -1,7 +1,7 @@
 [
     {
         "author" : "Flavius Josephus",
-        "title" : "Antiquitates Judaicae",
+        "title" : ["De bello Judaico libri vii", "Antiquitates Judaicae" ],
         "language" : "Greek",
         "import_parameters" : {
             "state_set" : 1
@@ -9,23 +9,7 @@
     },
     {
         "author" : "Flavius Josephus",
-        "title" : "Contra Apionem",
-        "language" : "Greek",
-        "import_parameters" : {
-            "state_set" : "*"
-        }
-    },
-    {
-        "author" : "Flavius Josephus",
-        "title" : "De bello Judaico libri vii",
-        "language" : "Greek",
-        "import_parameters" : {
-            "state_set" : 1
-        }
-    },
-    {
-        "author" : "Flavius Josephus",
-        "title" : "Josephi vita",
+        "title" : ["Josephi vita", "Contra Apionem" ],
         "language" : "Greek",
         "import_parameters" : {
             "state_set" : "*"
@@ -128,27 +112,10 @@
         }
     },
     {
-        "title" : "Ichneutae",
-        "author" : "Sophocles",
-        "language" : "Greek",
-        "import_parameters" : {
-            "use_line_count_for_divisions" : true,
-            "state_set" : 0
-        }
-    },
-    {
         "author" : "Homer",
         "language" : "Greek",
         "import_parameters" : {
             "use_line_count_for_divisions" : true,
-            "state_set" : 0
-        }
-    },
-    {
-        "author" : "Nigrinus",
-        "language" : "Greek",
-        "import_parameters" : {
-            "ignore_division_markers" : true,
             "state_set" : 0
         }
     },
@@ -161,53 +128,8 @@
         }
     },
     {
-        "author" : "Sophocles",
-        "language" : "Greek",
-        "title" : "Antigone",
-        "import_parameters" : {
-            "ignore_division_markers" : true,
-            "state_set" : 0
-        }
-    },
-    {
-        "author" : "Sophocles",
-        "language" : "Greek",
-        "title" : "Electra",
-        "import_parameters" : {
-            "ignore_division_markers" : true,
-            "state_set" : 0
-        }
-    },
-    {
-        "author" : "Sophocles",
-        "language" : "Greek",
-        "title" : "Oedipus at Colonus",
-        "import_parameters" : {
-            "ignore_division_markers" : true,
-            "state_set" : 0
-        }
-    },
-    {
-        "author" : "Sophocles",
-        "language" : "Greek",
-        "title" : "Oedipus Tyrannus",
-        "import_parameters" : {
-            "ignore_division_markers" : true,
-            "state_set" : 0
-        }
-    },
-    {
-        "author" : "Sophocles",
-        "language" : "Greek",
-        "title" : "Philoctetes",
-        "import_parameters" : {
-            "ignore_division_markers" : true,
-            "state_set" : 0
-        }
-    },
-    {
         "author" : "Apollonius Rhodius",
-        "title"  : "Argonautica",
+        "title"  : [ "Ichneutae", "Argonautica"],
         "language" : "Greek",
         "import_parameters" : {
             "use_line_count_for_divisions" : true,
@@ -216,16 +138,7 @@
     },
     {
         "author" : "Sophocles",
-        "title"  : "Ajax",
-        "language" : "Greek",
-        "import_parameters" : {
-            "ignore_division_markers" : true,
-            "state_set" : 0
-        }
-    },
-    {
-        "author" : "Sophocles",
-        "title"  : "Trachiniae",
+        "title"  : ["Antigone", "Electra", "Oedipus at Colonus", "Oedipus Tyrannus", "Ajax", "Philoctetes", "Trachiniae" ],
         "language" : "Greek",
         "import_parameters" : {
             "ignore_division_markers" : true,
@@ -245,12 +158,21 @@
         "author" : "Lucian",
         "title"  : ["Abdicatus", "Anacharsis", "Bis accusatus sive tribunalia", "Cataplus", "Contemplantes", "De morte Peregrini", "De parasito sive artem esse parasiticam", 
                     "De saltatione", "Dearum judicium", "Deorum concilium", "Dialogi Marini", "Eunuchus", "Fugitivi", "Gallus", "Icaromenippus", "Imagines", "Juppiter confuatus",
-                    "Juppiter trageodeus", "Lexiphanes", "Necyomantia", "Nigrinus", "Philopsuedes sive incredulus", "Piscator", "Pro imaginibus", "Prometheus", "Symposium",
-                    "Timon", "Toxaris vel amicitia", "Tyrannicida", "Vitarum auctio" ]
+                    "Juppiter trageodeus", "Lexiphanes", "Necyomantia", "Philopsuedes sive incredulus", "Piscator", "Pro imaginibus", "Prometheus", "Symposium",
+                    "Timon", "Toxaris vel amicitia", "Tyrannicida", "Vitarum auctio" ],
         "language" : "Greek",
         "import_parameters" : {
             "use_line_count_for_divisions" : true,
-            "state_set" : 0
+            "state_set" : 0,
+            "ignore_content_before_first_milestone" : true
+        }
+    },
+    {
+        "author" : "Lucian",
+        "title"  : "Nigrinus",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 1
         }
     },
     {
