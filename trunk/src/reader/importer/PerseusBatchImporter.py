@@ -140,7 +140,7 @@ class ImportTransforms():
             
         if changes > 0:
             work.save()
-        
+    
     @staticmethod
     def run_transforms( work, transforms ):
         
@@ -265,6 +265,10 @@ class PerseusFileProcessor():
         Arguments:
         file_path -- The path to the file to import
         """
+        
+        # Don't try to process files that are not XML
+        if not file_path.endswith(".xml"):
+            return
         
         # Get the document XML
         document_xml = parse(file_path)
