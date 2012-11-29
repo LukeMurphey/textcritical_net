@@ -69,6 +69,19 @@ def get_chapters_list( division, count=9):
     # Filter down the list to those in the same parent division
     if division.parent_division is not None:
         divisions = divisions.filter(parent_division=division.parent_division)
+        
+    # If no parent division was found, then filter the list down to the parent of the first division
+    # so that we don't show entries for different divisions in the list
+    else:
+        
+        # Try to get the first division
+        first_division = divisions[:1]
+        
+        # If we got a first division, then filter on this one's parent
+        if len(first_division) > 0 and first_division[0].parent_division is not None:
+            divisions = divisions.filter(parent_division=first_division[0].parent_division)
+        else:
+            divisions = divisions.filter(parent_division=None)
     
     # Get the number of pages before
     divisions_before = divisions.filter(sequence_number__lte=division.sequence_number).order_by("-sequence_number")[:pages_before]
