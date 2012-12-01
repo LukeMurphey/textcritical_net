@@ -205,8 +205,8 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     progress = ((1.0 * completed_chapters ) / total_chapters) * 100
     
     # Get the next and previous chapter number
-    previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).order_by('-sequence_number').values('descriptor', 'parent_division__descriptor')[:1]
-    next_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__gt=chapter.sequence_number).order_by('sequence_number').values('descriptor', 'parent_division__descriptor')[:1]
+    previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).order_by('-sequence_number')[:1]
+    next_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__gt=chapter.sequence_number).order_by('sequence_number')[:1]
     
     if len(previous_chapter) > 0:
         previous_chapter = previous_chapter[0]
