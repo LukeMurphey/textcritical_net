@@ -12,7 +12,7 @@ import re
 from time import time
 from xml.dom.minidom import parse
 from reader.importer.Perseus import PerseusTextImporter
-from reader.models import Work
+from reader.models import Work, Division, Verse
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -140,6 +140,38 @@ class ImportTransforms():
             
         if changes > 0:
             work.save()
+            
+    @staticmethod
+    def delete_unnecessary_divisions( work=None, **kwargs):
+        
+        # Sift through the work and delete divisions that:
+        #    * have no verses
+        #    * is not a parent to any divisions
+        
+        divisions = Division.objects.filter(work=work)
+        divisions_to_delete = []
+        
+        for division in divisions:
+            
+            # Determine if any verses point to the division
+            verses_count = Verse.objects.filter(division=division).count()
+            
+            # Determine if any this division has any sub-divisions
+            if verses_count == 0:
+                sub_divisions_count = Division.objects.filter(parent_division=division).count()
+                
+                # No sub-divisions; this one can be deleted
+                if sub_divisions_count == 0:
+                    divisions_to_delete.append(division)
+                    
+        # Delete the divisions
+        logger.info("Unnecessary divisions are being deleted, count=%i, title=%s", len(divisions_to_delete), work.title)
+    
+        for division in divisions_to_delete:
+            division.delete()
+            
+        # Return the number of divisions deleted
+        return len(divisions_to_delete)
     
     @staticmethod
     def run_transforms( work, transforms ):
