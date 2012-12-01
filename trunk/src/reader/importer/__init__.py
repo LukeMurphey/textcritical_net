@@ -254,7 +254,7 @@ class TextImporter():
         if division is not None and division.readable_unit == False:
             division.readable_unit = True
             division.save()
-            logger.info("Marking division as a readable unit because it contains a verse, division=%r", division)
+            logger.info("Marking division as a readable unit because it contains a verse, division=%s", division.descriptor)
         
         if save:
             verse.save()
