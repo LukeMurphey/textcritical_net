@@ -67,7 +67,7 @@ class PerseusTextImporter(TextImporter):
     VERSE_TAG_NAME = "verse"
     CHAPTER_TAG_NAME = "chapter"
     
-    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None, ignore_content_before_first_milestone=False, ignore_divs_not_in_refsdecl=False):
+    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None, ignore_content_before_first_milestone=False, ignore_undeclared_divs=False):
         """
         Constructs a Perseus text importer.
         
@@ -79,7 +79,7 @@ class PerseusTextImporter(TextImporter):
         ignore_division_markers -- if true, division markers will be ignored
         use_line_count_for_divisions -- if true, then the titles of the readable units will be the line count range
         ignore_content_before_first_milestone -- if true, then content before the first milestone will be ignored
-        ignore_divs_not_in_refsdecl -- if true, then divs that are not in the refsdecl will be ignored
+        ignore_undeclared_divs -- if true, then divs that are not in the refsdecl will be ignored
         """
         
         self.overwrite_existing = overwrite_existing
@@ -94,7 +94,7 @@ class PerseusTextImporter(TextImporter):
         self.ignore_division_markers = ignore_division_markers
         self.use_line_count_for_divisions = use_line_count_for_divisions
         self.ignore_content_before_first_milestone = ignore_content_before_first_milestone
-        self.ignore_divs_not_in_refsdecl = ignore_divs_not_in_refsdecl
+        self.ignore_undeclared_divs = ignore_undeclared_divs
         #super(PerseusTextImporter, self).__init__(work, work_source)
     
     def import_xml_string(self, xml_string ):
@@ -1170,7 +1170,7 @@ class PerseusTextImporter(TextImporter):
                         break
                 
                 # Ignore the div if is not in the state set then ignore it we ought to
-                if self.ignore_divs_not_in_refsdecl and not is_in_state_set:
+                if self.ignore_undeclared_divs and not is_in_state_set:
                     
                     # Ignore this one
                     pass
