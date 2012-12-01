@@ -60,6 +60,12 @@ def import_perseus_file(request):
             else:
                 ignore_content_before_milestones = False
                 
+            # Determine if we ought to throw out divisions that are not in the refsdecl
+            if 'ignore_undeclared_divs' in request.POST:
+                ignore_undeclared_divs = form.cleaned_data['ignore_undeclared_divs']
+            else:
+                ignore_undeclared_divs = False
+            
             # Get the file contents
             if request.FILES['perseus_file'].multiple_chunks():
                 pass
@@ -71,7 +77,7 @@ def import_perseus_file(request):
             for chunk in f.chunks():
                 perseus_xml_string = perseus_xml_string + str(chunk)  
                 
-            importer = PerseusTextImporter(state_set=state_set, ignore_division_markers=ignore_divisions, overwrite_existing=overwrite, ignore_content_before_first_milestone=ignore_content_before_milestones)
+            importer = PerseusTextImporter(state_set=state_set, ignore_division_markers=ignore_divisions, overwrite_existing=overwrite, ignore_content_before_first_milestone=ignore_content_before_milestones, ignore_undeclared_divs=ignore_undeclared_divs)
             work = importer.import_xml_string(perseus_xml_string)
                 
             messages.add_message(request, messages.INFO, 'Work successfully imported')
