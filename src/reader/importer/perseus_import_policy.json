@@ -190,7 +190,7 @@
         }
     },
     {
-        "language" : "_Greek",
+        "language" : "Greek",
         "import_parameters" : {
             "state_set" : 0
         }
