@@ -8,8 +8,10 @@ urlpatterns = patterns('',
     
     url(r'^/?$', 'reader.views.home', name='home' ),
     url(r'^works/?$', 'reader.views.works_index', name='works_index' ),
-    url(r'^work/(?P<title>.*)/(?P<division_indicator>.+)/(?P<chapter_indicator>.+)/?$', 'reader.views.read_work', name='read_work' ),
-    url(r'^work/(?P<title>.*)/(?P<chapter_indicator>.+)/?$', 'reader.views.read_work', name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/?$', 'reader.views.read_work', name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/?$', 'reader.views.read_work', name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/?$', 'reader.views.read_work', name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/?$', 'reader.views.read_work', name='read_work' ),
     url(r'^work/(?P<title>[^/]*)/?$', 'reader.views.read_work', name='read_work' ),
     
     url(r'^about/?$', 'reader.views.about', name='about' ),

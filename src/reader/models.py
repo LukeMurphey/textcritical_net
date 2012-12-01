@@ -107,6 +107,27 @@ class Division(models.Model):
             self.title_slug = self.get_slug_title()
 
         super(Division, self).save(*args, **kwargs)
+        
+    def get_division_indicators(self):
+        """
+        Make a list of the divisions.
+        """
+        
+        descriptors = []
+        
+        next_division = self
+        
+        # Keep recursing upwards until we hit the top
+        while next_division is not None:
+            
+            # Insert the descriptor at position zero, since the highest level will be at the lowest ID
+            descriptors.insert(0, next_division.descriptor)
+            
+            # Get the next division
+            next_division = next_division.parent_division
+            
+        return descriptors
+        
     
 class Verse(models.Model):
     division          = models.ForeignKey(Division)
