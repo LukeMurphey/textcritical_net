@@ -174,7 +174,10 @@
             "state_set" : 0,
             "ignore_undeclared_divs" : true,
             "transforms" : {
-                "delete_unnecessary_divisions"
+                "delete_unnecessary_divisions" : { },
+                "delete_divisions_by_title_slug" : {
+                	"title_slugs" : ["none"]
+                }
             }
         }
     },
@@ -187,7 +190,7 @@
         }
     },
     {
-        "language" : "Greek",
+        "language" : "_Greek",
         "import_parameters" : {
             "state_set" : 0
         }

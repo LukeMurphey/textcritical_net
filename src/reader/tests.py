@@ -285,6 +285,23 @@ class TestPerseusBatchImporter(TestReader):
         self.assertEqual( ImportTransforms.delete_unnecessary_divisions(work=work), 1)
         
         self.assertEqual( Division.objects.filter(work=work).count(), 3)
+        
+    def test_delete_divisions_by_title_slug(self):
+        
+        importer = PerseusTextImporter()
+        importer.state_set = 0
+        importer.ignore_undeclared_divs = True
+        
+        book_xml = self.load_test_resource('1a_gk.xml')
+        book_doc = parseString(book_xml)
+        work = importer.import_xml_document(book_doc)
+        
+        self.assertEqual( Division.objects.filter(work=work).count(), 4)
+        
+        self.assertEqual( ImportTransforms.delete_divisions_by_title_slug(work=work, title_slugs=["none"]), 1)
+        
+        self.assertEqual( Division.objects.filter(work=work).count(), 3)
+        
 class TestPerseusImport(TestReader):
     
     def setUp(self):

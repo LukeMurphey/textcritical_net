@@ -13,6 +13,7 @@ from time import time
 from xml.dom.minidom import parse
 from reader.importer.Perseus import PerseusTextImporter
 from reader.models import Work, Division, Verse
+from copy import copy
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -172,6 +173,28 @@ class ImportTransforms():
             
         # Return the number of divisions deleted
         return len(divisions_to_delete)
+    
+    @staticmethod
+    def delete_divisions_by_title_slug( work=None, title_slugs=None):
+        if title_slugs is None:
+            logger.warn("Transform could not be executed because no title_slugs were provided, transform=delete_divisions_by_title_slug")
+        else:
+            
+            # Get the divisions to delete
+            divisions = Division.objects.filter(work=work, title_slug__in=title_slugs)
+            
+            # Log how many divisions will be deleted
+            logger.info("Divisions are being deleted, count=%i, title=%s, titles_to_be_deleted=%r", len(divisions), work.title, title_slugs)
+            
+            for division in divisions:
+                
+                # Delete the verses
+                Verse.objects.filter(division=division).delete()
+                
+                # Now delete the division
+                division.delete()
+                
+            return len(divisions)
     
     @staticmethod
     def run_transforms( work, transforms ):
@@ -470,6 +493,11 @@ class PerseusBatchImporter(PerseusFileProcessor):
         # Get the transforms to be executed
         if import_parameters not in [None, True, False] and 'transforms' in import_parameters:
             transforms = import_parameters.get('transforms', None)
+            
+            # Create a copy since we are going to delete items from this one
+            import_parameters = copy(import_parameters)
+            
+            # Delete the transforms because the importer constructor doesn't take this argument
             del import_parameters['transforms']
         else:
             transforms = None
