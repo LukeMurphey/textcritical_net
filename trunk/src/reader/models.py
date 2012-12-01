@@ -108,7 +108,48 @@ class Division(models.Model):
 
         super(Division, self).save(*args, **kwargs)
         
-    def get_division_indicators(self):
+    def get_division_description(self, use_titles=False):
+        
+        s = ""
+        prior_was_number = False
+        
+        next_division = self
+        
+        # Keep recursing upwards until we hit the top
+        while next_division is not None:
+            
+            # Get the title that we are going to use
+            if use_titles:
+                title = str(next_division)
+            else:
+                title = next_division.descriptor
+            
+            # Determine if this is a number
+            is_number = re.match("[0-9]+", title)
+            
+            # Put a period between the numbers
+            if s is not None and prior_was_number and is_number:
+                s = "." + s
+            else:
+                s = " " + s
+                
+            prior_was_number = is_number
+                
+            # Add the title
+            if s is None:
+                s = title
+            else:
+                s = title + s
+            
+            # Get the next division
+            next_division = next_division.parent_division
+            
+        return s
+    
+    def get_division_description_titles(self):
+        return self.get_division_description(True)
+        
+    def get_division_indicators(self, use_titles=False):
         """
         Make a list of the divisions.
         """
@@ -121,12 +162,18 @@ class Division(models.Model):
         while next_division is not None:
             
             # Insert the descriptor at position zero, since the highest level will be at the lowest ID
-            descriptors.insert(0, next_division.descriptor)
+            if use_titles:
+                descriptors.insert(0, str(next_division) )
+            else:
+                descriptors.insert(0, next_division.descriptor)
             
             # Get the next division
             next_division = next_division.parent_division
             
         return descriptors
+    
+    def get_division_titles(self):
+        return self.get_division_indicators(use_titles=True)
         
     
 class Verse(models.Model):

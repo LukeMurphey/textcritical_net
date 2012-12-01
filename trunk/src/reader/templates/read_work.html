@@ -12,10 +12,10 @@
         <ul class="breadcrumb">
             <li><a href="{% url home %}">Home</a> <span class="divider">/</span></li>
             <li><a href="{% url works_index %}">Library</a> <span class="divider">/</span></li>
-            <li class="active">{{work.title}}:{{chapter}}</li>
+            <li class="active">{{work.title}} {{chapter.get_division_description }}</li>
         </ul>
         
-        <h1>{{work.title}} {% if chapters|length > 1 %}{{chapter}}{% endif %}{% if authors|length > 0 %} <small>By {{authors|join:", "}}</small>{% endif %}</h1>
+        <h1>{{work.title}}{% if authors|length > 0 %} <small>By {{authors|join:", "}}</small>{% endif %}</h1>
         
         {% comment %}
         ##############################
@@ -104,7 +104,7 @@
         {% endcomment %}
         
         {% if chapter.parent_division and divisions and divisions|length > 1 %}
-        <h2>{{chapter.parent_division}}</h2>
+        <h2>{{chapter.get_division_description_titles}}</h2>
         {% endif %}
         
         {% for verse in verses.all %}
