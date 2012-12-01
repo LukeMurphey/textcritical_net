@@ -8,7 +8,7 @@ import os
 from textcritical.default_settings import SITE_ROOT
 from reader.shortcuts import convert_xml_to_html5
 from reader.importer.Perseus import PerseusTextImporter
-from reader.importer.PerseusBatchImporter import ImportPolicy, PerseusBatchImporter, WorkDescriptor, wildcard_to_re
+from reader.importer.PerseusBatchImporter import ImportPolicy, PerseusBatchImporter, WorkDescriptor, wildcard_to_re, ImportTransforms
 from reader.importer import TextImporter, LineNumber
 from reader.language_tools.greek import Greek
 from reader.models import Author, Division, Verse
@@ -229,7 +229,7 @@ class TestLineNumber(TestCase):
         
         self.assertEquals( str(line_number), "354a" )
         
-class TestPerseusBatchImporter(TestCase):
+class TestPerseusBatchImporter(TestReader):
     
     def test_wildcard(self):
         
@@ -270,6 +270,21 @@ class TestPerseusBatchImporter(TestCase):
         
         self.assertEqual( importer.do_import(), 1 )
         
+    def test_delete_unnecessary_divisions(self):
+        
+        importer = PerseusTextImporter()
+        importer.state_set = 0
+        importer.ignore_undeclared_divs = True
+        
+        book_xml = self.load_test_resource('1a_gk.xml')
+        book_doc = parseString(book_xml)
+        work = importer.import_xml_document(book_doc)
+        
+        self.assertEqual( Division.objects.filter(work=work).count(), 4)
+        
+        self.assertEqual( ImportTransforms.delete_unnecessary_divisions(work=work), 1)
+        
+        self.assertEqual( Division.objects.filter(work=work).count(), 3)
 class TestPerseusImport(TestReader):
     
     def setUp(self):

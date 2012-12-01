@@ -1,0 +1,97 @@
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PERSEUS.BIBLSTRUCT 'INCLUDE'>
+<!ENTITY % PersVerse PUBLIC "-//Perseus P4//DTD Perseus Verse//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersVerse.dtd" >
+%PersVerse;
+]>
+<TEI.2>
+  <teiHeader type="text" status="new">
+    <fileDesc>
+      <titleStmt>
+    <title>Elegy and Iambus, Volume I</title>
+    <title type="sub">Machine readable text</title> 
+    <editor role="editor" n="Loeb">J. M. Edmonds</editor>
+    &responsibility;
+    &fund.NEH;&fund.Google;
+      </titleStmt>
+      <extent></extent>
+    &Perseus.publish;    
+      <sourceDesc>
+    <listBibl>
+      <biblStruct>
+        <analytic></analytic>
+        <monogr>
+          <author></author>
+          <title>Elegy and Iambus</title>
+          <respStmt><resp>with an English Translation by</resp>
+        <name>J. M. Edmonds</name>
+          </respStmt>
+          <imprint>
+        <pubPlace>Cambridge, MA</pubPlace>
+        <publisher>Harvard University Press</publisher>
+        <pubPlace>London</pubPlace>
+        <publisher>William Heinemann Ltd.</publisher>
+        <date>1931</date>
+          </imprint>
+          <biblScope type="volume">1</biblScope>
+        </monogr>
+      </biblStruct>
+    </listBibl>
+      </sourceDesc>
+    </fileDesc>
+    <encodingDesc>
+         <editorialDecl>
+            <correction status="high" method="silent">
+               <p>optical character recognition</p>
+            </correction>
+         </editorialDecl>
+       <refsDecl doctype="TEI.2">
+          <state unit="volume" delim="."/>
+          <state unit="text" delim="."/>
+          <state unit="section"/>
+       </refsDecl>
+       </encodingDesc>    
+     <profileDesc>
+        <langUsage> 
+           <language id="greek">Greek</language> 
+           <language id="en">English</language> 
+           <language id="la">Latin</language> 
+        </langUsage>
+     </profileDesc>
+  </teiHeader>
+<text><body>
+<div0 type="volume" n="1">
+
+
+
+
+
+<div1 type="text" id="tlg-0245"><head>*dhmodo/kou</head>
+
+
+<div2 type="section"><!--testimonia-->
+<head><bibl><foreign lang="en">NONE</foreign></bibl></head><p></p></div2>
+
+
+<div2 type="section"><!--fragments--><head>*)elegei/wn</head>
+
+<div3 type="elegiac" n="1">
+<cit id="tlg-0245.cit.1"><quote>o(/ti me\n ou)=n kaki/a h( a)krasi/a ou)k e)/sti, fanero/n. a)lla/ ph| i)/sws: to\ me\n ga\r para\ proai/resin to\ de\ kata\ proai/resi/n e)stin. ou) mh\n a)ll' o(/moio/n ge kata\ ta\s pra/ceis w(/sper to\ *dhmodo/kou ei)s *milhsi/ous:
+<cit id="tlg-0245.cit.2"><quote>
+<l>&lt;*kai\ to/de *dhmodo/kou&gt;:<!--note n="p.166.n.1"/--> *milh/sioi a)cu/netoi me\n</l>
+<l>ou)k ei)si/n, drw=sin d' oi(/aper w(cu/netoi:<!--note n="p.166.n.2"/--></l></quote><bibl>CURFRAG.tlg-0245.1</bibl></cit>
+<p>kai\ oi( a)kratei=s a)/dikoi me\n ou)k ei)si/n, a)dikou=si de/.</p> </quote> <bibl>Arist. <title>Eth. Nic.</title> 1151 a 5</bibl></cit>
+</div3>
+
+<div3 type="elegiac" n="2">
+<cit id="tlg-0245.cit.3"><quote>*dhmodo/kou:
+<cit id="tlg-0245.cit.4"><quote>
+<l>*kai\ to/de *dhmodo/kou: *xi=oi kakoi/: ou)x o( me\n o(\s d' ou)/,</l>
+<l>pa/ntes, plh\n *prokle/ous: kai\ *prokle/hs *xi/i+os.<!--note n="p.166.n.3"/--></l></quote> <bibl>CURFRAG.tlg-0245.2</bibl></cit>
+</quote> <bibl> <title>Anth. Pal.</title> 11. 235</bibl></cit>
+</div3></div2>
+</div1>
+</div0>
+</body>
+</text>
+</TEI.2>
