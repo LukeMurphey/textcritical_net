@@ -95,7 +95,61 @@ def get_chapters_list( division, count=9):
     
     return final_list
         
-def read_work(request, author=None, language=None, title=None, chapter_indicator=None, division_indicator=None, **kwargs):
+def get_division( work, division_0=None, division_1=None, division_2=None, division_3=None ):
+    """
+    This function gets the division that is associated with the given descriptor set.
+    
+    Arguments:
+    work -- The work to get the division from
+    division_0 -- The highest division to lookup
+    division_1 -- The next highest division to lookup
+    division_2 -- The next highest division to lookup
+    division_3 -- The next highest division to lookup
+    """
+    
+    # Filter down the list to the division within the given work
+    divisions = Division.objects.filter(work=work)
+    
+    # Get the division if we got three levels deep of descriptors ("1.2.3")
+    if division_0 is not None and division_1 is not None and division_2 is not None and division_3 is not None:
+        
+        divisions = divisions.filter(parent_division__parent_division__parent_division__parent_division=None,
+                                     parent_division__parent_division__parent_division__descriptor=division_0,
+                                     parent_division__parent_division__descriptor=division_1,
+                                     parent_division__descriptor=division_2,
+                                     descriptor=division_3)
+    
+    # Get the division if we got three levels deep of descriptors ("1.2.3")
+    elif division_0 is not None and division_1 is not None and division_2 is not None:
+        
+        divisions = divisions.filter(parent_division__parent_division__parent_division=None,
+                                     parent_division__parent_division__descriptor=division_0,
+                                     parent_division__descriptor=division_1,
+                                     descriptor=division_2)
+        
+    # Get the division if we got two levels deep of descriptors ("1.2")
+    elif division_0 is not None and division_1:
+        
+        divisions = divisions.filter(parent_division__parent_division=None,
+                                     parent_division__descriptor=division_0,
+                                     descriptor=division_1)
+    
+    # Get the division if we got one level deep of descriptors ("1")
+    elif division_0 is not None:
+        
+        divisions = divisions.filter(parent_division=None,
+                                     descriptor=division_0)
+    
+    # Only grab one
+    divisions = divisions[:1]
+    
+    if len(divisions) > 0:
+        return divisions[0]
+    else:
+        return None # We couldn't find a matching division, perhaps one doesn't exist with the given set of descriptors?
+    
+        
+def read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, **kwargs):
     
     # Some warnings that should be posted to the user
     warnings = []
@@ -107,28 +161,29 @@ def read_work(request, author=None, language=None, title=None, chapter_indicator
     work = get_object_or_404(Work, title_slug=title)
     
     # Get the chapter
-    division = None
-    
+    division = get_division(work, division_0, division_1, division_2, division_3)
+    """
     if chapter_indicator is not None and division_indicator is not None:
         division = Division.objects.filter(work=work, descriptor=chapter_indicator, parent_division__descriptor=division_indicator).order_by("level")[:1]
     
     elif chapter_indicator is not None:
         division = Division.objects.filter(work=work, descriptor=chapter_indicator).order_by("level")[:1]
-        
+    """
+    
     # Note a warning if were unable to find the given chapter
-    if division is not None and len(division) == 0 and (chapter_indicator is not None or division_indicator is not None):
+    if division is None and division_0 is not None:
         warnings.append( ("Section not found", "The place in the text you asked for could not be found.") )
     
     # Start the user off at the beginning of the work
-    if division is None or len(division) == 0:
+    if division is None:
         division = Division.objects.filter(work=work).order_by("sequence_number")[:1]
+        
+        if len(division) == 0:
+            raise Http404('Division could not be found.')
+        else:
+            division = division[0]
     
-    # Stop if we couldn't find the division
-    if len(division) == 0:
-        raise Http404('Division could not be found.')
-    else:
-        division = division[0]
-    
+    # Get the readable unit
     chapter = get_chapter_for_division(division)
     
     # Get the verses to display

@@ -70,15 +70,14 @@
         <div class="table_of_contents ">
             {% comment %}<h2><small>Table of Contents</small></h2>{% endcomment %}
 	        <ul class="nav nav-list">
-	            {% comment %}<li class="nav-header">Table of Contents</li>{% endcomment %}
 	            {% for division_part in divisions.all %}
 	               {% if chapter.parent_division.id == division_part.id %}
 	            <li class="division_{{division_part.level}} active">
-	                <a href="{% url read_work work.title_slug division_part.descriptor %}"><i class="icon-book icon-white"></i>{{division_part}}</a>
+	                <a href="{% url read_work work.title_slug %}/{{ division_part.get_division_indicators|join:"/" }}"><i class="icon-book icon-white"></i>{{division_part}}</a>
 	            </li>
 	               {% else %}
                 <li class="division_{{division_part.level}}">
-                    <a href="{% url read_work work.title_slug division_part.descriptor %}"><i class="icon-book {% if USE_DARK_THEME|default:0 %}icon-white{% endif %}"></i>{{division_part}}</a>
+                    <a href="{% url read_work work.title_slug%}/{{ division_part.get_division_indicators|join:"/" }}"><i class="icon-book {% if USE_DARK_THEME|default:0 %}icon-white{% endif %}"></i>{{division_part}}</a>
                 </li>
 	               {% endif %}
 	            {% endfor %}
