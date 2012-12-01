@@ -766,7 +766,7 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
     def test_load_book_ignore_divs_not_in_refsdecl(self):
         
         self.importer.state_set = 0
-        self.importer.ignore_divs_not_in_refsdecl = True
+        self.importer.ignore_undeclared_divs = True
         file_name = self.get_test_resource_file_name('1_gk.xml')
         self.importer.import_file(file_name)
         
