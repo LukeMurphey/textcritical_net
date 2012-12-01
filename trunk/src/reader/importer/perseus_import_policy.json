@@ -168,6 +168,17 @@
         }
     },
     {
+        "title"  : ["Elegy and Iambus, Volume I", "Elegy and Iambus, Volume II"],
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "ignore_undeclared_divs" : true,
+            "transforms" : {
+                "delete_unnecessary_divisions"
+            }
+        }
+    },
+    {
         "author" : "Lucian",
         "title"  : "Nigrinus",
         "language" : "Greek",
