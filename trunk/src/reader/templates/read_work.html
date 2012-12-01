@@ -68,7 +68,6 @@
         {% load reader_extras %}
         {% if divisions and divisions|length > 1 %}
         <div class="table_of_contents ">
-            {% comment %}<h2><small>Table of Contents</small></h2>{% endcomment %}
 	        <ul class="nav nav-list">
 	            {% for division_part in divisions.all %}
 	               {% if chapter.parent_division.id == division_part.id %}
@@ -129,11 +128,7 @@
         	<ul>
         {% if previous_chapter %}
 	            <li class="previous">
-                {% if previous_chapter.parent_division__descriptor %}
-                    <a href="{% url read_work work.title_slug previous_chapter.parent_division__descriptor previous_chapter.descriptor %}">&larr; Previous</a>
-                {% else %}
-                    <a href="{% url read_work work.title_slug previous_chapter.descriptor %}">&larr; Previous</a>
-                {% endif %}
+	            <a href="{% url read_work work.title_slug %}/{{ previous_chapter.get_division_indicators|join:"/" }}">&larr; Previous</a>
 	            </li>
         {% endif %}
         {% if chapters|length > 0 %}
@@ -143,21 +138,13 @@
         		{% else %}
         		<li>
         		{% endif %}
-        		{% if chapter.parent_division %}
-                   <a href="{% url read_work work.title_slug chapter.parent_division.descriptor c.descriptor %}">{{c}}</a>
-        		{% else %}
-                   <a href="{% url read_work work.title_slug c.descriptor %}">{{c}}</a>
-        		{% endif %}
+        		  <a href="{% url read_work work.title_slug %}/{{ c.get_division_indicators|join:"/" }}">{{c}}</a>
         		</li>
         {% endfor %}
         {% endif %}
         {% if next_chapter %}
 	            <li class="next">
-	            {% if next_chapter.parent_division__descriptor %}
-	                <a href="{% url read_work work.title_slug next_chapter.parent_division__descriptor next_chapter.descriptor %}">Next &rarr;</a>
-	            {% else %}
-	                <a href="{% url read_work work.title_slug next_chapter.descriptor %}">Next &rarr;</a>
-	            {% endif %}
+	            <a href="{% url read_work work.title_slug %}/{{ next_chapter.get_division_indicators|join:"/" }}">Next &rarr;</a>
 	            </li>
         {% endif %}
         	</ul>
