@@ -13,6 +13,22 @@ from reader.importer import TextImporter, LineNumber
 from reader.language_tools.greek import Greek
 from reader.models import Author, Division, Verse
 
+class TestReader(TestCase):
+    
+    def get_test_resource_file_name(self, file_name):
+        return os.path.join(os.path.realpath(os.path.dirname(__file__)), 'test', file_name)
+    
+    def load_test_resource(self, file_name):
+        
+        f = None
+        
+        try:
+            f = open( self.get_test_resource_file_name(file_name), 'r')
+            return f.read()
+        finally:
+            if f is not None:
+                f.close()
+
 class TestGreekLanguageTools(TestCase):
     
     def test_beta_code_conversion(self):
@@ -254,7 +270,7 @@ class TestPerseusBatchImporter(TestCase):
         
         self.assertEqual( importer.do_import(), 1 )
         
-class TestPerseusImport(TestCase):
+class TestPerseusImport(TestReader):
     
     def setUp(self):
         self.importer = PerseusTextImporter()
@@ -373,20 +389,6 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         self.assertEquals(chunks[1][0].name, "Whiston section")
         self.assertEquals(chunks[1][0].section_type, "chunk")
-    
-    def get_test_resource_file_name(self, file_name):
-        return os.path.join(os.path.realpath(os.path.dirname(__file__)), 'test', file_name)
-    
-    def load_test_resource(self, file_name):
-        
-        f = None
-        
-        try:
-            f = open( self.get_test_resource_file_name(file_name), 'r')
-            return f.read()
-        finally:
-            if f is not None:
-                f.close()
     
     def test_get_title(self):
         
@@ -761,6 +763,19 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 6)
         self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
     
+    def test_load_book_ignore_divs_not_in_refsdecl(self):
+        
+        self.importer.state_set = 0
+        self.importer.ignore_divs_not_in_refsdecl = True
+        file_name = self.get_test_resource_file_name('1_gk.xml')
+        self.importer.import_file(file_name)
+        
+        divisions = Division.objects.filter( work=self.importer.work )
+        
+        # Make sure that the div3 nodes were not treated as chunks
+        self.assertEquals(len(divisions), 3) # Would be 5 otherwise
+        
+    
     def test_load_book_with_sections(self):
         
         self.importer.state_set = 1 #Using Whiston sections as opposed to the defaults
@@ -894,3 +909,22 @@ semno/teron *)idoumai/an w)no/masan.
         
         self.assertEquals( str(line_count), "9")
         
+class TestDivisionModel(TestReader):
+    
+    def setUp(self):
+        self.importer = PerseusTextImporter()
+    
+    def test_get_division_indicators(self):
+        
+        book_xml = self.load_test_resource('nt_gk.xml')        
+        self.importer.import_xml_string(book_xml)
+        
+        division = Division.objects.filter(work=self.importer.work)[1]
+        
+        self.assertEquals( division.get_division_indicators(), [u'Matthew', u'1'] )
+        
+class TestViews(TestCase):
+    
+    def test_get_division(self):
+        
+        raise Exception("Not implemented yet") #get_division()

@@ -67,7 +67,7 @@ class PerseusTextImporter(TextImporter):
     VERSE_TAG_NAME = "verse"
     CHAPTER_TAG_NAME = "chapter"
     
-    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None, ignore_content_before_first_milestone=False):
+    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None, ignore_content_before_first_milestone=False, ignore_divs_not_in_refsdecl=False):
         """
         Constructs a Perseus text importer.
         
@@ -78,6 +78,8 @@ class PerseusTextImporter(TextImporter):
         work_source -- the work source associated with this work
         ignore_division_markers -- if true, division markers will be ignored
         use_line_count_for_divisions -- if true, then the titles of the readable units will be the line count range
+        ignore_content_before_first_milestone -- if true, then content before the first milestone will be ignored
+        ignore_divs_not_in_refsdecl -- if true, then divs that are not in the refsdecl will be ignored
         """
         
         self.overwrite_existing = overwrite_existing
@@ -92,6 +94,7 @@ class PerseusTextImporter(TextImporter):
         self.ignore_division_markers = ignore_division_markers
         self.use_line_count_for_divisions = use_line_count_for_divisions
         self.ignore_content_before_first_milestone = ignore_content_before_first_milestone
+        self.ignore_divs_not_in_refsdecl = ignore_divs_not_in_refsdecl
         #super(PerseusTextImporter, self).__init__(work, work_source)
     
     def import_xml_string(self, xml_string ):
@@ -1147,50 +1150,62 @@ class PerseusTextImporter(TextImporter):
             ###################################
             elif not self.ignore_division_markers and PerseusTextImporter.DIV_PARSE_REGEX.match( node.tagName ):
                 
-                # Note that we have not observed a milestone yet in this division
-                import_context.set_custom_attribute("milestone_observed", False)
+                # Get the type of the section
+                division_type = None
+                
+                if "type" in node.attributes.keys():
+                    division_type = node.attributes["type"].value
                 
                 # Get the level from the tag name
                 m = PerseusTextImporter.DIV_PARSE_REGEX.search( node.tagName )
                 level = int(m.groupdict()['level'] )
                 
-                # Get the type of the section
-                division_type = None
-                descriptor = None
-                
-                if "type" in node.attributes.keys():
-                    division_type = node.attributes["type"].value
-                    
-                if "n" in node.attributes.keys():
-                    descriptor = node.attributes["n"].value
-                
-                original_title = self.getSectionTitle(node)
-                title = self.process_text(original_title)
-                
-                # Use the division type as the title to the type (in some cases)
-                if original_title is None and division_type is not None:
-                    
-                    # Set the title for intro divisions
-                    if division_type == "intro":
-                        original_title = "intro"
-                        title = "Introduction"
+                is_in_state_set = False
                 
                 # Get the state set associated with this entry
                 for state in state_set:
                     if division_type is not None and state.name.lower() == division_type.lower() and state.level is not None:
                         level = state.level
+                        is_in_state_set = True
                         break
                 
-                self.make_division(import_context, level, division_type=division_type, title=title, original_title=original_title, descriptor=descriptor)
-                
-                # Start adding the content to the new division
-                new_division_node = import_context.current_node
-                parent_node = new_division_node
-                next_level_node = new_division_node
-                
-                logger.debug("Made division at level %i in %s" % (level, self.work.title))
-                
-                append_xml_content = False
+                # Ignore the div if is not in the state set then ignore it we ought to
+                if self.ignore_divs_not_in_refsdecl and not is_in_state_set:
+                    
+                    # Ignore this one
+                    pass
+                else:
+                    
+                    # Note that we have not observed a milestone yet in this division
+                    import_context.set_custom_attribute("milestone_observed", False)
+                    
+                    # Get the descriptor
+                    descriptor = None
+                    
+                    if "n" in node.attributes.keys():
+                        descriptor = node.attributes["n"].value
+                    
+                    original_title = self.getSectionTitle(node)
+                    title = self.process_text(original_title)
+                    
+                    # Use the division type as the title to the type (in some cases)
+                    if original_title is None and division_type is not None:
+                        
+                        # Set the title for intro divisions
+                        if division_type == "intro":
+                            original_title = "intro"
+                            title = "Introduction"
+                    
+                    self.make_division(import_context, level, division_type=division_type, title=title, original_title=original_title, descriptor=descriptor)
+                    
+                    # Start adding the content to the new division
+                    new_division_node = import_context.current_node
+                    parent_node = new_division_node
+                    next_level_node = new_division_node
+                    
+                    logger.debug("Made division at level %i in %s" % (level, self.work.title))
+                    
+                    append_xml_content = False
                 
             # Attach the content to the division if it is for the current division
             if append_xml_content:
