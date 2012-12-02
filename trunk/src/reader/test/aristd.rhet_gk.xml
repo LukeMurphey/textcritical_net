@@ -1,0 +1,91 @@
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PERSEUS.BIBLSTRUCT 'INCLUDE'>
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+  <teiHeader type="text" status="new">
+    <fileDesc>
+      <titleStmt>
+	<title>Ars Rhetorica</title>
+	<title type="sub">Machine readable text</title>
+	<author>Aristides, Aelius
+	</author>
+	<editor role="editor">Leonhard von Spengel</editor>
+	&responsibility;
+	&fund.Tufts;
+      </titleStmt>
+      <extent>192 KB</extent>
+	&Perseus.publish;
+      <sourceDesc>
+		<listBibl>
+		  <biblStruct>
+		    <analytic></analytic>
+		    <monogr>
+		      <author>Aristides, Aelius</author>
+		      <title>Rhetores Graeci, Vol 2</title>
+		      <respStmt><resp>ex recognitione Leonardi Spengel</resp>
+		        <name>Leonhard von Spengel</name>
+		      </respStmt>
+		      <imprint>
+			<pubPlace>Leipzig</pubPlace>
+			<publisher>Teubner</publisher>
+			<date>1854</date>
+		      </imprint>
+		      <biblScope type="volume"></biblScope>
+		    </monogr>
+		  </biblStruct>
+		</listBibl>
+      </sourceDesc>      
+    </fileDesc>
+     <encodingDesc>
+		<refsDecl doctype="TEI.2">
+		<state unit="text" delim="."/>
+		<state unit="book" delim="."/>
+		<state unit="chapter" delim="."/>
+		<state unit="section" delim="."/>
+		<state unit="subsection" delim="."/>		
+		</refsDecl>
+    </encodingDesc>
+     <profileDesc>
+      <langUsage>
+		<language id="greek">Greek</language>
+      </langUsage>
+    </profileDesc>
+</teiHeader>
+<text n="56"><body>
+<pb id="v.2.p.459"/>
+<div1 type="book" n="1"><head>peri\ politikou= lo/gou</head>
+<div2 type="chapter" n="Arg">
+<p>
+<milestone unit="section" n="1"/></p>
+<milestone unit="subsection" n="1"/><p>ta/de soi peri\ tw=n i)dew=n kai\ a)retw=n e)c w(=n suni/statai o( politiko\s lo/gos, kai\ di' w(=n dokima/zetai, kai\ pollou= a)/cios proa/getai, w(/sper e)k merw=n kaq' e(/kaston
+suntiqe/menos, pantaxo/qen o(lo/klhros kai\ telei/ws e)/xwn
+au)to\s e)n e(autw=|, ai(/tines toiai/de kai\ tosai/de ei)si/, semno/ths, baru/ths, peribolh/, a)ciopisti/a, sfodro/ths, e)/mfasis, deino/ths, e)pime/leia, gluku/ths, safh/neia kai\
+kaqaro/ths, braxu/ths kai\ suntomi/a, ko/lasis.</p></div2>
+
+<div2 type="chapter" n="1">
+<head>peri\ semno/thtos.</head>
+<p>
+<milestone unit="section" n="1"/></p>
+<milestone unit="subsection" n="1"/><p>h( me\n ou)=n semno/ths kaqolikw=s suni/statai trixh=|,
+kata\ gnw/mhn kata\ sxh=ma kai\ kata\ a)paggeli/an. gnw/mhn de\ le/gw to\n nou=n kai\ ta\ e)pinoh/mata, e)n oi(=s eu(ri/sketai ta\ pra/gmata, sxh/mata de\ to\n tu/pon tou= lo/gou,
+e)n w(=| e)kfero/mena ta\ noh/mata h)/toi toio/nde h)\ toio/nde to\n
+lo/gon fai/nesqai poiei=. kai\ tau=ta ta\ plei/sthn du/namin
+e)/xonta e)n tw=| lo/gw| kai\ o(/shn ta\ e)/myuxa kai\ kinou/mena
+para\ ta\ e)nanti/ws e)/xonta. a)paggeli/an de\ le/gw au)th\n
+th\n le/cin di' h(=s a)pagge/lletai ta\ e)pinoh/mata. <pb id="v.2.p.460"/></p>
+<milestone unit="subsection" n="2"/><p>kata\ d' ou)=n gnw/mhn semno\s e)/stai soi lo/gos e)k
+tw=n protetimhme/nwn e)nnohma/twn, protetimhme/na de/
+e)stin e(ni\ lo/gw|, o(/tan tis e)ndo/cois pra/gmasi xrh=tai, kai\
+peri\ e)ndo/cwn ti le/ghtai, kai\ o(/sa spa/nia/ e)sti kai\ palaia/. e)/ndoca de/ e)sti prw=ta me\n ta\ tw=n qew=n, oi(=on
+o(/tan ei)s ta\ qei=a e)pana/gh|s ta\s e)nnoi/as, qew=n eu)/noian,
+tu/xhs xrhsto/thta, oi(=on <quote>e)pi\ pollw=n a)/n tis i)dei=n
+dokei= moi th\n para\ tw=n qew=n eu)/noian</quote>, kai\ o(/sa
+toiau=ta.</p>
+</div2>
+</div1>
+</body>
+</text>
+</TEI.2>
