@@ -12,6 +12,7 @@ from reader.importer.PerseusBatchImporter import ImportPolicy, PerseusBatchImpor
 from reader.importer import TextImporter, LineNumber
 from reader.language_tools.greek import Greek
 from reader.models import Author, Division, Verse
+from reader.views import get_division
 
 class TestReader(TestCase):
     
@@ -968,8 +969,15 @@ class TestDivisionModel(TestReader):
         
         self.assertEquals( division.get_division_indicators(), [u'Matthew', u'1'] )
         
-class TestViews(TestCase):
+class TestViews(TestReader):
     
     def test_get_division(self):
         
-        raise Exception("Not implemented yet") #get_division()
+        importer = PerseusTextImporter()
+        book_xml = self.load_test_resource('nt_gk.xml')
+        work = importer.import_xml_string(book_xml)
+        
+        division = get_division( work, 'Matthew', '1')
+        
+        self.assertEquals( division.descriptor, '1' )
+        self.assertEquals( division.parent_division.descriptor, 'Matthew' )
