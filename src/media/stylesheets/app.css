@@ -220,6 +220,10 @@ body.dark .highlighted {
   margin-top: 12px; }
 .verse .l {
   display: block; }
+.verse .gap {
+  content: "..."; }
+.verse .quote {
+  font-style: italic; }
 
 /* -----------------------------------------
    jQuery data tables
