@@ -860,6 +860,7 @@ semno/teron *)idoumai/an w)no/masan.
         
         book_xml = self.load_test_resource('aristd.rhet_gk.xml')
         book_doc = parseString(book_xml)
+        self.importer.only_last_state_is_non_chunk = True
         self.importer.import_xml_document(book_doc)
         
         divisions = Division.objects.filter(work=self.importer.work)

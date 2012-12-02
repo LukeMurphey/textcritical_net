@@ -190,6 +190,14 @@
         }
     },
     {
+        "title"  : "Ars Rhetorica",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "only_last_state_is_non_chunk" : true
+        }
+    },
+    {
         "language" : "Greek",
         "import_parameters" : {
             "state_set" : 0
