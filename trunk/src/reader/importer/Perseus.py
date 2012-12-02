@@ -32,13 +32,16 @@ class State():
     
     CHUNK_TYPES = ["card", "chapter"]
     
-    def __init__(self, name, section_type, level):
+    def __init__(self, name, section_type, level, chunk=None):
         self.section_type = section_type
         self.name = name
         self.level = level
+        self.chunk = chunk
         
     def is_chunk(self):
-        if self.section_type is not None:
+        if self.chunk == True:
+            return True
+        elif self.section_type is not None:
             return True
         elif self.name in State.CHUNK_TYPES:
             return True
@@ -46,7 +49,7 @@ class State():
             return False
         
     @staticmethod
-    def createFromStateNode( state_node, level = None ):
+    def createFromStateNode( state_node, level = None, chunk = None ):
         
         unit_name = state_node.attributes["unit"].value
             
@@ -55,7 +58,7 @@ class State():
         else:
             section_type = None
             
-        return State(unit_name, section_type, level)
+        return State(unit_name, section_type, level, chunk)
     
     def __str__(self):
         return self.name
@@ -67,7 +70,7 @@ class PerseusTextImporter(TextImporter):
     VERSE_TAG_NAME = "verse"
     CHAPTER_TAG_NAME = "chapter"
     
-    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None, ignore_content_before_first_milestone=False, ignore_undeclared_divs=False):
+    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None, ignore_content_before_first_milestone=False, ignore_undeclared_divs=False, only_last_state_is_non_chunk=False):
         """
         Constructs a Perseus text importer.
         
@@ -80,6 +83,7 @@ class PerseusTextImporter(TextImporter):
         use_line_count_for_divisions -- if true, then the titles of the readable units will be the line count range
         ignore_content_before_first_milestone -- if true, then content before the first milestone will be ignored
         ignore_undeclared_divs -- if true, then divs that are not in the refsdecl will be ignored
+        only_last_state_is_non_chunk -- if true, then all state in the refsdecl other than the last one will assumed to be chunks
         """
         
         self.overwrite_existing = overwrite_existing
@@ -95,6 +99,7 @@ class PerseusTextImporter(TextImporter):
         self.use_line_count_for_divisions = use_line_count_for_divisions
         self.ignore_content_before_first_milestone = ignore_content_before_first_milestone
         self.ignore_undeclared_divs = ignore_undeclared_divs
+        self.only_last_state_is_non_chunk = only_last_state_is_non_chunk
         #super(PerseusTextImporter, self).__init__(work, work_source)
     
     def import_xml_string(self, xml_string ):
@@ -578,13 +583,14 @@ class PerseusTextImporter(TextImporter):
             if state.name == milestone_name:
                 return state
             
-    def is_milestone_chunk(self, state_set, milestone_node):
+    def is_milestone_chunk(self, state_set, milestone_node, only_last_state_is_non_chunk=False):
         """
         Returns a boolean indicating if this milestone is a section (like a chapter).
         
         Arguments:
         state_set -- The current set of states used to break up the text (from the header indicating the various chunking strategies)
         milestone_node -- The XML node representing the milestone
+        only_last_state_is_non_chunk -- Only allow the last state to be a non-chunk; all others will be considered chunks
         """
         
         # Determine if this is one of the nodes we always treat as a chunk
@@ -592,6 +598,10 @@ class PerseusTextImporter(TextImporter):
             return True
         
         state = self.get_state_for_milestone(state_set, milestone_node)
+        
+        # If the state is not the last one, then treat it as a chunk
+        if state is not None and only_last_state_is_non_chunk and state.name != state_set[-1].name:
+            return True
         
         if state is not None:
             return state.is_chunk()
@@ -1100,7 +1110,7 @@ class PerseusTextImporter(TextImporter):
             ###################################
             # If the content is a new milestone marker, then make a milestone
             ###################################
-            elif node.tagName == "milestone" and self.is_milestone_chunk(state_set, node):
+            elif node.tagName == "milestone" and self.is_milestone_chunk(state_set, node, self.only_last_state_is_non_chunk):
                 
                 # Note that we observed a milestone
                 import_context.set_custom_attribute("milestone_observed", True)
