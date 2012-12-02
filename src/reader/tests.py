@@ -854,6 +854,18 @@ semno/teron *)idoumai/an w)no/masan.
         
         self.assertEquals( Verse.objects.filter(division=divisions[3])[0].original_content, expected_content)
         
+    
+    def test_load_book_break_sections(self):
+        # See #424, http://lukemurphey.net/issues/424
+        
+        book_xml = self.load_test_resource('aristd.rhet_gk.xml')
+        book_doc = parseString(book_xml)
+        self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=self.importer.work)
+        
+        self.assertEquals(divisions.count(), 5)
+        
     def test_xml_use_line_numbers(self):
         
         tei_node_portion_xml = """
