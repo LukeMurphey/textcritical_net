@@ -83,7 +83,9 @@ class Division(models.Model):
     def __unicode__(self):
         if self.title is not None and len(self.title) > 0:
             return self.title
-        elif self.descriptor is not None and len(str(self.descriptor)) > 0:
+        elif self.descriptor is not None and self.type is not None:
+            return str(self.type) + " " + str(self.descriptor)
+        elif self.descriptor is not None:
             return str(self.descriptor)
         elif self.sequence_number is not None:
             return str(self.sequence_number)
