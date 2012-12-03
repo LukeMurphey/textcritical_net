@@ -867,6 +867,10 @@ semno/teron *)idoumai/an w)no/masan.
         divisions = Division.objects.filter(work=self.importer.work)
         
         self.assertEquals(divisions.count(), 5)
+        self.assertEquals(divisions[1].parent_division.id, divisions[0].id)
+        self.assertEquals(divisions[2].parent_division.id, divisions[1].id)
+        
+        self.assertEquals(divisions[4].parent_division.id, divisions[3].id)
         
     def test_xml_use_line_numbers(self):
         
