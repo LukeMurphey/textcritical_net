@@ -2,8 +2,6 @@ from django import template
 from reader.shortcuts import convert_xml_to_html5
 from reader.language_tools import transform_text
 
-import xml.dom.minidom as minidom
-
 register = template.Library()
 
 def xml_to_html5(value, language=None):
@@ -11,8 +9,7 @@ def xml_to_html5(value, language=None):
     
     value = value.encode('utf-8')
     
-    doc = minidom.parseString(value)
-    converted_doc = convert_xml_to_html5( doc, language=language )
+    converted_doc = convert_xml_to_html5( value, language=language )
     
     try:
         return converted_doc.firstChild.toxml( encoding="utf-8" )
@@ -25,8 +22,7 @@ def perseus_xml_to_html5(value, language=None):
     # Make the function to perform the transformation
     text_transformation_fx = lambda text, parent_node: transform_perseus_text(text, parent_node, language)
     
-    doc = minidom.parseString(value)
-    converted_doc = convert_xml_to_html5( doc, language=language,  text_transformation_fx=text_transformation_fx )
+    converted_doc = convert_xml_to_html5( value, language=language,  text_transformation_fx=text_transformation_fx )
     
     try:
         return converted_doc.toxml( encoding="utf-8" )

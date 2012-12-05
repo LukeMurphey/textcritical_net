@@ -6,7 +6,7 @@ from xml.dom.minidom import parse, parseString
 import os
 
 from textcritical.default_settings import SITE_ROOT
-from reader.shortcuts import convert_xml_to_html5
+from reader.shortcuts import convert_xml_to_html5, convert_xml_to_html5_minidom
 from reader.importer.Perseus import PerseusTextImporter
 from reader.importer.PerseusBatchImporter import ImportPolicy, PerseusBatchImporter, WorkDescriptor, wildcard_to_re, ImportTransforms
 from reader.importer import TextImporter, LineNumber
@@ -160,6 +160,16 @@ class TestImport(TestCase):
         
 class TestShortcuts(TestCase):
     
+    def time_conversion (self):
+        import time
+        
+        start = time.time()
+        
+        for i in range(0, 10000):
+            self.test_process_text()
+        
+        print "Completed", time.time() - start
+    
     def test_process_text(self):
         
         original_content = r"""
@@ -171,7 +181,24 @@ class TestShortcuts(TestCase):
     <span class="head">*(ikanw=s <span class="num" data-ref="some_ref">d</span> me\n </span>
 </verse>"""
 
-        actual_result = convert_xml_to_html5(parseString(original_content), new_root_node_tag_name="verse", return_as_str=True)
+        actual_result = convert_xml_to_html5(original_content, new_root_node_tag_name="verse", return_as_str=True)
+        
+        #self.write_out_test_file( expected_result + "\n\n" + actual_result )
+        
+        self.assertEqual(expected_result, actual_result)
+        
+    def test_process_text_entity(self):
+        
+        original_content = r"""
+<verse>
+    <head>*(ikanw=s <num ref="some_ref">d</num> me\n </head>&amp;
+</verse>"""
+
+        expected_result = r"""<?xml version="1.0" encoding="utf-8"?><verse>
+    <span class="head">*(ikanw=s <span class="num" data-ref="some_ref">d</span> me\n </span>&amp;
+</verse>"""
+
+        actual_result = convert_xml_to_html5(original_content, new_root_node_tag_name="verse", return_as_str=True)
         
         #self.write_out_test_file( expected_result + "\n\n" + actual_result )
         
@@ -189,7 +216,7 @@ class TestShortcuts(TestCase):
     <span class="head">Ἱκανῶς <span class="num" data-ref="some_ref">δ</span> μὲν </span>
 </span>"""
 
-        actual_result = convert_xml_to_html5( parseString(original_content), language=language, return_as_str=True)
+        actual_result = convert_xml_to_html5(original_content, language=language, return_as_str=True)
         
         #self.write_out_test_file( expected_result + "\n\n" + actual_result )
         
@@ -985,3 +1012,27 @@ class TestViews(TestReader):
         
         self.assertEquals( division.descriptor, '1' )
         self.assertEquals( division.parent_division.descriptor, 'Matthew' )
+        
+class TestDiogenesLemmaImporter(TestCase):
+    
+    def test_import_lemma(self):
+        
+        s = """a(/bruna    575884    a(/bruna (neut nom/voc/acc pl)"""
+        
+        
+        
+class TestDiogenesLemmaEntry(TestCase):
+    
+    def test_parse(self):
+        pass
+    
+    def test_parse_form(self):
+        
+        #parse_form
+        
+        pass
+    
+        """
+a(/dhma    1744787    a(/dhma (neut nom/voc/acc sg)
+a(/dhn    1750487    a(/ddhn (indeclform (adverb))    a(/dhn (indeclform (adverb))    a)/ddhn (indeclform (adverb))    a)/dhn (indeclform (adverb))
+a(/dicis    1896613    a(/dicis (fem nom sg)"""
