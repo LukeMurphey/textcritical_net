@@ -2,18 +2,155 @@ import xml.dom.minidom as minidom
 from reader.language_tools.greek import Greek
 from reader.language_tools import transform_text
 
-def convert_xml_to_html5( src_doc, new_root_node_tag_name=None, text_transformation_fx=None, language=None, return_as_str=False, allow_closing_in_start_tag=False):
+from HTMLParser import HTMLParser
+from xml.dom.minidom import parseString
+from htmlentitydefs import name2codepoint
+
+class HTML5Converter(HTMLParser):
+    """
+    Takes an XML document and produces a HTML5 document that can be posted within an HTML document.
+    """
+    
+    def __init__(self, new_root_node_tag_name, allow_closing_in_start_tag, text_transformation_fx):
+        """
+        Initialize the HTML5 converter.
+        
+        Arguments:
+        new_root_node_tag_name -- The name of the root node (otherwise, the root node will be converted too).
+        allow_closing_in_start_tag -- If true, then nodes with no children will be closed without an explicit closing tag. Otherwise, they will include an explicit closing tag.
+        text_transformation_fx -- A function which will be applied to all text. The function must take the following parameters: the text to transform, the tag_name of the parent node
+        """
+        
+        self.new_root_node_tag_name = new_root_node_tag_name
+        self.text_transformation_fx = text_transformation_fx
+        self.allow_closing_in_start_tag = allow_closing_in_start_tag
+        
+        # Make the new document
+        self.dst_doc = minidom.Document()
+        
+        # This is the node we are attaching content to
+        self.current_node = None
+        
+        # Indicates the number of nodes processed
+        self.nodes_processed = 0
+        
+        # initialize the base class
+        HTMLParser.__init__(self)
+    
+    def handle_starttag(self, tag, attrs):
+        
+        parent = self.current_node
+        
+        # Use a different root node if we were directed to use one
+        if self.new_root_node_tag_name is not None and self.nodes_processed == 0:
+            self.current_node = self.dst_doc.createElement(self.new_root_node_tag_name)
+            
+        else:
+            self.current_node = self.dst_doc.createElement( "span" )
+            self.current_node.setAttribute( "class", tag)
+        
+        # Copy over the attributes
+        for name, value in attrs:
+            self.current_node.setAttribute( "data-" + name, value)
+            
+        # Attach the new node
+        if parent is not None:
+            parent.appendChild(self.current_node)
+        else:
+            self.dst_doc.appendChild(self.current_node)
+            
+        self.nodes_processed = self.nodes_processed + 1
+        
+    def handle_endtag(self, tag):
+        
+        # If we don't allow closing in start tags, then add a text node that is empty to prevent it from closing early 
+        if not self.allow_closing_in_start_tag and len(self.current_node.childNodes) == 0:
+            txt_node = self.dst_doc.createTextNode( "" )
+            self.current_node.appendChild(txt_node)
+            
+        # Move the current pointer up one
+        self.current_node = self.current_node.parentNode
+    
+    def handle_data(self, data):
+        
+        # Don't try to add a node if we don't have a parent
+        if self.current_node is None:
+            return
+        
+        # Transform the content if a transform function is provided
+        if self.text_transformation_fx is not None:
+            txt_node = self.dst_doc.createTextNode( self.text_transformation_fx( text=data, parent_node=self.current_node ).decode( "utf-8" ) )
+        else:
+            txt_node = self.dst_doc.createTextNode( data )
+
+        # Append the txt node
+        self.current_node.appendChild(txt_node)
+
+    def handle_comment(self, data):
+        pass
+    
+    def handle_entityref(self, name):
+        
+        # Make a text node to handle the content
+        txt_node = self.dst_doc.createTextNode( unichr(name2codepoint[name]) )
+
+        # Append the txt node
+        self.current_node.appendChild(txt_node)
+        
+    def handle_charref(self, name):
+        if name.startswith('x'):
+            c = unichr(int(name[1:], 16))
+        else:
+            c = unichr(int(name))
+            
+        # Make a text node to handle the content
+        txt_node = self.dst_doc.createTextNode( c )
+
+        # Append the txt node
+        self.current_node.appendChild(txt_node)
+
+def convert_xml_to_html5( xml_str, new_root_node_tag_name=None, text_transformation_fx=None, language=None, return_as_str=False, allow_closing_in_start_tag=False):
     """
     Convert the XML into HTML5 with custom data attributes.
     
     Arguments:
-    document -- An XML document containing the original XML to be converted
+    xml_str -- An XML document containing the original XML to be converted
     new_root_node_tag_name -- The name of the root node (otherwise, the root node will be converted too).
     text_transformation_fx -- A function which will be applied to all text. The function must take the following parameters: the text to transform, the tag_name of the parent node
     language -- the language to use for transforming the text. This will only be used if text_transformation_fx is not none in which case the transform_text function will be used
     return_as_str -- If true, then the content will be returned as a string; otherwise a document will be returned
     allow_closing_in_start_tag -- If true, then nodes with no children will be closed without an explicit closing tag. Otherwise, they will include an explicit closing tag.
     """
+    
+    # If the language was provided but a text transformation function was not, then use the process_text function
+    if text_transformation_fx is None and language is not None:
+        text_transformation_fx = lambda text, parent_node: transform_text(text, language)
+    
+    # Convert the content
+    converter = HTML5Converter(new_root_node_tag_name, allow_closing_in_start_tag, text_transformation_fx)
+    converter.feed(xml_str)
+    
+    # Return the result
+    if return_as_str:
+        return converter.dst_doc.toxml( encoding="utf-8" )
+    else:
+        return converter.dst_doc
+    
+
+def convert_xml_to_html5_minidom( xml_str, new_root_node_tag_name=None, text_transformation_fx=None, language=None, return_as_str=False, allow_closing_in_start_tag=False):
+    """
+    Convert the XML into HTML5 with custom data attributes.
+    
+    Arguments:
+    xml_str -- An XML document containing the original XML to be converted
+    new_root_node_tag_name -- The name of the root node (otherwise, the root node will be converted too).
+    text_transformation_fx -- A function which will be applied to all text. The function must take the following parameters: the text to transform, the tag_name of the parent node
+    language -- the language to use for transforming the text. This will only be used if text_transformation_fx is not none in which case the transform_text function will be used
+    return_as_str -- If true, then the content will be returned as a string; otherwise a document will be returned
+    allow_closing_in_start_tag -- If true, then nodes with no children will be closed without an explicit closing tag. Otherwise, they will include an explicit closing tag.
+    """
+    
+    src_doc = parseString(xml_str)
     
     # If the language was provided but a text transformation function was not, then use the process_text function
     if text_transformation_fx is None and language is not None:
