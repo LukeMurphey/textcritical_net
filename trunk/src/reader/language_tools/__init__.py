@@ -13,8 +13,12 @@ def transform_text( text, language ):
     if text is None:
         return None
     
+    # If the language is none, then don't do anything
+    if language is None:
+        return text
+    
     # Convert Greek beta code
-    if language == "Greek":
+    elif language.lower() == "greek":
         text_unicode = Greek.beta_code_to_unicode(text)
         
         return text_unicode.encode('utf-8')

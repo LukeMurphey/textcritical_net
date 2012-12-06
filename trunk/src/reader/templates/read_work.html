@@ -112,7 +112,7 @@
             {% if verse.indicator|length > 0 %}
             <a class="verse_link" data-verse="{{verse.indicator}}" id="verse_link_{{verse.indicator}}" href="?verse={{verse.indicator}}"><span class="label {% if verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
 	        {% endif %}
-	        {{verse.original_content|xml_to_html5:chapter.work.language|safe}}
+	        {{verse.original_content|perseus_xml_to_html5:chapter.work.language|safe}}
         </span>
         {% endfor %}        
         

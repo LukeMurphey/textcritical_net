@@ -3,10 +3,12 @@
 from django.test import TestCase
 
 from xml.dom.minidom import parse, parseString
+import unicodedata
 import os
 
 from textcritical.default_settings import SITE_ROOT
 from reader.shortcuts import convert_xml_to_html5, convert_xml_to_html5_minidom
+from reader.templatetags.reader_extras import perseus_xml_to_html5
 from reader.importer.Perseus import PerseusTextImporter
 from reader.importer.PerseusBatchImporter import ImportPolicy, PerseusBatchImporter, WorkDescriptor, wildcard_to_re, ImportTransforms
 from reader.importer import TextImporter, LineNumber
@@ -221,6 +223,25 @@ class TestShortcuts(TestCase):
         #self.write_out_test_file( expected_result + "\n\n" + actual_result )
         
         self.assertEqual(expected_result, actual_result)
+        
+    def test_process_text_multi_language_transforms(self):
+        
+        original_content = r"""<verse>koti/nois<note anchored="yes" place="unspecified" resp="ed">
+                  <foreign lang="greek">koti/nois</foreign> MSS.; <foreign lang="greek">kolwnoi=s</foreign>(hills' Bekker, adopting the correction of Coraës.</note>  kai\ pa/gois</verse>""".decode("utf-8")
+
+        language = "Greek"
+        
+        expected_result = r"""<?xml version="1.0" encoding="utf-8"?><span class="verse">κοτίνοις<span class="note" data-anchored="yes" data-place="unspecified" data-resp="ed">
+                  <span class="foreign" data-lang="greek">κοτίνοις</span> MSS.; <span class="foreign" data-lang="greek">κολωνοῖς</span>(hills' Bekker, adopting the correction of Coraës.</span>  καὶ πάγοις</span>"""
+
+        
+        actual_result = perseus_xml_to_html5(original_content, language=language)
+        
+        # Normalize the unicode in case we have equivalent but different Unicode
+        expected_result_u = unicodedata.normalize("NFC", unicode( expected_result.decode("utf-8") ) )
+        actual_result_u = unicodedata.normalize("NFC", unicode( actual_result.decode("utf-8") ) )
+        
+        self.assertEqual( expected_result_u, actual_result_u )
         
 class TestLineNumber(TestCase):
     
