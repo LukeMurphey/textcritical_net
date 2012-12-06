@@ -1,5 +1,5 @@
 from django import template
-from reader.shortcuts import convert_xml_to_html5
+from reader.shortcuts import convert_xml_to_html5, convert_xml_to_html5_minidom
 from reader.language_tools import transform_text
 
 register = template.Library()
@@ -30,17 +30,19 @@ def perseus_xml_to_html5(value, language=None):
         converted_doc.unlink()
         del(converted_doc)
     
-def transform_perseus_text(text, parent_node, language):
+def transform_perseus_text(text, parent_node, default_language):
     
-    if parent_node.tagName.startswith("div"):
-        pass
-    
-    if parent_node.tagName in ["body", "p", "title", "foreign"]:
-        pass
-
+    # Get the language specific to this node if is defined
+    if parent_node is not None and parent_node.attributes.get('data-lang', None) is not None:
+        language = parent_node.attributes['data-lang'].value
     else:
-        return text
+        language = default_language
+    
+    # Notes are typically in English and thus do not need transformed.
+    if parent_node.attributes.get('class', None) is not None and parent_node.attributes.get('class', None).value == "note":
+        return text.encode('utf-8')
     
     return transform_text(text, language)
     
 register.filter('xml_to_html5', xml_to_html5)
+register.filter('perseus_xml_to_html5', perseus_xml_to_html5)
