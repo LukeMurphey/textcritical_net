@@ -11,7 +11,7 @@ class HTML5Converter(HTMLParser):
     Takes an XML document and produces a HTML5 document that can be posted within an HTML document.
     """
     
-    def __init__(self, new_root_node_tag_name, allow_closing_in_start_tag, text_transformation_fx):
+    def __init__(self, new_root_node_tag_name, allow_closing_in_start_tag, text_transformation_fx, node_transformation_fx):
         """
         Initialize the HTML5 converter.
         
@@ -19,10 +19,12 @@ class HTML5Converter(HTMLParser):
         new_root_node_tag_name -- The name of the root node (otherwise, the root node will be converted too).
         allow_closing_in_start_tag -- If true, then nodes with no children will be closed without an explicit closing tag. Otherwise, they will include an explicit closing tag.
         text_transformation_fx -- A function which will be applied to all text. The function must take the following parameters: the text to transform, the tag_name of the parent node
+        node_transformation_fx -- A function that allows node transformations to be overridden. The function must take the following parameters: tag name, attributes, parent node, document
         """
         
         self.new_root_node_tag_name = new_root_node_tag_name
         self.text_transformation_fx = text_transformation_fx
+        self.node_transformation_fx = node_transformation_fx
         self.allow_closing_in_start_tag = allow_closing_in_start_tag
         
         # Make the new document
@@ -40,18 +42,29 @@ class HTML5Converter(HTMLParser):
     def handle_starttag(self, tag, attrs):
         
         parent = self.current_node
+        custom_current_node = None
         
         # Use a different root node if we were directed to use one
         if self.new_root_node_tag_name is not None and self.nodes_processed == 0:
             self.current_node = self.dst_doc.createElement(self.new_root_node_tag_name)
             
         else:
-            self.current_node = self.dst_doc.createElement( "span" )
-            self.current_node.setAttribute( "class", tag)
+            
+            # Use the node transformation function if it is defined
+            if self.node_transformation_fx is not None:
+                custom_current_node = self.node_transformation_fx( tag, attrs, parent, self.dst_doc)
+                
+            # If the transformation function didn't handle the node, then process it normally
+            if custom_current_node is None:
+                self.current_node = self.dst_doc.createElement( "span" )
+                self.current_node.setAttribute( "class", tag)
+            else:
+                self.current_node = custom_current_node
         
         # Copy over the attributes
-        for name, value in attrs:
-            self.current_node.setAttribute( "data-" + name, value)
+        if custom_current_node is None:
+            for name, value in attrs:
+                self.current_node.setAttribute( "data-" + name, value)
             
         # Attach the new node
         if parent is not None:
@@ -109,7 +122,7 @@ class HTML5Converter(HTMLParser):
         # Append the txt node
         self.current_node.appendChild(txt_node)
 
-def convert_xml_to_html5( xml_str, new_root_node_tag_name=None, text_transformation_fx=None, language=None, return_as_str=False, allow_closing_in_start_tag=False):
+def convert_xml_to_html5( xml_str, new_root_node_tag_name=None, text_transformation_fx=None, language=None, return_as_str=False, allow_closing_in_start_tag=False, node_transformation_fx=None):
     """
     Convert the XML into HTML5 with custom data attributes.
     
@@ -120,6 +133,7 @@ def convert_xml_to_html5( xml_str, new_root_node_tag_name=None, text_transformat
     language -- the language to use for transforming the text. This will only be used if text_transformation_fx is not none in which case the transform_text function will be used
     return_as_str -- If true, then the content will be returned as a string; otherwise a document will be returned
     allow_closing_in_start_tag -- If true, then nodes with no children will be closed without an explicit closing tag. Otherwise, they will include an explicit closing tag.
+    node_transformation_fx -- A function that allows node transformations to be overridden. The function must take the following parameters: tag name, attributes, parent node, document
     """
     
     # If the language was provided but a text transformation function was not, then use the process_text function
@@ -127,7 +141,7 @@ def convert_xml_to_html5( xml_str, new_root_node_tag_name=None, text_transformat
         text_transformation_fx = lambda text, parent_node: transform_text(text, language)
     
     # Convert the content
-    converter = HTML5Converter(new_root_node_tag_name, allow_closing_in_start_tag, text_transformation_fx)
+    converter = HTML5Converter(new_root_node_tag_name, allow_closing_in_start_tag, text_transformation_fx, node_transformation_fx)
     converter.feed(xml_str)
     
     # Return the result

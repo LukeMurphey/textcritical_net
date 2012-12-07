@@ -206,6 +206,37 @@ class TestShortcuts(TestCase):
         
         self.assertEqual(expected_result, actual_result)
         
+    def test_process_custom_transformation(self):
+        
+        def node_transformation_fx( tag, attrs, parent, document ):
+            
+            if tag == "num":
+                
+                new_node = document.createElement( "strong" )
+                
+                i = 0
+                for name, value in attrs:
+                    
+                    i = i + 1
+                    new_node.setAttribute( "attr" + str(i), name + "_" + value)
+                    
+                return new_node
+        
+        original_content = r"""
+<verse>
+    <head>foo <num ref="some_ref">d</num> bar</head>
+</verse>"""
+
+        expected_result = r"""<?xml version="1.0" encoding="utf-8"?><verse>
+    <span class="head">foo <strong attr1="ref_some_ref">d</strong> bar</span>
+</verse>"""
+
+        actual_result = convert_xml_to_html5(original_content, new_root_node_tag_name="verse", return_as_str=True, node_transformation_fx=node_transformation_fx)
+        
+        #self.write_out_test_file( expected_result + "\n\n" + actual_result )
+        
+        self.assertEqual(expected_result, actual_result)
+        
     def test_process_text_with_transform(self):
         
         original_content = r"""
