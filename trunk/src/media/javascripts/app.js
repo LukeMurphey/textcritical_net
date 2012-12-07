@@ -80,3 +80,31 @@ function loadStoreSettings(){
 		
 	}
 }
+
+
+function resolve_path( reference ){
+
+    // Break up the path
+    var path_array = window.location.pathname.split( '/' );
+    var path = [];
+    
+    for( i = 0; i < path_array.length; i++){
+    	if( path_array[i].length > 0 ){
+    		path.push(path_array[i]);
+    	}
+    	
+    	if( path.length >= 2 ){
+    	   break;
+    	}
+    }
+    
+    // Break up the reference entry
+    refs = reference.split(/[- :._]+/);
+    
+    // Make the path
+    return "/" + path.concat(refs).join("/");
+}
+
+function go_to_chapter( reference ){
+	document.location = resolve_path(reference);
+}

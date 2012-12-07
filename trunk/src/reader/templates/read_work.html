@@ -23,41 +23,14 @@
         ##############################
         {% endcomment %}
         <div class="btn-toolbar">
+        <div class="input-prepend">
             <div class="btn-group">
-            
-                {% comment %}
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                    Table of Contents
-                    <span class="caret"></span>
-                </a>
-                
-		            <ul class="dropdown-menu">		                  
-		                {% for division_part in divisions.all %}
-		                   {% if chapter.parent_division.id == division_part.id %}
-		                <li class="division_{{division_part.level}} active">
-		                    <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book icon-white"></i>{{division_part}}</a>
-		                </li>
-		                   {% else %}
-		                <li class="division_{{division_part.level}}">
-		                    <a href="{% url read_work work.title_slug division_part.sequence_number %}"><i class="icon-book {% if not USE_DARK_THEME|default:0 %}icon-white{% endif %}"></i>{{division_part}}</a>
-		                </li>
-		                   {% endif %}
-		                {% endfor %}
-                    </ul>
-                {% endcomment %}
-                
+            	<button id="align_break" class="btn"><i class="icon-align-left"></i></button>
                 <button class="btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show_table_of_contents">Table of Contents</button>
-                <button id="align_break" class="btn"><i class="icon-align-left"></i></button>
             </div>
-            {% comment %}
-            <div class="btn-group">
-                <button class="btn">Side-by-side</button>
-                <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-                <ul class="dropdown-menu">
-                    <li><a href="#">English (Bill Neise)</a></li>
-                </ul>
-            </div>
-            {% endcomment %}
+            
+            <input class="span2" id="chapter" value="{{chapter.get_division_description}}" type="text">
+        </div>
         </div>
         
         {% comment %}
@@ -160,6 +133,16 @@ require(["jquery", "store", "app"], function($) {
     loadStoreSettings();
     $('#align_break').click(toggleVerseBreak);
     $('#show_table_of_contents').click( toggleTOC );
+    
+    function update_chapter_reference(e) {
+        if (e.keyCode == 13) {
+            var ref = $(this).val();
+            go_to_chapter(ref);
+            return true;
+        }
+    }
+    
+    $("#chapter").keypress( update_chapter_reference );
     
     $(".verse_link").click(function() {
     	return scrollToVerse( $(this).attr("data-verse") );
