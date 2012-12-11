@@ -1,0 +1,441 @@
+!a/bais	{49671719 9 a_(/bais,h(/bh	youthful prime	fem dat pl (doric)}
+!a/brois	{30699944 9 e)/brois,e)/bros	he-goat	masc dat pl}
+!a/can	{1504414 9 a)/can,a)/gw	lead	aor part act neut nom/voc/acc sg}
+!a/cin	{38523404 9 e)/cin,e)/ceimi2	sum	imperf ind act 3rd pl (epic)}
+!a/cios	{11409341 9 a)/cios,a)/cios	counterbalancing	masc nom sg}
+!a/da	{1950358 9 a(/da_,a(/dos	satiety	neut nom/voc/acc pl (doric aeolic)}
+!a/dh	{1950358 9 a(/dh,a(/dos	satiety	neut nom/voc/acc pl (attic epic doric)}{1950358 9 a(/dh,a(/dos	satiety	neut nom/voc/acc dual (doric aeolic)}
+!a/dhn	{1750487 9 a(/dhn,a(/dhn	to one's fill	indeclform (adverb)}{1950358 9 a(/dhn,a(/dos	satiety	neut acc sg}
+!a/fei	{15206975 9 a_(/fei,a(/ptw	fasten	plup ind act 3rd sg (attic epic doric aeolic)}
+!a/g'	{829877 9 a)/ge,a)/ge	come on!	indeclform (adverb)}{908577 9 a)/gai,a)/gh	wonder	fem nom/voc pl}{908577 9 a)/ga_|,a)/gh	wonder	fem dat sg (doric aeolic)}{1504414 9 a)/ge,a)/gw	lead	pres imperat act 2nd sg}
+!a/gei	{1247079 9 a(/gei,a)/gos	any matter of religious awe	neut nom/voc/acc dual (attic epic)}{1247079 9 a(/gei+,a)/gos	any matter of religious awe	neut dat sg (epic ionic)}{1247079 9 a(/gei,a)/gos	any matter of religious awe	neut dat sg}
+!a/h	{430684 9 a_)/h,a)a/w	hurt	imperf ind act 3rd sg (doric aeolic)}{430684 9 a)/h,a)a/w	hurt	pres imperat act 2nd sg (doric)}{30653619 9 e)/h,e)a/w	suffer	pres imperat act 2nd sg (doric)}
+!a/ion	{3367830 5 a_)/i+on,a)i/w1	perceive	imperf ind act 3rd pl (doric aeolic)}{3367830 5 a_)/i+on,a)i/w1	perceive	imperf ind act 1st sg (doric aeolic)}{3367830 5 a)_/i+on,a)i/w2	perceive	imperf ind act 3rd pl (epic doric aeolic)}
+!a/lhi	{5018738 9 a(/lh|,a(/llomai	sal-	aor subj mid 2nd sg}
+!a/lh|s	{4592614 9 a)/lh|s,a)/lh	wandering	fem dat pl (epic)}
+!a/lios	{4751988 9 a_(/lios,a(/lios1	of the sea	masc nom sg}{4751988 9 a_(/lios,a(/lios1	of the sea	masc/fem nom sg}{4754701 9 a(/lios,a(/lios2	fruitless	masc nom sg}{50121280 9 a_(/lios,h(/lios	sun	masc nom sg (doric)}
+!a/lla	{5033189 9 a)/lla,a)/llos	y	neut nom/voc/acc pl}{5033189 9 a)/lla_,a)/llos	y	fem nom/voc/acc dual}{5033189 9 a)/lla_,a)/llos	y	fem nom/voc sg (doric aeolic)}
+!a/llei	{5018738 9 a(/llei,a(/llomai	sal-	pres ind mid 2nd sg}
+!a/lletai	{5018738 9 a(/lletai,a(/llomai	sal-	pres ind mid 3rd sg}
+!a/llois	{5033189 9 a)/llois,a)/llos	y	neut dat pl}{5033189 9 a)/llois,a)/llos	y	masc dat pl}
+!a/menai	{19684069 9 a)/menai,a)/w3	satiate	pres inf act (epic)}{32007501 9 e)/menai,ei)mi/	sum	pres inf act (epic)}
+!a/mh	{5815695 9 a)/mh,a)/mh	shovel	fem nom/voc sg (attic epic ionic)}{5558424 9 a_)/mh,a)ma/w1	reap corn	imperf ind act 3rd sg (doric aeolic)}{5558424 9 a_)_/mh,a)ma/w1	reap corn	imperf ind act 3rd sg (doric aeolic)}{5558424 9 a)_/mh,a)ma/w1	reap corn	pres imperat act 2nd sg (doric)}{35420490 9 e)/mh,e)me/w	vomit	pres imperat act 2nd sg (doric aeolic)}
+!a/mmoron	{5924810 9 a)/mmoron,a)/mmoros	without share of	masc/fem acc sg}{5924810 9 a)/mmoron,a)/mmoros	without share of	neut nom/voc/acc sg}{35496645 9 e)/mmoron,e)/mmoros	partaking in	masc/fem acc sg}{35496645 9 e)/mmoron,e)/mmoros	partaking in	neut nom/voc/acc sg}
+!a/n	{81663248 9 a(_/n,o(/s	yas	fem acc sg (doric aeolic)}
+!a/nai	{6757976 9 a)/nai,a)/na	king	fem nom/voc pl}{6757976 9 a)/na_|,a)/na	king	fem dat sg (doric aeolic)}{9225226 9 a)/nai,a)/nh	fulfilment	fem nom/voc pl}{9225226 9 a)/na_|,a)/nh	fulfilment	fem dat sg (doric aeolic)}
+!a/nei	{8781239 9 a)/nei,a)/neimi	go up	pres ind act 2nd sg}{11250917 9 a)/nei,a)/nw1	accomplish	pres ind mp 2nd sg}{11250917 9 a)/nei,a)/nw1	accomplish	pres ind act 3rd sg}{9221770 9 a_)_/nei,a)ne/w	 	imperf ind act 3rd sg (attic epic doric aeolic)}{9221770 9 a)_/nei,a)ne/w	 	pres imperat act 2nd sg (attic epic)}{36799634 9 e)/nei,e)/neimi	sum	pres ind act 2nd sg}{76014939 9 e)/nei,ne/w	swim	imperf ind act 3rd sg (attic epic)}{76014939 9 e)/nei,ne/w1	swim	imperf ind act 3rd sg (attic epic)}{76019504 9 e)/nei,ne/w2	spin	imperf ind act 3rd sg (attic epic)}{76022599 9 e)/nei,ne/w3	heap	imperf ind act 3rd sg (attic epic)}
+!a/nein	{11250917 9 a)/nein,a)/nw1	accomplish	pres inf act (attic epic)}
+!a/neto	{11250917 9 a_)/neto,a)/nw1	accomplish	imperf ind mp 3rd sg (doric aeolic)}{9619125 9 a)/neto,a)ni/hmi	send up	aor ind mid 3rd sg (epic ionic)}{37155703 9 e)/neto,e)ni/hmi	send in	aor ind mid 3rd sg (epic ionic)}
+!a/ntwn	{10100899 9 a_)/ntwn,a)nta/w	come opposite to	imperf ind act 3rd pl (doric aeolic)}{10100899 9 a_)/ntwn,a)nta/w	come opposite to	imperf ind act 1st sg (doric aeolic)}
+!a/nw	{9892388 9 a)/nw,a)/noos	without understanding	masc/fem/neut nom/voc/acc dual}{11250917 9 a)/nw,a)/nw1	accomplish	pres subj act 1st sg}{11250917 9 a)/nw,a)/nw1	accomplish	pres ind act 1st sg}{11256222 9 a)/nw,a)/nw2	upwards	indeclform (adverb)}
+!a/piai	{12566160 9 a)/piai,a)/pios2	far away	fem nom/voc pl}{12566160 9 a_)/piai,a)/pios2	far away	fem nom/voc pl}
+!a/qh	{31572177 9 e)/qh,e)/qos	custom	neut nom/voc/acc pl (attic epic doric)}{31572177 9 e)/qh,e)/qos	custom	neut nom/voc/acc dual (doric aeolic)}{51953179 9 e)/qh,qe/w	dhávate	imperf ind act 3rd sg (doric aeolic)}
+!a/qhte	{31576159 9 e)/qhte,e)/qw	to be accustomed	pres subj act 2nd pl}{51289249 9 e)/qhte,qa/w	 	imperf ind act 2nd pl}
+!a/r	{15291788 9 a)/r,a)/ra	i[rtilde]	epic (indeclform particle)}
+!a/r'	{15291788 9 a)/ra,a)/ra	i[rtilde]	indeclform (particle)}{16092882 9 a)/ra,a)/ron	cuckoo-pint	neut nom/voc/acc pl}{2111737 9 a)/re,ai)/rw	attach	aor ind act 3rd sg (epic doric aeolic)}{44285764 9 e)/rai,e)/ra	earth	fem nom/voc pl}{44285764 9 e)/ra_|,e)/ra	earth	fem dat sg (attic doric aeolic)}{44870091 9 e)/ri,e)/ris	strife	fem voc sg}{45023440 9 e)/re,e)/ros1	love	masc voc sg}
+!a/ra	{15291788 9 a)/ra,a)/ra	i[rtilde]	indeclform (particle)}{16092882 9 a)/ra,a)/ron	cuckoo-pint	neut nom/voc/acc pl}{16095013 9 a)/ra_,a)/ros	use	neut nom/voc/acc pl (doric aeolic)}{44285764 9 e)/ra_,e)/ra	earth	fem nom/voc/acc dual}{44285764 9 e)/ra_,e)/ra	earth	fem nom/voc sg (attic doric aeolic)}{44288530 9 e)/ra_,e)/ramai	love	pres imperat mp 2nd sg (doric aeolic)}{45026235 9 e)/ra_,e)/ros2	wool	neut nom/voc/acc pl (doric aeolic)}{44349051 9 e)/ra_,e)ra/w1	love	pres imperat act 2nd sg}{44357206 9 e)/ra_,e)ra/w2	pour forth	pres imperat act 2nd sg}
+!a/ron	{16092882 9 a)/ron,a)/ron	cuckoo-pint	neut nom/voc/acc sg}{2111737 9 a)/ron,ai)/rw	attach	aor ind act 3rd pl (epic doric aeolic)}{2111737 9 a)/ron,ai)/rw	attach	aor ind act 1st sg (epic doric aeolic)}{45023440 9 e)/ron,e)/ros1	love	masc acc sg}
+!a/s	{81663248 9 a(_/s,o(/s	yas	fem acc pl}
+!a/sdwn	{32430564 9 e)/sdwn,ei)sdi/dwmi	flow into	aor ind act 3rd pl (epic doric aeolic)}{32430564 9 e)/sdwn,ei)sdi/dwmi	flow into	aor ind act 1st sg (epic)}
+!a/sein	{19684069 9 a)_/sein,a)/w3	satiate	fut inf act (attic epic)}
+!a/setai	{49798258 9 a(_/setai,h(/domai	swād-	aor subj mid 3rd sg (epic doric)}
+!a/sw	{49798258 9 a_(_/sw,h(/domai	swād-	aor ind mid 2nd sg (doric aeolic)}{49798258 9 a(_/sw,h(/domai	swād-	aor ind mid 2nd sg (doric aeolic)}
+!a/t'	{17635407 9 a(/te,a(/te	just as	indeclform (adverb)}
+!a/tan	{17728420 9 a_)/ta_n,a)/th	bewilderment	fem acc sg (doric aeolic)}{45792630 9 e)/ta_n,e)/ths	clansmen	masc acc sg (epic doric aeolic)}{45792630 9 e)/tan,e)/ths	clansmen	masc acc sg}
+!a/tion	{17749950 9 a_)/tion,a)ti/zw	not to honour	imperf ind act 3rd pl (doric aeolic)}{17749950 9 a_)/tion,a)ti/zw	not to honour	imperf ind act 1st sg (doric aeolic)}{115244570 9 e)/tion,ti/w	 	imperf ind act 3rd pl (attic epic)}{115244570 9 e)/tion,ti/w	 	imperf ind act 1st sg (attic epic)}{115244570 9 e)/ti_on,ti/w	 	imperf ind act 3rd pl (epic ionic)}{115244570 9 e)/ti_on,ti/w	 	imperf ind act 1st sg (epic ionic)}
+!a/tos	{428761 9 a)/tos,a)=tos	insatiate	masc/fem nom sg}{45851559 9 e)/tos,e)/tos	year	neut nom/voc/acc sg}
+!a/ttomen	{3186822 9 a_)/ttomen,a)i/ssw	shoot	imperf ind act 1st pl (attic doric aeolic)}{3186822 9 a)/ttomen,a)i/ssw	shoot	pres ind act 1st pl (attic doric aeolic)}
+!a/twn	{428761 9 a_)/twn,a)/atos	insatiate	masc/fem/neut gen pl}{428761 9 a)/twn,a)=tos	insatiate	masc/fem/neut gen pl}
+!a/wn	{81663248 9 a(/wn,o(/s	yas	masc/fem gen pl (homeric doric)}
+!a/xmata	{48822391 9 e)/xmata,e)/xma	that which holds	neut nom/voc/acc pl}
+!a/xqomai	{19480186 9 a)/xqomai,a)/xqomai	to be loaded	pres ind mp 1st sg}{48791038 9 e)/xqomai,e)/xqw	hate	pres ind mp 1st sg}
+!a/yet'	{15206975 9 a(/yete,a(/ptw	fasten	aor subj act 2nd pl (epic)}{15206975 9 a(/yete,a(/ptw	fasten	fut ind act 2nd pl}{15206975 9 a_(/yete,a(/ptw	fasten	futperf ind act 2nd pl (doric aeolic)}{15206975 9 a(/yetai,a(/ptw	fasten	aor subj mid 3rd sg (epic)}{15206975 9 a(/yetai,a(/ptw	fasten	fut ind mid 3rd sg}{15206975 9 a_(/yetai,a(/ptw	fasten	futperf ind mp 3rd sg (doric aeolic)}
+!a/zhs	{2274602 9 a)/zhs,a)/za	heat	fem gen sg (attic epic ionic)}{2304138 9 a)/zhs,a)/zos	dry	fem gen sg (attic epic ionic)}{49087994 9 e)/zhs,za/w	 	imperf ind act 2nd sg (attic epic ionic)}{49192211 9 e)/zhs,ze/w	boil	imperf ind act 2nd sg (doric aeolic)}
+!a=ge	{829877 9 a)/ge,a)/ge	come on!	indeclform (adverb)}{1504414 9 a)/ge,a)/gw	lead	pres imperat act 2nd sg}{1504414 9 a_)=ge,a)/gw	lead	imperf ind act 3rd sg (doric aeolic)}
+!a=i	{81663248 9 a(=|,o(/s	yas	fem dat sg (doric aeolic)}
+!a=n	{81663248 9 a(=n,o(/s	yas	masc/fem gen pl (doric)}
+!a=s	{49002922 9 a(=s,e(/ws	 	doric aeolic (indeclform conj)}{81663248 9 a(=s,o(/s	yas	fem gen sg (doric aeolic)}
+!a=sai	{49798258 9 a(=sai,h(/domai	swād-	aor imperat mid 2nd sg (doric)}
+!ac	{32695571 9 e)c,e)k	from out of	proclitic indeclform (prep)}
+!adu/s	{49871392 9 a(_du/s,h(du/s	pleasant	masc nom sg (doric)}
+!aei/dontes	{2060536 9 a)ei/dontes,a)ei/dw	Il.Parv..	pres part act masc nom/voc pl (epic ionic)}
+!agagei=n	{1504414 9 a)gagei=n,a)/gw	lead	aor inf act (attic epic doric)}
+!aghko/ti	{777653 9 a_)ghko/ti,a)ga/w	 	perf part act masc/neut dat sg (attic doric ionic aeolic)}
+!ago/menos	{1504414 9 a)go/menos,a)/gw	lead	pres part mp masc nom sg}
+!agome/nh	{1504414 9 a)gome/nh,a)/gw	lead	pres part mp fem nom/voc sg (attic epic ionic)}
+!agorei=	{1220085 9 a)gorei=,a)gora/omai	meet in assembly	pres ind mid 2nd sg (attic epic doric ionic aeolic)}
+!ai	{122325915 9 ai(,o(	lentil	fem nom/voc pl}
+!ai/	{122325915 9 ai(/,o(	lentil	fem nom/voc pl}{81663248 9 ai(/,o(/s	yas	fem nom pl}
+!aiper	{122325915 9 ai(,o(	lentil	fem nom/voc pl}
+!airei=sqai	{3109854 9 ai(rei=sqai,ai(re/w	take with the hand	pres inf mp (attic epic)}
+!aireu=ntai	{3109854 9 ai(reu=ntai,ai(re/w	take with the hand	pres ind mp 3rd pl (epic doric ionic)}
+!ak	{32695571 9 e)k,e)k	from out of	proclitic indeclform (prep)}
+!ak'	{3652867 9 a)ka_/,a)kh/	point	fem nom/voc/acc dual}{3652867 9 a)ka_/,a)kh/	point	fem nom/voc sg (doric aeolic)}{3652867 9 a)kai/,a)kh/	point	fem nom/voc pl}{3715927 9 a)ki/,a)ki/s	pointed object	fem voc sg}{32756124 9 e)ka/,e)ka/s	 	fem voc sg}
+!aka=i	{3652867 9 a)ka=|,a)kh/	point	fem dat sg (doric aeolic)}
+!akei=sqai	{3605260 9 a)kei=sqai,a)ke/omai	heal	fut inf mid (attic epic)}{3605260 9 a)kei=sqai,a)ke/omai	heal	pres inf mp (attic epic)}{3650824 9 a)kei=sqai,a)ke/w	 	pres inf mp (attic epic)}
+!akosth=i	{3922568 9 a)kosth=|,a)kosta/w	well-fed	pres subj mp 2nd sg (doric)}{3922568 9 a)kosth=|,a)kosta/w	well-fed	pres ind mp 2nd sg (doric aeolic)}{3922568 9 a)kosth=|,a)kosta/w	well-fed	pres subj act 3rd sg (doric)}{3922568 9 a)kosth=|,a)kosta/w	well-fed	pres ind act 3rd sg (doric aeolic)}{3922568 9 a)kosth=|,a)kosta/w	well-fed	pres subj mp 2nd sg (epic ionic)}{3922568 9 a)kosth=|,a)kosta/w	well-fed	pres ind mp 2nd sg (epic doric ionic aeolic)}{3922568 9 a)kosth=|,a)kosta/w	well-fed	pres subj act 3rd sg (epic ionic)}{3922568 9 a)kosth=|,a)koste/w	well-fed	pres subj mp 2nd sg}{3922568 9 a)kosth=|,a)koste/w	well-fed	pres ind mp 2nd sg}{3922568 9 a)kosth=|,a)koste/w	well-fed	pres subj act 3rd sg}{3923272 9 a)kosth=|,a)kosth/	barley	fem dat sg (attic epic ionic)}
+!akou/hn	{3942831 9 a)kou/hn,a)kou/w	hear	pres inf act (doric aeolic)}
+!akru/ptei	{101757985 9 e)kru/ptei,e)k-r(u/ptw	cleanse	pres ind mp 2nd sg}[32695571]{101757985 9 e)kru/ptei,e)k-r(u/ptw	cleanse	pres ind act 3rd sg}[32695571]
+!ale/geis	{4466362 9 a)le/geis,a)le/gw	have a care	pres ind act 2nd sg}
+!ale/ousin	{4586706 9 a)le/ousin,a)le/w	grind	pres part act masc/neut dat pl (epic doric ionic)}{4586706 9 a)le/ousin,a)le/w	grind	pres ind act 3rd pl (epic doric ionic aeolic)}{4586706 9 a)le/ousin,a)le/w	grind	aor subj act 3rd pl (epic)}{31972031 9 a)le/ousin,ei)/lw	shut in	aor subj pass 3rd pl (epic)}
+!alei=	{5018738 9 a(lei=,a(/llomai	sal-	fut ind mid 2nd sg (attic epic doric ionic aeolic)}{4647478 9 a_(lei=,a(lh/s	thronged	masc/fem/neut nom/voc/acc dual (attic epic ionic)}{4647478 9 a_(lei=,a(lh/s	thronged	masc/fem/neut dat sg (ionic)}
+!alhqh=	{4614110 9 a)lhqh=,a)lhqh/s	unconcealed	neut nom/voc/acc pl (attic epic doric)}{4614110 9 a)lhqh=,a)lhqh/s	unconcealed	masc/fem/neut nom/voc/acc dual (doric aeolic)}{4614110 9 a)lhqh=,a)lhqh/s	unconcealed	masc/fem acc sg (attic epic doric)}
+!all'	{4876490 9 a)lla/,a)lla/	otheruise	indeclform (adverb)}{35153600 9 e)lle/,e(llo/s	a young deer	masc voc sg}{35153600 9 e)lla/,e)llo/s	a young deer	neut nom/voc/acc pl}{35153600 9 e)lla_/,e)llo/s	a young deer	fem nom/voc/acc dual}{35153600 9 e)lla_/,e)llo/s	a young deer	fem nom/voc sg (doric aeolic)}{35153600 9 e)lle/,e)llo/s	a young deer	masc voc sg}{35153600 9 e)llai/,e)llo/s	a young deer	fem nom/voc pl}
+!allagh/n	{4903770 9 a)llagh/n,a)llagh/	change	fem acc sg (attic epic ionic)}
+!am	{36096155 9 e)m,e)n	in	epic (proclitic indeclform prep)}
+!am'	{6016536 9 a_(ma/,a(mo/s1	 	neut nom/voc/acc pl}{6016536 9 a_(ma_/,a(mo/s1	 	fem nom/voc/acc dual}{6016536 9 a_(ma_/,a(mo/s1	 	fem nom/voc sg (doric aeolic)}{6016536 9 a_(me/,a(mo/s1	 	masc voc sg}{6016536 9 a_(mai/,a(mo/s1	 	fem nom/voc pl}{31358279 9 a(me/,e)gw/	I at least	masc/fem acc 1st pl (doric)}
+!ame/nou	{71584156 9 e)me/nou,me/nw	stay	imperf ind mp 2nd sg (attic epic doric)}
+!ame/trw|	{5809929 9 a)me/trw|,a)/metros	without	masc/fem/neut dat sg}
+!amei/beto	{5652925 9 a_)mei/beto,a)mei/bw	change	imperf ind mp 3rd sg (doric aeolic)}
+!ameibo/menon	{5652925 9 a)meibo/menon,a)mei/bw	change	pres part mp masc acc sg}{5652925 9 a)meibo/menon,a)mei/bw	change	pres part mp neut nom/voc/acc sg}
+!amen	{32007501 9 e)men,ei)mi/	sum	pres inf act}
+!an	{36096155 9 e)n,e)n	in	proclitic indeclform (prep)}{32242949 9 e)n,ei)s	into	doric aeolic (proclitic indeclform prep)}
+!ana/gei	{7005192 9 a)na/gei,a)na/gw	lead up	pres ind mp 2nd sg}{7005192 9 a)na/gei,a)na/gw	lead up	pres ind act 3rd sg}{36168825 9 e)na/gei,e)na/gw	lead in	pres ind mp 2nd sg}{36168825 9 e)na/gei,e)na/gw	lead in	pres ind act 3rd sg}
+!andrei/hs	{8632023 9 a)ndrei/hs,a)ndrei/a	may	fem gen sg (epic ionic)}{8638558 9 a)ndrei/hs,a)ndrei=os	of	fem gen sg (epic ionic)}
+!ane/ntwn	{9619125 9 a)ne/ntwn,a)ni/hmi	send up	aor imperat act 3rd pl}{9619125 9 a)ne/ntwn,a)ni/hmi	send up	aor part act masc/neut gen pl}{37155703 9 e)ne/ntwn,e)ni/hmi	send in	aor imperat act 3rd pl}{37155703 9 e)ne/ntwn,e)ni/hmi	send in	aor part act masc/neut gen pl}
+!ane/pipton	{7882533 9 a)ne/pi_pton,a)napi/ptw	fall back	imperf ind act 3rd pl}{7882533 9 a)ne/pi_pton,a)napi/ptw	fall back	imperf ind act 1st sg}{35712532 9 e)ne/pi_pton,e)mpi/tnw	fall upon	imperf ind act 3rd pl}{35712532 9 e)ne/pi_pton,e)mpi/tnw	fall upon	imperf ind act 1st sg}
+!aneko/smion	{31120066 9 e)neko/smion,e)gkosme/w	arrange in	imperf ind act 3rd pl (doric)}{31120066 9 e)neko/smion,e)gkosme/w	arrange in	imperf ind act 1st sg (doric)}
+!anh/sato	{9221770 9 a_)_nh/sato,a)ne/w	 	aor ind mid 3rd sg (doric aeolic)}{36785387 9 e)nh/sato,e)ne/zomai	sit in	aor ind mid 3rd sg (epic)}{76014939 9 e)nh/sato,ne/w	swim	aor ind mid 3rd sg}{76019504 9 e)nh/sato,ne/w2	spin	aor ind mid 3rd sg}{76022599 9 e)nh/sato,ne/w3	heap	aor ind mid 3rd sg}
+!anisqh=nai	{37150500 9 e)nisqh=nai,e)ni/zw	to set in	aor inf pass}
+!ano/ntos	{32007501 9 a)no/ntos,a)na/-ei)mi/	sum	pres part act masc/neut gen sg}[6738940]{32007501 9 e)no/ntos,e)n-ei)mi/	sum	pres part act masc/neut gen sg}[36096155]
+!ant'	{10270183 9 a)nti/,a)nti/	over against.	indeclform (prep)}{32007501 9 e)nti,ei)mi/	sum	pres ind act 3rd pl (doric)}{32007501 9 e)nti,ei)mi/	sum	pres ind act 3rd sg (doric)}
+!anti	{32007501 9 e)nti,ei)mi/	sum	pres ind act 3rd pl (doric)}{32007501 9 e)nti,ei)mi/	sum	pres ind act 3rd sg (doric)}
+!anw=!	{9619125 9 a)nw=,a)ni/hmi	send up	aor subj act 1st sg}{9619125 9 a)nw=,a)ni/hmi	send up	aor subj act 1st sg}{37155703 9 e)nw=,e)ni/hmi	send in	aor subj act 1st sg}{37155703 9 e)nw=,e)ni/hmi	send in	aor subj act 1st sg}
+!ao/n	{32007501 9 e)o/n,ei)mi/	sum	pres part act masc voc sg (epic doric ionic)}{32007501 9 e)o/n,ei)mi/	sum	pres part act neut nom/voc/acc sg (epic doric ionic)}
+!ap'	{12711488 9 a)po/,a)po/	ápa	indeclform (prep)}{12711488 9 a)pai/,a)po/	ápa	poetic indeclform (prep)}{40532015 9 e)pi/,e)pi/	being upon	indeclform (prep)}
+!apte/on	{15190663 9 a(pte/on,a(pte/on	one must cling to	masc acc sg}{15190663 9 a(pte/on,a(pte/on	one must cling to	neut nom/voc/acc sg}{15191705 0 a(pte/on,a(pte/os	 	masc/fem acc sg}{15191705 0 a(pte/on,a(pte/os	 	neut nom/voc/acc sg}
+!aq'	{31483956 9 e)qa/,e)qa/s	accustomed	masc/fem voc sg}{70100624 2 a)qa/,mara/n	 	indeclform (indecl)}
+!ar'	{15316072 9 a)ra_/,a)ra/	prayer	fem nom/voc/acc dual (ionic)}{15316072 9 a)ra_/,a)ra/	prayer	fem nom/voc sg (attic doric ionic aeolic)}{15316072 9 a)rai/,a)ra/	prayer	fem nom/voc pl (ionic)}{15316072 9 a)ra_/,a)rh/	prayer	fem nom/voc/acc dual}{15316072 9 a)ra_/,a)rh/	prayer	fem nom/voc sg (attic doric aeolic)}{15316072 9 a)rai/,a)rh/	prayer	fem nom/voc pl}{15799220 9 a)ri/,a)ri/s	bow-drill	fem voc sg}
+!ara/sswn	{15401864 9 a)ra/sswn,a)ra/ssw	smite	pres part act masc nom sg}{15335347 9 a)ra/sswn,a)ra/zw	snarl	fut part act masc nom sg (epic)}
+!arh/n	{15316072 9 a)rh/n,a)ra/	prayer	fem acc sg (epic ionic)}{15316072 9 a)rh/n,a)rh/	prayer	fem acc sg (epic ionic)}
+!arme/nh	{15375874 9 a)rme/nh,a)rari/skw	join	aor part mid fem nom/voc sg (attic epic doric ionic aeolic)}{32225874 9 e)rme/nh,ei)/rw	fasten together in rows	perf part mp fem nom/voc sg (attic epic ionic)}
+!armoni/as	{16022725 9 a(rmoni/a_s,a(rmoni/a	means of joining	fem acc pl}{16022725 9 a(rmoni/a_s,a(rmoni/a	means of joining	fem gen sg (attic doric aeolic)}
+!arnaki/dwn	{16051271 9 a)rnaki/dwn,a)rnaki/s	sheepskin coat	fem gen pl}
+!arqe/ntos	{15375874 9 a)rqe/ntos,a)rari/skw	join	aor part pass masc/neut gen sg}{2111737 9 a)rqe/ntos,ai)/rw	attach	aor part pass masc/neut gen sg}
+!arw=sin	{15335347 9 a)rw=sin,a)ra/zw	snarl	fut part act masc/neut dat pl (attic epic doric ionic)}{15335347 9 a)rw=sin,a)ra/zw	snarl	fut ind act 3rd pl (attic epic doric ionic aeolic)}{16133591 9 a)rw=sin,a)ro/w	plough	pres subj mp 2nd sg (epic)}{16133591 9 a)rw=sin,a)ro/w	plough	pres subj act 3rd pl}{16133591 9 a)rw=sin,a)ro/w	plough	pres subj act 3rd sg (epic)}{44349051 9 e)rw=sin,e)ra/w1	love	pres part act masc/neut dat pl (attic epic doric ionic)}{44349051 9 e)rw=sin,e)ra/w1	love	pres subj act 3rd pl (attic epic ionic)}{44349051 9 e)rw=sin,e)ra/w1	love	pres ind act 3rd pl (attic epic doric ionic)}{44357206 9 e)rw=sin,e)ra/w2	pour forth	pres part act masc/neut dat pl (attic epic doric ionic)}{44357206 9 e)rw=sin,e)ra/w2	pour forth	pres subj act 3rd pl (attic epic ionic)}{44357206 9 e)rw=sin,e)ra/w2	pour forth	pres ind act 3rd pl (attic epic doric ionic)}{44349051 9 e)rw=sin,e)re/w	love	pres subj act 3rd pl (attic epic doric)}
+!as	{32242949 9 e)s,ei)s	into	proclitic indeclform (prep)}
+!asei=t'	{16761206 9 a_)sei=to,a)sa/omai	glut oneself	imperf ind pass 3rd sg (attic epic doric ionic aeolic)}{16761206 9 a)sei=to,a)sa/omai	glut oneself	pres opt pass 3rd sg (epic ionic)}{16761206 9 a)sei=tai,a)sa/omai	glut oneself	pres ind pass 3rd sg (attic epic doric ionic aeolic)}{16761206 9 a_)sei=to,a)sa/w	glut oneself	imperf ind mp 3rd sg (attic epic doric ionic aeolic)}{16761206 9 a)sei=to,a)sa/w	glut oneself	pres opt mp 3rd sg (epic ionic)}{16761206 9 a_)sei=te,a)sa/w	glut oneself	imperf ind act 2nd pl (attic epic doric ionic aeolic)}{16761206 9 a)sei=te,a)sa/w	glut oneself	pres imperat act 2nd pl (attic epic ionic)}{16761206 9 a)sei=te,a)sa/w	glut oneself	pres opt act 2nd pl (epic ionic)}{16761206 9 a)sei=te,a)sa/w	glut oneself	pres ind act 2nd pl (attic epic doric ionic aeolic)}{16761206 9 a)sei=tai,a)sa/w	glut oneself	pres ind mp 3rd sg (attic epic doric ionic aeolic)}{32496059 9 e)sei=to,ei)si/hmi	sendinto	aor ind mid 3rd sg}{32496059 9 e)sei=to,ei)si/hmi	sendinto	plup ind mp 3rd sg}{32496059 9 e)sei=te,ei)si/hmi	sendinto	aor opt act 2nd pl}{32496059 9 e)sei=te,ei)si/hmi	sendinto	aor opt act 2nd pl}{32496059 9 e)sei=tai,ei)si/hmi	sendinto	perf ind mp 3rd sg}{102671843 9 e)sei=to,se/w	 	imperf ind mp 3rd sg (attic epic)}{102671843 9 e)sei=te,se/w	 	imperf ind act 2nd pl (attic epic)}
+!asi/a	{16868608 9 a)si/a_,a)/sios	Asian	fem nom/voc/acc dual}{16868608 9 a)si/a_,a)/sios	Asian	fem nom/voc sg (attic doric aeolic)}{45391918 9 e)si/a_,e)si/a	 	fem nom/voc/acc dual}{45391918 9 e)si/a_,e)si/a	 	fem nom/voc sg (attic doric aeolic)}
+!asi/an	{16868608 9 a)si/a_n,a)/sios	Asian	fem acc sg (attic doric aeolic)}{45391918 9 e)si/a_n,e)si/a	 	fem acc sg (attic doric aeolic)}
+!asi/a|	{16868608 9 a)si/a_|,a)/sios	Asian	fem dat sg (attic doric aeolic)}{45391918 9 e)si/a_|,e)si/a	 	fem dat sg (attic doric aeolic)}
+!asme/nou	{16982754 9 a)sme/nou,a)/smenos	well-pleased	masc/neut gen sg}
+!asmo/n	{45401991 9 e)smo/n,e(smo/s	that which settles	masc acc sg (ionic)}
+!ass'	{32007501 9 e)ssi,ei)mi/	sum	pres ind act 2nd sg (epic doric aeolic)}{115248615 9 a)ssa,tis	any one	neut acc pl (epic)}
+!ast'	{17177614 9 a)sta_/,a)sth/	 	fem nom/voc/acc dual}{17177614 9 a)sta_/,a)sth/	 	fem nom/voc sg (doric aeolic)}{17177614 9 a)stai/,a)sth/	 	fem nom/voc pl}{17213629 9 a)ste/,a)sto/s	townsman	masc voc sg}{32007501 9 e)sti,ei)mi/	sum	pres ind act 3rd sg}{32007501 9 e)ste,ei)mi/	sum	pres ind act 2nd pl}
+!aste	{32007501 9 e)ste,ei)mi/	sum	pres ind act 2nd pl}
+!aston	{32007501 9 e)ston,ei)mi/	sum	pres ind act 2nd dual}{32007501 9 e)ston,ei)mi/	sum	pres ind act 3rd dual}
+!astoxi/zh|	{17221618 9 a)stoxi/zh|,a)stoxi/zomai	 	pres subj mp 2nd sg}{17221618 9 a)stoxi/zh|,a)stoxi/zomai	 	pres ind mp 2nd sg}
+!ate/rwn	{17705028 9 a(te/rwn,a(/teros	sṃ	fem gen pl}{17705028 9 a(te/rwn,a(/teros	sṃ	masc/neut gen pl}
+!au/an	{18261439 9 au(/a_n,au)=os	dry	fem acc sg (attic doric aeolic)}
+!au/ei	{18768552 9 au(/ei,au)/w1	get a light	pres ind mp 2nd sg (attic)}{18768552 9 au(/ei,au)/w1	get a light	pres ind act 3rd sg (attic)}
+!au=	{18018007 5 au)=,au)=1	again	indeclform (adverb)}{18018007 5 au)=,au)=2	again	indeclform (exclam)}
+!au=t'	{82654957 9 au(=tai,ou(=tos	this	fem nom/voc pl}
+!auth=s	{30641750 9 au(th=s,e(autou=	Stadtrecht von Gortyn	fem gen sg (attic epic ionic)}
+!autou=	{30641750 9 au(tou=,e(autou=	Stadtrecht von Gortyn	neut gen sg}{30641750 9 au(tou=,e(autou=	Stadtrecht von Gortyn	masc gen sg}
+!autw=i	{30641750 9 au(tw=|,e(autou=	Stadtrecht von Gortyn	neut dat sg}{30641750 9 au(tw=|,e(autou=	Stadtrecht von Gortyn	masc dat sg}
+!ax'	{3652867 9 a)ka_/,a)kh/	point	fem nom/voc/acc dual}{3652867 9 a)ka_/,a)kh/	point	fem nom/voc sg (doric aeolic)}{3652867 9 a)kai/,a)kh/	point	fem nom/voc pl}{3715927 9 a)ki/,a)ki/s	pointed object	fem voc sg}{32756124 9 e)ka/,e)ka/s	 	fem voc sg}{50907129 9 a_)xa_/,h)xh/	sound	fem nom/voc/acc dual (doric)}{50907129 9 a_)xa_/,h)xh/	sound	fem nom/voc sg (doric aeolic)}{50907129 9 a_)xai/,h)xh/	sound	fem nom/voc pl (doric)}
+!azome/nous	{2299611 9 a(zome/nous,a(/zomai	stand in awe of	pres part mp masc acc pl}
+!e'	{30607493 9 e(o,e(/	 	masc/fem gen sg}{30607493 9 e(e/,e(/	 	masc/fem acc sg (epic)}{39314245 9 e(a/,e(o/s	his	neut nom/voc/acc pl}{39314245 9 e(a_/,e(o/s	his	fem nom/voc/acc dual}{39314245 9 e(a_/,e(o/s	his	fem nom/voc sg (attic doric aeolic)}{39314245 9 e(e/,e(o/s	his	masc voc sg}{39314245 9 e(ai/,e(o/s	his	fem nom/voc pl}
+!e/cetai	{48834892 9 e(/cetai,e)/xw	check	fut ind mid 3rd sg}
+!e/lou	{3109854 9 e(/lou,ai(re/w	take with the hand	aor ind mid 2nd sg (attic epic doric)}
+!e/menos	{53750363 9 e(/menos,i(/hmi	Ja-c-io	aor part mid masc nom sg}
+!e/n	{32293143 9 e(/n,ei(=s	sem	neut nom/voc/acc sg}{53750363 9 e(/n,i(/hmi	Ja-c-io	aor ind act 3rd pl (epic)}{53750363 9 e(/n,i(/hmi	Ja-c-io	aor part act neut nom/voc/acc sg}
+!e/na	{37417100 9 e(/na,e(/nos	belonging to the former of two periods	neut nom/voc/acc pl}{37417100 9 e(/na_,e(/nos	belonging to the former of two periods	fem nom/voc/acc dual}{37417100 9 e(/na_,e(/nos	belonging to the former of two periods	fem nom/voc sg (doric aeolic)}{32293143 9 e(/na,ei(=s	sem	masc acc sg}
+!e/nai	{37417100 9 e(/nai,e(/nos	belonging to the former of two periods	fem nom/voc pl}{37417100 9 e(/na_|,e(/nos	belonging to the former of two periods	fem dat sg (doric aeolic)}
+!e/nan	{37417100 9 e(/na_n,e(/nos	belonging to the former of two periods	fem acc sg (doric aeolic)}
+!e/nas	{37417100 9 e(/na_s,e(/nos	belonging to the former of two periods	fem acc pl}{37417100 9 e(/na_s,e(/nos	belonging to the former of two periods	fem gen sg (doric aeolic)}
+!e/nhn	{37417100 9 e(/nhn,e(/nos	belonging to the former of two periods	fem acc sg (attic epic ionic)}
+!e/noi	{37417100 9 e(/noi,e(/nos	belonging to the former of two periods	masc nom/voc pl}
+!e/nou	{37417100 9 e(/nou,e(/nos	belonging to the former of two periods	masc/neut gen sg}{37456676 9 e(/nou,e(no/w	make one	pres imperat act 2nd sg}{37456676 9 e(/nou,e(no/w	make one	imperf ind act 3rd sg (homeric ionic)}
+!e/nous	{37417100 9 e(/nous,e(/nos	belonging to the former of two periods	masc acc pl}{37456676 9 e(/nous,e(no/w	make one	imperf ind act 2nd sg (homeric ionic)}
+!e/nta	{53750363 9 e(/nta,i(/hmi	Ja-c-io	aor part act masc acc sg}{53750363 9 e(/nta,i(/hmi	Ja-c-io	aor part act neut nom/voc/acc pl}
+!e/nwn	{37417100 9 e(/nwn,e(/nos	belonging to the former of two periods	fem gen pl}{37417100 9 e(/nwn,e(/nos	belonging to the former of two periods	masc/neut gen pl}{37456676 9 e(/nwn,e(no/w	make one	imperf ind act 3rd pl (doric aeolic)}{37456676 9 e(/nwn,e(no/w	make one	imperf ind act 1st sg (doric aeolic)}
+!e/petai	{43982437 9 e(/petai,e(/pomai	 	pres ind mp 3rd sg}
+!e/pontes	{43982437 9 e(/pontes,e(/pomai	 	pres part act masc nom/voc pl}
+!e/s	{53750363 9 e(/s,i(/hmi	Ja-c-io	aor imperat act 2nd sg}
+!e/saimen	{31475848 9 e(/saimen,e(/zomai	seat oneself	aor opt act 1st pl (epic)}
+!e/sqai	{53750363 9 e(/sqai,i(/hmi	Ja-c-io	aor inf mid}{53750363 9 e(/sqai,i(/hmi	Ja-c-io	aor inf mid}
+!e/stat'	{54864591 9 e(/stato,i(/sthmi	make to stand	plup ind mp 3rd sg}{54864591 9 e(/state,i(/sthmi	make to stand	plup ind act 2nd pl}{54864591 9 e(/state,i(/sthmi	make to stand	perf imperat act 2nd pl}{54864591 9 e(/state,i(/sthmi	make to stand	perf ind act 2nd pl}{54864591 9 e(/statai,i(/sthmi	make to stand	perf ind mp 3rd sg}
+!e/sth	{54864591 9 e(/sth,i(/sthmi	make to stand	plup ind act 1st sg}
+!e/t'	{53750363 9 e(/to,i(/hmi	Ja-c-io	aor ind mid 3rd sg (epic ionic)}{53750363 9 e(/te,i(/hmi	Ja-c-io	aor imperat act 2nd pl}{53750363 9 e(/te,i(/hmi	Ja-c-io	aor ind act 2nd pl (epic ionic)}
+!e/twn	{53750363 9 e(/twn,i(/hmi	Ja-c-io	aor imperat act 3rd dual}
+!e/wn	{81663248 9 e(/wn,o(/s	yas	masc/fem gen pl (ionic)}
+!ea'	{39314245 9 e(ai/,e(o/s	his	fem nom/voc pl}
+!eauto/n	{30641750 9 e(auto/n,e(autou=	Stadtrecht von Gortyn	masc acc sg}
+!ei	{31581456 9 ei),ei)	 	proclitic indeclform (conj)}
+!ei/an	{30653619 9 ei)/a_n,e)a/w	suffer	imperf ind act 3rd pl (epic doric aeolic)}{30653619 9 ei)/a_n,e)a/w	suffer	imperf ind act 1st sg (epic doric aeolic)}{30653619 9 ei)/a_n,e)a/w	suffer	imperf ind act 3rd pl (doric aeolic)}{30653619 9 ei)/a_n,e)a/w	suffer	imperf ind act 1st sg (doric aeolic)}
+!ei/as	{30653619 9 ei)/a_s,e)a/w	suffer	imperf ind act 2nd sg (epic)}{30653619 9 ei)/a_s,e)a/w	suffer	imperf ind act 2nd sg}
+!ei/beto	{31657946 9 ei)/beto,ei)/bw	drop	imperf ind mp 3rd sg (homeric ionic)}
+!ei/detai	{31709119 9 ei)/detai,ei)/domai	see	pres ind mid 3rd sg}
+!ei/kei	{53750363 9 ei(/kei,i(/hmi	Ja-c-io	plup ind act 3rd sg (attic epic)}
+!ei/las	{31926550 9 ei(/la_s,ei(/lh	the sun's heat	fem acc pl}{31926550 9 ei(/la_s,ei(/lh	the sun's heat	fem gen sg (doric aeolic)}
+!ei/leto	{3109854 9 ei(/leto,ai(re/w	take with the hand	aor ind mid 3rd sg}
+!ei/shs	{53750363 9 ei(/shs,i(/hmi	Ja-c-io	aor part act fem gen sg (attic epic ionic)}
+!ei/wn	{30653619 9 ei)/wn,e)a/w	suffer	imperf ind act 3rd pl (epic)}{30653619 9 ei)/wn,e)a/w	suffer	imperf ind act 1st sg (epic)}{30653619 9 ei)/wn,e)a/w	suffer	imperf ind act 3rd pl}{30653619 9 ei)/wn,e)a/w	suffer	imperf ind act 1st sg}
+!ei=	{31581456 9 ei)=,ei)	 	proclitic indeclform (conj)}{32103851 9 ei)=,ei)=mi	ibo	pres ind act 2nd sg}{32007501 9 ei)=,ei)mi/	sum	pres ind act 2nd sg}
+!ei=n	{36096155 9 ei)=n,e)n	in	proclitic poetic indeclform (prep)}
+!ei=pe	{32148410 9 ei)=pe,ei)=pon	said	aor ind act 3rd sg (epic ionic)}{32148410 9 ei)=pe,ei)=pon	said	aor imperat act 2nd sg}{32148410 9 ei)=pe,ei)=pon	said	aor ind act 3rd sg}{32168381 9 ei)=pe,ei)=pos	 	masc voc sg}
+!ei=s	{32293143 9 ei(=s,ei(=s	sem	masc nom sg}
+!ei=sqai	{37313502 9 ei(=sqai,e(/nnumi	ves-	perf inf pass}{31475848 9 ei(=sqai,e(/zomai	seat oneself	perf inf mp}{53750363 9 ei(=sqai,i(/hmi	Ja-c-io	perf inf mp}
+!ei=t'	{37313502 9 ei(=to,e(/nnumi	ves-	plup ind pass 3rd sg}{37313502 9 ei(=tai,e(/nnumi	ves-	perf ind pass 3rd sg}{31475848 9 ei(=to,e(/zomai	seat oneself	plup ind mp 3rd sg}{31475848 9 ei(=tai,e(/zomai	seat oneself	perf ind mp 3rd sg}{53750363 9 ei(=to,i(/hmi	Ja-c-io	aor ind mid 3rd sg}{53750363 9 ei(=to,i(/hmi	Ja-c-io	plup ind mp 3rd sg}{53750363 9 ei(=te,i(/hmi	Ja-c-io	aor opt act 2nd pl}{53750363 9 ei(=te,i(/hmi	Ja-c-io	aor opt act 2nd pl}{53750363 9 ei(=tai,i(/hmi	Ja-c-io	perf ind mp 3rd sg}
+!ei=tai	{37313502 9 ei(=tai,e(/nnumi	ves-	perf ind pass 3rd sg}{31475848 9 ei(=tai,e(/zomai	seat oneself	perf ind mp 3rd sg}{53750363 9 ei(=tai,i(/hmi	Ja-c-io	perf ind mp 3rd sg}
+!ei=te	{53750363 9 ei(=te,i(/hmi	Ja-c-io	aor opt act 2nd pl}{53750363 9 ei(=te,i(/hmi	Ja-c-io	aor opt act 2nd pl}
+!ei=xes	{48834892 9 ei)=xes,e)/xw	check	imperf ind act 2nd sg}
+!eide/nai	{31709119 9 ei)de/nai,oi)=da	see	perf inf act}
+!eim'	{32007501 9 ei)mi,ei)mi/	sum	pres ind act 1st sg}
+!ein	{36096155 9 ei)n,e)n	in	proclitic poetic indeclform (prep)}
+!eirgasme/nos	{44358525 9 ei)rgasme/nos,e)rga/zomai	work	perf part mp masc nom sg}
+!eirgnu/menoi	{44443257 0 ei(rgnu/menoi,e)/rgnumi	 	pres part mp masc nom/voc pl}{32175573 9 ei(rgnu/menoi,ei(/rgnumi	shut in	pres part mp masc nom/voc pl}
+!eirh/kamen	{45277727 9 ei)rh/kamen,e)rw=	verbum	perf ind act 1st pl}
+!eis	{32242949 9 ei)s,ei)s	into	proclitic indeclform (prep)}
+!eisai/wn	{32365669 9 ei)sai/+wn,ei)sai/w	catch the sound of	pres part act masc nom sg}
+!eisi	{32007501 9 ei)si,ei)mi/	sum	pres ind act 3rd pl}
+!eisin	{32007501 9 ei)sin,ei)mi/	sum	pres ind act 3rd pl}
+!ekte/a	{34161322 9 e(kte/a,e(kte/on	to be held	neut nom/voc/acc pl}{34161322 9 e(kte/a_,e(kte/on	to be held	fem nom/voc/acc dual}{34161322 9 e(kte/a_,e(kte/on	to be held	fem nom/voc sg (attic doric aeolic)}{34161322 9 e(kte/a,e(kte/os	to be held	neut nom/voc/acc pl}{34161322 9 e(kte/a_,e(kte/os	to be held	fem nom/voc/acc dual}{34161322 9 e(kte/a_,e(kte/os	to be held	fem nom/voc sg (attic doric aeolic)}{34163520 9 e(kte/a_,e(kteu/s	the sixth part (sextarius) of the	masc acc sg}
+!ektikoi=s	{34183915 9 e(ktikoi=s,e(ktiko/s	formed by	masc/neut dat pl}
+!elei=sqai	{3109854 9 e(lei=sqai,ai(re/w	take with the hand	fut inf mid (attic epic)}
+!ell'	{35042556 9 e(lla_/,e(lla/	 	fem nom/voc/acc dual}{35042556 9 e(lla_/,e(lla/	 	fem nom/voc sg (doric aeolic)}{35042556 9 e(llai/,e(lla/	 	fem nom/voc pl}{35153600 9 e(lle/,e(llo/s	a young deer	masc voc sg}
+!elo/nta	{3109854 9 e(lo/nta,ai(re/w	take with the hand	aor part act neut nom/voc/acc pl}{3109854 9 e(lo/nta,ai(re/w	take with the hand	aor part act masc acc sg}
+!enw=n	{37456676 9 e(nw=n,e(no/w	make one	pres part act masc voc sg (doric aeolic)}{37456676 9 e(nw=n,e(no/w	make one	pres part act neut nom/voc/acc sg (doric aeolic)}{37456676 9 e(nw=n,e(no/w	make one	pres part act masc nom sg}{37456676 9 e(nw=n,e(no/w	make one	pres inf act (doric)}
+!eo/s	{39314245 9 e(o/s,e(o/s	his	masc nom sg}
+!eq'	{45862040 9 e(ta/,e(to/s	sent	neut nom/voc/acc pl}{45862040 9 e(ta_/,e(to/s	sent	fem nom/voc/acc dual}{45862040 9 e(ta_/,e(to/s	sent	fem nom/voc sg (doric aeolic)}{45862040 9 e(te/,e(to/s	sent	masc voc sg}{45862040 9 e(tai/,e(to/s	sent	fem nom/voc pl}
+!estame/non	{54864591 9 e(stame/non,i(/sthmi	make to stand	perf part mp masc acc sg}{54864591 9 e(stame/non,i(/sthmi	make to stand	perf part mp neut nom/voc/acc sg}
+!et'	{45862040 9 e(ta/,e(to/s	sent	neut nom/voc/acc pl}{45862040 9 e(ta_/,e(to/s	sent	fem nom/voc/acc dual}{45862040 9 e(ta_/,e(to/s	sent	fem nom/voc sg (doric aeolic)}{45862040 9 e(te/,e(to/s	sent	masc voc sg}{45862040 9 e(tai/,e(to/s	sent	fem nom/voc pl}
+!eta/	{45862040 9 e(ta/,e(to/s	sent	neut nom/voc/acc pl}{45862040 9 e(ta_/,e(to/s	sent	fem nom/voc/acc dual}{45862040 9 e(ta_/,e(to/s	sent	fem nom/voc sg (doric aeolic)}
+!ete/rou	{45714355 9 e(te/rou,e(/teros	D Mort.	masc/neut gen sg}
+!eu	{30607493 9 eu(,e(/	 	masc/fem gen sg}
+!eu/ein	{48238932 9 eu(/ein,eu(/w	singe	pres inf act (attic epic)}
+!eu/eis	{48238932 9 eu(/eis,eu(/w	singe	pres ind act 2nd sg}
+!eu/etai	{48238932 9 eu(/etai,eu(/w	singe	pres ind mp 3rd sg}
+!eu/h|s	{48238932 9 eu(/h|s,eu(/w	singe	pres subj act 2nd sg}
+!eu/ois	{48238932 9 eu(/ois,eu(/w	singe	pres opt act 2nd sg}
+!eu/ontas	{48238932 9 eu(/ontas,eu(/w	singe	pres part act masc acc pl}
+!eu/ousin	{48238932 9 eu(/ousin,eu(/w	singe	pres part act masc/neut dat pl (attic epic doric ionic)}{48238932 9 eu(/ousin,eu(/w	singe	pres ind act 3rd pl (attic epic doric ionic)}
+!eu/santes	{48238932 9 eu(/santes,eu(/w	singe	aor part act masc nom/voc pl}
+!eu/sato	{48238932 9 eu(/sato,eu(/w	singe	aor ind mid 3rd sg}{48238932 9 eu(/sato,eu(/w	singe	aor ind mid 3rd sg (homeric ionic)}
+!eu=	{30607493 9 eu(=,e(/	 	masc/fem gen sg}{53750363 9 eu(=,i(/hmi	Ja-c-io	aor imperat mid (epic doric ionic)}
+!eu=sq'	{47797304 9 eu(sta/,eu(sto/n	victim whose skin is singed	neut nom/voc/acc pl}
+!eue/tw	{48238932 9 eu(e/tw,eu(/w	singe	pres imperat act 3rd sg}
+!h/koi	{49990672 9 h(/koi_,h(/kw	to have come	pres opt act 3rd sg}
+!h/kw	{49990672 9 h(/kw,h(/kw	to have come	pres subj act 1st sg}{49990672 9 h(/kw,h(/kw	to have come	pres ind act 1st sg}{53750363 9 h(/kw,i(/hmi	Ja-c-io	aor ind mid 2nd sg}{53750363 9 h(/kw,i(/hmi	Ja-c-io	aor ind mid 2nd sg (homeric ionic)}
+!h/mata	{50170564 9 h(_/mata,h(=ma	that which is thrown	neut nom/voc/acc pl}
+!h/n	{81663248 9 h(/n,o(/s	yas	fem acc sg (attic homeric ionic)}
+!h/saito	{49798258 9 h(/saito,h(/domai	swād-	aor opt mid 3rd sg}
+!h/santo	{31475848 9 h(/santo,e(/zomai	seat oneself	aor ind mid 3rd pl (epic)}{49798258 9 h(/santo,h(/domai	swād-	aor ind mid 3rd pl}{49798258 9 h(_/santo,h(/domai	swād-	aor ind mid 3rd pl (attic epic doric ionic)}{49798258 9 h(/santo,h(/domai	swād-	aor ind mid 3rd pl (homeric ionic)}
+!h/sei	{50792422 9 h(/sei,h(=sis	Jewsand Christians in Egypt	fem nom/voc/acc dual (attic epic)}{50792422 9 h(/sei+,h(=sis	Jewsand Christians in Egypt	fem dat sg (epic)}{50792422 9 h(/sei,h(=sis	Jewsand Christians in Egypt	fem dat sg (attic ionic)}{53750363 9 h(/sei,i(/hmi	Ja-c-io	fut ind mid 2nd sg}{53750363 9 h(/sei,i(/hmi	Ja-c-io	fut ind act 3rd sg}
+!h/sesqai	{53750363 9 h(/sesqai,i(/hmi	Ja-c-io	fut inf mid}
+!h/setai	{49798258 9 h(/setai,h(/domai	swād-	aor subj mid 3rd sg (epic)}{53750363 9 h(/setai,i(/hmi	Ja-c-io	fut ind mid 3rd sg}
+!h/sews	{50792422 9 h(/sew^s,h(=sis	Jewsand Christians in Egypt	fem gen sg (attic)}
+!h/somai	{49798258 9 h(/somai,h(/domai	swād-	aor subj mid 1st sg (epic)}{53750363 9 h(/somai,i(/hmi	Ja-c-io	fut ind mid 1st sg}
+!h/somen	{53750363 9 h(/somen,i(/hmi	Ja-c-io	fut ind act 1st pl}
+!h/sousin	{53750363 9 h(/sousin,i(/hmi	Ja-c-io	fut part act masc/neut dat pl (attic epic doric ionic)}{53750363 9 h(/sousin,i(/hmi	Ja-c-io	fut ind act 3rd pl (attic epic doric ionic)}
+!h='	{49652966 9 h(=|,h(=|	which way	indeclform (adverb)}{53750363 9 h(=i,i(/hmi	Ja-c-io	aor subj mid 2nd sg}{53750363 9 h(=|,i(/hmi	Ja-c-io	aor subj act 3rd sg}{53750363 9 h(=|,i(/hmi	Ja-c-io	aor subj act 3rd sg}{53750363 9 h(=ai,i(/hmi	Ja-c-io	aor subj mid 2nd sg (epic)}{81663248 9 h(=|,o(/s	yas	fem dat sg (attic homeric ionic)}
+!h=ce	{49990672 9 h(=ce,h(/kw	to have come	aor ind act 3rd sg}{49990672 9 h(=ce,h(/kw	to have come	aor ind act 3rd sg (homeric ionic)}
+!h=i	{49652966 9 h(=|,h(=|	which way	indeclform (adverb)}{53750363 9 h(=i,i(/hmi	Ja-c-io	aor subj mid 2nd sg}{53750363 9 h(=|,i(/hmi	Ja-c-io	aor subj act 3rd sg}{53750363 9 h(=|,i(/hmi	Ja-c-io	aor subj act 3rd sg}{81663248 9 h(=|,o(/s	yas	fem dat sg (attic homeric ionic)}
+!h=isin	{53750363 9 h(=|sin,i(/hmi	Ja-c-io	aor subj act 3rd sg (epic)}{53750363 9 h(=|sin,i(/hmi	Ja-c-io	aor subj act 3rd sg (epic)}{81663248 9 h(=|sin,o(/s	yas	fem dat pl (homeric ionic)}
+!h=nto	{50172660 9 h(=nto,h(=mai	ēs-	plup ind mid 3rd pl}{55625118 9 h(=nto,ka/qhmai	to be seated	imperf ind mid 3rd pl}
+!h=s	{32293143 9 h(=s,ei(=s	sem	masc nom sg (doric)}{81663248 9 h(=s,o(/s	yas	fem gen sg (attic homeric ionic)}
+!h=sai	{49798258 9 h(=sai,h(/domai	swād-	aor imperat mid 2nd sg}{50172660 9 h(=sai,h(=mai	ēs-	perf ind mid 2nd sg}{55625118 9 h(=sai,ka/qhmai	to be seated	pres ind mid 2nd sg}
+!h=sin	{50792422 9 h(=sin,h(=sis	Jewsand Christians in Egypt	fem acc sg}{53750363 9 h(=sin,i(/hmi	Ja-c-io	aor subj mid 2nd sg (epic)}{53750363 9 h(=sin,i(/hmi	Ja-c-io	aor subj act 3rd sg (epic)}{53750363 9 h(=sin,i(/hmi	Ja-c-io	aor subj act 3rd sg (epic)}
+!h=sqai	{50172660 9 h(=sqai,h(=mai	ēs-	perf inf mid}
+!hd'	{77672493 9 h(di/,o(/de	this	fem nom sg}
+!hg'	{49774610 9 h(ge/,h(go/s	 	masc voc sg}
+!hgei=tai	{49731395 9 h(gei=tai,h(ge/omai	go before	pres ind mid 3rd sg (attic epic)}
+!hme/nhn	{50172660 9 h(me/nhn,h(=mai	ēs-	perf part mid fem acc sg (attic epic ionic)}
+!hme/noisi	{50172660 9 h(me/noisi,h(=mai	ēs-	perf part mid masc/neut dat pl (epic ionic aeolic)}
+!hme/nwn	{50172660 9 h(me/nwn,h(=mai	ēs-	perf part mid fem gen pl}{50172660 9 h(me/nwn,h(=mai	ēs-	perf part mid masc/neut gen pl}
+!hmerw/sas	{50277216 9 h(merw/sa_s,h(mero/w	tame	aor part act masc nom/voc sg (attic epic ionic)}
+!hrmosme/nas	{15996466 9 h(rmosme/na_s,a(rmo/zw	fit together	perf part mp fem acc pl (attic epic doric ionic aeolic)}{15996466 9 h(rmosme/na_s,a(rmo/zw	fit together	perf part mp fem gen sg (attic epic doric ionic aeolic)}
+!hrpasme/nhs	{16149144 9 h(rpasme/nhs,a(rpa/zw	snatch away	perf part mp fem gen sg (attic epic doric ionic aeolic)}
+!hsa/mhn	{31475848 9 h(sa/mhn,e(/zomai	seat oneself	aor ind mid 1st sg (epic)}{49798258 9 h(sa/mhn,h(/domai	swād-	aor ind mid 1st sg}{49798258 9 h(_sa/mhn,h(/domai	swād-	aor ind mid 1st sg (attic epic doric ionic)}{49798258 9 h(sa/mhn,h(/domai	swād-	aor ind mid 1st sg (homeric ionic)}
+!hsame/nous	{49798258 9 h(same/nous,h(/domai	swād-	aor part mid masc acc pl}
+!hsq'	{50825568 9 h(sta/,h(sto/s	in de An.	neut nom/voc/acc pl}{50825568 9 h(sta_/,h(sto/s	in de An.	fem nom/voc/acc dual}{50825568 9 h(sta_/,h(sto/s	in de An.	fem nom/voc sg (doric aeolic)}{50825568 9 h(ste/,h(sto/s	in de An.	masc voc sg}{50825568 9 h(stai/,h(sto/s	in de An.	fem nom/voc pl}
+!hu=ron	{47543948 9 hu(=ron,eu(ri/skw	find	aor ind act 3rd pl}{47543948 9 hu(=ron,eu(ri/skw	find	aor ind act 1st sg}
+!hure/qh	{47543948 9 hu(re/qh,eu(ri/skw	find	aor ind pass 3rd sg}
+!i/ceai	{53725836 9 i(/ceai,i(/zw	si-sd-ō	aor subj mid 2nd sg (epic doric)}{53924049 9 i(/ceai,i(kne/omai	come	fut ind mid 2nd sg (epic ionic)}
+!i/hs	{53750363 9 i(/hs,i(/hmi	Ja-c-io	imperf ind act 2nd sg (homeric ionic)}{53750363 9 i(/hs,i(/hmi	Ja-c-io	pres ind act 2nd sg}{53750363 9 i_(/hs,i(/hmi	Ja-c-io	imperf ind act 2nd sg}{53750363 9 i_(/hs,i(/hmi	Ja-c-io	imperf ind act 2nd sg (doric aeolic)}{53750363 9 i(/hs,i(/hmi	Ja-c-io	imperf ind act 2nd sg (doric aeolic)}{53750363 9 i_(/hs,i(e/w	Ja-c-io	imperf ind act 2nd sg (doric aeolic)}{53750363 9 i(/hs,i(e/w	Ja-c-io	imperf ind act 2nd sg (doric aeolic)}
+!i/khtai	{53924049 9 i(/khtai,i(kne/omai	come	aor subj mp 3rd sg}
+!i/rwn	{53709828 9 i_(/rwn,i(ero/w	consecrate	imperf ind act 3rd pl (doric ionic aeolic)}{53709828 9 i_(/rwn,i(ero/w	consecrate	imperf ind act 1st sg (doric ionic aeolic)}
+!i/sai	{53725836 9 i(/sai,i(/zw	si-sd-ō	aor inf act}{53725836 9 i(/sai_,i(/zw	si-sd-ō	aor opt act 3rd sg}
+!i/se	{53725836 9 i(/se,i(/zw	si-sd-ō	aor ind act 3rd sg (homeric ionic)}
+!i/zeai	{53725836 9 i(/zeai,i(/zw	si-sd-ō	pres ind mp 2nd sg (epic ionic)}
+!i/zein	{53725836 9 i(/zein,i(/zw	si-sd-ō	pres inf act (attic epic)}
+!i/zesqai	{53725836 9 i(/zesqai,i(/zw	si-sd-ō	pres inf mp}
+!i/zw	{53725836 9 i(/zw,i(/zw	si-sd-ō	pres subj act 1st sg}{53725836 9 i(/zw,i(/zw	si-sd-ō	pres ind act 1st sg}
+!i=cai	{53924049 9 i_(=cai,i(kne/omai	come	perf ind mp 2nd sg}
+!ia=si	{53750363 9 i(a=si,i(/hmi	Ja-c-io	pres ind act 3rd pl}
+!iei=n	{53750363 9 i(ei=n,i(e/w	Ja-c-io	pres inf act (attic epic doric)}
+!ike/sqai	{53924049 9 i(ke/sqai,i(kne/omai	come	aor inf mid}
+!iko/n	{53924049 9 i(ko/n,i(kne/omai	come	aor part act masc voc sg}{53924049 9 i(ko/n,i(kne/omai	come	aor part act neut nom/voc/acc sg}
+!im'	{54095165 9 i(_ma/,i(ma/s	leathern strap	masc voc sg (epic)}
+!in	{30607493 9 i(n,e(/	 	masc/fem dat sg (epic)}
+!ist'	{54957346 9 i(ste/,i(sto/s	anything set upright	masc voc sg}
+!ista/menon	{54864591 9 i(sta/menon,i(/sthmi	make to stand	pres part mp masc acc sg}{54864591 9 i(sta/menon,i(/sthmi	make to stand	pres part mp neut nom/voc/acc sg}{54860695 9 i(sta_/menon,i(sta/w	 	pres part mp masc acc sg (doric ionic aeolic)}{54860695 9 i(sta_/menon,i(sta/w	 	pres part mp neut nom/voc/acc sg (doric ionic aeolic)}
+!iw=n	{53750363 9 i(w=n,i(e/w	Ja-c-io	pres part act masc nom sg (attic epic doric)}
+!iw=si	{53750363 9 i(w=si,i(e/w	Ja-c-io	pres subj act 3rd pl (attic epic doric)}
+!o/d'	{77672493 9 o(/de,o(/de	this	masc nom sg}
+!o/das	{77671371 9 o(/da_s,o(da/w	export and sell	imperf ind act 2nd sg (homeric ionic)}
+!o/n	{81663248 9 o(/n,o(/s	yas	masc acc sg}{81663248 9 o(/n,o(/s	yas	neut acc sg}
+!o/nt'	{81879235 9 o(/nte,o(/ste	who	masc acc sg (attic)}
+!o/ou	{81663248 9 o(/ou,o(/s	yas	masc/neut gen sg (epic)}
+!o/ros	{81460717 9 o(/ros,o(/ros	boundary	masc nom sg}
+!o/s	{81663248 9 o(/s,o(/s	yas	masc nom sg}
+!o/ssa	{81793631 9 o(/ssa,o(/sos	as great as	neut nom/voc/acc pl (epic)}{81793631 9 o(/ssa_,o(/sos	as great as	fem nom/voc/acc dual (epic)}{81793631 9 o(/ssa_,o(/sos	as great as	fem nom/voc sg (epic doric aeolic)}
+!o/ti	{81898167 9 o(/ti,o(/stis	that	neut nom/acc sg}{82037165 5 o(/ti,o(/ti1	for what	indeclform (adverb)}{82037165 5 o(/ti,o(/ti2	for what	indeclform (conj)}
+!o/twn	{81898167 9 o(/twn,o(/stis	that	masc/neut gen pl}
+!od'	{77672493 9 o(di/,o(/de	this	masc nom sg}{77754998 5 o(de/,o(do/s1	way	masc voc sg}{77754998 5 o(de/,o(do/s2	way	fem voc sg}
+!oi	{30607493 9 oi(,e(/	 	masc/fem dat sg (epic ionic)}{122325915 9 oi(,o(	lentil	masc nom/voc pl}
+!oi/	{30607493 9 oi(,e(/	 	masc/fem dat sg (epic ionic)}{122325915 9 oi(/,o(	lentil	masc nom/voc pl}{81663248 9 oi(/,o(/s	yas	masc nom pl}
+!oi/ws	{78590725 9 oi(/ws,oi(/ws	 	indeclform (adverb)}{78436433 9 oi(/ws,oi(=os	such as	adverbial}{78436433 9 oi(/ws,oi(=os	such as	masc acc pl (doric ionic)}
+!oi=d'	{77672493 9 oi(di/,o(/de	this	masc nom pl}
+!oi=s	{81663248 9 oi(=s,o(/s	yas	masc/neut dat pl}
+!oid'	{77672493 9 oi(di/,o(/de	this	masc nom pl}
+!ola=i	{78703659 9 o(la=|,o(la/w	 	pres subj mp 2nd sg}{78703659 9 o(la=|,o(la/w	 	pres ind mp 2nd sg (epic)}{78703659 9 o(la=|,o(la/w	 	pres subj act 3rd sg}{78703659 9 o(la=|,o(la/w	 	pres ind act 3rd sg (epic)}
+!oper	{122325915 9 o(,o(	lentil	masc nom sg}
+!oq'	{82012873 9 o(te/,o(/te	when	indeclform (conj)}
+!orw=	{80733617 9 o(rw=,o(ra/w	Inscr. destombeaux des rois	pres imperat mid 2nd sg}{80733617 9 o(rw=,o(ra/w	Inscr. destombeaux des rois	pres imperat mp 2nd sg (epic)}{80733617 9 o(rw=,o(ra/w	Inscr. destombeaux des rois	pres subj act 1st sg (attic epic ionic)}{80733617 9 o(rw=,o(ra/w	Inscr. destombeaux des rois	pres ind act 1st sg (attic epic ionic)}{80733617 9 o(rw=,o(ra/w	Inscr. destombeaux des rois	pres subj act 1st sg (attic epic doric ionic)}{80733617 9 o(rw=,o(ra/w	Inscr. destombeaux des rois	pres ind act 1st sg (attic epic doric ionic)}{80733617 9 o(rw=,o(ra/w	Inscr. destombeaux des rois	imperf ind mp 2nd sg (homeric ionic)}{80733617 9 o(rw=,o(ra/w	Inscr. destombeaux des rois	imperf ind mid 2nd sg (homeric ionic)}
+!ot'	{82012873 9 o(te/,o(/te	when	indeclform (conj)}
+!ou	{30607493 9 e(,e(/	 	masc/fem acc sg (epic)}
+!ou/menoi	{53750363 9 e(/menoi,i(/hmi	Ja-c-io	aor part mid masc nom/voc pl}
+!ou/n	{36096155 9 e)/n,e)n	in	proclitic indeclform (prep)}{32293143 9 e(/n,ei(=s	sem	neut nom/voc/acc sg}{32007501 9 e)/n,ei)mi/	sum	imperf ind act 3rd pl (epic)}{32007501 9 o)/n,ei)mi/	sum	pres part act masc voc sg}{32007501 9 o)/n,ei)mi/	sum	pres part act neut nom/voc/acc sg}{32242949 9 e)/n,ei)s	into	doric aeolic (proclitic indeclform prep)}{53750363 9 e(/n,i(/hmi	Ja-c-io	aor ind act 3rd pl (epic)}{53750363 9 e(/n,i(/hmi	Ja-c-io	aor part act neut nom/voc/acc sg}
+!ou/s	{81663248 9 ou(/s,o(/s	yas	masc acc pl}
+!ou/seis	{37313502 9 e(/seis,e(/nnumi	ves-	fut ind act 2nd sg}{45394314 9 e(/seis,e(/sis	a sending forth	fem nom/voc pl (attic epic)}{45394314 9 e(/seis,e(/sis	a sending forth	fem nom/acc pl (attic)}{31475848 9 e(/seis,e(/zomai	seat oneself	aor subj act 2nd sg (epic)}{32440723 9 e)/seis,ei)/seimi	enter	pres ind act 2nd sg (epic ionic)}{102671843 9 e)/seis,se/w	 	imperf ind act 2nd sg (attic epic)}{122163586 9 u(_/seis,u(/w	rain	aor subj act 2nd sg (epic)}{122163586 9 u(_/seis,u(/w	rain	fut ind act 2nd sg}{121780255 9 u(/seis,u(=sis	a raining	fem nom/voc pl (attic epic)}{121780255 9 u(/seis,u(=sis	a raining	fem nom/acc pl (attic)}
+!ou/shs	{45394314 9 e(/shs,e(/sis	a sending forth	fem nom/voc pl (doric aeolic)}{102671843 9 e)/shs,se/w	 	imperf ind act 2nd sg (doric aeolic)}{121780255 9 u(/shs,u(=sis	a raining	fem nom/voc pl (doric aeolic)}
+!ou/tou	{45792630 9 e)/tou,e)/ths	clansmen	masc gen sg}
+!ou/twn	{53750363 9 e(/twn,i(/hmi	Ja-c-io	aor imperat act 3rd dual}
+!ou=	{30607493 9 ou(=,e(/	 	masc/fem gen sg}{53750363 9 ou(=,i(/hmi	Ja-c-io	aor imperat mid (attic epic doric)}{81663248 9 ou(=,o(/s	yas	masc/neut gen sg}{82159145 9 ou(=,ou(=	where	indeclform (adverb)}
+!ou=d'	{82264987 9 o)de/,ou)do/s1	threshold	masc voc sg (attic)}
+!ou=n	{36096155 9 e)=n,e)n	in	proclitic indeclform (prep)}{32242949 9 e)=n,ei)s	into	doric aeolic (proclitic indeclform prep)}{121760213 9 u(=n,u(=s	the wild swine	masc/fem acc sg}
+!ou=s	{32242949 9 e)=s,ei)s	into	proclitic indeclform (prep)}{121760213 9 u(=s,u(=s	the wild swine	masc/fem nom pl (attic)}{121760213 9 u(=s,u(=s	the wild swine	masc/fem nom sg}
+!ou=sa	{122163586 9 u_(=sa,u(/w	rain	aor ind act 1st sg}
+!ou=toi	{82654957 9 ou(=toi,ou(=tos	this	masc nom/voc pl}
+!oud'	{82264987 9 o)de/,ou)do/s1	threshold	masc voc sg (attic)}
+!oume/nh	{53750363 9 e(me/nh,i(/hmi	Ja-c-io	aor part mid fem nom/voc sg (attic epic ionic)}
+!oume/nhn	{53750363 9 e(me/nhn,i(/hmi	Ja-c-io	aor part mid fem acc sg (attic epic ionic)}
+!oume/nois	{53750363 9 e(me/nois,i(/hmi	Ja-c-io	aor part mid masc/neut dat pl}
+!oume/nou	{53750363 9 e(me/nou,i(/hmi	Ja-c-io	aor part mid masc/neut gen sg}{71584156 9 e)me/nou,me/nw	stay	imperf ind mp 2nd sg (attic epic doric)}{118528457 9 u_(me/nou,u(meno/w	cover with a film	imperf ind act 3rd sg}{118528457 9 u(me/nou,u(meno/w	cover with a film	pres imperat act 2nd sg}
+!oumen	{32007501 9 e)men,ei)mi/	sum	pres inf act}
+!oun	{36096155 9 e)n,e)n	in	proclitic indeclform (prep)}{32242949 9 e)n,ei)s	into	doric aeolic (proclitic indeclform prep)}
+!ouper	{30607493 9 e(,e(/	 	masc/fem acc sg (epic)}
+!ouq'	{45862040 9 e(ta/,e(to/s	sent	neut nom/voc/acc pl}{45862040 9 e(ta_/,e(to/s	sent	fem nom/voc/acc dual}{45862040 9 e(ta_/,e(to/s	sent	fem nom/voc sg (doric aeolic)}{45862040 9 e(te/,e(to/s	sent	masc voc sg}{45862040 9 e(tai/,e(to/s	sent	fem nom/voc pl}{31483956 9 e)qa/,e)qa/s	accustomed	masc/fem voc sg}
+!ouri/zontai	{44785050 9 e)ri/zontai,e)ri/zw	strive	pres ind mp 3rd pl}
+!ous	{32242949 9 e)s,ei)s	into	proclitic indeclform (prep)}
+!ous'	{121760213 9 u(si/,u(=s	the wild swine	masc/fem dat pl}
+!ouston	{32007501 9 e)ston,ei)mi/	sum	pres ind act 2nd dual}{32007501 9 e)ston,ei)mi/	sum	pres ind act 3rd dual}
+!out'	{45862040 9 e(ta/,e(to/s	sent	neut nom/voc/acc pl}{45862040 9 e(ta_/,e(to/s	sent	fem nom/voc/acc dual}{45862040 9 e(ta_/,e(to/s	sent	fem nom/voc sg (doric aeolic)}{45862040 9 e(te/,e(to/s	sent	masc voc sg}{45862040 9 e(tai/,e(to/s	sent	fem nom/voc pl}
+!u/ceai	{121803079 9 u(/ceai,u(ssw	hyssop	aor subj mid 2nd sg (epic)}{121803079 9 u(/ceai,u(ssw	hyssop	fut ind mid 2nd sg (epic ionic)}{121803079 9 u_(/ceai,u(ssw	hyssop	futperf ind mp 2nd sg (epic ionic)}
+!u/cetai	{121803079 9 u(/cetai,u(ssw	hyssop	aor subj mid 3rd sg (epic)}{121803079 9 u(/cetai,u(ssw	hyssop	fut ind mid 3rd sg}{121803079 9 u_(/cetai,u(ssw	hyssop	futperf ind mp 3rd sg}
+!u/etai	{122163586 9 u(_/etai,u(/w	rain	pres ind mp 3rd sg}
+!u/ontes	{122163586 9 u(_/ontes,u(/w	rain	pres part act masc nom/voc pl}
+!u/samen	{122163586 9 u_(_/samen,u(/w	rain	aor ind act 1st pl}{122163586 9 u(_/samen,u(/w	rain	aor ind act 1st pl (homeric ionic)}
+!u/seie	{122163586 9 u(_/seie,u(/w	rain	aor opt act 3rd sg}
+!u/sontes	{122163586 9 u(_/sontes,u(/w	rain	fut part act masc nom/voc pl}
+!u/xois	{121803079 9 u_(/xois,u(ssw	hyssop	perf opt act 2nd sg}
+!udei=to	{118208922 9 u_(dei=to,u(de/w	call	imperf ind mp 3rd sg (attic epic)}{118208922 9 u(dei=to,u(de/w	call	pres opt mp 3rd sg (epic ionic)}{118208922 9 u(dei=to,u(de/w	call	imperf ind mp 3rd sg (attic epic)}
+!uka=n	{118430460 9 u(_ka=n,u(/khs	a sea-fish	masc gen pl (doric aeolic)}
+!uperoplo/teroi	{119595086 9 u(peroplo/teroi,u(pe/roplos	insolent	masc nom/voc comp pl}
+!us'	{121760213 9 u(si/,u(=s	the wild swine	masc/fem dat pl}
+!usa/menos	{122163586 9 u(_sa/menos,u(/w	rain	aor part mid masc nom sg}
+!w/n	{6672376 9 a)/n,a)/n1	he came	indeclform (particle)}{6735704 9 a)/_n,a)/n2	 	attic (indeclform conj)}{6738940 9 a)/n,a)na/	on board	poetic indeclform (prep)}{30611481 9 a)/n,e)a/n	if haply	contr indeclform (conj)}
+!w/nie	{9673076 9 a)/nie,a)/nios	 	masc/fem voc sg}
+!w/nios	{9673076 9 a)/nios,a)/nios	 	masc/fem nom sg}
+!w/s	{81663248 9 w(/s,o(/s	yas	masc acc pl (doric)}{130156813 9 w(/s,w(s	so	proclitic indeclform (conj)}{130156813 9 w(/s,w(s	so	indeclform (adverb)}
+!w=ka	{3911200 9 a)/ka_,a)/kos	cure	neut nom/voc/acc pl (doric aeolic)}
+!w=n	{81663248 9 w(=n,o(/s	yas	fem gen pl}{81663248 9 w(=n,o(/s	yas	masc/neut gen pl}
+!w=ntes	{53750363 9 a)/ntes,a)nti/-i(/hmi	Ja-c-io	aor imperat act 2nd sg}[10270183]
+!w=s	{130156813 9 w(=s,w(s	so	proclitic indeclform (conj)}{130156813 9 w(=s,w(s	so	indeclform (adverb)}
+!w=sin	{53750363 9 w(=sin,i(/hmi	Ja-c-io	aor subj act 3rd pl}{53750363 9 w(=sin,i(/hmi	Ja-c-io	aor subj act 3rd pl}
+!wni/as	{9578209 9 a)ni/a_s,a)ni/a	grief	fem acc pl}{9578209 9 a)ni/a_s,a)ni/a	grief	fem gen sg (attic doric aeolic)}{9597148 9 a_)ni/a_s,a)nia/w	grieve	imperf ind act 2nd sg (doric aeolic)}
+!wni/dh	{53340328 9 a)ni_/dh,a)na/-i)de/w	know	imperf ind act 3rd sg (doric aeolic)}[6738940]{53340328 9 a)ni/dh,a)na/-i)de/w	know	pres imperat act 2nd sg (doric aeolic)}[6738940]
+!wni/ois	{8781239 9 a)ni/ois,a)/neimi	go up	pres opt act 2nd sg}{9673076 9 a)ni/ois,a)/nios	 	masc/fem/neut dat pl}{9221770 9 a)_ni/ois,a)ne/w	 	pres opt act 2nd sg (doric)}
+!wrisme/na	{81133834 9 w(risme/na,o(ri/zw	divide	perf part mp neut nom/voc/acc pl}{81133834 9 w(risme/na_,o(ri/zw	divide	perf part mp fem nom/voc/acc dual}{81133834 9 w(risme/na_,o(ri/zw	divide	perf part mp fem nom/voc sg (doric aeolic)}
+!ws	{130156813 9 w(s,w(s	so	proclitic indeclform (conj)}
+'/fagon	{31453762 9 e)/fagon,e)sqi/w	eat	aor ind act 3rd pl}{31453762 9 e)/fagon,e)sqi/w	eat	aor ind act 1st sg}
+'/fask'	{122654980 9 e)/faske,fa/skw	say	imperf ind act 3rd sg}
+'/fugon	{123032026 9 e)/fugon,feu/gw	flee	aor ind act 3rd pl}{123032026 9 e)/fugon,feu/gw	flee	aor ind act 1st sg}
+'/laxes	{66355924 9 e)/laxes,lagxa/nw	obtain by lot	aor ind act 2nd sg}
+'/legon	{4466362 9 a_)/legon,a)le/gw	have a care	imperf ind act 3rd pl (doric aeolic)}{4466362 9 a_)/legon,a)le/gw	have a care	imperf ind act 1st sg (doric aeolic)}{4466362 9 a)/legon,a)le/gw	have a care	imperf ind act 3rd pl (homeric ionic)}{4466362 9 a)/legon,a)le/gw	have a care	imperf ind act 1st sg (homeric ionic)}{34749594 9 e)/legon,e)/legos	song	masc acc sg}{67073932 9 e)/legon,le/gw1	lay	imperf ind act 3rd pl}{67073932 9 e)/legon,le/gw1	lay	imperf ind act 1st sg}{67074331 9 e)/legon,le/gw2	pick up	imperf ind act 3rd pl}{67074331 9 e)/legon,le/gw2	pick up	imperf ind act 1st sg}{67073932 5 e)/legon,le/gw3	lay	imperf ind act 3rd pl}{67073932 5 e)/legon,le/gw3	lay	imperf ind act 1st sg}
+'/nagxos	{36167207 9 e)/nagxos,e)/nagxos	just now	indeclform (adverb)}
+'/ndikon	{36657791 9 e)/ndikon,e)/ndikos	according to right	masc acc sg}{36657791 9 e)/ndikon,e)/ndikos	according to right	neut nom/voc/acc sg}{36657791 9 e)/ndikon,e)/ndikos	according to right	masc/fem acc sg}{36657791 9 e)/ndikon,e)/ndikos	according to right	neut nom/voc/acc sg}
+'/pion	{12563186 9 a)/pion,a)/pion	pear	neut nom/voc/acc sg}{12564134 9 a)/pion,a)/pios1	pear-tree	fem acc sg}{12566160 9 a)/pion,a)/pios2	far away	masc acc sg}{12566160 9 a)/pion,a)/pios2	far away	neut nom/voc/acc sg}{12566160 9 a_)/pion,a)/pios2	far away	masc acc sg}{12566160 9 a_)/pion,a)/pios2	far away	neut nom/voc/acc sg}{12610093 9 a)/pi_on,a)pi/wn	not fat	masc/fem voc sg}{12610093 9 a)/pi_on,a)pi/wn	not fat	neut nom/voc/acc sg}{42015716 9 e)/pion,e)/pion	oil for lamps	neut nom/voc/acc sg}{90876893 9 e)/pion,pi/nw	Aër.	aor ind act 3rd pl}{90876893 9 e)/pion,pi/nw	Aër.	aor ind act 1st sg}
+'/st'	{17177614 9 a)sta_/,a)sth/	 	fem nom/voc/acc dual}{17177614 9 a)sta_/,a)sth/	 	fem nom/voc sg (doric aeolic)}{17177614 9 a)stai/,a)sth/	 	fem nom/voc pl}{17213629 9 a)ste/,a)sto/s	townsman	masc voc sg}{45454610 9 e)/ste,e)/ste	up to the time that	indeclform (conj)}{32007501 9 e)sti,ei)mi/	sum	pres ind act 3rd sg}{32007501 9 e)ste,ei)mi/	sum	pres ind act 2nd pl}{32007501 9 e)/ste,ei)mi/	sum	pres imperat act 2nd pl}{32007501 9 e)/stai,ei)mi/	sum	fut ind mid 3rd sg}
+'/sti	{32007501 9 e)sti,ei)mi/	sum	pres ind act 3rd sg}
+'ba/dize	{19738019 9 e)ba/dize,badi/zw	walk	imperf ind act 3rd sg}
+'bale	{20019946 9 e)/bale,ba/llw	throw	aor ind act 3rd sg}{20019946 9 e)/ba_le,ba/llw	throw	aor ind act 3rd sg (doric)}
+'bolw=n	{521776 9 a)bolw=n,a)bole/w	meet	pres part act masc nom sg (attic epic doric)}
+'bou/leuse	{21375463 9 e)bou/leuse,bouleu/w	take counsel	aor ind act 3rd sg}
+'bou/leusen	{21375463 9 e)bou/leusen,bouleu/w	take counsel	aor ind act 3rd sg}
+'boulo/mhn	{21420515 9 e)boulo/mhn,bou/lomai	will	imperf ind mp 1st sg}
+'c	{32695571 9 e)c,e)k	from out of	proclitic indeclform (prep)}
+'ca/ch|s	{37921771 9 e)ca_/ch|s,e)ca/gnumi	break and tear away	aor subj act 2nd sg}{37933823 9 e)ca/ch|s,e)ca/gw	lead out	aor subj act 2nd sg}
+'cai/fnhs	{38066225 9 e)cai/fnhs,e)cai/fnhs	on a sudden	indeclform (adverb)}
+'cairh/setai	{38010727 9 e)cairh/setai,e)caire/w	take out	aor subj mid 3rd sg (epic)}{38010727 9 e)cairh/setai,e)caire/w	take out	fut ind mid 3rd sg}{38010727 9 e)cairh/setai,e)caire/w	take out	aor subj mid 3rd sg (epic prose)}{38010727 9 e)cairh/setai,e)caire/w	take out	fut ind mid 3rd sg}
+'calei/yh|s	{38111053 9 e)calei/yh|s,e)calei/fw	plaster	aor subj act 2nd sg}
+'caleifqh=nai	{38111053 9 e)caleifqh=nai,e)calei/fw	plaster	aor inf pass}
+'camarta/nein	{38152608 9 e)camarta/nein,e)camarta/nw	Acut. (Sp.	pres inf act (attic epic)}
+'camarti/a	{38157355 9 e)camarti/a_,e)camarti/a	error	fem nom/voc/acc dual}{38157355 9 e)camarti/a_,e)camarti/a	error	fem nom/voc sg (attic doric aeolic)}
+'camei/yei	{38173983 9 e)camei/yei,e)ca/meiyis	alternation	fem nom/voc/acc dual (attic epic)}{38173983 9 e)camei/yei+,e)ca/meiyis	alternation	fem dat sg (epic)}{38173983 9 e)camei/yei,e)ca/meiyis	alternation	fem dat sg (attic ionic)}{38170915 9 e)camei/yei,e)camei/bw	exchange	aor subj act 3rd sg (epic)}{38170915 9 e)camei/yei,e)camei/bw	exchange	fut ind mid 2nd sg}{38170915 9 e)camei/yei,e)camei/bw	exchange	fut ind act 3rd sg}
+'capata=n	{38298962 9 e)capata=n,e)capa/th	deceit	fem gen pl (doric aeolic)}{38293733 9 e)capata=n,e)capata/w	deceive	pres part act masc voc sg (doric aeolic)}{38293733 9 e)capata=n,e)capata/w	deceive	pres part act neut nom/voc/acc sg (doric aeolic)}{38293733 9 e)capata=n,e)capata/w	deceive	pres part act masc nom sg (doric aeolic)}{38293733 9 e)capata_=n,e)capata/w	deceive	pres inf act (epic doric)}{38293733 9 e)capata=n,e)capata/w	deceive	pres inf act (attic doric)}{38293733 9 e)capata=n,e)capata/w	deceive	pres part act masc voc sg (doric aeolic)}{38293733 9 e)capata=n,e)capata/w	deceive	pres part act neut nom/voc/acc sg (doric aeolic)}{38293733 9 e)capata=n,e)capata/w	deceive	pres part act masc nom sg (doric aeolic)}{38293733 9 e)capata_=n,e)capata/w	deceive	pres inf act (epic doric)}{38293733 9 e)capata=n,e)capata/w	deceive	pres inf act (attic doric)}
+'capathqh=|s	{38293733 9 e)capathqh=|s,e)capata/w	deceive	aor subj pass 2nd sg (attic ionic)}{38293733 9 e)capathqh=|s,e)capata/w	deceive	aor subj pass 2nd sg (attic ionic)}
+'capoqnh/skwn	{13199891 9 e)capoqnh/skwn,e)k-a)poqnh/skw	die	pres part act masc nom sg}[32695571]
+'carpa/sas	{38397044 9 e)carpa_/sa_s,e)carpa/zw	snatch away from	fut part act fem acc pl (doric)}{38397044 9 e)carpa_/sa_s,e)carpa/zw	snatch away from	fut part act fem gen sg (doric)}{38397044 9 e)carpa_/sa_s,e)carpa/zw	snatch away from	fut part act fem acc pl (doric)}{38397044 9 e)carpa_/sa_s,e)carpa/zw	snatch away from	fut part act fem gen sg (doric)}{38397044 9 e)carpa/sa_s,e)carpa/zw	snatch away from	aor part act masc nom/voc sg (attic epic ionic)}{38397044 9 e)carpa/sa_s,e)carpa/zw	snatch away from	aor part act masc nom/voc sg (attic epic ionic)}
+'catima/zhton	{38448400 9 e)catima/zhton,e)catima/zw	dishonour utterly	pres subj act 3rd dual}{38448400 9 e)catima/zhton,e)catima/zw	dishonour utterly	pres subj act 2nd dual}{38448400 9 e)cati_ma/zhton,e)catima/zw	dishonour utterly	pres subj act 3rd dual}{38448400 9 e)cati_ma/zhton,e)catima/zw	dishonour utterly	pres subj act 2nd dual}
+'ce/legxe	{38546400 9 e)ce/legxe,e)cele/gxw	convict	pres imperat act 2nd sg}{38546400 9 e)ce/legxe,e)cele/gxw	convict	imperf ind act 3rd sg (homeric ionic)}
+'ce/lh|	{38010727 9 e)ce/lh|,e)caire/w	take out	aor subj mid 2nd sg}{38010727 9 e)ce/lh|,e)caire/w	take out	aor subj act 3rd sg}{38010727 9 e)ce/lh|,e)caire/w	take out	aor subj mid 2nd sg}{38010727 9 e)ce/lh|,e)caire/w	take out	aor subj mp 2nd sg}{38010727 9 e)ce/lh|,e)caire/w	take out	aor subj act 3rd sg}
+'ce/negke	{34357291 9 e)ce/negke,e)kfe/rw	carry out of	aor ind act 3rd sg (homeric ionic)}{34357291 9 e)ce/negke,e)kfe/rw	carry out of	aor ind act 3rd sg (homeric ionic)}
+'ce/peisa	{33750462 9 e)ce/peisa,e)kpei/qw	persuade completely	aor ind act 1st sg}
+'ce/qhk'	{34175746 9 e)ce/qhka,e)kti/qhmi	set out	aor ind act 1st sg}{34175746 9 e)ce/qhke,e)kti/qhmi	set out	aor ind act 3rd sg}
+'ce/rxetai	{38661875 9 e)ce/rxetai,e)ce/rxomai	go	pres ind mp 3rd sg}
+'ce/taze	{38684124 9 e)ce/taze,e)ceta/zw	examine well	pres imperat act 2nd sg}{38684124 9 e)ce/taze,e)ceta/zw	examine well	pres imperat act 2nd sg}{38684124 9 e)ce/taze,e)ceta/zw	examine well	imperf ind act 3rd sg (homeric ionic)}{38684124 9 e)ce/taze,e)ceta/zw	examine well	imperf ind act 3rd sg (homeric ionic)}
+'cegerei=s	{38491716 9 e)cegerei=s,e)cegei/rw	awaken	fut ind act 2nd sg (attic epic doric ionic)}
+'cegerqh=i	{38491716 9 e)cegerqh=|,e)cegei/rw	awaken	aor subj pass 3rd sg}
+'cei=nai	{38680507 9 e)cei=nai,e)/cesti	it is allowed	pres inf act}{38832259 9 e)cei=nai,e)ci/hmi	send out	aor inf act}{38832259 9 e)cei=nai,e)ci/hmi	send out	aor inf act}
+'ceirgasme/nh	{38604678 9 e)ceirgasme/nh,e)cerga/zomai	work out	perf part mp fem nom/voc sg (attic epic ionic)}
+'ceke/nwsen	{33324998 9 e)ceke/nwsen,e)kkeno/w	empty out	aor ind act 3rd sg}
+'cele/gcai	{38546400 9 e)cele/gcai,e)cele/gxw	convict	aor inf act}{38546400 9 e)cele/gcai_,e)cele/gxw	convict	aor opt act 3rd sg}
+'cele/tw	{38010727 9 e)cele/tw,e)caire/w	take out	aor imperat act 3rd sg}
+'celegxqh=i	{38546400 9 e)celegxqh=|,e)cele/gxw	convict	aor subj pass 3rd sg}
+'celku/sai	{38572076 9 e)celku/sai,e)ce/lkw	draw	aor inf act}{38572076 9 e)celku/sai_,e)ce/lkw	draw	aor opt act 3rd sg}
+'celkusqh=|	{38572076 9 e)celkusqh=|,e)ce/lkw	draw	aor subj pass 3rd sg}
+'celqei=n	{38661875 9 e)celqei=n,e)ce/rxomai	go	aor inf act (attic epic doric)}
+'cemei=n	{38578102 9 e)cemei=n,e)ceme/w	vomit forth	pres inf act (attic epic doric)}{38578102 9 e)cemei=n,e)ceme/w	vomit forth	fut inf act (attic epic doric)}{38578102 9 e)cemei=n,e)ceme/w	vomit forth	pres inf act (attic epic doric)}
+'cenegkei=n	{34357291 9 e)cenegkei=n,e)kfe/rw	carry out of	aor inf act (attic epic doric)}
+'cepai/rei	{48281642 0 e)cepai/rei,e)k-e)faire/omai	 	pres imperat act 2nd sg (attic epic doric ionic aeolic parad_form prose)}[32695571]{48281642 0 e)cepai/rei,e)k-e)faire/omai	 	imperf ind act 3rd sg (attic epic doric ionic aeolic parad_form prose)}[32695571]{39451981 9 e)cepai/rei,e)k-e)pai/rw	lift up and set on	pres ind mp 2nd sg}[32695571]{39451981 9 e)cepai/rei,e)k-e)pai/rw	lift up and set on	pres ind act 3rd sg}[32695571]
+'ceph/dhs'	{33795984 9 e)ceph/dhsa,e)kphda/w	leap out	aor ind act 1st sg (attic ionic)}{33795984 9 e)ceph/dhso,e)kphda/w	leap out	imperf ind mp 2nd sg}{33795984 9 e)ceph/dhse,e)kphda/w	leap out	aor ind act 3rd sg (attic ionic)}
+'cerw=	{38600861 9 e)cerw=,e)cera/w	evacuate	pres imperat mp 2nd sg}{38600861 9 e)cerw=,e)cera/w	evacuate	pres subj act 1st sg (attic epic ionic)}{38600861 9 e)cerw=,e)cera/w	evacuate	pres ind act 1st sg (attic epic ionic)}{38600861 9 e)cerw=,e)cera/w	evacuate	pres subj act 1st sg (attic epic doric ionic)}{38600861 9 e)cerw=,e)cera/w	evacuate	pres ind act 1st sg (attic epic doric ionic)}{38600861 9 e)cerw=,e)cera/w	evacuate	pres imperat mp 2nd sg}{38600861 9 e)cerw=,e)cera/w	evacuate	pres subj act 1st sg (attic epic ionic)}{38600861 9 e)cerw=,e)cera/w	evacuate	pres ind act 1st sg (attic epic ionic)}{38600861 9 e)cerw=,e)cera/w	evacuate	imperf ind mp 2nd sg (homeric ionic)}{38600861 9 e)cerw=,e)cera/w	evacuate	imperf ind mp 2nd sg (homeric ionic)}{38638917 9 e)cerw=,e)cere/w	will speak	pres subj act 1st sg (attic epic doric)}{38638917 9 e)cerw=,e)cere/w	will speak	pres ind act 1st sg (attic epic doric)}{38638917 9 e)cerw=,e)cere/w1	will speak	fut ind act 1st sg (attic epic doric)}
+'ceta/zwn	{38684124 9 e)ceta/zwn,e)ceta/zw	examine well	pres part act masc nom sg}{38684124 9 e)ceta/zwn,e)ceta/zw	examine well	pres part act masc nom sg}
+'ceure	{38726820 9 e)/ceure,e)ceuri/skw	find out	aor imperat act 2nd sg}{38726820 9 e)/ceure,e)ceuri/skw	find out	aor ind act 3rd sg (homeric ionic)}{38726820 9 e)/ceure,e)ceuri/skw	find out	aor ind act 3rd sg (homeric ionic)}
+'ceurei=n	{38726820 9 e)ceurei=n,e)ceuri/skw	find out	aor inf act (attic epic doric)}
+'ch/kousen	{38092709 9 e)ch/kousen,e)cakou/w	hear	aor ind act 3rd sg (attic epic ionic)}
+'ch/negken	{34357291 9 e)ch/negken,e)kfe/rw	carry out of	aor ind act 3rd sg}{34357291 9 e)ch/negken,e)kfe/rw	carry out of	aor ind act 3rd sg}
+'ch/nta	{10100899 9 e)ch/nta_,e)k-a)nta/w	come opposite to	imperf ind act 3rd sg (attic epic ionic)}[32695571]
+'ch=lqen	{38661875 9 e)ch=lqen,e)ce/rxomai	go	aor ind act 3rd sg}{38661875 9 e)ch=lqen,e)ce/rxomai	go	aor ind act 3rd sg}
+'chgh/qh	{38748494 9 e)chgh/qh,e)chge/omai	to be leader of	aor ind pass 3rd sg}{38748494 9 e)chgh/qh,e)chge/omai	to be leader of	aor ind mp 3rd sg (homeric ionic)}{38748494 9 e)chgh/qh,e)chge/omai	to be leader of	aor ind pass 3rd sg (homeric ionic)}
+'chith/sato	{38055317 9 e)ch|th/sato,e)caite/w	demand	aor ind mid 3rd sg}
+'chra/sato	{38358824 9 e)chra/sato,e)cara/omai	utter curses	aor ind mid 3rd sg (attic epic ionic)}
+'ch|re/qh	{38010727 9 e)ch|re/qh,e)caire/w	take out	aor ind pass 3rd sg}
+'ch|th/sato	{38055317 9 e)ch|th/sato,e)caite/w	demand	aor ind mid 3rd sg}
+'ci/h|	{11409341 9 a)ci/h|,a)/cios	counterbalancing	fem dat sg (epic ionic)}{11362694 9 a)ci/h|,a)ci/a	worth	fem dat sg (epic ionic)}{38523404 9 e)ci/h|,e)/ceimi2	sum	pres subj act 3rd sg}{38832259 9 e)ci/h|,e)ci/hmi	send out	pres subj act 3rd sg}{38832259 9 e)ci/h|,e)ci/hmi	send out	pres subj mp 2nd sg}
+'ciqi	{38523404 9 e)/ciqi,e)/ceimi2	sum	pres imperat act 2nd sg}
+'comh=|	{39020175 9 e)comh=|,e)co/mnumi	swear in excuse	fut ind mid 2nd sg}
+'cousi/a	{39127432 9 e)cousi/a_,e)cousi/a	power	fem nom/voc/acc dual}{39127432 9 e)cousi/a_,e)cousi/a	power	fem nom/voc sg (attic doric aeolic)}
+'cw	{39197975 9 e)/cw,e)/cw	out	indeclform (adverb)}{45444955 9 e)/cw,e)/ssomai	sum.	aor ind mp 2nd sg (homeric ionic)}
+'cw/pios	{39240914 9 e)cw/pios,e)cw/pios	out of sight of	masc/fem nom sg}
+'cwqen	{39213187 9 e)/cwqen,e)/cwqen	from without	indeclform (adverb)}
+'d'	{31453762 9 e)/de,e)/dw	eat	pres imperat act 2nd sg (epic)}{31453762 9 e)/de,e)/dw	eat	imperf ind act 3rd sg (epic)}
+'da/krusa	{24139561 9 e)da/kru_sa,dakru/w	weep	aor ind act 1st sg}
+'da/kruse	{24139561 9 e)da/kru_se,dakru/w	weep	aor ind act 3rd sg}
+'da/mh	{24224505 9 e)da/mh,dama/w	 	imperf ind act 3rd sg (doric)}{24224505 9 e)da/mh,dama/w	 	imperf ind act 3rd sg (epic doric ionic aeolic)}{24188188 9 e)da/mh,dama/zw	overpower	aor ind pass 3rd sg}
+'dam'	{1659080 9 a)/dama,a)/damos	 	neut nom/voc/acc pl}{1659080 9 a)/dame,a)/damos	 	masc/fem voc sg}
+'danei/sato	{24247614 9 e)danei/sato,danei/zw	put out money at usury	aor ind mid 3rd sg}{24247614 9 e)danei/+sato,danei/zw	put out money at usury	aor ind mid 3rd sg}
+'de	{31453762 9 e)/de,e)/dw	eat	pres imperat act 2nd sg (epic)}{31453762 9 e)/de,e)/dw	eat	imperf ind act 3rd sg (epic)}
+'de/	{31453762 9 e)/de,e)/dw	eat	pres imperat act 2nd sg (epic)}{31453762 9 e)/de,e)/dw	eat	imperf ind act 3rd sg (epic)}
+'dei	{25164827 9 e)/dei,de/w1	bind	imperf ind act 3rd sg (attic epic)}{25176157 9 e)/dei,de/w2	lack	imperf ind act 3rd sg (attic epic)}{24457731 9 e)/dei,dei=	there is need	imperf ind act 3rd sg (attic epic ionic)}{31453762 9 e)/dei,e)/dw	eat	fut ind mid 2nd sg (epic)}{31453762 9 e)/dei,e)/dw	eat	pres ind mp 2nd sg (epic)}{31453762 9 e)/dei,e)/dw	eat	pres ind act 3rd sg (epic)}{31453762 9 e)/dei,e)sqi/w	eat	fut ind mid 2nd sg}
+'dein	{31453762 9 e)/dein,e)/dw	eat	pres inf act (attic epic)}
+'delfo/s	{1704217 9 a)delfo/s,a)delfo/s	son of the same mother	masc nom sg}
+'delfou=	{1704217 9 a)delfou=,a)delfo/s	son of the same mother	masc gen sg}
+'delfw=|	{1704217 9 a)delfw=|,a)delfo/s	son of the same mother	masc dat sg}
+'den	{31453762 9 e)/de_n,e)/dw	eat	pres inf act (epic doric)}{31453762 9 e)/den,e)/dw	eat	imperf ind act 3rd sg (epic)}
+'des	{31453762 9 e)/de_s,e)/dw	eat	pres ind act 2nd sg (epic doric)}{31453762 9 e)/des,e)/dw	eat	imperf ind act 2nd sg (epic)}
+'di/daca	{27609164 9 e)di/daca,dida/skw	instruct	aor ind act 1st sg}
+'do/kei	{28945988 9 e)do/kei,doke/w	expect	imperf ind act 3rd sg (attic epic)}

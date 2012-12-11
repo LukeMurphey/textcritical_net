@@ -1,4 +1,4 @@
-from reader.models import Author, Work, WorkSource, WorkType, Division, Verse
+from reader.models import Author, Work, WorkType, Division, Verse, Lemma, WordForm, WordDescription
 from django.contrib import admin
 
 class AuthorAdmin(admin.ModelAdmin):
@@ -68,3 +68,59 @@ class WorkTypeAdmin(admin.ModelAdmin):
 admin.site.register(WorkType, WorkTypeAdmin)
 
 admin.site.register(Division, DivisionModel)
+
+class WordFormInline(admin.StackedInline):
+    model = WordForm
+    extra = 0
+    
+    fieldsets = (
+        (None, {
+            'fields': ('form', ),
+        }),
+    )
+
+class LemmaAdmin(admin.ModelAdmin):
+    
+    list_display = ('lexical_form', 'reference_number')
+    search_fields = ('lexical_form',)
+    
+    inlines = [
+        WordFormInline,
+    ]
+
+admin.site.register(Lemma, LemmaAdmin)
+
+class WordDescriptionInline(admin.StackedInline):
+    model = WordDescription
+    extra = 0
+    
+    fieldsets = (
+        (None, {
+            'fields': ( ('person', 'number', 'part_of_speech'), 'dialects', ('indeclinable', 'particle'), 'description'),
+        }),
+        ('Nouns', {
+            'fields': ( ('gender', 'geog_name', 'numeral'), 'cases'),
+        }),
+        ('Verbs', {
+            'fields': ( ('adverb', 'infinitive'), ('participle', 'voice') ),
+        }),
+        ('Other', {
+            'fields': ( ('superlative', 'comparative', 'expletive'), ('poetic', 'clitic', 'movable_nu' ) ),
+        })
+    )
+
+class WordFormModel(admin.ModelAdmin):
+    
+    search_fields = ('form',),
+    
+    fieldsets = (
+        (None, {
+            'fields': ('form', ),
+        }),
+    )
+    
+    inlines = [
+        WordDescriptionInline,
+    ]
+    
+admin.site.register(WordForm, WordFormModel)

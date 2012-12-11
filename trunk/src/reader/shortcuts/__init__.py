@@ -122,6 +122,11 @@ class HTML5Converter(HTMLParser):
         # Append the txt node
         self.current_node.appendChild(txt_node)
 
+class BootstrapCustomizer():
+    
+    def node_transformation_fx(self, tag, attrs, parent, document ):
+        pass
+
 def convert_xml_to_html5( xml_str, new_root_node_tag_name=None, text_transformation_fx=None, language=None, return_as_str=False, allow_closing_in_start_tag=False, node_transformation_fx=None):
     """
     Convert the XML into HTML5 with custom data attributes.

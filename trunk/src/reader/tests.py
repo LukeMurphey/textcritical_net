@@ -12,8 +12,9 @@ from reader.templatetags.reader_extras import perseus_xml_to_html5
 from reader.importer.Perseus import PerseusTextImporter
 from reader.importer.PerseusBatchImporter import ImportPolicy, PerseusBatchImporter, WorkDescriptor, wildcard_to_re, ImportTransforms
 from reader.importer import TextImporter, LineNumber
+from reader.importer.Diogenes import DiogenesLemmataImporter
 from reader.language_tools.greek import Greek
-from reader.models import Author, Division, Verse
+from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Case
 from reader.views import get_division
 
 class TestReader(TestCase):
@@ -1064,27 +1065,89 @@ class TestViews(TestReader):
         
         self.assertEquals( division.descriptor, '1' )
         self.assertEquals( division.parent_division.descriptor, 'Matthew' )
-        
-class TestDiogenesLemmaImporter(TestCase):
+                
+class TestDiogenesLemmaEntry(TestReader):
     
-    def test_import_lemma(self):
+    def make_lemma(self):
+        lemma = Lemma(lexical_form=Greek.beta_code_str_to_unicode("a(/bra"), language="Greek", reference_number=537850)
+        lemma.save()
         
-        s = """a(/bruna    575884    a(/bruna (neut nom/voc/acc pl)"""
+        return lemma
+    
+    def make_form(self):
         
+        lemma = self.make_lemma()
         
+        word_form = WordForm()
+        word_form.lemma = lemma
+        word_form.form = Greek.beta_code_str_to_unicode("a(/bra")
+        word_form.save()
         
-class TestDiogenesLemmaEntry(TestCase):
+        return word_form
+    
+    def test_import_file(self):
+        
+        lemmas = DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
+        
+        self.assertEquals( len(lemmas), 95)
     
     def test_parse(self):
-        pass
-    
+        
+        f = open( self.get_test_resource_file_name("greek-lemmata.txt"), 'r')
+        s = f.readline()
+        
+        lemma = DiogenesLemmataImporter.parse_lemma(s)
+        
+        self.assertEquals(lemma.lexical_form, Greek.beta_code_str_to_unicode("a(/bra"))
+        self.assertEquals(lemma.reference_number, 537850)
+        
+        word_forms = WordForm.objects.filter(lemma=lemma)
+        word_descriptions = WordDescription.objects.filter(word_form=word_forms[0])
+        
+        self.assertEquals(8, word_forms.count() )
+        self.assertEquals(2, word_descriptions.count() )
+        
     def test_parse_form(self):
         
         #parse_form
+        s = "a(/bra (fem nom/voc/acc dual) (fem nom/voc sg (attic doric aeolic))"
         
-        pass
+        form = DiogenesLemmataImporter.parse_form(s, self.make_lemma())
+        
+        self.assertEquals( form.form, Greek.beta_code_str_to_unicode("a(/bra") )
+        
     
-        """
-a(/dhma    1744787    a(/dhma (neut nom/voc/acc sg)
-a(/dhn    1750487    a(/ddhn (indeclform (adverb))    a(/dhn (indeclform (adverb))    a)/ddhn (indeclform (adverb))    a)/dhn (indeclform (adverb))
-a(/dicis    1896613    a(/dicis (fem nom sg)"""
+    def test_parse_form_description_noun(self):
+        
+        s = "(fem nom/voc/acc dual)"
+        
+        word_Form = self.make_form()
+        
+        desc = DiogenesLemmataImporter.parse_description(s, word_Form)
+        
+        self.assertEquals( desc.number, WordDescription.DUAL )
+        self.assertEquals( desc.gender, WordDescription.FEMININE )
+        #self.assertEquals( desc.cases, [Case.NOMINATIVE, Case.VOCATIVE, Case.ACCUSATIVE] )
+        
+    def test_parse_form_description_noun2(self):
+        s = " (fem nom/voc sg (attic doric aeolic))"
+        
+        word_form = self.make_form()
+        
+        desc = DiogenesLemmataImporter.parse_description(s, word_form)
+        
+        self.assertEquals( desc.number, WordDescription.SINGULAR )
+        self.assertEquals( desc.gender, WordDescription.FEMININE )
+        #self.assertEquals( desc.cases, [Case.NOMINATIVE, Case.VOCATIVE, Case.ACCUSATIVE] )
+        
+    def test_split_descriptions(self):
+        
+        descriptions = DiogenesLemmataImporter.split_descriptions( "(fem nom/voc/acc dual) (fem nom/voc sg (doric aeolic))" )
+        
+        self.assertEquals(descriptions, ['(fem nom/voc/acc dual)', ' (fem nom/voc sg (doric aeolic))'] )
+    
+    def test_parse_descriptions(self):
+        
+        forms = DiogenesLemmataImporter.parse_descriptions("(fem nom/voc/acc dual) (fem nom/voc sg (doric aeolic))", self.make_form() )
+        
+        
