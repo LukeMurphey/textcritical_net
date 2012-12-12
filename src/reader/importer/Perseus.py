@@ -100,7 +100,6 @@ class PerseusTextImporter(TextImporter):
         self.ignore_content_before_first_milestone = ignore_content_before_first_milestone
         self.ignore_undeclared_divs = ignore_undeclared_divs
         self.only_last_state_is_non_chunk = only_last_state_is_non_chunk
-        #super(PerseusTextImporter, self).__init__(work, work_source)
     
     def import_xml_string(self, xml_string ):
         """
