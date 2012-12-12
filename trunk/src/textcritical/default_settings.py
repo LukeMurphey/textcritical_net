@@ -97,6 +97,10 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+# The address and port to use when using the built-in web-server
+WEB_SERVER_ADDRESS = '0.0.0.0'
+WEB_SERVER_PORT    = 8080
+
 # Set up the template context processors
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + ('textcritical.context_processors.global_settings', )
 
