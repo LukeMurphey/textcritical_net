@@ -138,10 +138,10 @@
     },
     {
         "author" : "Sophocles",
-        "title"  : ["Antigone", "Electra", "Oedipus at Colonus", "Oedipus Tyrannus", "Ajax", "Philoctetes", "Trachiniae" ],
         "language" : "Greek",
         "import_parameters" : {
             "ignore_division_markers" : true,
+            "use_line_count_for_divisions" : true,
             "state_set" : 0
         }
     },
