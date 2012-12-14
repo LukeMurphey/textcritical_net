@@ -17,6 +17,30 @@ from reader.language_tools.greek import Greek
 from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Case
 from reader.views import get_division
 
+import time
+
+def time_function_call(fx):
+    """
+    This decorator will provide a log message measuring how long a function call took.
+    
+    Arguments:
+    fx -- The function to measure
+    """
+    
+    def wrapper(*args, **kwargs):
+        t = time.time()
+        
+        r = fx(*args, **kwargs)
+        
+        diff = time.time() - t
+        
+        diff_string = str( round( diff, 6) ) + " seconds"
+        
+        print "%s, duration=%s" % (fx.__name__, diff_string)
+        
+        return r
+    return wrapper
+
 class TestReader(TestCase):
     
     def get_test_resource_file_name(self, file_name):
@@ -1100,6 +1124,7 @@ class TestDiogenesLemmaEntry(TestReader):
         
         return word_form
     
+    @time_function_call
     def test_import_file(self):
         
         lemmas = DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
