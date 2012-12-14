@@ -111,7 +111,12 @@
         		{% else %}
         		<li>
         		{% endif %}
-        		  <a href="{% url read_work work.title_slug %}/{{ c.get_division_indicators|join:"/" }}">{{c.descriptor}}</a>
+        		  <a href="{% url read_work work.title_slug %}/{{ c.get_division_indicators|join:"/" }}">
+        		  {% if c.type == "card" %}
+        		  {{c}}
+        		  {% else %}
+        		  {{c.descriptor}}
+        		  {% endif %}</a>
         		</li>
         {% endfor %}
         {% endif %}
