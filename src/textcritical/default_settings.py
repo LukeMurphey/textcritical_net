@@ -98,7 +98,7 @@ STATICFILES_DIRS = (
 )
 
 # The address and port to use when using the built-in web-server
-WEB_SERVER_ADDRESS = '0.0.0.0'
+WEB_SERVER_ADDRESS = '0.0.0.0'  # Use '127.0.0.1' to serve content to localhost only
 WEB_SERVER_PORT    = 8080
 
 # Set up the template context processors
