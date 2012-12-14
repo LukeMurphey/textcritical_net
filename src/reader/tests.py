@@ -952,6 +952,21 @@ semno/teron *)idoumai/an w)no/masan.
         
         self.assertEquals(divisions[4].parent_division.id, divisions[3].id)
         
+    def test_load_book_ignore_divs_and_use_line_numbers(self):
+        # See #468, http://lukemurphey.net/issues/468
+        
+        book_xml = self.load_test_resource('soph.trach_gk.xml')
+        book_doc = parseString(book_xml)
+        self.importer.use_line_count_for_divisions = True
+        self.importer.ignore_division_markers = True
+        self.importer.state_set = 0
+        self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=self.importer.work)
+        
+        self.assertEquals(divisions.count(), 4)
+        self.assertEquals(divisions[0].title, "lines 1-48")
+        
     def test_xml_use_line_numbers(self):
         
         tei_node_portion_xml = """
