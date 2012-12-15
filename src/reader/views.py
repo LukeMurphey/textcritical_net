@@ -192,11 +192,12 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     # Get the chapter
     division, verse_to_highlight = get_division_and_verse(work, division_0, division_1, division_2, division_3, division_4)
     
-    #division = get_division(work, division_0, division_1, division_2, division_3)
-    
     # Note a warning if were unable to find the given chapter
+    chapter_not_found = False
+    
     if division is None and division_0 is not None:
         warnings.append( ("Section not found", "The place in the text you asked for could not be found.") )
+        chapter_not_found = True
     
     # Start the user off at the beginning of the work
     if division is None:
@@ -210,7 +211,7 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     # Make sure the verse exists
     verse_not_found = False
     
-    if verse_to_highlight is not None:
+    if chapter_not_found == False and verse_to_highlight is not None:
         if Verse.objects.filter(division=division, indicator=verse_to_highlight).count() == 0:
             warnings.append( ("Verse not found", "The verse you specified couldn't be found.") )
             verse_not_found = True
@@ -265,6 +266,7 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
                               'total_chapters'       : total_chapters,
                               'completed_chapters'   : completed_chapters,
                               'remaining_chapters'   : remaining_chapters,
+                              'chapter_not_found'    : chapter_not_found,
                               'verse_not_found'      : verse_not_found,
                               'progress'             : progress},
                               context_instance=RequestContext(request))

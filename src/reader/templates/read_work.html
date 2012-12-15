@@ -1,13 +1,13 @@
 {% extends "base_with_nav.html" %}
 {% block content %}
 
-           {% for warning in warnings %}
-           <div class="alert alert-block">
+        {% for warning in warnings %}
+        <div class="alert alert-block">
 		    <button type="button" class="close" data-dismiss="alert">x</button>
 		    <strong>{{warning.0}}:</strong>
 		    {{warning.1}}
-		   </div>
-           {% endfor %}
+		</div>
+        {% endfor %}
     
         <ul class="breadcrumb">
             <li><a href="{% url home %}">Home</a> <span class="divider">/</span></li>
@@ -22,7 +22,6 @@
         # Button toolbar
         ##############################
         {% endcomment %} 
-        
         <div class="control-group {% if verse_not_found %}error{% endif %}">
         	<div class="input-append">
         		<input class="span2" placeholder="Jump to reference..." id="chapter" value="{{chapter.get_division_description}}{% if verse_to_highlight %}:{{verse_to_highlight}}{% endif %}" type="text">
@@ -78,11 +77,12 @@
         {% if chapter.parent_division and divisions and divisions|length > 1 %}
         <h2>{{chapter.get_division_description_titles}}</h2>
         {% endif %}
+        <span class="hide"><a id="chapter_base_url" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">Current chapter</a></span>
         
         {% for verse in verses.all %}
-        <span id="verse_{{verse.indicator}}" class="verse_container {% if verse.indicator == verse_to_highlight %}highlighted{% endif %}">
+        <span id="verse_{{verse.indicator}}" class="verse_container {% if not chapter_not_found and verse.indicator == verse_to_highlight %}highlighted{% endif %}">
             {% if verse.indicator|length > 0 %}
-            <a class="verse_link" data-verse="{{verse.indicator}}" id="verse_link_{{verse.indicator}}" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}/{{verse.indicator}}"><span class="label {% if verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
+            <a class="verse_link" data-verse="{{verse.indicator}}" data-verse-descriptor="{{chapter.get_division_description}}:{{verse}}" id="verse_link_{{verse.indicator}}" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}/{{verse.indicator}}"><span class="label {% if not chapter_not_found and verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
 	        {% endif %}
 	        {{verse.original_content|perseus_xml_to_html5:chapter.work.language|safe}}
         </span>
@@ -158,7 +158,9 @@ require(["jquery", "store", "app"], function($) {
     $("#change_reference").click( go_to_selected_chapter );
     
     $(".verse_link").click(function() {
-    	return TextCritical.scrollToVerse( $(this).attr("data-verse") );
+    	$("#chapter").val( $(this).attr("data-verse-descriptor") );
+    	return TextCritical.scrollToVerse( $(this).attr("data-verse"), $("#chapter_base_url").attr("href") );
+    	
     });
     
     {% if verse_to_highlight %}
