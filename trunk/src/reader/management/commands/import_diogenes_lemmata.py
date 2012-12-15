@@ -11,6 +11,7 @@ class Command(BaseCommand):
 
     option_list = BaseCommand.option_list + (
         make_option("-f", "--file", dest="filename", help="The file to import"),
+        make_option("-l", "--line_number", dest="line_number", help="The line-number to begin")
     )
 
     def handle(self, *args, **options):
@@ -25,8 +26,14 @@ class Command(BaseCommand):
             print "No filename was provided to import"
             return
         
+        # Get the line number
+        line_number  = options['line_number']
+        
+        if line_number is not None:
+            line_number = int(line_number)
+        
         print "Importing ", filename
         importer = DiogenesLemmataImporter()
-        importer.import_file(filename)
+        importer.import_file(filename, start_line_number=line_number)
         
         print os.path.basename(filename), "successfully imported"

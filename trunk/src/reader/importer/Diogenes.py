@@ -8,6 +8,7 @@ from reader.language_tools import Greek
 from reader.models import Lemma, Case, WordForm, WordDescription, Dialect
 import re
 import logging
+from time import time
 from django.db import transaction
 
 logger = logging.getLogger(__name__)
@@ -101,7 +102,11 @@ class DiogenesLemmataImporter():
                   "enclitic" : WordDescription.ENCLITIC
                   }
         
+    cached_cases = None
+    cached_dialects = None
+    
     @staticmethod
+    @transaction.commit_on_success
     def parse_lemma( entry, line_number=None ):
         """
         Parse an entry in the Diogenes greek-lemmata.txt file.
@@ -125,11 +130,10 @@ class DiogenesLemmataImporter():
         lemma.save()
         
         # Attach the forms
-        forms = []
         forms_raw = split_entry[2:]
         
         for f in forms_raw:
-            forms.append( DiogenesLemmataImporter.parse_form(f, lemma, line_number) )
+            DiogenesLemmataImporter.parse_form(f, lemma, line_number)
         
         return lemma
     
@@ -161,7 +165,7 @@ class DiogenesLemmataImporter():
         return word_form
     
     @staticmethod
-    def parse_descriptions( descriptions, word_form, line_number=None ):
+    def parse_descriptions( descriptions, word_form, line_number=None, return_created_descriptions=False ):
         """
         Parse descriptions for a particular form.
         
@@ -176,10 +180,15 @@ class DiogenesLemmataImporter():
         parsed_descriptions = DiogenesLemmataImporter.split_descriptions(descriptions)
         descriptions = []
         
-        for d in parsed_descriptions: 
-            descriptions.append( DiogenesLemmataImporter.parse_description(d, word_form, line_number=line_number) )
+        for d in parsed_descriptions:
             
-        return descriptions
+            desc = DiogenesLemmataImporter.parse_description(d, word_form, line_number=line_number)
+            
+            if return_created_descriptions:
+                descriptions.append( desc )
+            
+        if return_created_descriptions:
+            return descriptions
     
     @staticmethod
     def split_descriptions( description_str ):
@@ -226,15 +235,21 @@ class DiogenesLemmataImporter():
         case -- A name of a case.
         """
         
-        matching_cases = Case.objects.filter(name=case)
-        
-        if len(matching_cases) > 0:
-            return matching_cases[0]
-        else:
-            new_case = Case(name=case)
-            new_case.save()
+        if DiogenesLemmataImporter.cached_cases is None:
+            DiogenesLemmataImporter.cached_cases =  Case.objects.all()
             
-            return new_case
+        for c in DiogenesLemmataImporter.cached_cases:
+            
+            if c.name == case:
+                return c
+            
+        # Create the new case
+        new_case = Case(name=case)
+        new_case.save()
+            
+        DiogenesLemmataImporter.cached_cases = None
+            
+        return new_case
     
     @staticmethod
     def get_dialect( dialect ):
@@ -245,15 +260,21 @@ class DiogenesLemmataImporter():
         dialect -- A name of a dialect.
         """
         
-        matching_dialects = Dialect.objects.filter(name=dialect)
-        
-        if len(matching_dialects) > 0:
-            return matching_dialects[0]
-        else:
-            new_dialect = Dialect(name=dialect)
-            new_dialect.save()
+        if DiogenesLemmataImporter.cached_dialects is None:
+            DiogenesLemmataImporter.cached_dialects =  Dialect.objects.all()
             
-            return new_dialect
+        for c in DiogenesLemmataImporter.cached_dialects:
+            
+            if c.name == dialect:
+                return c
+            
+        # Create the new diallect
+        new_dialect = Dialect(name=dialect)
+        new_dialect.save()
+            
+        DiogenesLemmataImporter.cached_dialects = None
+            
+        return new_dialect
     
     @staticmethod
     def set_part_of_speech( word_description, part_of_speech, raise_if_already_set=True, dont_set_if_already_set=True):
@@ -427,28 +448,53 @@ class DiogenesLemmataImporter():
         
         return word_description
     
+    #@transaction.commit_on_success
     @staticmethod
-    @transaction.commit_on_success
-    def import_file( file_name, return_created_objects=False ):
+    def import_file( file_name, return_created_objects=False, start_line_number=None ):
         
-        lemmas = []
+        logger.debug("Importing file, file=\"%s\"", file_name )
         
-        f = None
-        line_number = 0
+        # Record the start time so that we can measure performance
+        start_time = time()
+        
+        # If we are returning the objects, then initialize an array to store them. Otherwise, intialize the count.
+        if return_created_objects:
+            lemmas = []
+        else:
+            lemmas = 0
+        
+        # Initialize a couple more things...
+        f = None # The file handle
+        line_number = 0 # The line number
         
         try:
+            
+            # Open the file
             f = open( file_name, 'r')
             
+            # Process each line
             for line in f:
-                line_number = line_number + 1
-                lemma = DiogenesLemmataImporter.parse_lemma(line, line_number)
                 
-                if return_created_objects:
-                    lemmas.append( lemma )
+                # Note the line number we are importing
+                line_number = line_number + 1
+                
+                # If we are importing starting from a particular line number, then skip lines until you get to this point
+                if start_line_number is not None and line_number < start_line_number:
+                    pass # Skip this line
+                
+                else:
+                    # Import the line
+                    lemma = DiogenesLemmataImporter.parse_lemma(line, line_number)
+                    
+                    if return_created_objects:
+                        lemmas.append( lemma )
+                    else:
+                        lemmas = lemmas + 1
         finally:
             if f is not None:
                 f.close()
+                
+        logger.info("Import complete, duration=%i", time() - start_time )
             
-        if return_created_objects:
-            return lemmas
+        return lemmas
     
