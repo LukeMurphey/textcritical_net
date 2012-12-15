@@ -53,16 +53,21 @@ TextCritical.scrolltoAnchor = function(id){
 /**
  * Highlight a selected verse without performing a request to the server.
  **/
-TextCritical.scrollToVerse = function(verse_number){
+TextCritical.scrollToVerse = function(verse_number, base_chapter_url){
 
+	// Make sure a base chapter URL was provided
+	if ( base_chapter_url == null || base_chapter_url == undefined ){
+		console.warn("No base chapter URL was provided; will not be able to update the URL for the given verse");
+		return true; // Let the href propagate
+	}
 	
 	// The ID of the verse number element
 	var id = "verse_" + verse_number
 	
 	// Update the URL
 	title = document.title;
-	path = window.location.pathname;
-	history.pushState( {verse: verse_number}, title, path + "?verse=" + verse_number);
+	history.pushState( {verse: verse_number}, title, base_chapter_url + "/" + verse_number);
+	console.info("Updating the URL to point to the selected verse");
 	
 	// Remove existing highlights
 	$('.verse_container').removeClass('highlighted');
@@ -97,7 +102,6 @@ TextCritical.loadStoreSettings = function(){
 	
 	if( break_verses ){
 		TextCritical.setFormatBreakLine();
-		
 	}
 }
 
@@ -105,7 +109,7 @@ TextCritical.loadStoreSettings = function(){
  * Determines the path that corresponds to the given reference.
  **/
 TextCritical.resolve_path = function( reference ){
-
+	
     // Break up the path
     var path_array = window.location.pathname.split( '/' );
     var path = [];
