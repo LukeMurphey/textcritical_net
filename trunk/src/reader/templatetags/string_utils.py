@@ -12,6 +12,9 @@ def contains(value, arg):
     {% endif %}
     """
     
+    if value is None:
+        return False
+    
     return arg in value
 
 @register.filter()
@@ -25,6 +28,9 @@ def startswith(value, arg):
     {% endif %}
     """
     
+    if value is None:
+        return False
+    
     return value.startswith(arg)
 
 @register.filter()
@@ -37,5 +43,8 @@ def endswith(value, arg):
     Doesn't have a port.
     {% endif %}
     """
+    
+    if value is None:
+        return False
     
     return value.endswith(arg)
