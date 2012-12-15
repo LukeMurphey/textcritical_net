@@ -2,42 +2,59 @@
 
 */
 
+var TextCritical = {};
 
-function setFormatBreakLine(){
+/**
+ * Causes the verses to break onto separate lines. 
+ **/
+TextCritical.setFormatBreakLine = function(){
 	$('.verse_container').addClass("block");
 	$('#align_break').addClass('active');
 }
 
-function unSetFormatBreakLine(){
+/**
+ * Causes the verses to not break onto separate lines. 
+ **/
+TextCritical.unSetFormatBreakLine = function(){
 	$('.verse_container').removeClass("block");
 	$('#align_break').removeClass('active');
 }
 
-function toggleTOC(){
+/**
+ * Toggles the table-of-contents.
+ **/
+TextCritical.toggleTOC = function(){
 	$('.table_of_contents').toggle('fast', 'swing');
 }
 
-function toggleVerseBreak(){
+/**
+ * TOggles the verse breaks.
+ **/
+TextCritical.toggleVerseBreak = function(){
 	break_verses = !break_verses;
 	
 	if( break_verses ){
-		setFormatBreakLine();
+		TextCritical.setFormatBreakLine();
 	}
 	else{
-		unSetFormatBreakLine();
+		TextCritical.unSetFormatBreakLine();
 	}
 	
 	settings.set("break_verses", break_verses);
 }
 
-function scrolltoAnchor(id){
+/**
+ * Scrolls to the given anchor.
+ **/
+TextCritical.scrolltoAnchor = function(id){
 	$('html,body').animate({scrollTop: $("#"+id).offset().top},'slow');
 }
 
-function scrollToVerse(verse_number){
-	/*
-	 * This function allows users to highlight a verse without performing a request to the server. 
-	 */
+/**
+ * Highlight a selected verse without performing a request to the server.
+ **/
+TextCritical.scrollToVerse = function(verse_number){
+
 	
 	// The ID of the verse number element
 	var id = "verse_" + verse_number
@@ -56,13 +73,16 @@ function scrollToVerse(verse_number){
 	$('#' + id + ' .label').addClass('label-info');
 	
 	// Scroll to the verse
-	scrolltoAnchor(id);
+	TextCritical.scrolltoAnchor(id);
 	
 	return false; // Stop the page from reloading
 	
 }
 
-function loadStoreSettings(){
+/**
+ * Loads the client-saved settings.
+ **/
+TextCritical.loadStoreSettings = function(){
 	/*
 	 * Load the user's settings from local storage.
 	 */
@@ -76,13 +96,15 @@ function loadStoreSettings(){
 	break_verses = settings.get("break_verses", defaults);
 	
 	if( break_verses ){
-		setFormatBreakLine();
+		TextCritical.setFormatBreakLine();
 		
 	}
 }
 
-
-function resolve_path( reference ){
+/**
+ * Determines the path that corresponds to the given reference.
+ **/
+TextCritical.resolve_path = function( reference ){
 
     // Break up the path
     var path_array = window.location.pathname.split( '/' );
@@ -105,6 +127,9 @@ function resolve_path( reference ){
     return "/" + path.concat(refs).join("/");
 }
 
-function go_to_chapter( reference ){
-	document.location = resolve_path(reference);
+/**
+ * Opens the view to the given chapter reference.
+ **/
+TextCritical.go_to_chapter = function( reference ){
+	document.location = TextCritical.resolve_path(reference);
 }
