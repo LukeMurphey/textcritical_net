@@ -44,12 +44,6 @@
           target: package
          ================================= -->
 	<target name="package" depends="package_app,package_media" description="Create the package">
-        <mkdir dir="${value.build.packageoutput.directory}" />
-        <zip destfile="${value.build.packageoutput.directory}/TextCritical (${value.build.version}.${svn.revision.max}).zip"
-            basedir="src"
-        	excludes="reader/test/**, reader/tests.py, admin/**, media/**, **/*.pyc, textcritical/settings.py"
-            whenempty="create"
-        />
 	</target>
 	
     <!-- ================================= 
@@ -57,7 +51,7 @@
          ================================= -->
     <target name="package_app" depends="get_build_number" description="Create the application package (sans media)">
         <mkdir dir="${value.build.packageoutput.directory}" />
-        <zip destfile="${value.build.packageoutput.directory}/TextCritical (${value.build.version}.${svn.revision.max}).zip"
+        <zip destfile="${value.build.packageoutput.directory}/textcritical_app_${svn.revision.max}.zip"
             basedir="src"
             excludes="reader/test/**, reader/tests.py, admin/**, media/**, **/*.pyc, textcritical/settings.py"
             whenempty="create"
@@ -69,7 +63,7 @@
          ================================= -->
     <target name="package_media" depends="minify_js,compile_scss,get_build_number" description="Create the media-only package">
         <mkdir dir="${value.build.packageoutput.directory}" />
-        <zip destfile="${value.build.packageoutput.directory}/TextCritical_media (${value.build.version}.${svn.revision.max}).zip"
+        <zip destfile="${value.build.packageoutput.directory}/textcritical_media_${svn.revision.max}.zip"
             basedir="src"
         	includes="admin/**, media/**"
             excludes="**/*.sass"
