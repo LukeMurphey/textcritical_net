@@ -5,7 +5,12 @@ from reader.language_tools import transform_text
 register = template.Library()
 
 def xml_to_html5(value, language=None):
-    """Converts the provided XML to HTML5 custom data attributes."""
+    """
+    Converts the provided XML to HTML5 custom data attributes.
+    
+    Usage:
+    {{text|xml_to_html5:"Greek"}}
+    """
     
     value = value.encode('utf-8')
     
@@ -18,6 +23,12 @@ def xml_to_html5(value, language=None):
         del(converted_doc)
 
 def perseus_xml_to_html5(value, language=None):
+    """
+    Converts the provided XML to HTML5 custom data attributes. Performs some changes specific to Perseus TEI documents.
+    
+    Usage:
+    {{text|perseus_xml_to_html5:"Greek"}}
+    """
     
     # Make the function to perform the transformation
     text_transformation_fx = lambda text, parent_node: transform_perseus_text(text, parent_node, language)

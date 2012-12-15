@@ -105,6 +105,7 @@
 	            </li>
         {% endif %}
         {% if chapters|length > 0 %}
+        {% load string_utils %}
         {% for c in chapters %}
         		{% if c == chapter %}
         		<li class="active" >
@@ -112,8 +113,8 @@
         		<li>
         		{% endif %}
         		  <a href="{% url read_work work.title_slug %}/{{ c.get_division_indicators|join:"/" }}">
-        		  {% if c.type == "card" %}
-        		  {{c}}
+        		  {% if c.title|contains:"lines" %}
+        		  {{c.title}}
         		  {% else %}
         		  {{c.descriptor}}
         		  {% endif %}</a>
