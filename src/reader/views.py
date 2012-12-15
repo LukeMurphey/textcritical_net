@@ -95,6 +95,38 @@ def get_chapters_list( division, count=9):
     
     return final_list
         
+def get_division_and_verse( work, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None ):
+    """
+    This function gets the division that is associated with the given descriptor set. If the final division descriptor is 
+    actually a verse indicator, then, return the verse indicator.
+    
+    Arguments:
+    work -- The work to get the division from
+    division_0 -- The highest division to lookup
+    division_1 -- The next highest division to lookup
+    division_2 -- The next highest division to lookup
+    division_3 -- The next highest division to lookup (this can only be a verse indicator)
+    """
+    
+    # Assume that the descriptors are for divisions
+    division = get_division( work, division_0, division_1, division_2, division_3 )
+    
+    if division is not None:
+        return division, division_4
+    
+    # If we couldn't find a division, then let's assume that the last descriptor was for a verse
+    if division_3 is not None:
+        return get_division( work, division_0, division_1, division_2 ), division_3
+    
+    elif division_2 is not None:
+        return get_division( work, division_0, division_1 ), division_2
+    
+    elif division_1 is not None:
+        return get_division( work, division_0 ), division_1
+    
+    elif division_0 is not None:
+        return get_division( work ), division_0
+        
 def get_division( work, division_0=None, division_1=None, division_2=None, division_3=None ):
     """
     This function gets the division that is associated with the given descriptor set.
@@ -149,26 +181,18 @@ def get_division( work, division_0=None, division_1=None, division_2=None, divis
         return None # We couldn't find a matching division, perhaps one doesn't exist with the given set of descriptors?
     
         
-def read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, **kwargs):
+def read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, **kwargs):
     
     # Some warnings that should be posted to the user
     warnings = []
-    
-    # Get the verse to highlight (if provided)
-    verse_to_highlight = request.GET.get('verse', None)
     
     # Try to get the work
     work = get_object_or_404(Work, title_slug=title)
     
     # Get the chapter
-    division = get_division(work, division_0, division_1, division_2, division_3)
-    """
-    if chapter_indicator is not None and division_indicator is not None:
-        division = Division.objects.filter(work=work, descriptor=chapter_indicator, parent_division__descriptor=division_indicator).order_by("level")[:1]
+    division, verse_to_highlight = get_division_and_verse(work, division_0, division_1, division_2, division_3, division_4)
     
-    elif chapter_indicator is not None:
-        division = Division.objects.filter(work=work, descriptor=chapter_indicator).order_by("level")[:1]
-    """
+    #division = get_division(work, division_0, division_1, division_2, division_3)
     
     # Note a warning if were unable to find the given chapter
     if division is None and division_0 is not None:
@@ -182,6 +206,14 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
             raise Http404('Division could not be found.')
         else:
             division = division[0]
+            
+    # Make sure the verse exists
+    verse_not_found = False
+    
+    if verse_to_highlight is not None:
+        if Verse.objects.filter(division=division, indicator=verse_to_highlight).count() == 0:
+            warnings.append( ("Verse not found", "The verse you specified couldn't be found.") )
+            verse_not_found = True
     
     # Get the readable unit
     chapter = get_chapter_for_division(division)
@@ -233,6 +265,7 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
                               'total_chapters'       : total_chapters,
                               'completed_chapters'   : completed_chapters,
                               'remaining_chapters'   : remaining_chapters,
+                              'verse_not_found'      : verse_not_found,
                               'progress'             : progress},
                               context_instance=RequestContext(request))
 

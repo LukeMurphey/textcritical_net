@@ -21,18 +21,17 @@
         ##############################
         # Button toolbar
         ##############################
-        {% endcomment %}
-        <div class="btn-toolbar">
-        <div class="input-prepend">
-            <div class="btn-group">
-            	<button id="align_break" class="btn"><i class="icon-align-left"></i></button>
-                <button class="btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show_table_of_contents">Table of Contents</button>
-            </div>
-            
-            <input class="span2" id="chapter" value="{{chapter.get_division_description}}" type="text">
-        </div>
-        </div>
+        {% endcomment %} 
         
+        <div class="control-group {% if verse_not_found %}error{% endif %}">
+        	<div class="input-append">
+        		<input class="span2" placeholder="Jump to reference..." id="chapter" value="{{chapter.get_division_description}}{% if verse_to_highlight %}:{{verse_to_highlight}}{% endif %}" type="text">
+			    <button class="btn" type="button">Go!</button>
+			    <button class="btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show_table_of_contents">Table of Contents</button>
+			    <button id="align_break" class="btn"><i class="icon-align-left"></i></button>
+			</div>
+        </div>
+		
         {% comment %}
         ##############################
         # Table of contents
@@ -83,7 +82,7 @@
         {% for verse in verses.all %}
         <span id="verse_{{verse.indicator}}" class="verse_container {% if verse.indicator == verse_to_highlight %}highlighted{% endif %}">
             {% if verse.indicator|length > 0 %}
-            <a class="verse_link" data-verse="{{verse.indicator}}" id="verse_link_{{verse.indicator}}" href="?verse={{verse.indicator}}"><span class="label {% if verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
+            <a class="verse_link" data-verse="{{verse.indicator}}" id="verse_link_{{verse.indicator}}" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}/{{verse.indicator}}"><span class="label {% if verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
 	        {% endif %}
 	        {{verse.original_content|perseus_xml_to_html5:chapter.work.language|safe}}
         </span>
