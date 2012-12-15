@@ -301,11 +301,11 @@ def api_index(request):
     
     make_url(urls, "api_index")
     make_url(urls, "api_beta_code_to_unicode")
+    make_url(urls, "api_works_list")
     
     return render_api_response(request, urls)
 
 def api_beta_code_to_unicode(request):
-    
     return HttpResponse("Not implemented yet", content_type=JSON_CONTENT_TYPE)
 
 def api_works_list(request):
@@ -313,3 +313,5 @@ def api_works_list(request):
     response = HttpResponse(content_type=JSON_CONTENT_TYPE)
     json_serializer = serializers.get_serializer("json")()
     json_serializer.serialize(Work.objects.all(), stream=response)
+    
+    return response
