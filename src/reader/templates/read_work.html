@@ -26,7 +26,7 @@
         <div class="control-group {% if verse_not_found %}error{% endif %}">
         	<div class="input-append">
         		<input class="span2" placeholder="Jump to reference..." id="chapter" value="{{chapter.get_division_description}}{% if verse_to_highlight %}:{{verse_to_highlight}}{% endif %}" type="text">
-			    <button class="btn" type="button">Go!</button>
+			    <button class="btn" type="submit" id="change_reference">Go</button>
 			    <button class="btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show_table_of_contents">Table of Contents</button>
 			    <button id="align_break" class="btn"><i class="icon-align-left"></i></button>
 			</div>
@@ -135,26 +135,34 @@
 <script language="javascript">
 
 require(["jquery", "store", "app"], function($) {
-    loadStoreSettings();
-    $('#align_break').click(toggleVerseBreak);
-    $('#show_table_of_contents').click( toggleTOC );
+	TextCritical.loadStoreSettings();
+    $('#align_break').click( TextCritical.toggleVerseBreak );
+    $('#show_table_of_contents').click( TextCritical.toggleTOC );
     
     function update_chapter_reference(e) {
         if (e.keyCode == 13) {
             var ref = $(this).val();
-            go_to_chapter(ref);
+            TextCritical.go_to_chapter(ref);
             return true;
         }
     }
     
     $("#chapter").keypress( update_chapter_reference );
     
+    function go_to_selected_chapter(){
+        var ref = $("#chapter").val();
+        TextCritical.go_to_chapter(ref);
+        return true;
+    }
+    
+    $("#change_reference").click( go_to_selected_chapter );
+    
     $(".verse_link").click(function() {
-    	return scrollToVerse( $(this).attr("data-verse") );
+    	return TextCritical.scrollToVerse( $(this).attr("data-verse") );
     });
     
     {% if verse_to_highlight %}
-    scrolltoAnchor("verse_{{verse_to_highlight}}");
+    TextCritical.scrolltoAnchor("verse_{{verse_to_highlight}}");
     {% endif %}
 });
 </script>
