@@ -108,9 +108,8 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         # Get the form
         beta_code_string = entry[0:entry.find("\t")]
         
-        # Strip off the leading exclamation mark which isn't necessary from what I can tell
-        if beta_code_string[0] == "!":
-            beta_code_string = beta_code_string[1:]
+        # Strip out the exclamation marks which isn't necessary from what I can tell and just makes problems
+        beta_code_string = beta_code_string.replace("!", "")
         
         # Find the lemma entry
         greek_code_string = Greek.beta_code_to_unicode(beta_code_string)
