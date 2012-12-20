@@ -79,7 +79,17 @@
         {% if chapter.parent_division and divisions and divisions|length > 1 %}
         <h2>{{chapter.get_division_description_titles}}</h2>
         {% endif %}
-        <span class="hide"><a id="chapter_base_url" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">Current chapter</a></span>
+        <span class="hide">
+        	<span id="divisions">
+        		<ul>
+        			{% for d in chapter.get_division_indicators %}
+        			<li class="division_indicators">{{d}}</li>
+        			{% endfor %}
+        		</ul>
+        	</span>
+        	<a id="chapter_base_url" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">Current chapter</a>
+        </span>
+        	
         {% with chapter_description=chapter.get_division_description %}
         
         {% for verse in verses.all %}
@@ -142,10 +152,17 @@ require(["jquery", "store", "app"], function($) {
     $('#align_break').click( TextCritical.toggleVerseBreak );
     $('#show_table_of_contents').click( TextCritical.toggleTOC );
     
+    // Get the division IDs
+    division_ids = [];
+
+    jQuery.each( $('.division_indicators'), function() {
+    	division_ids.push( $(this).text() );
+    });
+    
     function update_chapter_reference(e) {
         if (e.keyCode == 13) {
             var ref = $(this).val();
-            TextCritical.go_to_chapter(ref);
+            TextCritical.go_to_chapter(ref, division_ids);
             return true;
         }
     }
@@ -154,7 +171,7 @@ require(["jquery", "store", "app"], function($) {
     
     function go_to_selected_chapter(){
         var ref = $("#chapter").val();
-        TextCritical.go_to_chapter(ref);
+        TextCritical.go_to_chapter(ref, division_ids);
         return true;
     }
     

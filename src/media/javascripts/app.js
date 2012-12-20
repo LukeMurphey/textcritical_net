@@ -103,9 +103,22 @@ TextCritical.loadStoreSettings = function(){
 }
 
 /**
- * Determines the path that corresponds to the given reference.
+ * Slugifies some text.
  **/
-TextCritical.resolve_path = function( reference ){
+TextCritical.slugify = function (text) {
+	text = text.replace(/[^-a-zA-Z0-9,&\s]+/ig, '');
+	text = text.replace(/-/gi, "_");
+	text = text.replace(/\s/gi, "-");
+	return text;
+}
+
+/**
+ * Determines the path that corresponds to the given reference.
+ * 
+ * @param string the reference to go to (like "Romans 14:1")
+ * @param array an array of the current division markers. Used to help the function not break on division descriptors that have spaces in the name (like "1 Thessalonians")
+ **/
+TextCritical.resolve_path = function( reference, division_ids ){
 	
     // Break up the path
     var path_array = window.location.pathname.split( '/' );
@@ -120,9 +133,24 @@ TextCritical.resolve_path = function( reference ){
     	   break;
     	}
     }
+        
+    // Make a map from division IDs so that we avoid breaking on division IDs with spaces in them
+    divisions_map = {}
+    
+    for( c = 0; c < division_ids.length; c++ ){
+    	divisions_map[division_ids[c]] = TextCritical.slugify(division_ids[c]);
+    	reference = reference.replace(division_ids[c], TextCritical.slugify(division_ids[c]));
+    }
     
     // Break up the reference entry
-    refs = reference.split(/[- :._]+/);
+    refs = reference.split(/[ :._]+/);
+    
+    // Swap the slugs back with the originals
+    for(var original_name in divisions_map){
+    	for( c = 0; c < refs.length; c++){
+    		refs[c] = refs[c].replace(divisions_map[original_name], original_name)
+    	}
+    }
     
     // Make the path
     return "/" + path.concat(refs).join("/");
@@ -131,6 +159,6 @@ TextCritical.resolve_path = function( reference ){
 /**
  * Opens the view to the given chapter reference.
  **/
-TextCritical.go_to_chapter = function( reference ){
-	document.location = TextCritical.resolve_path(reference);
+TextCritical.go_to_chapter = function( reference, division_ids ){
+	document.location = TextCritical.resolve_path(reference, division_ids);
 }
