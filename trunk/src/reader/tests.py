@@ -12,7 +12,8 @@ from reader.templatetags.reader_extras import perseus_xml_to_html5
 from reader.importer.Perseus import PerseusTextImporter
 from reader.importer.PerseusBatchImporter import ImportPolicy, PerseusBatchImporter, WorkDescriptor, wildcard_to_re, ImportTransforms
 from reader.importer import TextImporter, LineNumber
-from reader.importer.Diogenes import DiogenesLemmataImporter
+from reader.importer.Diogenes import DiogenesLemmataImporter,\
+    DiogenesAnalysesImporter
 from reader.language_tools.greek import Greek
 from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Case
 from reader.views import get_division
@@ -1105,7 +1106,7 @@ class TestViews(TestReader):
         self.assertEquals( division.descriptor, '1' )
         self.assertEquals( division.parent_division.descriptor, 'Matthew' )
                 
-class TestDiogenesLemmaEntry(TestReader):
+class TestDiogenesLemmaImport(TestReader):    
     
     def make_lemma(self):
         lemma = Lemma(lexical_form=Greek.beta_code_str_to_unicode("a(/bra"), language="Greek", reference_number=537850)
@@ -1190,4 +1191,38 @@ class TestDiogenesLemmaEntry(TestReader):
         
         forms = DiogenesLemmataImporter.parse_descriptions("(fem nom/voc/acc dual) (fem nom/voc sg (doric aeolic))", self.make_form() )
         
+class TestDiogenesAnalysesImport(TestReader):
+    
+    @time_function_call
+    def test_import_file(self):
         
+        # Get the lemmas so that we can match up the 
+        lemmas = DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
+        
+        # Import the analyses
+        analyses = DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
+        
+        # See if the analyses match up with the lemmas
+        # Find the word description and make sure the lemma matches
+        
+        #descriptions = WordDescription.objects.filter(word_form__form=Greek.beta_code_str_to_unicode("a(/bas") )
+        descriptions = WordDescription.objects.filter(meaning="favourite slave" )
+        
+        self.assertEqual(descriptions[0].lemma.reference_number, 537850)
+        self.assertEqual(descriptions[0].meaning, "favourite slave")
+        
+        
+    def test_parse_no_match(self):
+        
+        word_form = WordForm()
+        word_form.form = "test_parse_no_match"
+        word_form.save()
+        
+        desc = "Wont match regex"
+        
+        # Make sure this does not trigger an exception
+        self.assertEquals( DiogenesAnalysesImporter.import_analysis_entry(desc, word_form), None )
+    
+    
+        
+    

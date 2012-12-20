@@ -83,10 +83,6 @@ class LemmaAdmin(admin.ModelAdmin):
     
     list_display = ('lexical_form', 'reference_number')
     search_fields = ('lexical_form',)
-    
-    inlines = [
-        WordFormInline,
-    ]
 
 admin.site.register(Lemma, LemmaAdmin)
 
@@ -96,18 +92,18 @@ class WordDescriptionInline(admin.StackedInline):
     
     fieldsets = (
         (None, {
-            'fields': ( ('person', 'number', 'part_of_speech'), 'dialects', ('indeclinable', 'particle'), 'description'),
+            'fields': ( ('meaning', ), ('person', 'number', 'part_of_speech'), 'dialects', ('indeclinable', 'particle'), 'description'),
         }),
         ('Nouns', {
             'fields': ( ('gender', 'geog_name', 'numeral'), 'cases'),
         }),
         ('Verbs', {
-            'fields': ( ('adverb', 'infinitive'), ('participle', 'voice') ),
+            'fields': ( ('voice', 'mood', 'tense'), ('adverb', 'infinitive', 'participle',)  ),
         }),
         ('Other', {
             'fields': ( ('superlative', 'comparative', 'expletive'), ('poetic', 'clitic', 'movable_nu' ) ),
         })
-    )
+    ) 
 
 class WordFormModel(admin.ModelAdmin):
     
