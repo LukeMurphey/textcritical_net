@@ -151,7 +151,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         
         # Stop if the regex did not match
         if r is None:
-            logger.warn("Analysis entry does not match the regex, form=%s, line_number=%i, form_number=%i" % (word_form.form, line_number, form_number) )
+            logger.warn("Analysis entry does not match the regex, form=%s, line_number=%r, form_number=%r" % (word_form.form, line_number, form_number) )
             return
         
         d = r.groupdict()
