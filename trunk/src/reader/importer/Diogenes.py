@@ -245,7 +245,7 @@ class DiogenesLemmataImporter():
                 }
     
     MOOD_MAP = {
-                "subj"    : "subjective",
+                "subj"    : "subjunctive",
                 "ind"     : "indicative",
                 "imperat" : "imperative",
                 "opt"     : "optative",
