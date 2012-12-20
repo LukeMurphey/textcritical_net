@@ -30,7 +30,6 @@ class DivisionModel(admin.ModelAdmin):
         VerseInline,
     ]
     
-    
 class DivisionInline(admin.StackedInline):
     model = Division
     extra = 0
@@ -120,3 +119,27 @@ class WordFormModel(admin.ModelAdmin):
     ]
     
 admin.site.register(WordForm, WordFormModel)
+
+class WordDescriptionModel(admin.ModelAdmin):
+    model = WordDescription
+    
+    search_fields = ('meaning'),
+    list_display = ('word_form', '__unicode__', 'part_of_speech', 'meaning')
+    list_filter = ('part_of_speech', 'geog_name', 'voice')
+    
+    fieldsets = (
+        (None, {
+            'fields': ( ('meaning', ), ('person', 'number', 'part_of_speech'), 'dialects', ('indeclinable', 'particle'), 'description'),
+        }),
+        ('Nouns', {
+            'fields': ( ('gender', 'geog_name', 'numeral'), 'cases'),
+        }),
+        ('Verbs', {
+            'fields': ( ('voice', 'mood', 'tense'), ('adverb', 'infinitive', 'participle',)  ),
+        }),
+        ('Other', {
+            'fields': ( ('superlative', 'comparative', 'expletive'), ('poetic', 'clitic', 'movable_nu' ) ),
+        })
+    ) 
+
+admin.site.register(WordDescription, WordDescriptionModel)

@@ -379,7 +379,7 @@ class WordDescription(models.Model):
     adverb         = models.NullBooleanField(default=None, null=True)
     infinitive     = models.NullBooleanField(default=None, null=True)
     participle     = models.NullBooleanField(default=None, null=True)
-    voice          = models.CharField(choices=NUMBER, max_length=10, default=None, null=True)
+    voice          = models.IntegerField(choices=VOICE, default=None, null=True)
     mood           = models.CharField(max_length=100, default=None, null=True)
     tense          = models.CharField(max_length=100, default=None, null=True)
     
@@ -405,8 +405,81 @@ class WordDescription(models.Model):
     
     meaning        = models.CharField( max_length=200, default="", null=True)
     
+    # This class replaces some well-known terms with shorter versions
+    SHORTENERS = {
+                  'Feminine'  : 'fem',
+                  'Masculine' : 'masc',
+                  'Neuter'    : 'nuet',
+                  
+                  'Singular' : 'sg',
+                  'Plural'   : 'pl',
+                  
+                  'First'  : '1st',
+                  'Second' : '2nd',
+                  'Third'  : '3rd',
+                  
+                  'present'           : 'pres',
+                  'imperfect'         : 'impf',
+                  'aorist'            : 'aor',
+                  'future'            : 'fut',
+                  'perfect'           : 'perf',
+                  'future perfect'    : 'futperf',
+                  'pluperfect'        : 'plup',
+                  
+                  'Active'         : 'act',
+                  'Passive'        : 'pass',
+                  'Middle'         : 'mid',
+                  'Middle/Passive' : 'mid/pass',
+                  
+                  'indicative'    : 'ind',
+                  'imperative'    : 'imperat',
+                  'subjunctive'   : 'subj',
+                  'optative'      : 'opt',
+                  'interrogative' : 'interrog',
+                  
+                  'infinitive' : 'inf',
+                  
+                  }
+    
+    def shorten(self, value):
+        return WordDescription.SHORTENERS.get(value, value)
+    
+    def append_if_not_none(self, a, entry):
+        if entry is not None:
+            a.append( self.shorten(entry) )
+            
+    def append_if_true(self, a, value, str_value):
+        
+        if value:
+            a.append( self.shorten(str_value) )
+    
     def __unicode__(self):
-        return unicode(self.description)
         
+        a = []
         
+        self.append_if_not_none(a, self.get_gender_display())
+        cases = []
+        
+        for c in self.cases.all():
+            cases.append(c.name)
+            
+        self.append_if_not_none(a, "/".join(cases) )
+        
+        self.append_if_not_none(a, self.tense)
+        self.append_if_true(a, self.infinitive, "infinitive")
+        self.append_if_not_none(a, self.mood)
+        self.append_if_not_none(a, self.get_voice_display() )
+        self.append_if_not_none(a, self.get_person_display() )
+        self.append_if_not_none(a, self.get_number_display() )
+        
+        self.append_if_true(a, self.part_of_speech == WordDescription.ADVERB, "adverbial")
+        self.append_if_true(a, self.indeclinable, "indeclinable")
+            
+        if self.clitic:
+            pass
+            
+        if self.comparative:
+            pass
+        
+        return unicode(" ".join(a).strip().lower())
     
