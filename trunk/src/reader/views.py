@@ -7,7 +7,8 @@ from django.template.context import RequestContext
 import json
 import logging
 import math
-from reader.models import Work, Division, Verse
+from reader.models import Work, Division, Verse, WordDescription
+from reader.language_tools.greek import Greek
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
 
@@ -281,6 +282,10 @@ def humans_txt(request):
     
 def not_found_404(request):
     pass
+
+def tests(request):
+    return render_to_response('test.html',
+                              context_instance=RequestContext(request))
     
 # -----------------------------------
 # API views are defined below
@@ -291,6 +296,14 @@ def render_api_response(request, content):
     raw_content = json.dumps(content)
     
     return HttpResponse(raw_content, content_type=JSON_CONTENT_TYPE)
+
+def render_queryset_api_response(request, content):
+    
+    response = HttpResponse(content_type=JSON_CONTENT_TYPE)
+    json_serializer = serializers.get_serializer("json")()
+    json_serializer.serialize(content, stream=response, indent=2)
+    
+    return response
 
 def api_index(request):
     
@@ -305,8 +318,50 @@ def api_index(request):
     
     return render_api_response(request, urls)
 
-def api_beta_code_to_unicode(request):
-    return HttpResponse("Not implemented yet", content_type=JSON_CONTENT_TYPE)
+def api_word_parse(request, word=None):
+    
+    if word is None or len(word) == 0 and 'word' in request.GET:
+        word = request.GET['word']
+    
+    # Do a search for the parse
+    descriptions = WordDescription.objects.all().filter(word_form__form=word )
+    
+    # Return the response    
+    return render_queryset_api_response(request, descriptions)
+
+def api_word_parse_beta_code(request, word=None):
+    
+    if word is None or len(word) == 0 and 'word' in request.GET:
+        word = request.GET['word']
+    
+    # Do a search for the parse
+    descriptions = WordDescription.objects.filter(word_form__form=Greek.beta_code_to_unicode(word) )
+    
+    # Return the response    
+    return render_queryset_api_response(request, descriptions)
+
+def api_unicode_to_betacode(request, word=None):
+    if word is None or len(word) == 0 and 'word' in request.GET:
+        word = request.GET['word']
+    
+    d = {}
+    
+    d['unicode'] = word
+    d['beta-code'] = Greek.unicode_to_beta_code(word)
+    
+    return render_api_response(request, d)
+
+def api_beta_code_to_unicode(request, word=None):
+    
+    if word is None or len(word) == 0 and 'word' in request.GET:
+        word = request.GET['word']
+    
+    d = {}
+    
+    d['unicode'] = Greek.beta_code_to_unicode(word)
+    d['beta-code'] = word
+    
+    return render_api_response(request, d)
 
 def api_works_list(request):
     

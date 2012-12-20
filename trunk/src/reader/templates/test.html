@@ -1,0 +1,101 @@
+{% extends "base_with_nav.html" %}
+{% block content %}
+
+        
+        <h1>Tests</h1>
+        
+
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
+ 
+
+{% endblock %}
+
+{% block javascript %}
+<script language="javascript">
+
+require(["jquery", "qunit", "app"], function($) {
+	
+    {% comment %}
+    ##############################
+    # API Tests
+    ##############################
+    {% endcomment %} 
+    test( "betacode_to_unicode_as_get_param", function() {
+    	
+    	var request = $.ajax({
+    		  url: "/api/betacode_to_unicode/?word=*th/nios",
+    		  async : false,
+    		  success: function(html) {
+    		      strReturn = html;
+    		  },
+    		  type: "GET"
+    	});
+    	
+        equal( strReturn['unicode'], "Τήνιος", "The beta-code of '*th/nios'  value ought to be Τήνιος" );
+     });
+    
+    test( "unicode_to_betacode_as_get_param", function() {
+        
+        var request = $.ajax({
+              url: "/api/unicode_to_betacode/?word=Τήνιος",
+              async : false,
+              success: function(html) {
+                  strReturn = html;
+              },
+              type: "GET"
+        });
+        
+        equal( strReturn['beta-code'].toLowerCase(), "*th/nios", "Τήνιος ought to be the beta-code '*th/nios'" );
+     });
+    
+    test( "unicode_to_betacode", function() {
+        
+        var request = $.ajax({
+              url: "/api/unicode_to_betacode/Τήνιος",
+              async : false,
+              success: function(html) {
+                  strReturn = html;
+              },
+              type: "GET"
+        });
+        
+        equal( strReturn['beta-code'].toLowerCase(), "*th/nios", "Τήνιος ought to be the beta-code '*th/nios'" );
+     });
+    
+    test( "word_parse", function() {
+        
+        var request = $.ajax({
+              url: "/api/word_parse/?word=ἀφορμάν",
+              async : false,
+              success: function(html) {
+                  strReturn = html;
+              },
+              type: "GET"
+        });
+        
+        equal( strReturn[0]['fields']['meaning'], "starting-point", "The meaning of ἀφορμάν ought to be 'starting-point'" );
+     });
+    
+    test( "word_parse_beta_code", function() {
+        
+        var request = $.ajax({
+              url: "/api/word_parse/beta_code/?word=A)FORMA/N",
+              async : false,
+              success: function(html) {
+                  strReturn = html;
+              },
+              type: "GET"
+        });
+        
+        equal( strReturn[0]['fields']['meaning'], "starting-point", "The meaning of ἀφορμάν ought to be 'starting-point'" );
+     });
+	    
+	    
+});
+</script>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/qunit.css">
+{% endblock %}

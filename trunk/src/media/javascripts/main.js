@@ -15,6 +15,11 @@ require.config({
             "libs/jquery.dataTables"
         ],
         
+        qunit: [
+            "http://code.jquery.com/qunit/qunit-1.10.0",
+            "libs/qunit"
+        ],
+        
         bootstrap: [
             "libs/bootstrap"
         ],

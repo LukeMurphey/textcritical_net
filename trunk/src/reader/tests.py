@@ -1211,6 +1211,23 @@ class TestDiogenesAnalysesImport(TestReader):
         self.assertEqual(descriptions[0].lemma.reference_number, 537850)
         self.assertEqual(descriptions[0].meaning, "favourite slave")
         
+    @time_function_call
+    def test_lookup_by_form(self):
+        
+        # Get the lemmas so that we can match up the 
+        lemmas = DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
+        
+        # Import the analyses
+        analyses = DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
+        
+        # See if the analyses match up with the lemmas
+        # Find the word description and make sure the lemma matches
+        
+        descriptions = WordDescription.objects.filter(word_form__form=Greek.beta_code_str_to_unicode("a(/bra") )
+        
+        self.assertEqual(descriptions[0].lemma.reference_number, 537850)
+        self.assertEqual(descriptions[0].meaning, "favourite slave")
+        
         
     def test_parse_no_match(self):
         
