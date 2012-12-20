@@ -115,6 +115,10 @@ require(["jquery", "qunit", "app"], function($) {
         
         equal( TextCritical.resolve_path(reference, division_ids), "/tests/1/Thessalonians/1/4", "A reference to 1 Thessalonians 1:4 ought to be translated to the path '/1/Thessalonians/1/4' and not '/1 Thessalonians/1/4' since the division IDs provided didn't include '1 Thessalonians'" );
     });
+    
+    test( "slugify", function() {
+        equal( TextCritical.slugify("1 Corinthians"), "1-Corinthians", "The slug of '1 Corinthians' ought to be'1-Corinthians'" );
+    });
 	    
 });
 </script>

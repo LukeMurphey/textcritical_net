@@ -104,6 +104,8 @@ TextCritical.loadStoreSettings = function(){
 
 /**
  * Slugifies some text.
+ * 
+ * @param string The text to slugify.
  **/
 TextCritical.slugify = function (text) {
 	text = text.replace(/[^-a-zA-Z0-9,&\s]+/ig, '');
