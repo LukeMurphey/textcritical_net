@@ -89,8 +89,32 @@ require(["jquery", "qunit", "app"], function($) {
         });
         
         equal( strReturn[0]['fields']['meaning'], "starting-point", "The meaning of ἀφορμάν ought to be 'starting-point'" );
-     });
-	    
+    });
+	
+    {% comment %}
+    ##############################
+    # Reading View Tests
+    ##############################
+    {% endcomment %}
+    test( "resolve_path_name_with_spaces", function() {
+        
+    	reference = "1 Thessalonians 1:4";
+    	division_ids = ["1 Thessalonians", "1", "3"];
+    	
+    	TextCritical.resolve_path(reference, division_ids);
+        
+        equal( TextCritical.resolve_path(reference, division_ids), "/tests/1 Thessalonians/1/4", "A reference to 1 Thessalonians 1:4 ought to be translated to the path '/1 Thessalonians/1/4' and not '/1/Thessalonians/1/4'" );
+    });
+    
+    test( "resolve_path_name_no_spaces", function() {
+        
+    	reference = "1 Thessalonians 1:4";
+    	division_ids = ["1" , "Thessalonians", "1", "3"];
+    	
+    	TextCritical.resolve_path(reference, division_ids);
+        
+        equal( TextCritical.resolve_path(reference, division_ids), "/tests/1/Thessalonians/1/4", "A reference to 1 Thessalonians 1:4 ought to be translated to the path '/1/Thessalonians/1/4' and not '/1 Thessalonians/1/4' since the division IDs provided didn't include '1 Thessalonians'" );
+    });
 	    
 });
 </script>
