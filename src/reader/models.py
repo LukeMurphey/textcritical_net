@@ -224,7 +224,7 @@ class Lemma(models.Model):
     
     lexical_form = models.CharField(max_length=200)
     language = models.CharField(max_length=40)
-    reference_number = models.IntegerField()
+    reference_number = models.IntegerField(db_index=True)
     
     def __unicode__(self):
         return unicode(self.lexical_form)
@@ -264,7 +264,7 @@ class WordForm(models.Model):
     """
     
     form = models.CharField(max_length=200)
-    lemma = models.ForeignKey(Lemma)
+    #lemma = models.ForeignKey(Lemma)
     
     def __unicode__(self):
         return unicode(self.form)
@@ -291,6 +291,7 @@ class WordDescription(models.Model):
     PLURAL   = 2
     
     NUMBER = (
+        ('', ''),
         (SINGULAR, 'Singular'),
         (DUAL,     'Dual'),
         (PLURAL,   'Plural')
@@ -307,6 +308,7 @@ class WordDescription(models.Model):
     INTERJECTION = 7
     
     PARTS_OF_SPEECH = (
+        ('', ''),
         (NOUN, 'Noun'),
         (VERB, 'Verb'),
         (ADVERB, 'Adverb'),
@@ -323,6 +325,7 @@ class WordDescription(models.Model):
     THIRD =  3
     
     PERSON = (
+        ('', ''),
         (FIRST,  'First'),
         (SECOND, 'Second'),
         (THIRD,  'Third')
@@ -335,6 +338,7 @@ class WordDescription(models.Model):
     MIDDLE_PASSIVE = 3
     
     VOICE = (
+        ('', ''),
         (ACTIVE, 'Active'),
         (MIDDLE, 'Middle'),
         (PASSIVE,'Passive'),
@@ -348,8 +352,9 @@ class WordDescription(models.Model):
     ENDOCLITIC = 3
     
     CLITIC = (
+        ('', ''),
         (PROCLITIC, 'Proclitic'),
-        (ENCLITIC, 'Enclitic'),
+        (ENCLITIC,  'Enclitic'),
         (MESOCLITIC,'Mesoclitic'),
         (ENDOCLITIC,'Endoclitic')
     )
@@ -357,6 +362,12 @@ class WordDescription(models.Model):
     # Superlatives and comparatives
     REGULAR   = 0
     IRREGULAR = 1
+    
+    REGULARITY = (
+        ('', ''),
+        (REGULAR, 'Regular'),
+        (IRREGULAR, 'Irregular'),
+    )
     
     # Attributes associated with nouns
     gender         = models.IntegerField(choices=GENDERS, default=None, null=True)
@@ -369,6 +380,8 @@ class WordDescription(models.Model):
     infinitive     = models.NullBooleanField(default=None, null=True)
     participle     = models.NullBooleanField(default=None, null=True)
     voice          = models.CharField(choices=NUMBER, max_length=10, default=None, null=True)
+    mood           = models.CharField(max_length=100, default=None, null=True)
+    tense          = models.CharField(max_length=100, default=None, null=True)
     
     # Attributes associated with verbs and nouns 
     person         = models.IntegerField(choices=PERSON, default=None, null=True)
@@ -378,16 +391,19 @@ class WordDescription(models.Model):
     indeclinable   = models.NullBooleanField(default=None, null=True)
     particle       = models.NullBooleanField(default=None, null=True)
     
-    superlative    = models.IntegerField(choices=GENDERS, default=None, null=True)
-    comparative    = models.IntegerField(choices=GENDERS, default=None, null=True)
+    superlative    = models.IntegerField(choices=REGULARITY, default=None, null=True)
+    comparative    = models.IntegerField(choices=REGULARITY, default=None, null=True)
     expletive      = models.NullBooleanField(default=None, null=True)
     poetic         = models.NullBooleanField(default=None, null=True)
     clitic         = models.IntegerField(choices=CLITIC, default=None, null=True)
     
     movable_nu     = models.NullBooleanField(default=None, null=True)
     
+    lemma          = models.ForeignKey(Lemma)
     word_form      = models.ForeignKey(WordForm)
     description    = models.CharField( max_length=50, default="", null=True)
+    
+    meaning        = models.CharField( max_length=200, default="", null=True)
     
     def __unicode__(self):
         return unicode(self.description)

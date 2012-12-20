@@ -1,0 +1,23 @@
+a(/bas	{49671719 9 a_(/ba_s,h(/bh	youthful prime	fem acc pl (doric)}{49671719 9 a_(/ba_s,h(/bh	youthful prime	fem gen sg (doric aeolic)}
+a(/bh	{15206975 9 a_(/bh,a(/ptw	fasten	aor ind pass 3rd sg (doric aeolic)}{15206975 9 a(/ptw	fasten	aor ind pass 3rd sg (homeric ionic)}{49671719 9 a_(/bh,h(/bh	youthful prime	fem nom/voc sg (attic epic doric ionic)}
+a(/bh|	{49671719 9 a_(/bh|,h(/bh	youthful prime	fem dat sg (attic epic doric ionic)}
+a(/bra	{537850 9 a(/bra_,a(/bra	favourite slave	fem nom/voc/acc dual}{537850 9 a(/bra_,a(/bra	favourite slave	fem nom/voc sg (attic doric aeolic)}
+a(/brai	{537850 9 a(/bra	favourite slave	fem nom/voc pl}{537850 9 a(/bra_|,a(/bra	favourite slave	fem dat sg (attic doric aeolic)}
+a(/brais	{537850 9 a(/bra	favourite slave	fem dat pl}
+a(/bran	{537850 9 a(/bra_n,a(/bra	favourite slave	fem acc sg (attic doric aeolic)}
+a(/bras	{537850 9 a(/bra_s,a(/bra	favourite slave	fem acc pl}{537850 9 a(/bra_s,a(/bra	favourite slave	fem gen sg (attic doric aeolic)}
+a(/bra|	{537850 9 a(/brai,a(/bra	favourite slave	fem nom/voc pl}{537850 9 a(/bra_|,a(/bra	favourite slave	fem dat sg (attic doric aeolic)}
+a(/bromoi	{551984 9 a)/bromoi,a)/bromos	joining in a shout	masc/fem nom/voc pl}
+a(/bros	{30699944 9 e)/bros,e)/bros	he-goat	masc nom sg}
+a(/bruna	{575884 9 a(/bruna	mulberries	neut nom/voc/acc pl}{576883 9 a_(/bru_na,a(bru/nw	make delicate	aor ind act 1st sg (doric aeolic)}{576883 9 a(/bru_na,a(bru/nw	make delicate	aor ind act 1st sg (homeric ionic)}
+a(/brune	{576883 9 a_(/bru_ne,a(bru/nw	make delicate	aor ind act 3rd sg (doric aeolic)}{576883 9 a_(/bru_ne,a(bru/nw	make delicate	imperf ind act 3rd sg (doric aeolic)}{576883 9 a(/bru_ne,a(bru/nw	make delicate	pres imperat act 2nd sg}{576883 9 a(/bru_ne,a(bru/nw	make delicate	aor ind act 3rd sg (homeric ionic)}{576883 9 a(/bru_ne,a(bru/nw	make delicate	imperf ind act 3rd sg (homeric ionic)}
+a(/brwn	{20742870 9 e)/brwn,bibrw/skw	eat	aor ind act 3rd pl (epic doric aeolic)}{20742870 9 e)/brwn,bibrw/skw	eat	aor ind act 1st sg}{30699944 9 e)/brwn,e)/bros	he-goat	masc gen pl}
+a(/ceis	{1139170 9 a)_/ceis,a)/gnumi	break	aor subj act 2nd sg (epic)}{1139170 9 a)_/ceis,a)/gnumi	break	fut ind act 2nd sg}{1504414 9 a)/ceis,a)/gw	lead	aor subj act 2nd sg (epic)}{1504414 9 a)/ceis,a)/gw	lead	fut ind act 2nd sg}{77209243 9 e)/ceis,ce/w	—shave	imperf ind act 2nd sg (attic epic)}{38523404 9 e)/ceis,e)/ceimi2	sum	pres ind act 2nd sg (epic ionic)}
+a(/d'	{1950358 9 a(/de,a(/dos	satiety	masc voc sg}{8579992 9 a(/de,a(nda/nw	please	aor ind act 3rd sg (epic doric ionic aeolic)}{8579992 9 a(/de,a(nda/nw	please	aor imperat act 2nd sg}{77672493 9 a(/_de,o(/de	this	fem nom sg (doric aeolic)}
+a(/ddhn	{1750487 9 a)/ddhn,a(/dhn	to one's fill	indeclform (adverb)}
+a(/de	{1950358 9 a(/dos	satiety	masc voc sg}{8579992 9 a(nda/nw	please	aor ind act 3rd sg (epic doric ionic aeolic)}{8579992 9 a(nda/nw	please	aor imperat act 2nd sg}{77672493 9 a(/_de,o(/de	this	fem nom sg (doric aeolic)}
+a(/dea	{1950358 9 a(/dos	satiety	neut nom/voc/acc pl (epic ionic)}
+a(/dein	{31453762 9 e)/dein,e)/dw	eat	pres inf act (attic epic)}
+a(/den	{8579992 9 a(nda/nw	please	aor ind act 3rd sg (epic doric ionic aeolic)}
+a(/des	{8579992 9 a(nda/nw	please	aor ind act 2nd sg (epic doric ionic aeolic)}
+a(/desqai	{49798258 9 a(_/desqai,h(/domai	swād-	pres inf mp (doric)}
