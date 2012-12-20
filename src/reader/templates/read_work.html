@@ -1,6 +1,6 @@
 {% extends "base_with_nav.html" %}
 {% block content %}
-
+		{% load string_utils %}
         {% for warning in warnings %}
         <div class="alert alert-block">
 		    <button type="button" class="close" data-dismiss="alert">x</button>
@@ -22,14 +22,16 @@
         # Button toolbar
         ##############################
         {% endcomment %} 
+        {% with chapter_description=chapter.get_division_description %}
         <div class="control-group {% if verse_not_found %}error{% endif %}">
         	<div class="input-append">
-        		<input class="span2" placeholder="Jump to reference..." id="chapter" value="{{chapter.get_division_description}}{% if verse_to_highlight %}:{{verse_to_highlight}}{% endif %}" type="text">
+        		<input class="span2" placeholder="Jump to reference..." id="chapter" value="{{chapter.get_division_description}}{% if verse_to_highlight %}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse_to_highlight}}{% endif %}" type="text">
 			    <button class="btn" type="submit" id="change_reference">Go</button>
 			    <button class="btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show_table_of_contents">Table of Contents</button>
 			    <button id="align_break" class="btn"><i class="icon-align-left"></i></button>
 			</div>
         </div>
+        {% endwith %}
 		
         {% comment %}
         ##############################
@@ -78,16 +80,17 @@
         <h2>{{chapter.get_division_description_titles}}</h2>
         {% endif %}
         <span class="hide"><a id="chapter_base_url" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">Current chapter</a></span>
+        {% with chapter_description=chapter.get_division_description %}
         
         {% for verse in verses.all %}
         <span id="verse_{{verse.indicator}}" class="verse_container {% if not chapter_not_found and verse.indicator == verse_to_highlight %}highlighted{% endif %}">
             {% if verse.indicator|length > 0 %}
-            <a class="verse_link" data-verse="{{verse.indicator}}" data-verse-descriptor="{{chapter.get_division_description}}:{{verse}}" id="verse_link_{{verse.indicator}}" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}/{{verse.indicator}}"><span class="label {% if not chapter_not_found and verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
+            <a class="verse_link" data-verse="{{verse.indicator}}" data-verse-descriptor="{{chapter_description}}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse}}" id="verse_link_{{verse.indicator}}" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}/{{verse.indicator}}"><span class="label {% if not chapter_not_found and verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
 	        {% endif %}
 	        {{verse.original_content|perseus_xml_to_html5:chapter.work.language|safe}}
         </span>
         {% endfor %}        
-        
+        {% endwith %}
          
         {% comment %}
         #############################
@@ -104,7 +107,7 @@
 	            </li>
         {% endif %}
         {% if chapters|length > 0 %}
-        {% load string_utils %}
+        
         {% for c in chapters %}
         		{% if c == chapter %}
         		<li class="active" >

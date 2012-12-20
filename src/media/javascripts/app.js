@@ -28,7 +28,7 @@ TextCritical.toggleTOC = function(){
 }
 
 /**
- * TOggles the verse breaks.
+ * Toggles the verse breaks.
  **/
 TextCritical.toggleVerseBreak = function(){
 	break_verses = !break_verses;
@@ -88,9 +88,6 @@ TextCritical.scrollToVerse = function(verse_number, base_chapter_url){
  * Loads the client-saved settings.
  **/
 TextCritical.loadStoreSettings = function(){
-	/*
-	 * Load the user's settings from local storage.
-	 */
 	
 	var defaults = {
 		"break_verses": false
