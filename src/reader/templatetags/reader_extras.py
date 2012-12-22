@@ -1,3 +1,4 @@
+import re
 from django import template
 from reader.shortcuts import convert_xml_to_html5, convert_xml_to_html5_minidom
 from reader.language_tools import transform_text
@@ -31,9 +32,9 @@ def perseus_xml_to_html5(value, language=None):
     """
     
     # Make the function to perform the transformation
-    text_transformation_fx = lambda text, parent_node: transform_perseus_text(text, parent_node, language)
+    text_transformation_fx = lambda text, parent_node, dst_doc: transform_perseus_text(text, parent_node, dst_doc, language)
     
-    converted_doc = convert_xml_to_html5( value, language=language,  text_transformation_fx=text_transformation_fx )
+    converted_doc = convert_xml_to_html5( value, language=language, text_transformation_fx=text_transformation_fx )
     
     try:
         return converted_doc.toxml( encoding="utf-8" )
@@ -41,7 +42,7 @@ def perseus_xml_to_html5(value, language=None):
         converted_doc.unlink()
         del(converted_doc)
     
-def transform_perseus_text(text, parent_node, default_language):
+def transform_perseus_text(text, parent_node, dst_doc, default_language):
     
     # Get the language specific to this node if is defined
     if parent_node is not None and parent_node.attributes.get('data-lang', None) is not None:
@@ -53,7 +54,27 @@ def transform_perseus_text(text, parent_node, default_language):
     if parent_node.attributes.get('class', None) is not None and parent_node.attributes.get('class', None).value == "note":
         return text.encode('utf-8')
     
-    return transform_text(text, language)
+    # Split up the text and place the text segments in nodes
+    segments = re.findall("[\s]+|[\[\],.:.;]|[^\s\[\],.:.;]+", text)
+    #segments = text.split(" ")
+    
+    for s in segments:
+        
+        # Don't wrap punctuation in a word node
+        if s in [";", ",", ".", "[", "]", ":"] or len(s.strip()) == 0:
+            txt_node = dst_doc.createTextNode( s )
+            parent_node.appendChild( txt_node )
+        
+        else:
+            new_node = dst_doc.createElement( "span" )
+            new_node.setAttribute( "class", "word")
+            
+            # Create the text node and append it
+            txt_node = dst_doc.createTextNode( transform_text(s, language).decode( "utf-8" ) )
+            new_node.appendChild(txt_node)
+           
+            # Append the node
+            parent_node.appendChild(new_node)
     
 register.filter('xml_to_html5', xml_to_html5)
 register.filter('perseus_xml_to_html5', perseus_xml_to_html5)

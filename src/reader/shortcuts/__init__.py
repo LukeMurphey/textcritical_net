@@ -18,7 +18,7 @@ class HTML5Converter(HTMLParser):
         Arguments:
         new_root_node_tag_name -- The name of the root node (otherwise, the root node will be converted too).
         allow_closing_in_start_tag -- If true, then nodes with no children will be closed without an explicit closing tag. Otherwise, they will include an explicit closing tag.
-        text_transformation_fx -- A function which will be applied to all text. The function must take the following parameters: the text to transform, the tag_name of the parent node
+        text_transformation_fx -- A function which will be applied to all text. The function must take the following parameters: the text to transform, the tag_name of the parent node, document
         node_transformation_fx -- A function that allows node transformations to be overridden. The function must take the following parameters: tag name, attributes, parent node, document
         """
         
@@ -58,6 +58,7 @@ class HTML5Converter(HTMLParser):
             if custom_current_node is None:
                 self.current_node = self.dst_doc.createElement( "span" )
                 self.current_node.setAttribute( "class", tag)
+                
             else:
                 self.current_node = custom_current_node
         
@@ -92,12 +93,22 @@ class HTML5Converter(HTMLParser):
         
         # Transform the content if a transform function is provided
         if self.text_transformation_fx is not None:
-            txt_node = self.dst_doc.createTextNode( self.text_transformation_fx( text=data, parent_node=self.current_node ).decode( "utf-8" ) )
+            
+            # Transform the text
+            transformed_text = self.text_transformation_fx( text=data, parent_node=self.current_node, dst_doc=self.dst_doc )
+            
+            # Don't bother appending empty text
+            if transformed_text is not None:
+                txt_node = self.dst_doc.createTextNode( transformed_text.decode( "utf-8" ) )
+            else:
+                txt_node = None
+            
         else:
             txt_node = self.dst_doc.createTextNode( data )
 
         # Append the txt node
-        self.current_node.appendChild(txt_node)
+        if txt_node:
+            self.current_node.appendChild(txt_node)
 
     def handle_comment(self, data):
         pass
@@ -143,7 +154,7 @@ def convert_xml_to_html5( xml_str, new_root_node_tag_name=None, text_transformat
     
     # If the language was provided but a text transformation function was not, then use the process_text function
     if text_transformation_fx is None and language is not None:
-        text_transformation_fx = lambda text, parent_node: transform_text(text, language)
+        text_transformation_fx = lambda text, parent_node, dst_doc: transform_text(text, language)
     
     # Convert the content
     converter = HTML5Converter(new_root_node_tag_name, allow_closing_in_start_tag, text_transformation_fx, node_transformation_fx)
