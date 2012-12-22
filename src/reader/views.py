@@ -9,6 +9,7 @@ import logging
 import math
 from reader.models import Work, Division, Verse, WordDescription
 from reader.language_tools.greek import Greek
+import unicodedata
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
 
@@ -60,6 +61,9 @@ def get_chapter_for_division(division):
         return divisions[0]
     
 def get_chapters_list( division, count=9):
+    """
+    Get the list of chapters for pagination.
+    """
     
     pages_before = math.ceil( (count - 1.0) / 2 )
     pages_after = math.floor( (count - 1.0) / 2 )
@@ -324,21 +328,33 @@ def api_word_parse(request, word=None):
         word = request.GET['word']
     
     # Do a search for the parse
-    descriptions = WordDescription.objects.all().filter(word_form__form=word )
+    word_lookup = unicodedata.normalize("NFKC", word.lower() )
     
-    # Return the response    
-    return render_queryset_api_response(request, descriptions)
+    descriptions = WordDescription.objects.all().filter( word_form__form=word_lookup )
+    
+    results = []
+    
+    for d in descriptions:
+        
+        entry = {}
+        
+        entry["meaning"] = d.meaning
+        entry["description"] = str(d)
+        
+        if d.lemma:
+            entry["lemma"] = d.lemma.lexical_form
+        else:
+            entry["lemma"] = None
+            
+        results.append(entry)
+    
+    # Return the response
+    return render_api_response(request, results)
+    
+    #return render_queryset_api_response(request, descriptions)
 
-def api_word_parse_beta_code(request, word=None):
-    
-    if word is None or len(word) == 0 and 'word' in request.GET:
-        word = request.GET['word']
-    
-    # Do a search for the parse
-    descriptions = WordDescription.objects.filter(word_form__form=Greek.beta_code_to_unicode(word) )
-    
-    # Return the response    
-    return render_queryset_api_response(request, descriptions)
+def api_word_parse_beta_code(request, word=None):  
+    return api_word_parse(request, Greek.beta_code_to_unicode(word))
 
 def api_unicode_to_betacode(request, word=None):
     if word is None or len(word) == 0 and 'word' in request.GET:
