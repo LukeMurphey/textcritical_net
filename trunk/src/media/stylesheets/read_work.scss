@@ -96,3 +96,20 @@ body.dark .highlighted{
         
     }
 }
+
+#morphology-dialog-content{
+	height: 220px;
+}
+
+.word{
+	cursor:pointer;
+	cursor:hand;		
+}
+
+.word:hover{
+	text-decoration: underline;
+}
+
+.dialog-extra-options{
+	margin-top: 6px;
+}

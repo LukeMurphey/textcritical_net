@@ -142,12 +142,74 @@
         </div>
         {% endif %}
 
+		<script type="text/html" id='morphology-loading'>
+			<div class="loading" style="padding-top: 60px;">
+				<%= message %>
+				<div class="progress progress-striped active">
+	    			<div class="bar" style="width: 100%;"></div>
+	    		</div>
+    		</div>
+		</script>
+			
+		<script type="text/html" id='morphology-info'>
+
+
+<% if ( parses.length == 0 ) { %>
+<h4>Parse not found</h4>
+No parses could be found for <%= word %>.
+<p>
+Try looking the word up on <a target="_blank" href="http://www.perseus.tufts.edu/hopper/morph?l=<%= word %>&la=greek">Perseus.tufts.edu</a>
+or on <a target="_blank" href="https://www.google.com/search?q=<%= word %>">Google</a>.
+</p>
+<% }
+else { %>
+<div class="morphology-results">
+<% if ( parses.length == 1 ) { %>
+Found 1 parse for <%= word %>:</div>
+<% }
+else { %>
+Found <%= parses.length %> parses for <%= word %>:</div>
+<% } %>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Lemma</th>
+			<th>Parse</th>
+			<th>Meaning</th>
+		</tr>
+	</thead>
+    <tbody>
+<% _.each(parses,function(parse){ %>
+		<tr>
+			<td><a href="#" class="lemma"><%= parse.lemma %></td>
+			<td><%= parse.description %></td>
+			<td><%= parse.meaning %></td>
+        </tr>
+<% }); %>
+    </tbody>
+</table>
+<% } %>
+	</script>
+
+	<div id="morphology-dialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="morphology-dialog-label" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="morphology-dialog-label">Morphology</h3>
+		</div>
+		<div class="modal-body" id="morphology-dialog-content">
+		</div>
+		<div class="modal-footer">
+			<span class="pull-left dialog-extra-options" id="morphology-dialog-extra-options"></span>
+			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+
 {% endblock %}
 
 {% block javascript %}
 <script language="javascript">
 
-require(["jquery", "store", "app"], function($) {
+require(["jquery", "store", "app", "underscore"], function($) {
 	TextCritical.loadStoreSettings();
     $('#align_break').click( TextCritical.toggleVerseBreak );
     $('#show_table_of_contents').click( TextCritical.toggleTOC );
@@ -186,6 +248,8 @@ require(["jquery", "store", "app"], function($) {
     {% if verse_to_highlight %}
     TextCritical.scrolltoAnchor("verse_{{verse_to_highlight}}");
     {% endif %}
+    
+    $(".word").click( TextCritical.word_lookup );
 });
 </script>
 {% endblock %}

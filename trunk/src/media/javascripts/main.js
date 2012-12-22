@@ -32,6 +32,11 @@ require.config({
              "libs/bootbox"
         ],
         
+        underscore: [
+             "http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min",
+             "libs/underscore"
+        ],
+        
         app: [
              "app"
         ]
