@@ -164,3 +164,49 @@ TextCritical.resolve_path = function( reference, division_ids ){
 TextCritical.go_to_chapter = function( reference, division_ids ){
 	document.location = TextCritical.resolve_path(reference, division_ids);
 }
+
+/**
+ * Opens the morphology dialog on the word within the text clicked.
+ **/
+TextCritical.word_lookup = function (){
+	TextCritical.open_morphology_dialog( $(this).text() );
+	return false;
+}
+
+/**
+ * Opens a dialog that obtains the morphology of a word.
+ **/
+TextCritical.open_morphology_dialog = function( word ){
+	
+	// Reset the content to the loading content
+	var loading_template = $("#morphology-loading").html();
+	$("#morphology-dialog-content").html(_.template(loading_template,{ message: "Looking up morphology for " +  _.escape(word) + "..." }));
+	
+	// Set the link to Google
+	var extra_options_template = 'Look up at <a target="_blank" href="http://www.perseus.tufts.edu/hopper/morph?l=<%= word %>&la=greek">Perseus</a> or <a target="_blank" href="https://www.google.com/search?q=<%= word %>">Google</a>';
+	
+	$("#morphology-dialog-extra-options").html(_.template(extra_options_template,{ word : word }));
+	
+	// Set the title
+	$("#morphology-dialog-label").text("Morphology: " +  _.escape(word) );
+	
+	// Open the form
+	$("#morphology-dialog").modal();
+	
+	// Submit the AJAX request to display the information
+	$.ajax({
+		url: "/api/word_parse/" + word
+	}).done(function(data) {
+		
+		// Render the lemma information
+		var template = $("#morphology-info").html();
+		$("#morphology-dialog-content").html(_.template(template,{parses:data, word: _.escape(word)}));
+		
+		// Set the lemmas to be links
+		$("a.lemma").click(TextCritical.word_lookup);
+		
+	}).error( function(jqXHR, textStatus, errorThrown) {
+		$("#morphology-dialog-content").html( "<h4>Parse failed</h4> The request to parse could not be completed" );
+	});
+	
+}

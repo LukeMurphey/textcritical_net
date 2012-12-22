@@ -1,6 +1,7 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 import re
+import unicodedata
 
 class Author(models.Model):
     """
@@ -229,6 +230,13 @@ class Lemma(models.Model):
     def __unicode__(self):
         return unicode(self.lexical_form)
     
+    def save(self, *args, **kwargs):
+        
+        # Normalize the form to NFKC so that we can do queries reliably
+        self.lexical_form = unicodedata.normalize("NFKC", self.lexical_form )
+
+        super(Lemma, self).save(*args, **kwargs)
+    
 class Case(models.Model):
     """
     Represents various cases.
@@ -264,10 +272,16 @@ class WordForm(models.Model):
     """
     
     form = models.CharField(max_length=200)
-    #lemma = models.ForeignKey(Lemma)
     
     def __unicode__(self):
         return unicode(self.form)
+    
+    def save(self, *args, **kwargs):
+        
+        # Normalize the form to NFKC so that we can do queries reliably
+        self.form = unicodedata.normalize("NFKC", self.form)
+
+        super(WordForm, self).save(*args, **kwargs)
     
 class WordDescription(models.Model):
     """
@@ -429,7 +443,7 @@ class WordDescription(models.Model):
                   'Active'         : 'act',
                   'Passive'        : 'pass',
                   'Middle'         : 'mid',
-                  'Middle/Passive' : 'mid/pass',
+                  'Middle/Passive' : 'mid-pass',
                   
                   'indicative'    : 'ind',
                   'imperative'    : 'imperat',
@@ -438,6 +452,7 @@ class WordDescription(models.Model):
                   'interrogative' : 'interrog',
                   
                   'infinitive' : 'inf',
+                  'participle' : 'part'
                   
                   }
     
@@ -457,7 +472,12 @@ class WordDescription(models.Model):
         
         a = []
         
+        self.append_if_not_none(a, self.tense)
+        self.append_if_true(a, self.participle, "participle")
+        self.append_if_true(a, self.infinitive, "infinitive")
+        self.append_if_not_none(a, self.get_voice_display() )
         self.append_if_not_none(a, self.get_gender_display())
+        
         cases = []
         
         for c in self.cases.all():
@@ -465,10 +485,8 @@ class WordDescription(models.Model):
             
         self.append_if_not_none(a, "/".join(cases) )
         
-        self.append_if_not_none(a, self.tense)
-        self.append_if_true(a, self.infinitive, "infinitive")
         self.append_if_not_none(a, self.mood)
-        self.append_if_not_none(a, self.get_voice_display() )
+        
         self.append_if_not_none(a, self.get_person_display() )
         self.append_if_not_none(a, self.get_number_display() )
         

@@ -1141,56 +1141,7 @@ class TestDiogenesLemmaImport(TestReader):
         
         self.assertEquals(lemma.lexical_form, Greek.beta_code_str_to_unicode("a(/bra"))
         self.assertEquals(lemma.reference_number, 537850)
-        
-        word_forms = WordForm.objects.filter(lemma=lemma)
-        word_descriptions = WordDescription.objects.filter(word_form=word_forms[0])
-        
-        self.assertEquals(8, word_forms.count() )
-        self.assertEquals(2, word_descriptions.count() )
-        
-    def test_parse_form(self):
-        
-        #parse_form
-        s = "a(/bra (fem nom/voc/acc dual) (fem nom/voc sg (attic doric aeolic))"
-        
-        form = DiogenesLemmataImporter.parse_form(s, self.make_lemma())
-        
-        self.assertEquals( form.form, Greek.beta_code_str_to_unicode("a(/bra") )
-        
-    
-    def test_parse_form_description_noun(self):
-        
-        s = "(fem nom/voc/acc dual)"
-        
-        word_Form = self.make_form()
-        
-        desc = DiogenesLemmataImporter.parse_description(s, word_Form)
-        
-        self.assertEquals( desc.number, WordDescription.DUAL )
-        self.assertEquals( desc.gender, WordDescription.FEMININE )
-        #self.assertEquals( desc.cases, [Case.NOMINATIVE, Case.VOCATIVE, Case.ACCUSATIVE] )
-        
-    def test_parse_form_description_noun2(self):
-        s = " (fem nom/voc sg (attic doric aeolic))"
-        
-        word_form = self.make_form()
-        
-        desc = DiogenesLemmataImporter.parse_description(s, word_form)
-        
-        self.assertEquals( desc.number, WordDescription.SINGULAR )
-        self.assertEquals( desc.gender, WordDescription.FEMININE )
-        #self.assertEquals( desc.cases, [Case.NOMINATIVE, Case.VOCATIVE, Case.ACCUSATIVE] )
-        
-    def test_split_descriptions(self):
-        
-        descriptions = DiogenesLemmataImporter.split_descriptions( "(fem nom/voc/acc dual) (fem nom/voc sg (doric aeolic))" )
-        
-        self.assertEquals(descriptions, ['(fem nom/voc/acc dual)', ' (fem nom/voc sg (doric aeolic))'] )
-    
-    def test_parse_descriptions(self):
-        
-        forms = DiogenesLemmataImporter.parse_descriptions("(fem nom/voc/acc dual) (fem nom/voc sg (doric aeolic))", self.make_form() )
-        
+
 class TestDiogenesAnalysesImport(TestReader):
     
     @time_function_call
@@ -1232,7 +1183,7 @@ class TestDiogenesAnalysesImport(TestReader):
     def test_parse_no_match(self):
         
         word_form = WordForm()
-        word_form.form = "test_parse_no_match"
+        word_form.form = unicode("test_parse_no_match", "UTF-8")
         word_form.save()
         
         desc = "Wont match regex"
