@@ -329,7 +329,7 @@ def api_word_parse(request, word=None):
     
     # Do a search for the parse
     word_lookup = unicodedata.normalize("NFKC", word.lower() )
-    
+    print "Looking up:", word_lookup
     descriptions = WordDescription.objects.all().filter( word_form__form=word_lookup )
     
     results = []
@@ -353,7 +353,11 @@ def api_word_parse(request, word=None):
     
     #return render_queryset_api_response(request, descriptions)
 
-def api_word_parse_beta_code(request, word=None):  
+def api_word_parse_beta_code(request, word=None):
+    
+    if word is None or len(word) == 0 and 'word' in request.GET:
+        word = request.GET['word']
+    
     return api_word_parse(request, Greek.beta_code_to_unicode(word))
 
 def api_unicode_to_betacode(request, word=None):

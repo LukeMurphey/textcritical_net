@@ -26,6 +26,6 @@ urlpatterns = patterns('',
     url(r'^api/unicode_to_betacode/(?P<word>[^/]*)/?$', 'reader.views.api_unicode_to_betacode', name='api_unicode_to_betacode' ),
     
     url(r'^api/works/?$', 'reader.views.api_works_list', name='api_works_list' ),
-    url(r'^api/word_parse/beta_code/(?P<word>[^/]*)/?$', 'reader.views.api_word_parse_beta_code', name='api_word_parse_beta_code' ),
+    url(r'^api/word_parse_beta_code/(?P<word>[^/]*)/?$', 'reader.views.api_word_parse_beta_code', name='api_word_parse_beta_code' ),
     url(r'^api/word_parse/(?P<word>[^/]*)/?$', 'reader.views.api_word_parse', name='api_word_parse' )
 )
