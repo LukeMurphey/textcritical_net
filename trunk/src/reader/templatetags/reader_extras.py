@@ -5,6 +5,7 @@ from reader.language_tools import transform_text
 
 register = template.Library()
 
+@register.filter(name='xml_to_html5')
 def xml_to_html5(value, language=None):
     """
     Converts the provided XML to HTML5 custom data attributes.
@@ -23,6 +24,7 @@ def xml_to_html5(value, language=None):
         converted_doc.unlink()
         del(converted_doc)
 
+@register.filter(name='perseus_xml_to_html5')
 def perseus_xml_to_html5(value, language=None):
     """
     Converts the provided XML to HTML5 custom data attributes. Performs some changes specific to Perseus TEI documents.
@@ -43,6 +45,15 @@ def perseus_xml_to_html5(value, language=None):
         del(converted_doc)
     
 def transform_perseus_text(text, parent_node, dst_doc, default_language):
+    """
+    Transform the Perseus XML to HTML that can be easily displayed in a web app.
+    
+    Arguments:
+    text -- The content of a text node to be processed
+    parent_node -- The parent node within the converted document
+    dst_doc -- The document of the converted document (to add new nodes to)
+    default_language -- The language of the document (unless otherwise specified)
+    """
     
     # Get the language specific to this node if is defined
     if parent_node is not None and parent_node.attributes.get('data-lang', None) is not None:
@@ -75,6 +86,3 @@ def transform_perseus_text(text, parent_node, dst_doc, default_language):
            
             # Append the node
             parent_node.appendChild(new_node)
-    
-register.filter('xml_to_html5', xml_to_html5)
-register.filter('perseus_xml_to_html5', perseus_xml_to_html5)
