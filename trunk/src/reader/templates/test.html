@@ -74,13 +74,13 @@ require(["jquery", "qunit", "app"], function($) {
               type: "GET"
         });
         
-        equal( strReturn[0]['fields']['meaning'], "starting-point", "The meaning of ἀφορμάν ought to be 'starting-point'" );
+        equal( strReturn[0]['meaning'], "starting-point", "The meaning of ἀφορμάν ought to be 'starting-point'" );
      });
     
     test( "word_parse_beta_code", function() {
         
         var request = $.ajax({
-              url: "/api/word_parse/beta_code/?word=A)FORMA/N",
+              url: "/api/word_parse_beta_code/?word=A)FORMA/N",
               async : false,
               success: function(html) {
                   strReturn = html;
@@ -88,7 +88,7 @@ require(["jquery", "qunit", "app"], function($) {
               type: "GET"
         });
         
-        equal( strReturn[0]['fields']['meaning'], "starting-point", "The meaning of ἀφορμάν ought to be 'starting-point'" );
+        equal( strReturn[0]['meaning'], "starting-point", "The meaning of ἀφορμάν ought to be 'starting-point'" );
     });
 	
     {% comment %}
