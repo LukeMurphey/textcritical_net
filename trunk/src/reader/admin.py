@@ -94,7 +94,7 @@ class WordDescriptionInline(admin.StackedInline):
             'fields': ( ('meaning', ), ('person', 'number', 'part_of_speech'), 'dialects', ('indeclinable', 'particle'), 'description'),
         }),
         ('Nouns', {
-            'fields': ( ('gender', 'geog_name', 'numeral'), 'cases'),
+            'fields': ( ('masculine', 'feminine', 'neuter', 'geog_name', 'numeral'), 'cases'),
         }),
         ('Verbs', {
             'fields': ( ('voice', 'mood', 'tense'), ('adverb', 'infinitive', 'participle',)  ),
@@ -132,7 +132,7 @@ class WordDescriptionModel(admin.ModelAdmin):
             'fields': ( ('meaning', ), ('person', 'number', 'part_of_speech'), 'dialects', ('indeclinable', 'particle'), 'description'),
         }),
         ('Nouns', {
-            'fields': ( ('gender', 'geog_name', 'numeral'), 'cases'),
+            'fields': ( ('masculine', 'feminine', 'neuter', 'geog_name', 'numeral'), 'cases'),
         }),
         ('Verbs', {
             'fields': ( ('voice', 'mood', 'tense'), ('adverb', 'infinitive', 'participle',)  ),
