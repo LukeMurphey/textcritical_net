@@ -12,9 +12,9 @@ from reader.templatetags.reader_extras import perseus_xml_to_html5
 from reader.importer.Perseus import PerseusTextImporter
 from reader.importer.PerseusBatchImporter import ImportPolicy, PerseusBatchImporter, WorkDescriptor, wildcard_to_re, ImportTransforms
 from reader.importer import TextImporter, LineNumber
-from reader.importer.Diogenes import DiogenesLemmataImporter,\
-    DiogenesAnalysesImporter
+from reader.importer.Diogenes import DiogenesLemmataImporter, DiogenesAnalysesImporter
 from reader.language_tools.greek import Greek
+from reader import language_tools
 from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Case
 from reader.views import get_division
 
@@ -47,6 +47,13 @@ class TestReader(TestCase):
     def get_test_resource_file_name(self, file_name):
         return os.path.join(os.path.realpath(os.path.dirname(__file__)), 'test', file_name)
     
+    def write_out_test_file(self, content):
+        
+        fname = '/Users/lmurphey/Desktop/output.txt'
+        f = open(fname, 'w')
+        f.write(content)
+        f.close()
+    
     def load_test_resource(self, file_name):
         
         f = None
@@ -58,7 +65,16 @@ class TestReader(TestCase):
             if f is not None:
                 f.close()
 
-class TestGreekLanguageTools(TestCase):
+class TestGreekLanguageTools(TestReader):
+    
+    def test_strip_accents(self):
+        
+        self.write_out_test_file(language_tools.strip_accents( language_tools.normalize_unicode( u"θεός" )).encode("utf-8"))
+        
+        self.assertEqual( language_tools.strip_accents( language_tools.normalize_unicode( u"θεός" )), language_tools.normalize_unicode( u"θεoς" ) )
+        
+    def test_strip_accents_str(self):
+        self.assertEqual( Greek.strip_accents_str( "θεός" ), u"θεoς")
     
     def test_beta_code_conversion(self):
         self.assertEqual( Greek.beta_code_str_to_unicode("H)/LIOS"), u"ἤλιος")
@@ -1179,6 +1195,36 @@ class TestDiogenesAnalysesImport(TestReader):
         self.assertEqual(descriptions[0].lemma.reference_number, 537850)
         self.assertEqual(descriptions[0].meaning, "favourite slave")
         
+        
+    def make_lemma(self):
+        lemma = Lemma(lexical_form=Greek.beta_code_str_to_unicode("a(/bra"), language="Greek", reference_number=537850)
+        lemma.save()
+        
+        return lemma
+    
+    def make_form(self):
+        
+        lemma = self.make_lemma()
+        
+        word_form = WordForm()
+        word_form.lemma = lemma
+        word_form.form = Greek.beta_code_str_to_unicode("a(/bra")
+        word_form.save()
+        
+        return word_form
+        
+    def test_handle_multiple_genders(self):
+        
+        # Get the lemmas so that we can match up the 
+        DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
+        
+        word_form = self.make_form()
+        
+        description = DiogenesAnalysesImporter.import_analysis_entry("537850 9 a_)ghko/ti,a)ga/w\t \tperf part act masc/neut dat sg (attic doric ionic aeolic)}" , word_form)
+        
+        self.assertTrue( description.masculine )
+        self.assertTrue( description.neuter )
+        self.assertFalse( description.feminine )
         
     def test_parse_no_match(self):
         
