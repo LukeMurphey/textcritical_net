@@ -10,6 +10,7 @@ import math
 from reader.models import Work, Division, Verse, WordDescription
 from reader.language_tools.greek import Greek
 import unicodedata
+from reader import language_tools
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
 
@@ -328,8 +329,8 @@ def api_word_parse(request, word=None):
         word = request.GET['word']
     
     # Do a search for the parse
-    word_lookup = unicodedata.normalize("NFKC", word.lower() )
-    print "Looking up:", word_lookup
+    word_lookup = language_tools.normalize_unicode( word.lower() )
+    
     descriptions = WordDescription.objects.all().filter( word_form__form=word_lookup )
     
     results = []
