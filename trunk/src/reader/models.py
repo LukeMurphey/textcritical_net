@@ -2,6 +2,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 import re
 import unicodedata
+from reader import language_tools
 
 class Author(models.Model):
     """
@@ -224,6 +225,7 @@ class Lemma(models.Model):
     """
     
     lexical_form = models.CharField(max_length=200)
+    basic_lexical_form = models.CharField(max_length=200)
     language = models.CharField(max_length=40)
     reference_number = models.IntegerField(db_index=True)
     
@@ -234,6 +236,9 @@ class Lemma(models.Model):
         
         # Normalize the form to NFKC so that we can do queries reliably
         self.lexical_form = unicodedata.normalize("NFKC", self.lexical_form )
+        
+        # Save the basic form
+        self.basic_lexical_form = language_tools.strip_accents( self.lexical_form )
 
         super(Lemma, self).save(*args, **kwargs)
     
@@ -272,6 +277,7 @@ class WordForm(models.Model):
     """
     
     form = models.CharField(max_length=200)
+    basic_form = models.CharField(max_length=200)
     
     def __unicode__(self):
         return unicode(self.form)
@@ -279,7 +285,10 @@ class WordForm(models.Model):
     def save(self, *args, **kwargs):
         
         # Normalize the form to NFKC so that we can do queries reliably
-        self.form = unicodedata.normalize("NFKC", self.form)
+        self.form = language_tools.normalize_unicode(self.form)
+        
+        # Save the basic form
+        self.basic_form = language_tools.strip_accents( self.form )
 
         super(WordForm, self).save(*args, **kwargs)
     
@@ -287,17 +296,6 @@ class WordDescription(models.Model):
     """
     Describes one potential meaning for a given word form.
     """
-    
-    # Gender
-    NEUTER    = 0
-    FEMININE  = 1
-    MASCULINE = 2
-    
-    GENDERS = (
-        (NEUTER,    'Neuter'),
-        (FEMININE,  'Feminine'),
-        (MASCULINE, 'Masculine')
-    )
     
     # Number
     SINGULAR = 0
@@ -384,7 +382,10 @@ class WordDescription(models.Model):
     )
     
     # Attributes associated with nouns
-    gender         = models.IntegerField(choices=GENDERS, default=None, null=True)
+    masculine      = models.NullBooleanField(default=False)
+    feminine       = models.NullBooleanField(default=False)
+    neuter         = models.NullBooleanField(default=False)
+    
     cases          = models.ManyToManyField(Case)
     geog_name      = models.NullBooleanField(default=None, null=True)
     numeral        = models.NullBooleanField(default=None, null=True)
@@ -476,8 +477,22 @@ class WordDescription(models.Model):
         self.append_if_true(a, self.participle, "participle")
         self.append_if_true(a, self.infinitive, "infinitive")
         self.append_if_not_none(a, self.get_voice_display() )
-        self.append_if_not_none(a, self.get_gender_display())
+
+        # Add the genders
+        genders = []
         
+        if self.masculine:
+            genders.append("masc")
+            
+        if self.feminine:
+            genders.append("fem")
+            
+        if self.neuter:
+            genders.append("nuet")
+            
+        self.append_if_not_none(a, "/".join(genders) )
+        
+        # Add the cases
         cases = []
         
         for c in self.cases.all():
