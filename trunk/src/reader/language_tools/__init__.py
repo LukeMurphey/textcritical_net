@@ -1,4 +1,5 @@
 from reader.language_tools.greek import Greek
+import unicodedata
 
 def transform_text( text, language ):
     """
@@ -26,3 +27,29 @@ def transform_text( text, language ):
     # By default, just return the text
     else:
         return text
+    
+def normalize_unicode(s):
+    return unicodedata.normalize("NFKC", s )
+    
+def strip_accents(s):
+    """
+    Remove accents from the provided unicode string.
+    
+    Arguments:
+    s -- unicode string to remove accents from.
+    """
+    
+    nkfd_form = unicodedata.normalize('NFKD', unicode(s))
+    return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
+    
+    #return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
+
+def strip_accents_str(s):
+    """
+    Remove accents from the provided string.
+    
+    Arguments:
+    s -- String to remove accents from.
+    """
+    
+    return strip_accents( s.decode("UTF-8") )
