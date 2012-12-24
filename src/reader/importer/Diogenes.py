@@ -90,7 +90,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
     PARSE_FIND_ATTRS = re.compile("[a-zA-Z0-9_]+")
     
     PARSE_ANALYSIS_DESCRIPTIONS_RE = re.compile("([{][^{]*)")
-    PARSE_ANALYSIS_DESCRIPTION_RE = re.compile("(?P<reference_number>[0-9]+)\s+(?P<second_number>[0-9]+)\s+(?P<form_1>[^,\s]+)(,(?P<form_2>[^,\s]+))?\t(?P<definition>.+)\t(?P<attrs>[^}]*)}(\[(?P<extra>[0-9]+)\])?")
+    PARSE_ANALYSIS_DESCRIPTION_RE = re.compile("[{]?(?P<reference_number>[0-9]+)\s+(?P<second_number>[0-9]+)\s+(?P<form_1>[^,\s]+)(,(?P<form_2>[^,\s]+))?\t(?P<definition>.+)\t(?P<attrs>[^}]*)}(\[(?P<extra>[0-9]+)\])?")
         
     
     CASE_MAP = {
@@ -109,12 +109,6 @@ class DiogenesAnalysesImporter(DiogenesImporter):
                 'perf'    : 'perfect',
                 'futperf' : 'future perfect',
                 'plup'    : 'pluperfect'
-                }
-    
-    GENDER_MAP = {
-                'fem'     : WordDescription.FEMININE,
-                'masc'    : WordDescription.MASCULINE,
-                'neut'    : WordDescription.NEUTER
                 }
     
     NUMBER_MAP = {
@@ -159,7 +153,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         
     @classmethod
     @transaction.commit_on_success
-    def import_line(cls, entry, line_number):
+    def import_line(cls, entry, line_number=None):
         """
         Parse an entry in the Diogenes greek-analyses.txt file.
         
@@ -192,7 +186,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
             DiogenesAnalysesImporter.import_analysis_entry(desc, word_form, line_number, form_number)
         
         # Log the line
-        if (line_number % 1000) == 0:
+        if line_number is not None and (line_number % 1000) == 0:
             logger.info("Importation progress, line_number=%i", line_number )
         
         return word_form
@@ -227,7 +221,6 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         # Stop if we couldn't find a matching lemma
         if lemma.count() == 0:
             logger.warn("Unable to find the lemma for an analysis entry, form=%s, line_number=%i, form_number=%i" % (word_form.form, line_number, form_number) )
-        
         else:
             lemma = lemma[0]
             
@@ -239,7 +232,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
             
             # Parse into a list of attributes
             attrs = cls.PARSE_FIND_ATTRS.findall(d['attrs'])
-        
+            
             # Update the word description with the data from the attributes
             return cls.create_description_attributes(attrs, word_description, line_number)
         
@@ -322,13 +315,22 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         
         dialects = []
         cases = []
+        genders = []
         
         # Go through the attributes and initialize the instance
         for a in attrs:
             
             # Handle gender
-            if a in cls.GENDER_MAP:
-                word_description.gender = cls.GENDER_MAP[a]
+            if a == "fem":
+                word_description.feminine = True
+                cls.set_part_of_speech( word_description, WordDescription.NOUN)
+                
+            elif a == "masc":
+                word_description.masculine = True
+                cls.set_part_of_speech( word_description, WordDescription.NOUN)
+                
+            elif a == "neut":
+                word_description.neuter = True
                 cls.set_part_of_speech( word_description, WordDescription.NOUN)
             
             # Handle number
@@ -443,6 +445,10 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         # Add the dialects
         for dialect in dialects:
             word_description.dialects.add(dialect)
+            
+        # Add the genders
+        for gender in genders:
+            word_description.genders.add(gender)
         
         return word_description
 
