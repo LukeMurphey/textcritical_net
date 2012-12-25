@@ -201,7 +201,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         
         Arguments:
         cls -- The class
-        reference_number -- The reference number assocaiated with the lemma
+        reference_number -- The reference number associated with the lemma
         """
         
         lemma = Lemma.objects.only("id").filter(reference_number=reference_number)[:1]
@@ -210,7 +210,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
             return lemma[0]
     
     @classmethod
-    def import_analysis_entry(cls, desc, word_form, line_number=None, form_number=None, raise_exception_on_match_failure=True ):
+    def import_analysis_entry(cls, desc, word_form, line_number=None, form_number=None, raise_exception_on_match_failure=False ):
         """
         Import an entry from the Diogenes lemmata file.
         
@@ -243,7 +243,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         
         # Stop if we couldn't find a matching lemma
         if lemma is None:
-            logger.warn("Unable to find the lemma for an analysis entry, form=%s, reference_number=%i, line_number=%r, form_number=%r" % (word_form.form, reference_number, line_number, form_number) )
+            logger.warn("Unable to find the lemma for an analysis entry, form=%s, reference_number=%r, line_number=%r, form_number=%r" % (word_form.form, reference_number, line_number, form_number) )
         else:
             
             # Add the description of the form
