@@ -5,6 +5,9 @@ from reader.language_tools import transform_text
 from HTMLParser import HTMLParser
 from xml.dom.minidom import parseString
 from htmlentitydefs import name2codepoint
+from time import time
+
+import logging
 
 class HTML5Converter(HTMLParser):
     """
@@ -133,11 +136,6 @@ class HTML5Converter(HTMLParser):
         # Append the txt node
         self.current_node.appendChild(txt_node)
 
-class BootstrapCustomizer():
-    
-    def node_transformation_fx(self, tag, attrs, parent, document ):
-        pass
-
 def convert_xml_to_html5( xml_str, new_root_node_tag_name=None, text_transformation_fx=None, language=None, return_as_str=False, allow_closing_in_start_tag=False, node_transformation_fx=None):
     """
     Convert the XML into HTML5 with custom data attributes.
@@ -261,3 +259,27 @@ def add_xml_as_html( src_doc, src_node, dst_doc, parent_dst_node, language, text
     # Recurse on the child nodes
     for child_node in src_node.childNodes:
         add_xml_as_html(src_doc, child_node, dst_doc, new_dst_node, language, text_transformation_fx)
+        
+logger = logging.getLogger(__name__)
+        
+def time_function_call(fx):
+    """
+    This decorator will provide a log message measuring how long a function call took.
+    
+    Arguments:
+    fx -- The function to measure
+    """
+    
+    def wrapper(*args, **kwargs):
+        t = time()
+        
+        r = fx(*args, **kwargs)
+        
+        diff = time() - t
+        
+        diff_string = str( round( diff, 6) ) + " seconds"
+        
+        logger.debug( "%s, duration=%s", fx.__name__, diff_string )
+        
+        return r
+    return wrapper
