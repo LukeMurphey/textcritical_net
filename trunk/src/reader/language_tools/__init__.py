@@ -40,8 +40,10 @@ def strip_accents(s):
     """
     
     nkfd_form = unicodedata.normalize('NFKD', unicode(s))
-    return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
     
+    stripped_form = u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
+    
+    return normalize_unicode(stripped_form)
     #return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
 
 def strip_accents_str(s):
