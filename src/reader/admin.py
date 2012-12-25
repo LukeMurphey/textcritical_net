@@ -107,10 +107,11 @@ class WordDescriptionInline(admin.StackedInline):
 class WordFormModel(admin.ModelAdmin):
     
     search_fields = ('form',),
+    list_display = ('form', 'basic_form')
     
     fieldsets = (
         (None, {
-            'fields': ('form', ),
+            'fields': ('form', 'basic_form'),
         }),
     )
     
