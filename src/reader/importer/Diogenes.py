@@ -6,7 +6,6 @@ Created on Sep 2, 2012
 
 from reader.language_tools import Greek
 from reader.models import Lemma, Case, WordForm, WordDescription, Dialect
-from reader.shortcuts import time_function_call
 import re
 import logging
 from time import time
@@ -174,6 +173,9 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         # Find the lemma entry
         greek_code_string = Greek.beta_code_to_unicode(beta_code_string)
         
+        # Cut out the stray apostraphe's
+        greek_code_string = greek_code_string.replace("'", "")
+        
         # Make the form
         word_form = WordForm()
         word_form.form = greek_code_string
@@ -194,6 +196,13 @@ class DiogenesAnalysesImporter(DiogenesImporter):
     
     @classmethod
     def get_lemma(cls, reference_number):
+        """
+        Get the lemma associated with the given reference number.
+        
+        Arguments:
+        cls -- The class
+        reference_number -- The reference number assocaiated with the lemma
+        """
         
         lemma = Lemma.objects.only("id").filter(reference_number=reference_number)[:1]
         
@@ -206,7 +215,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         Import an entry from the Diogenes lemmata file.
         
         Arguments:
-        cls -- The base case
+        cls -- The class
         desc -- A string with the part of the line that describes the given form (e.g. "{537850 9 a(/bra_,a(/bra    favourite slave    fem nom/voc/acc dual}")
         word_form -- The WordForm instance associated with the description
         line_number -- The line number that this entry is found on
@@ -255,7 +264,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         Get a case associated with the provided string.
         
         Arguments:
-        cls -- The base case
+        cls -- The class
         case -- A name of a case.
         """
         
@@ -281,7 +290,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         Get a dialect associated with the provided string.
         
         Arguments:
-        cls -- The base case
+        cls -- The class
         dialect -- A name of a dialect.
         """
         
@@ -329,7 +338,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         Update the description with attributes from the attrs.
         
         Arguments:
-        cls -- The base case
+        cls -- The class
         attrs -- The list of attributes
         word_description -- The word description instance to modify
         raise_on_unused_attributes -- Raise an exception if an attribute is observed that is not recognized
@@ -491,7 +500,13 @@ class DiogenesLemmataImporter():
         
         split_entry = entry.split("\t")
         
+        # Convert the beta-code to Greek
         lexical_form = Greek.beta_code_str_to_unicode(split_entry[0])
+        
+        # Cut out unnecessary apostrophe's
+        lexical_form = lexical_form.replace("'", "")
+        
+        # Get the reference number
         reference_number = int(split_entry[1])
         
         # Make the entry
