@@ -9,7 +9,6 @@ import logging
 import math
 from reader.models import Work, Division, Verse, WordDescription
 from reader.language_tools.greek import Greek
-import unicodedata
 from reader import language_tools
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
@@ -330,8 +329,13 @@ def api_word_parse(request, word=None):
     
     # Do a search for the parse
     word_lookup = language_tools.normalize_unicode( word.lower() )
-    
+    ignoring_diacritics = False
     descriptions = WordDescription.objects.all().filter( word_form__form=word_lookup )
+    
+    # If the lookup for the word failed, try doing a lookup without the diacritics
+    if descriptions.count() == 0:
+        ignoring_diacritics = True
+        descriptions = WordDescription.objects.all().filter( word_form__basic_form=language_tools.strip_accents(word_lookup) )
     
     results = []
     
@@ -341,6 +345,7 @@ def api_word_parse(request, word=None):
         
         entry["meaning"] = d.meaning
         entry["description"] = str(d)
+        entry["ignoring_diacritics"] = ignoring_diacritics
         
         if d.lemma:
             entry["lemma"] = d.lemma.lexical_form

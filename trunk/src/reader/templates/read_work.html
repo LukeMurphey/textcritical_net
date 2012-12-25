@@ -165,11 +165,20 @@ or on <a target="_blank" href="https://www.google.com/search?q=<%= word %>">Goog
 else { %>
 <div class="morphology-results">
 <% if ( parses.length == 1 ) { %>
-Found 1 parse for <%= word %>:</div>
+Found 1 parse for <%= word %>
 <% }
 else { %>
-Found <%= parses.length %> parses for <%= word %>:</div>
+Found <%= parses.length %> parses for <%= word %>
 <% } %>
+
+<% if ( parses[0].ignoring_diacritics ) { %>
+. An exact match could not be found, so similar words with different diacritical marks are being returned.
+<% }
+else { %>
+:
+<% } %>
+
+</div>
 <table class="table table-striped">
 	<thead>
 		<tr>
