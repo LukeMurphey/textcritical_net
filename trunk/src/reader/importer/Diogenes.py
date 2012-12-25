@@ -6,6 +6,7 @@ Created on Sep 2, 2012
 
 from reader.language_tools import Greek
 from reader.models import Lemma, Case, WordForm, WordDescription, Dialect
+from reader.shortcuts import time_function_call
 import re
 import logging
 from time import time
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 class DiogenesImporter():
     
     @classmethod
-    def import_file( cls, file_name, return_created_objects=False, start_line_number=None ):
+    def import_file( cls, file_name, return_created_objects=False, start_line_number=None, **kwargs ):
         
         logger.debug("Importing file, file=\"%s\"", file_name )
         
@@ -50,7 +51,7 @@ class DiogenesImporter():
                 
                 else:
                     # Import the line
-                    obj = cls.import_line(line, line_number)
+                    obj = cls.import_line(line, line_number, **kwargs)
                     
                     if return_created_objects:
                         if obj is not None:
@@ -90,7 +91,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
     PARSE_FIND_ATTRS = re.compile("[a-zA-Z0-9_]+")
     
     PARSE_ANALYSIS_DESCRIPTIONS_RE = re.compile("([{][^{]*)")
-    PARSE_ANALYSIS_DESCRIPTION_RE = re.compile("[{]?(?P<reference_number>[0-9]+)\s+(?P<second_number>[0-9]+)\s+(?P<form_1>[^,\s]+)(,(?P<form_2>[^,\s]+))?\t(?P<definition>.+)\t(?P<attrs>[^}]*)}(\[(?P<extra>[0-9]+)\])?")
+    PARSE_ANALYSIS_DESCRIPTION_RE = re.compile("[{]?(?P<reference_number>[0-9]+)\s+(?P<second_number>[0-9]+)\s+(?P<forms>[^\t]+)\t(?P<definition>.+)\t(?P<attrs>[^}]*)}(\[(?P<extra>[0-9]+)\])?")
         
     
     CASE_MAP = {
@@ -153,7 +154,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         
     @classmethod
     @transaction.commit_on_success
-    def import_line(cls, entry, line_number=None):
+    def import_line(cls, entry, line_number=None, raise_exception_on_match_failure=False):
         """
         Parse an entry in the Diogenes greek-analyses.txt file.
         
@@ -183,16 +184,24 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         
         for desc in cls.PARSE_ANALYSIS_DESCRIPTIONS_RE.findall(entry):
             form_number = form_number + 1
-            DiogenesAnalysesImporter.import_analysis_entry(desc, word_form, line_number, form_number)
+            DiogenesAnalysesImporter.import_analysis_entry(desc, word_form, line_number, form_number, raise_exception_on_match_failure)
         
         # Log the line
         if line_number is not None and (line_number % 1000) == 0:
             logger.info("Importation progress, line_number=%i", line_number )
         
         return word_form
-            
+    
     @classmethod
-    def import_analysis_entry(cls, desc, word_form, line_number=None, form_number=None ):
+    def get_lemma(cls, reference_number):
+        
+        lemma = Lemma.objects.only("id").filter(reference_number=reference_number)[:1]
+        
+        if len(lemma) > 0:
+            return lemma[0]
+    
+    @classmethod
+    def import_analysis_entry(cls, desc, word_form, line_number=None, form_number=None, raise_exception_on_match_failure=True ):
         """
         Import an entry from the Diogenes lemmata file.
         
@@ -202,6 +211,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         word_form -- The WordForm instance associated with the description
         line_number -- The line number that this entry is found on
         form_number -- The number of the form on this line (since each line can have several forms)
+        raise_exception_on_match_failure -- Indicates if an exception should be raised if the line could not be matched to the regular expression
         """
         
         # Parse the description
@@ -209,6 +219,10 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         
         # Stop if the regex did not match
         if r is None:
+            
+            if raise_exception_on_match_failure:
+                raise Exception("Analysis entry does not match the regex, form=%s, line_number=%r, form_number=%r" % (word_form.form, line_number, form_number) )
+            
             logger.warn("Analysis entry does not match the regex, form=%s, line_number=%r, form_number=%r" % (word_form.form, line_number, form_number) )
             return
         
@@ -216,13 +230,12 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         
         # Find the entry associated by the reference number
         reference_number = d['reference_number']
-        lemma = Lemma.objects.filter(reference_number=reference_number)
+        lemma = cls.get_lemma(reference_number)
         
         # Stop if we couldn't find a matching lemma
-        if lemma.count() == 0:
-            logger.warn("Unable to find the lemma for an analysis entry, form=%s, line_number=%i, form_number=%i" % (word_form.form, line_number, form_number) )
+        if lemma is None:
+            logger.warn("Unable to find the lemma for an analysis entry, form=%s, reference_number=%i, line_number=%r, form_number=%r" % (word_form.form, reference_number, line_number, form_number) )
         else:
-            lemma = lemma[0]
             
             # Add the description of the form
             word_description = WordDescription(description=desc)
@@ -235,8 +248,6 @@ class DiogenesAnalysesImporter(DiogenesImporter):
             
             # Update the word description with the data from the attributes
             return cls.create_description_attributes(attrs, word_description, line_number)
-        
-        
     
     @classmethod
     def get_case( cls, case ):
@@ -244,6 +255,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         Get a case associated with the provided string.
         
         Arguments:
+        cls -- The base case
         case -- A name of a case.
         """
         
@@ -269,6 +281,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         Get a dialect associated with the provided string.
         
         Arguments:
+        cls -- The base case
         dialect -- A name of a dialect.
         """
         
@@ -312,10 +325,19 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         
     @classmethod
     def create_description_attributes(cls, attrs, word_description, raise_on_unused_attributes=False, line_number=None ):
+        """
+        Update the description with attributes from the attrs.
+        
+        Arguments:
+        cls -- The base case
+        attrs -- The list of attributes
+        word_description -- The word description instance to modify
+        raise_on_unused_attributes -- Raise an exception if an attribute is observed that is not recognized
+        line_number -- The line number of the description we are populating
+        """
         
         dialects = []
         cases = []
-        genders = []
         
         # Go through the attributes and initialize the instance
         for a in attrs:
@@ -435,6 +457,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
                 else:
                     logger.warn("Attribute was not expected: attribute=%s" % a )
         
+        
         # Save the description
         word_description.save()
         
@@ -445,10 +468,6 @@ class DiogenesAnalysesImporter(DiogenesImporter):
         # Add the dialects
         for dialect in dialects:
             word_description.dialects.add(dialect)
-            
-        # Add the genders
-        for gender in genders:
-            word_description.genders.add(gender)
         
         return word_description
 
