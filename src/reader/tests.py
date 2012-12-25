@@ -68,13 +68,10 @@ class TestReader(TestCase):
 class TestGreekLanguageTools(TestReader):
     
     def test_strip_accents(self):
-        
-        self.write_out_test_file(language_tools.strip_accents( language_tools.normalize_unicode( u"θεός" )).encode("utf-8"))
-        
-        self.assertEqual( language_tools.strip_accents( language_tools.normalize_unicode( u"θεός" )), language_tools.normalize_unicode( u"θεoς" ) )
+        self.assertEqual( language_tools.normalize_unicode( language_tools.strip_accents( u"θεός" )), u"θεος")
         
     def test_strip_accents_str(self):
-        self.assertEqual( Greek.strip_accents_str( "θεός" ), u"θεoς")
+        self.assertEqual( Greek.strip_accents_str( "θεός" ), u"θεος")
     
     def test_beta_code_conversion(self):
         self.assertEqual( Greek.beta_code_str_to_unicode("H)/LIOS"), u"ἤλιος")
@@ -202,7 +199,7 @@ class TestImport(TestCase):
         
         self.assertEquals(expected, dst_dom.toxml())
         
-class TestShortcuts(TestCase):
+class TestShortcuts(TestReader):
     
     def time_conversion (self):
         import time
@@ -227,8 +224,6 @@ class TestShortcuts(TestCase):
 
         actual_result = convert_xml_to_html5(original_content, new_root_node_tag_name="verse", return_as_str=True)
         
-        #self.write_out_test_file( expected_result + "\n\n" + actual_result )
-        
         self.assertEqual(expected_result, actual_result)
         
     def test_process_text_entity(self):
@@ -243,8 +238,6 @@ class TestShortcuts(TestCase):
 </verse>"""
 
         actual_result = convert_xml_to_html5(original_content, new_root_node_tag_name="verse", return_as_str=True)
-        
-        #self.write_out_test_file( expected_result + "\n\n" + actual_result )
         
         self.assertEqual(expected_result, actual_result)
         
@@ -275,8 +268,6 @@ class TestShortcuts(TestCase):
 
         actual_result = convert_xml_to_html5(original_content, new_root_node_tag_name="verse", return_as_str=True, node_transformation_fx=node_transformation_fx)
         
-        #self.write_out_test_file( expected_result + "\n\n" + actual_result )
-        
         self.assertEqual(expected_result, actual_result)
         
     def test_process_text_with_transform(self):
@@ -293,8 +284,6 @@ class TestShortcuts(TestCase):
 
         actual_result = convert_xml_to_html5(original_content, language=language, return_as_str=True)
         
-        #self.write_out_test_file( expected_result + "\n\n" + actual_result )
-        
         self.assertEqual(expected_result, actual_result)
         
     def test_process_text_multi_language_transforms(self):
@@ -304,9 +293,8 @@ class TestShortcuts(TestCase):
 
         language = "Greek"
         
-        expected_result = r"""<?xml version="1.0" encoding="utf-8"?><span class="verse">κοτίνοις<span class="note" data-anchored="yes" data-place="unspecified" data-resp="ed">
-                  <span class="foreign" data-lang="greek">κοτίνοις</span> MSS.; <span class="foreign" data-lang="greek">κολωνοῖς</span>(hills' Bekker, adopting the correction of Coraës.</span>  καὶ πάγοις</span>"""
-
+        expected_result = r"""<?xml version="1.0" encoding="utf-8"?><span class="verse"><span class="word">κοτίνοις</span><span class="note" data-anchored="yes" data-place="unspecified" data-resp="ed">
+                  <span class="foreign" data-lang="greek"><span class="word">κοτίνοις</span></span> MSS.; <span class="foreign" data-lang="greek"><span class="word">κολωνοῖς</span></span>(hills' Bekker, adopting the correction of Coraës.</span>  <span class="word">καὶ</span> <span class="word">πάγοις</span></span>"""
         
         actual_result = perseus_xml_to_html5(original_content, language=language)
         
@@ -381,14 +369,14 @@ class TestPerseusBatchImporter(TestReader):
     
     def test_import(self):
         
-        dir = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'test')
+        directory = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'test')
         
         work_descriptor = WorkDescriptor(title="Eumenides")
         
         import_policy = ImportPolicy()
         import_policy.descriptors.append( work_descriptor )
         
-        importer = PerseusBatchImporter( perseus_directory=dir, book_selection_policy=import_policy.should_be_processed )
+        importer = PerseusBatchImporter( perseus_directory=directory, book_selection_policy=import_policy.should_be_processed )
         
         self.assertEqual( importer.do_import(), 1 )
         
@@ -1163,29 +1151,37 @@ class TestDiogenesAnalysesImport(TestReader):
     @time_function_call
     def test_import_file(self):
         
-        # Get the lemmas so that we can match up the 
-        lemmas = DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
+        # Get the lemmas so that we can match up the analyses
+        DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
         
         # Import the analyses
-        analyses = DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
+        DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
         
         # See if the analyses match up with the lemmas
         # Find the word description and make sure the lemma matches
-        
-        #descriptions = WordDescription.objects.filter(word_form__form=Greek.beta_code_str_to_unicode("a(/bas") )
         descriptions = WordDescription.objects.filter(meaning="favourite slave" )
         
         self.assertEqual(descriptions[0].lemma.reference_number, 537850)
         self.assertEqual(descriptions[0].meaning, "favourite slave")
         
+    def test_import_file_no_match(self):
+        
+        # Get the lemmas so that we can match up the analyses
+        DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata-no-match.txt"), return_created_objects=True)
+        
+        # Import the analyses
+        analyses = DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses-no-match.txt"), return_created_objects=True, raise_exception_on_match_failure=True)
+        
+        self.assertEqual(len(analyses), 4)
+        
     @time_function_call
     def test_lookup_by_form(self):
         
         # Get the lemmas so that we can match up the 
-        lemmas = DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
+        DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
         
         # Import the analyses
-        analyses = DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
+        DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
         
         # See if the analyses match up with the lemmas
         # Find the word description and make sure the lemma matches
@@ -1215,7 +1211,7 @@ class TestDiogenesAnalysesImport(TestReader):
         
     def test_handle_multiple_genders(self):
         
-        # Get the lemmas so that we can match up the 
+        # Get the lemmas so that we can match up the analyses
         DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
         
         word_form = self.make_form()
@@ -1225,6 +1221,19 @@ class TestDiogenesAnalysesImport(TestReader):
         self.assertTrue( description.masculine )
         self.assertTrue( description.neuter )
         self.assertFalse( description.feminine )
+        
+    def test_handle_no_match(self):
+        
+        # Get the lemmas so that we can match up the analyses
+        DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata-no-match.txt"), return_created_objects=True)
+        
+        word_form = self.make_form()
+        
+        #full_entry = "e)pamfie/sasqai\t{31475848 9 e)pamfi+e/sasqai,e)pi/,a)mfi/-e(/zomai\tseat oneself\taor inf mid (attic epic doric ionic aeolic parad_form prose)}[40532015][6238652]{6264700 9 e)pi/-a)mfia/zw\tciothe\taor inf mid}[40532015]{6365952 9 e)pi/-a)mfie/nnumi\tput round\taor inf mid (attic)}[40532015]"
+        
+        word_description = DiogenesAnalysesImporter.import_analysis_entry( "e)pamfie/sasqai\t{31475848 9 e)pamfi+e/sasqai,e)pi/,a)mfi/-e(/zomai\tseat oneself\taor inf mid (attic epic doric ionic aeolic parad_form prose)}[40532015][6238652]", word_form)
+        
+        self.assertNotEqual(word_description, None)
         
     def test_parse_no_match(self):
         
