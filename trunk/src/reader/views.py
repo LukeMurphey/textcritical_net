@@ -12,6 +12,7 @@ import difflib
 from reader.models import Work, Division, Verse, WordDescription
 from reader.language_tools.greek import Greek
 from reader import language_tools
+from reader.shortcuts import uniquefy
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
 
@@ -324,6 +325,16 @@ def api_index(request):
     
     return render_api_response(request, urls)
 
+def description_id_fun(x):
+    """
+    Provides the string necessary to uniquefy WordDescription instances.
+    
+    Arguments:
+    x -- a word description instance.
+    """
+    
+    return str(x)
+
 def api_word_parse(request, word=None):
     
     if word is None or len(word) == 0 and 'word' in request.GET:
@@ -332,7 +343,7 @@ def api_word_parse(request, word=None):
     # Do a search for the parse
     word_lookup = language_tools.normalize_unicode( word.lower() )
     ignoring_diacritics = False
-    descriptions = WordDescription.objects.all().filter( word_form__form=word_lookup )
+    descriptions = WordDescription.objects.filter( word_form__form=word_lookup )
     
     # If the lookup for the word failed, try doing a lookup without the diacritics
     word_basic_form = language_tools.strip_accents(word_lookup)
@@ -340,7 +351,11 @@ def api_word_parse(request, word=None):
     if descriptions.count() == 0:
         ignoring_diacritics = True
         descriptions = WordDescription.objects.all().filter( word_form__basic_form=word_basic_form )
+        
+    # Make the list distinct
+    descriptions = uniquefy(descriptions, description_id_fun)
     
+    # Make the final result to be returned
     results = []
     
     for d in descriptions:
@@ -357,6 +372,7 @@ def api_word_parse(request, word=None):
         else:
             entry["lemma"] = None
             
+        # Calculate the similarity so that sort the results by similarity
         entry["similarity"] = int(round(difflib.SequenceMatcher(None, entry["lemma"], word_basic_form).ratio() * 100, 0))
         
         results.append(entry)
@@ -369,8 +385,6 @@ def api_word_parse(request, word=None):
     
     # Return the response
     return render_api_response(request, results)
-    
-    #return render_queryset_api_response(request, descriptions)
 
 def api_word_parse_beta_code(request, word=None):
     
