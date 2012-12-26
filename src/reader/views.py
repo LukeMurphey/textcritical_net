@@ -7,6 +7,8 @@ from django.template.context import RequestContext
 import json
 import logging
 import math
+import difflib
+
 from reader.models import Work, Division, Verse, WordDescription
 from reader.language_tools.greek import Greek
 from reader import language_tools
@@ -333,9 +335,11 @@ def api_word_parse(request, word=None):
     descriptions = WordDescription.objects.all().filter( word_form__form=word_lookup )
     
     # If the lookup for the word failed, try doing a lookup without the diacritics
+    word_basic_form = language_tools.strip_accents(word_lookup)
+    
     if descriptions.count() == 0:
         ignoring_diacritics = True
-        descriptions = WordDescription.objects.all().filter( word_form__basic_form=language_tools.strip_accents(word_lookup) )
+        descriptions = WordDescription.objects.all().filter( word_form__basic_form=word_basic_form )
     
     results = []
     
@@ -346,13 +350,22 @@ def api_word_parse(request, word=None):
         entry["meaning"] = d.meaning
         entry["description"] = str(d)
         entry["ignoring_diacritics"] = ignoring_diacritics
+        entry["form"] = d.word_form.form
         
         if d.lemma:
             entry["lemma"] = d.lemma.lexical_form
         else:
             entry["lemma"] = None
             
+        entry["similarity"] = int(round(difflib.SequenceMatcher(None, entry["lemma"], word_basic_form).ratio() * 100, 0))
+        
         results.append(entry)
+        
+    # If we are ignoring diacritics, then sort the entries by the similarity
+    def word_compare(x, y):
+        return y["similarity"] - x["similarity"]
+    
+    results = sorted(results, cmp=word_compare)
     
     # Return the response
     return render_api_response(request, results)
