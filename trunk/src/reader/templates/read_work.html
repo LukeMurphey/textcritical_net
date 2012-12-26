@@ -165,23 +165,17 @@ or on <a target="_blank" href="https://www.google.com/search?q=<%= word %>">Goog
 else { %>
 <div class="morphology-results">
 <% if ( parses.length == 1 ) { %>
-Found 1 parse for <%= word %>
+Found 1 parse for <%= word %><% }
+else { %>Found <%= parses.length %> parses for <%= word %><% } %><% if ( parses[0].ignoring_diacritics ) { %>. An exact match could not be found, so similar words with different diacritical marks are being returned.
 <% }
-else { %>
-Found <%= parses.length %> parses for <%= word %>
-<% } %>
-
-<% if ( parses[0].ignoring_diacritics ) { %>
-. An exact match could not be found, so similar words with different diacritical marks are being returned.
-<% }
-else { %>
-:
+else { %>:
 <% } %>
 
 </div>
 <table class="table table-striped">
 	<thead>
 		<tr>
+			<% if ( parses[0].ignoring_diacritics ) { %><th>Form</th><% } %>
 			<th>Lemma</th>
 			<th>Parse</th>
 			<th>Meaning</th>
@@ -190,6 +184,7 @@ else { %>
     <tbody>
 <% _.each(parses,function(parse){ %>
 		<tr>
+			<% if ( parses[0].ignoring_diacritics ) { %><td><%= parse.form %></td><% } %>
 			<td><a href="#" class="lemma"><%= parse.lemma %></td>
 			<td><%= parse.description %></td>
 			<td><%= parse.meaning %></td>
