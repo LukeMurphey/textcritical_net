@@ -224,8 +224,8 @@ class Lemma(models.Model):
     Represents a root word.
     """
     
-    lexical_form = models.CharField(max_length=200)
-    basic_lexical_form = models.CharField(max_length=200)
+    lexical_form = models.CharField(max_length=200, db_index=True)
+    basic_lexical_form = models.CharField(max_length=200, db_index=True)
     language = models.CharField(max_length=40)
     reference_number = models.IntegerField(db_index=True)
     
@@ -276,8 +276,8 @@ class WordForm(models.Model):
     Represents a particular form of a word (taking into account what a declension would look like).
     """
     
-    form = models.CharField(max_length=200)
-    basic_form = models.CharField(max_length=200)
+    form = models.CharField(max_length=200, db_index=True)
+    basic_form = models.CharField(max_length=200, db_index=True)
     
     def __unicode__(self):
         return unicode(self.form)
