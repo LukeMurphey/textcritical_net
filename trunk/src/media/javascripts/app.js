@@ -227,7 +227,7 @@ TextCritical.unhighlight_all_words = function(){
 
 /**
  * Highlights all of the word nodes with the given text.
- * @param word
+ * @param word the word to highlight
  */
 TextCritical.highlight_word = function( word ){
 	
