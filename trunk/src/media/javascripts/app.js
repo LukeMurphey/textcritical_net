@@ -210,3 +210,36 @@ TextCritical.open_morphology_dialog = function( word ){
 	});
 	
 }
+
+/**
+ * Highlights the word that the user is focusing on or hovering over.
+ **/
+TextCritical.highlight_selected_word = function(){
+	TextCritical.highlight_word( $(this).text() );
+}
+
+/**
+ * Unhighlights all words.
+ */
+TextCritical.unhighlight_all_words = function(){
+	$('.word').removeClass('highlighted');
+}
+
+/**
+ * Highlights all of the word nodes with the given text.
+ * @param word
+ */
+TextCritical.highlight_word = function( word ){
+	
+	// Unhighlight all existing words to make sure we don't accumulate highlights
+	TextCritical.unhighlight_all_words();
+	
+	// Make the regular expression for finding the words.
+	var pattern = new RegExp("^" + word + "$");
+	console.debug( "Highlighting " + word );
+	
+	// Add the CSS to make these words highlighted
+	$('.word').filter(function(){
+  		return pattern.test($(this).text())
+	}).addClass('highlighted');
+}

@@ -254,6 +254,7 @@ require(["jquery", "store", "app", "underscore"], function($) {
     {% endif %}
     
     $(".word").click( TextCritical.word_lookup );
+    $(".word").hover(TextCritical.highlight_selected_word, TextCritical.unhighlight_all_words);
 });
 </script>
 {% endblock %}

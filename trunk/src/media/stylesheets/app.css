@@ -183,7 +183,7 @@ footer .addthis_toolbox {
   100% {
     background: #454545; } }
 
-.highlighted {
+.verse_container.highlighted {
   background-color: #EEE;
   border-radius: 3px;
   -moz-border-radius: 3px;
@@ -193,12 +193,19 @@ footer .addthis_toolbox {
   -o-animation: highlighted 2.5s;
   animation: highlighted 2.5s; }
 
-body.dark .highlighted {
+body.dark .verse_container.highlighted {
   background-color: #454545;
   -moz-animation: highlighted-dark 2.5s;
   -webkit-animation: highlighted-dark 2.5s;
   -o-animation: highlighted-dark 2.5s;
   animation: highlighted-dark 2.5s; }
+
+.word.highlighted {
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-color: #FAA732; 
+  color: white; }
 
 .division_2 {
   padding-left: 24px; }

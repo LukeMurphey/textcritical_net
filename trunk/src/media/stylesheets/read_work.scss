@@ -57,15 +57,22 @@
     }
 }
 
-.highlighted{
+.verse_container.highlighted{
     background-color: #EEE;
     @include rounded(3px);
     @include animation(highlighted, 2.5s);
 }
 
-body.dark .highlighted{
+body.dark .verse_container.highlighted{
     background-color: #454545;
     @include animation(highlighted-dark, 2.5s);
+}
+
+.word.highlighted{
+    @include rounded(3px);
+    background-color: #FAA732;
+    color: black;
+    padding: 3px;
 }
 
 @for $i from 2 through 5 {
