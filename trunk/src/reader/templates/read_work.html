@@ -45,11 +45,11 @@
 	            {% for division_part in divisions.all %}
 	               {% if chapter.parent_division.id == division_part.id %}
 	            <li class="division_{{division_part.level}} active">
-	                <a href="{% url read_work work.title_slug %}/{{ division_part.get_division_indicators|join:"/" }}"><i class="icon-book icon-white"></i>{{division_part|capfirst}}</a>
+	                <a data-division-descriptor="{{division_part.descriptor}}" href="{% url read_work work.title_slug %}/{{ division_part.get_division_indicators|join:"/" }}"><i class="icon-book icon-white"></i>{{division_part|capfirst}}</a>
 	            </li>
 	               {% else %}
                 <li class="division_{{division_part.level}}">
-                    <a href="{% url read_work work.title_slug%}/{{ division_part.get_division_indicators|join:"/" }}"><i class="icon-book {% if USE_DARK_THEME|default:0 %}icon-white{% endif %}"></i>{{division_part|capfirst}}</a>
+                    <a data-division-descriptor="{{division_part.descriptor}}" href="{% url read_work work.title_slug%}/{{ division_part.get_division_indicators|join:"/" }}"><i class="icon-book {% if USE_DARK_THEME|default:0 %}icon-white{% endif %}"></i>{{division_part|capfirst}}</a>
                 </li>
 	               {% endif %}
 	            {% endfor %}
@@ -83,7 +83,7 @@
         	<span id="divisions">
         		<ul>
         			{% for d in chapter.get_division_indicators %}
-        			<li class="division_indicators">{{d}}</li>
+        			<li data-division-descriptor="{{d}}" class="division_indicator">{{d}}</li>
         			{% endfor %}
         		</ul>
         	</span>
@@ -220,9 +220,9 @@ require(["jquery", "store", "app", "underscore"], function($) {
     
     // Get the division IDs
     division_ids = [];
-
-    jQuery.each( $('.division_indicators'), function() {
-    	division_ids.push( $(this).text() );
+    
+    jQuery.each( $('[data-division-descriptor]'), function() {
+    	division_ids.push( $(this).attr("data-division-descriptor") );
     });
     
     function update_chapter_reference(e) {

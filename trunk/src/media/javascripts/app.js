@@ -122,8 +122,13 @@ TextCritical.slugify = function (text) {
  **/
 TextCritical.resolve_path = function( reference, division_ids ){
 	
-	// Trim the reference in case it has extra spaces
-	reference = TextCritical.trim( reference );
+	// Trim the reference in case it has extra spaces and change to lower case so that we handle reference in a case insensitive way
+	reference = TextCritical.trim( reference ).toLowerCase();
+	
+	// Change all of the division IDs to lower case
+	for( c = 0; c < division_ids.length; c++ ){
+		division_ids[c] = division_ids[c].toLowerCase();
+	}
 	
     // Break up the path
     var path_array = window.location.pathname.split( '/' );
@@ -143,7 +148,11 @@ TextCritical.resolve_path = function( reference, division_ids ){
     divisions_map = {}
     
     for( c = 0; c < division_ids.length; c++ ){
+    	
+    	// Set the key to the be the slugified version of the division ID
     	divisions_map[division_ids[c]] = TextCritical.slugify(division_ids[c]);
+    	
+    	// Set the value to be the original
     	reference = reference.replace(division_ids[c], TextCritical.slugify(division_ids[c]));
     }
     
@@ -184,6 +193,8 @@ TextCritical.word_lookup = function (){
  **/
 TextCritical.open_morphology_dialog = function( word ){
 	
+	console.info( "Obtaining the morphology of " + word );
+	
 	// Trim the word in case extra space was included
 	word = TextCritical.trim(word);
 	
@@ -214,8 +225,11 @@ TextCritical.open_morphology_dialog = function( word ){
 		// Set the lemmas to be links
 		$("a.lemma").click(TextCritical.word_lookup);
 		
+		console.info( "Successfully performed a request for the morphology of " + word );
+		
 	}).error( function(jqXHR, textStatus, errorThrown) {
 		$("#morphology-dialog-content").html( "<h4>Parse failed</h4> The request to parse could not be completed" );
+		console.error( "The request for the morphology failed for " + word );
 	});
 }
 
@@ -253,7 +267,7 @@ TextCritical.highlight_word = function( word ){
 	
 	// Make the regular expression for finding the words.
 	var pattern = new RegExp("^" + word + "$");
-	console.debug( "Highlighting " + word );
+	console.info( "Highlighting " + word );
 	
 	// Add the CSS to make these words highlighted
 	$('.word').filter(function(){
