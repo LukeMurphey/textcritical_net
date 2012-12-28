@@ -119,6 +119,14 @@ require(["jquery", "qunit", "app"], function($) {
     test( "slugify", function() {
         equal( TextCritical.slugify("1 Corinthians"), "1-Corinthians", "The slug of '1 Corinthians' ought to be'1-Corinthians'" );
     });
+    
+    test( "trim_leading_space", function() {
+        equal( TextCritical.trim(" 1 Corinthians"), "1 Corinthians", "' 1 Corinthians' trimmed ought to be'1 Corinthians'" );
+    });
+    
+    test( "trim_trailing_space", function() {
+        equal( TextCritical.trim("1 Corinthians "), "1 Corinthians", "' 1 Corinthians ' trimmed ought to be'1 Corinthians'" );
+    });
 	    
 });
 </script>
