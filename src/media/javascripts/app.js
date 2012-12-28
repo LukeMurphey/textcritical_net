@@ -122,6 +122,9 @@ TextCritical.slugify = function (text) {
  **/
 TextCritical.resolve_path = function( reference, division_ids ){
 	
+	// Trim the reference in case it has extra spaces
+	reference = TextCritical.trim( reference );
+	
     // Break up the path
     var path_array = window.location.pathname.split( '/' );
     var path = [];
@@ -160,6 +163,9 @@ TextCritical.resolve_path = function( reference, division_ids ){
 
 /**
  * Opens the view to the given chapter reference.
+ * 
+ * @param string the reference to go to (like "Romans 14:1")
+ * @param array an array of division IDs; these will be used to help parsing of the reference
  **/
 TextCritical.go_to_chapter = function( reference, division_ids ){
 	document.location = TextCritical.resolve_path(reference, division_ids);
@@ -177,6 +183,9 @@ TextCritical.word_lookup = function (){
  * Opens a dialog that obtains the morphology of a word.
  **/
 TextCritical.open_morphology_dialog = function( word ){
+	
+	// Trim the word in case extra space was included
+	word = TextCritical.trim(word);
 	
 	// Reset the content to the loading content
 	var loading_template = $("#morphology-loading").html();
@@ -208,7 +217,15 @@ TextCritical.open_morphology_dialog = function( word ){
 	}).error( function(jqXHR, textStatus, errorThrown) {
 		$("#morphology-dialog-content").html( "<h4>Parse failed</h4> The request to parse could not be completed" );
 	});
-	
+}
+
+/**
+ * Trims the string.
+ * @param s the string to be stripped
+ */
+TextCritical.trim = function(s) 
+{
+    return String(s).replace(/^\s+|\s+$/g, '');
 }
 
 /**
