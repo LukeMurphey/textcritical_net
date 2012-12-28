@@ -83,7 +83,7 @@ class Division(models.Model):
     title_slug       = models.SlugField()
     original_title   = models.CharField(max_length=200, blank=True, null=True)
     subtitle         = models.CharField(max_length=200, blank=True)
-    descriptor       = models.CharField(max_length=10)
+    descriptor       = models.CharField(max_length=10, db_index=True)
     
     type             = models.CharField(max_length=50, blank=True, null=True)
     level            = models.IntegerField()
@@ -91,7 +91,7 @@ class Division(models.Model):
     original_content = models.TextField(blank=True)
     
     parent_division  = models.ForeignKey('self', blank=True, null=True)
-    readable_unit    = models.BooleanField(default=False)
+    readable_unit    = models.BooleanField(default=False, db_index=True)
     
     def __unicode__(self):
         if self.title is not None and len(self.title) > 0:
