@@ -70,9 +70,8 @@ body.dark .verse_container.highlighted{
 
 .word.highlighted{
     @include rounded(3px);
-    background-color: #FAA732;
-    color: black;
-    padding: 3px;
+    background-color: #49AFCD;
+    color: white;
 }
 
 @for $i from 2 through 5 {
