@@ -208,6 +208,11 @@ class Verse(models.Model):
             return self.indicator
         else:
             return unicode(self.sequence_number)
+        
+    def save(self, *args, **kwargs):
+        
+        # Normalize the content so that we can do searches by normalizing to 
+        self.content = language_tools.normalize_unicode( self.content )
     
 class WorkSource(models.Model):
     """
@@ -235,7 +240,7 @@ class Lemma(models.Model):
     def save(self, *args, **kwargs):
         
         # Normalize the form to NFKC so that we can do queries reliably
-        self.lexical_form = unicodedata.normalize("NFKC", self.lexical_form )
+        self.lexical_form = language_tools.normalize_unicode( self.lexical_form )
         
         # Save the basic form
         self.basic_lexical_form = language_tools.strip_accents( self.lexical_form )
