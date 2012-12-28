@@ -189,7 +189,7 @@ def get_division( work, division_0=None, division_1=None, division_2=None, divis
         return None # We couldn't find a matching division, perhaps one doesn't exist with the given set of descriptors?
     
         
-def read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, **kwargs):
+def read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
     
     # Some warnings that should be posted to the user
     warnings = []
@@ -203,7 +203,11 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     # Note a warning if were unable to find the given chapter
     chapter_not_found = False
     
-    if division is None and division_0 is not None:
+    if leftovers is not None:
+        warnings.append( ("Section not found", "The place in the text you asked for could not be found (the reference you defined is too deep).") )
+        chapter_not_found = True
+    
+    elif division is None and division_0 is not None:
         warnings.append( ("Section not found", "The place in the text you asked for could not be found.") )
         chapter_not_found = True
     
