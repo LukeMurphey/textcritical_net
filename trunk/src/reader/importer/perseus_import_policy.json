@@ -186,6 +186,7 @@
         "language" : "Greek",
         "import_parameters" : {
             "only_leaf_divisions_readable" : true,
+            "division_tags" : ["div1", "div2"],
             "state_set" : 0
         }
     },

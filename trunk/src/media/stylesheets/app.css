@@ -236,6 +236,9 @@ body.dark .verse_container.highlighted {
   display: block; }
 .verse .lb {
   display: block; }
+.verse .div3 {
+  padding-top: 16px;
+  display: block; }
 
 #morphology-dialog-content {
   height: 220px; }
