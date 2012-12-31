@@ -229,6 +229,13 @@ body.dark .verse_container.highlighted {
   content: "..."; }
 .verse .quote {
   font-style: italic; }
+.verse .docauthor {
+  display: block;
+  padding-bottom: 16px; }
+.verse .label {
+  display: block; }
+.verse .lb {
+  display: block; }
 
 #morphology-dialog-content {
   height: 220px; }
