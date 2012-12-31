@@ -182,6 +182,14 @@
         }
     },
     {
+        "title"  : ["Greek Anthology, Volume I", "Greek Anthology, Volume II", "Greek Anthology, Volume III", "Greek Anthology, Volume IV", "Greek Anthology, Volume V" ],
+        "language" : "Greek",
+        "import_parameters" : {
+            "only_leaf_divisions_readable" : true,
+            "state_set" : 0
+        }
+    },
+    {
         "author" : "Lucian",
         "title"  : "Nigrinus",
         "language" : "Greek",

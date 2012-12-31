@@ -70,7 +70,8 @@ class PerseusTextImporter(TextImporter):
     VERSE_TAG_NAME = "verse"
     CHAPTER_TAG_NAME = "chapter"
     
-    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None, ignore_content_before_first_milestone=False, ignore_undeclared_divs=False, only_last_state_is_non_chunk=False):
+    def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None,
+                       ignore_content_before_first_milestone=False, ignore_undeclared_divs=False, only_last_state_is_non_chunk=False, only_leaf_divisions_readable=False):
         """
         Constructs a Perseus text importer.
         
@@ -84,6 +85,7 @@ class PerseusTextImporter(TextImporter):
         ignore_content_before_first_milestone -- if true, then content before the first milestone will be ignored
         ignore_undeclared_divs -- if true, then divs that are not in the refsdecl will be ignored
         only_last_state_is_non_chunk -- if true, then all state in the refsdecl other than the last one will assumed to be chunks
+        only_bottom_division_readable -- if true, then only the bottom-most division will be allowed to be readable
         """
         
         self.overwrite_existing = overwrite_existing
@@ -100,6 +102,7 @@ class PerseusTextImporter(TextImporter):
         self.ignore_content_before_first_milestone = ignore_content_before_first_milestone
         self.ignore_undeclared_divs = ignore_undeclared_divs
         self.only_last_state_is_non_chunk = only_last_state_is_non_chunk
+        self.only_leaf_divisions_readable = only_leaf_divisions_readable
     
     def import_xml_string(self, xml_string ):
         """
@@ -166,7 +169,7 @@ class PerseusTextImporter(TextImporter):
                 
             # Restart the line count for the next division
             import_context.reset_start_line_count()
-            
+        
         # Save the XML content for the previous chapter
         self.save_original_content(import_context)
     
@@ -277,6 +280,14 @@ class PerseusTextImporter(TextImporter):
             import_context.initialize_xml_doc()
         
         import_context.verse = TextImporter.make_verse(self, import_context.verse, import_context.division, save)
+        
+        # If we are only to allow edge division nodes as readable units, then make sure divisions with children are not set as readable
+        if self.only_leaf_divisions_readable and import_context.division is not None and import_context.division.readable_unit == True:
+            
+            # If the division has children, make sure readability is set to false
+            if Division.objects.filter(parent_division=import_context.division).count() > 0:
+                import_context.division.readable_unit = False
+                import_context.division.save()
         
         return import_context.verse
     
@@ -492,7 +503,7 @@ class PerseusTextImporter(TextImporter):
     @staticmethod
     def use_line_numbers_for_division_titles(tei_header_node):
         """
-        Determines if the readable unit divisions ought to beset to the line numbers.
+        Determines if the readable unit divisions ought to be set to the line numbers.
         
         Arguments:
         tei_header_node -- A node representing the TEI header
