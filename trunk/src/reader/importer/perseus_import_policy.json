@@ -16,15 +16,28 @@
         }
     },
     {
-        "author" : "Aeschines",
-        "title" : "Speeches (Greek). Machine readable text",
+        "author" : "Arrian",
+        "editor" : "A.G. Roos",
+        "title"  : "Anabasis",
         "language" : "Greek",
         "import_parameters" : {
             "state_set" : 0,
             "transforms" : {
                 "set_meta_data" : {
-                    "title_slug" : "speeches-aeschines",
-                    "title" : "Speeches (Aeschines)"
+                    "title_slug" : "anabasis-roos"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Aeschines",
+        "title" : "Speeches",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "speeches-aeschines"
                 }
             }
         }
@@ -96,6 +109,21 @@
     {
         "author" : "Euripides",
         "language" : "Greek",
+        "title" : "Electra",
+        "import_parameters" : {
+            "use_line_count_for_divisions" : true,
+            "ignore_division_markers" : true,
+            "state_set" : 0
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "electra-euripides"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Euripides",
+        "language" : "Greek",
         "import_parameters" : {
             "use_line_count_for_divisions" : true,
             "ignore_division_markers" : true,
@@ -125,6 +153,400 @@
         "title" : "Quomodo adolescens poetas audire debeat",
         "import_parameters" : {
             "state_set" : 0
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "W. C. Helmbold",
+        "title"  : "An virtus doceri possit",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "an-virtus-doceri-possit-hembold"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "W. C. Helmbold",
+        "title"  : "An vitiositas ad infelicitatem sufficia",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "an-vitiositas-ad-infelicitatem-sufficia-hembold"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "W. C. Helmbold",
+        "title"  : "Animine an corporis affectiones sint peiores",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "animine-an-corporis-affectiones-sint-peiores-hembold"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "Frank Cole Babbitt",
+        "title"  : "Apophthegmata Laconica",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "apophthegmata-laconica-babbitt"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "Frank Cole Babbitt",
+        "title"  : "De Alexandri magni fortuna aut virtute",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "de-alexandri-magni-fortuna-aut-virtute-babbitt"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "W. C. Helmbold",
+        "title"  : "De amore prolis",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "de-amore-prolis-hembold"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "W. C. Helmbold",
+        "title"  : "De cohibenda ira",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "de-cohibenda-ira-hembold"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "W. C. Helmbold",
+        "title"  : "De curiositate",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "de-curiositate-hembold"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "Frank Cole Babbitt",
+        "title"  : "De fortuna Romanorum",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "de-fortuna-romanorum-babbitt"
+                }
+            }
+        }
+    },
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    {
+        "author" : "Plutarch",
+        "editor" : "W. C. Helmbold",
+        "title"  : "De fraterno amore",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "de-fraterno-amore-hembold"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "W. C. Helmbold",
+        "title"  : "De garrulitate",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "de-garrulitate-hembold"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "Frank Cole Babbitt",
+        "title"  : "De gloria Atheniensium",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "de-gloria-atheniensium-babbitt"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : ["Harold Cherniss", "William C. Helmbold"],
+        "title"  : "De primo frigido",
+        "should_import" : false,
+        "import_parameters" : {
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "de-primo-frigido-hembold"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "W. C. Helmbold",
+        "title"  : "De tranquilitate animi",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "de-tranquilitate-animi-hembold"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "W. C. Helmbold",
+        "title"  : "De virtute morali",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "de-virtute-morali-hembold"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "Frank Cole Babbitt",
+        "title"  : "Instituta Laconica",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "instituta-laconica-babbitt"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "Frank Cole Babbitt",
+        "title"  : "Lacaenarum Apophthegmata",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "lacaenarum-apophthegmata-babbitt"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "Frank Cole Babbitt",
+        "title"  : "Mulierum virtutes",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "mulierum-virtutes-babbitt"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Aristides, Aelius",
+        "title"  : "Orationes",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "orationes-aristides"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "Frank Cole Babbitt",
+        "title"  : "Parallela minora",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "parallela-minora-babbitt"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "Frank Cole Babbitt",
+        "title"  : "Regum et imperatorum apophthegmata",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "regum-et-imperatorum-apophthegmata-babbitt"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "Frank Cole Babbitt",
+        "title"  : "Quaestiones Graecae",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "quaestiones-graecae-babbitt"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "editor" : "Frank Cole Babbitt",
+        "title"  : "Quaestiones Romanae",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "quaestiones-romanae-babbitt"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Andocides",
+        "title"  : "Speeches",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "speeches-andocides"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Dinarchus",
+        "title"  : "Speeches",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "speeches-dinarchus"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Hyperides",
+        "title"  : "Speeches",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "speeches-hyperides"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Lycurgus",
+        "title"  : "Speeches",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "speeches-lycurgus"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Lysias",
+        "title"  : "Speeches",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "speeches-lysias"
+                }
+            }
         }
     },
     {
@@ -165,6 +587,21 @@
             "use_line_count_for_divisions" : true,
             "state_set" : 0,
             "ignore_content_before_first_milestone" : true
+        }
+    },
+    {
+        "author" : "Lucian",
+        "title"  : "Alexander",
+        "language" : "Greek",
+        "import_parameters" : {
+            "use_line_count_for_divisions" : true,
+            "state_set" : 0,
+            "ignore_content_before_first_milestone" : true,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "alexander-lucian"
+                }
+            }
         }
     },
     {
