@@ -445,7 +445,18 @@ class PerseusTextImporter(TextImporter):
         
         if len(editor_nodes) > 0:
             for ed in editor_nodes:
-                editors.append( PerseusTextImporter.getText(ed.childNodes) )
+                
+                editor = PerseusTextImporter.getText(ed.childNodes)
+                
+                # If the editor has an "and" in it, then split up the editor into two fields
+                editors_and = editor.split("and")
+                
+                if len(editors_and) > 1:
+                    for e in editors_and:
+                        editors.append( e.strip() )
+                        
+                else:
+                    editors.append( editor )
         else:
             return None
         
