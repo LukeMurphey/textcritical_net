@@ -365,7 +365,13 @@ class TestPerseusBatchImporter(TestReader):
         wd = WorkDescriptor(author="Lucian", title=["Abdicatus", "Anacharsis", "Bis accusatus sive tribunalia", "Cataplus"])
         
         self.assertTrue( wd.matches( ["Abdicatus", "Anacharsis", "Bis accusatus sive tribunalia", "Cataplus"], "Anacharsis" ) )
-        self.assertTrue( wd.should_be_processed("Lucian", "Anacharsis", "52.gk-xml", "Greek") )
+        self.assertTrue( wd.should_be_processed("Lucian", "Anacharsis", "52.gk-xml", "Greek", None) )
+        
+    def test_match_editor(self):
+        
+        wd = WorkDescriptor(editor="Herbert Weir Smyth, Ph.D.", title="Eumenides")
+        
+        self.assertTrue( wd.should_be_processed("Aeschylus", "Eumenides", "52.gk-xml", "Greek", "Herbert Weir Smyth, Ph.D.") )
     
     def test_import(self):
         
@@ -379,6 +385,51 @@ class TestPerseusBatchImporter(TestReader):
         importer = PerseusBatchImporter( perseus_directory=directory, book_selection_policy=import_policy.should_be_processed )
         
         self.assertEqual( importer.do_import(), 1 )
+        
+    def test_import_editor_filter(self):
+        
+        directory = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'test')
+        
+        work_descriptor = WorkDescriptor(title="Eumenides", editor="Herbert Weir Smyth, Ph.D.")
+        
+        import_policy = ImportPolicy()
+        import_policy.descriptors.append( work_descriptor )
+        
+        importer = PerseusBatchImporter( perseus_directory=directory, book_selection_policy=import_policy.should_be_processed )
+        
+        self.assertEqual( importer.do_import(), 1 )
+        
+        
+    def test_import_skip_document(self):
+                
+        directory = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'test')
+        
+        # Make sure the regular descriptor matches
+        work_descriptor = WorkDescriptor(author="Plutarch", title="De primo frigido", editor=["Harold Cherniss", "William C. Helmbold"])
+        
+        self.assertTrue( work_descriptor.should_be_processed("Plutarch", "De primo frigido", "plut.127_loeb_eng.xml", "Greek", ["Harold Cherniss", "William C. Helmbold"]) )
+        
+        # Make sure the dropping action matches
+        work_descriptor2 = WorkDescriptor(author="Plutarch", title="De primo frigido", editor=["Harold Cherniss", "William C. Helmbold"], should_import=False )
+        
+        self.assertFalse( work_descriptor2.should_be_processed("Plutarch", "De primo frigido", "plut.127_loeb_eng.xml", "Greek", ["Harold Cherniss", "William C. Helmbold"]) )
+        
+        # Now run the imports and make sure the correct action occurs when allowing importation
+        import_policy = ImportPolicy()
+        import_policy.descriptors.append( work_descriptor )
+        
+        importer = PerseusBatchImporter( perseus_directory=directory, book_selection_policy=import_policy.should_be_processed )
+        
+        self.assertEqual( importer.do_import(), 1 )
+        
+        # Now run the imports and make sure the correct action occurs when dis-allowing importation
+        
+        import_policy2 = ImportPolicy()
+        import_policy2.descriptors.append( work_descriptor2 )
+        
+        importer = PerseusBatchImporter( perseus_directory=directory, book_selection_policy=import_policy2.should_be_processed )
+        
+        self.assertEqual( importer.do_import(), 0 )
         
     def test_delete_unnecessary_divisions(self):
         
@@ -594,6 +645,16 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         self.assertEquals( editors[0], "Brooke Foss Westcott")
         self.assertEquals( editors[1], "Fenton John Anthony Hort")
+        
+    def test_get_editors_multiple_in_single_field(self):
+        
+        book_xml = self.load_test_resource('plut.127_loeb_eng.xml')
+        book_doc = parseString(book_xml)
+        
+        editors = PerseusTextImporter.get_editors(book_doc)
+        
+        self.assertEquals( editors[0], "Harold Cherniss")
+        self.assertEquals( editors[1], "William C. Helmbold")
     
     def test_get_author_no_title_stmt(self):
         

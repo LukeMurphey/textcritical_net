@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE TEI.2
+  PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+   <teiHeader type="text" status="new">
+      <fileDesc>
+         <titleStmt>
+            <title>De primo frigido</title>
+            <title type="sub">Machine readable text</title>
+            <author n="Plut.">Plutarch</author>
+            <editor role="editor" n="Loeb">Harold Cherniss and William C. Helmbold</editor>&responsibility;&fund.NEH;</titleStmt>
+         <extent/>&Perseus.publish;<sourceDesc>
+            <biblStruct>
+               <analytic/>
+               <monogr>
+                  <author>Plutarch</author>
+                  <title>Moralia</title>
+                  <respStmt>
+                     <resp>with an English Translation by</resp>
+                     <name>Harold Cherniss and William C. Helmbold</name>
+                  </respStmt>
+                  <imprint>
+                     <pubPlace>Cambridge, MA</pubPlace>
+                     <publisher>Harvard University Press</publisher>
+                     <pubPlace>London</pubPlace>
+                     <publisher>William Heinemann Ltd.</publisher>
+                     <date>1957</date>
+                  </imprint>
+                  <biblScope type="volume">12</biblScope>
+               </monogr>
+            </biblStruct>
+         </sourceDesc>
+      </fileDesc>
+      <encodingDesc>
+         <editorialDecl>
+            <correction status="high" method="silent">
+               <p>optical character recognition</p>
+            </correction>
+         </editorialDecl>
+         <refsDecl doctype="TEI.2">
+            <state unit="section"/>
+         </refsDecl><!--<refsDecl doctype="TEI.2">
+				<state unit="stephpage" n="chunk"/>
+				</refsDecl>--></encodingDesc>
+      <profileDesc>
+         <langUsage>
+            <language id="greek">Greek</language>
+            <language id="eng">English</language>
+            <language id="la">Latin</language>
+         </langUsage>
+      </profileDesc>
+      <revisionDesc>
+         <change>
+            <date>5/10</date>
+            <respStmt>
+               <name>RS</name>
+               <resp/>
+            </respStmt>
+            <item>tagged and parsed</item>
+         </change>
+      </revisionDesc>
+   </teiHeader>
+   <text>
+      <body>
+         <div1 type="section" n="intro">
+            <pb id="v.12.p.227"/>
+            <head>ON THE PRINCIPLE OF COLD (DE PRIMO FRIGIDO) <lb/> INTRODUCTION</head>
+            <p>
+					This little essay, or open letter to Favorinus, is not
+					written in a controversial spirit, though a few sharp
+					comments are made from time to time. Having
+					established (chapters 5-7) that an element of Cold
+					really exists, Plutarch proceeds to consider what that
+					element may be. Since fire is obviously excluded,
+					can it be air, as the Stoics believe (8-12), or water,
+					as Empedocles, and an early Peripatetic, Strato, hold
+					(13-16) ? Or, indeed, may it be earth itself (17-22) ?
+					This latter opinion is apparently put forward by
+					Plutarch as an original contribution to theoretical
+					physics and there is no reason to believe it is not his.
+					The essay closes, however, with a recommendation
+					to scepticism,<note resp="ed" place="unspecified" anchored="yes">See J. Schr&ouml;ter, <hi rend="italics">Plutarchs Stellung zur Skepsis</hi> (Greifswald, 1911), pp. 23 and 40. He compares other recomendations to the suspension of judgement, such as <hi rend="italics">Mor.</hi> 430 f - 431 a. <hi rend="italics">Cf.</hi> also Hartman, <hi rend="italics">De Plutarcho</hi>, pp. 253 f.</note> so that our author may not have regarded his attempted proof as cogent, as indeed it is
+					not.
+				</p>
+				</div1>
+				</body>
+				</text>
+				</TEI.2>
+				
