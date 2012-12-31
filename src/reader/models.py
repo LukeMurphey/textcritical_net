@@ -211,8 +211,15 @@ class Verse(models.Model):
         
     def save(self, *args, **kwargs):
         
-        # Normalize the content so that we can do searches by normalizing to 
-        self.content = language_tools.normalize_unicode( self.content )
+        # Normalize the content so that we can do searches by normalizing to the same form of Unicode
+        """
+        if isinstance( self.content, str):
+            self.content = language_tools.normalize_unicode( unicode(self.content, "UTF-8", 'strict') )
+        else:
+            self.content = language_tools.normalize_unicode( self.content )
+        """
+        
+        super(Verse, self).save(*args, **kwargs)
     
 class WorkSource(models.Model):
     """
