@@ -71,7 +71,7 @@ class TestGreekLanguageTools(TestReader):
         self.assertEqual( language_tools.normalize_unicode( language_tools.strip_accents( u"θεός" )), u"θεος")
         
     def test_strip_accents_str(self):
-        self.assertEqual( language_tools.normalize_unicode( "θεός" ), u"θεος")
+        self.assertEqual( language_tools.normalize_unicode( u"θεός" ), u"θεός")
     
     def test_beta_code_conversion(self):
         self.assertEqual( Greek.beta_code_str_to_unicode("H)/LIOS"), u"ἤλιος")
