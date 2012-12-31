@@ -71,7 +71,8 @@ class PerseusTextImporter(TextImporter):
     CHAPTER_TAG_NAME = "chapter"
     
     def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None,
-                       ignore_content_before_first_milestone=False, ignore_undeclared_divs=False, only_last_state_is_non_chunk=False, only_leaf_divisions_readable=False):
+                       ignore_content_before_first_milestone=False, ignore_undeclared_divs=False, only_last_state_is_non_chunk=False,
+                       only_leaf_divisions_readable=False, division_tags=None):
         """
         Constructs a Perseus text importer.
         
@@ -86,6 +87,7 @@ class PerseusTextImporter(TextImporter):
         ignore_undeclared_divs -- if true, then divs that are not in the refsdecl will be ignored
         only_last_state_is_non_chunk -- if true, then all state in the refsdecl other than the last one will assumed to be chunks
         only_bottom_division_readable -- if true, then only the bottom-most division will be allowed to be readable
+        division_tags -- if not none, only division tags within this list will be considered valid
         """
         
         self.overwrite_existing = overwrite_existing
@@ -103,6 +105,11 @@ class PerseusTextImporter(TextImporter):
         self.ignore_undeclared_divs = ignore_undeclared_divs
         self.only_last_state_is_non_chunk = only_last_state_is_non_chunk
         self.only_leaf_divisions_readable = only_leaf_divisions_readable
+        
+        if division_tags is not None:
+            self.division_tags = division_tags[:]
+        else:
+            self.division_tags = None
     
     def import_xml_string(self, xml_string ):
         """
@@ -1168,7 +1175,7 @@ class PerseusTextImporter(TextImporter):
             ###################################
             # Handle division nodes
             ###################################
-            elif not self.ignore_division_markers and PerseusTextImporter.DIV_PARSE_REGEX.match( node.tagName ):
+            elif not self.ignore_division_markers and PerseusTextImporter.DIV_PARSE_REGEX.match( node.tagName ) and (self.division_tags is None or node.tagName in self.division_tags) :
                 
                 # Get the type of the section
                 division_type = None
@@ -1194,6 +1201,7 @@ class PerseusTextImporter(TextImporter):
                     
                     # Ignore this one
                     pass
+                
                 else:
                     
                     # Note that we have not observed a milestone yet in this division

@@ -997,7 +997,7 @@ semno/teron *)idoumai/an w)no/masan.
         self.assertEquals(divisions[0].title, "lines 1-48")
         
     def test_load_book_only_bottom_division_readable(self):
-        # See #469, http://lukemurphey.net/issues/469
+        # See #502, http://lukemurphey.net/issues/502
         
         book_xml = self.load_test_resource('01_gk.xml')
         book_doc = parseString(book_xml)
@@ -1006,7 +1006,21 @@ semno/teron *)idoumai/an w)no/masan.
         
         divisions = Division.objects.filter(work=self.importer.work)
         
+        self.assertEquals(divisions.count(), 13)
         self.assertEquals(divisions.filter(readable_unit=True).count(), 11) #is 13 without using only_leaf_divisions_readable = True 
+        
+    def test_load_book_explicit_division_tags(self):
+        # See #503, http://lukemurphey.net/issues/503
+        
+        book_xml = self.load_test_resource('01_gk.xml')
+        book_doc = parseString(book_xml)
+        self.importer.only_leaf_divisions_readable = True
+        self.importer.division_tags = ["div1", "div2"]
+        self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=self.importer.work)
+        
+        self.assertEquals(divisions.count(), 12) #Should not have made the div3 under chapter 10 a division
         
     def test_xml_use_line_numbers(self):
         
