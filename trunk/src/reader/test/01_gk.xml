@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE TEI.2
+  PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersVerse PUBLIC "-//Perseus P4//DTD Perseus Verse//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersVerse.dtd" >
+%PersVerse;
+]>
+<TEI.2>
+   <teiHeader type="text" status="new">
+      <fileDesc>
+         <titleStmt>
+            <title>Greek Anthology, Volume I</title>
+            <title type="sub">Machine readable text</title>
+            <editor role="editor" n="Loeb">W. R. Paton</editor>&responsibility;&fund.NEH;&fund.Google;</titleStmt>
+         <extent/>&Perseus.publish;<sourceDesc>
+            <listBibl>
+               <biblStruct>
+                  <analytic/>
+                  <monogr>
+                     <title>The Greek Anthology</title>
+                     <respStmt>
+                        <resp>with an English Translation by</resp>
+                        <name>W. R. Paton</name>
+                     </respStmt>
+                     <imprint>
+                        <pubPlace>London</pubPlace>
+                        <publisher>William Heinemann Ltd.</publisher>
+                        <date>1916</date>
+                     </imprint>
+                     <biblScope type="volume">1</biblScope>
+                  </monogr>
+               </biblStruct>
+            </listBibl>
+         </sourceDesc>
+      </fileDesc>
+      <encodingDesc>
+         <editorialDecl>
+            <correction status="high" method="silent">
+               <p>optical character recognition</p>
+            </correction>
+         </editorialDecl>
+         <refsDecl doctype="TEI.2">
+            <state unit="book" delim="."/>
+            <state unit="chapter" n="chunk"/>
+         </refsDecl>
+      </encodingDesc>
+      <profileDesc>
+         <langUsage>
+            <language id="greek">Greek</language>
+            <language id="la">Latin</language>
+         </langUsage>
+      </profileDesc>
+      <revisionDesc>
+         <change>
+            <date>6/10</date>
+            <respStmt>
+               <name>RS</name>
+               <resp/>
+            </respStmt>
+            <item>tagged and parsed</item>
+         </change>
+      </revisionDesc>
+   </teiHeader>
+   <text>
+      <body>
+         <pb id="v.1.p.2"/>
+         <div1 type="book" n="1">
+            <label>ta\ tw=n *xhristianw=n e)pigra/mmata eu)sebh= te kai\ qei=a e)pigra/mmata ka)\n oi( *(/ellhnes a)pare/skwntai</label>
+            <div2 type="chapter" n="1">
+               <docAuthor lang="la">
+                  <persName lang="la" key="tlg-0138"><foreign lang="la">anonymi epigrammatici</foreign></persName>
+               </docAuthor>
+               <label>ei)s to\ kibou/rion th=s a(gi/as *sofi/as</label>
+               <p>
+                  <lb/> a(\s oi( pla/noi kaqei=lon e)nqa/d' ei)ko/nas
+<lb/> a)/naktes e)sth/lwsan eu)sebei=s pa/lin.
+</p>
+            </div2>
+            <div2 type="chapter" n="2">
+               <docAuthor lang="la">
+                  <persName lang="la" key="tlg-0138"><foreign lang="la">anonymi epigrammatici</foreign></persName>
+               </docAuthor>
+               <label>e)n tai=s a(yi=si tw=n *blaxernw=n</label>
+               <p>
+                  <lb/> qei=os *)iousti=nos, *sofi/hs po/sis, w(=| po/re *xristo\s
+<lb/> pa/nta diorqou=sqai, kai\ kle/os e)n pole/mois,
+<lb/>mhtro\s a)peiroga/moio do/mon ska/zonta noh/sas,
+<lb/> saqro\n a)poskeda/sas teu=ce/ min a)sfale/ws.
+</p>
+            </div2>
+            <div2 type="chapter" n="3">
+               <docAuthor lang="la">
+                  <persName lang="la" key="tlg-0138"><foreign lang="la">anonymi epigrammatici</foreign></persName>
+               </docAuthor>
+               <label>ei)s to\ au)to\ e)n tai=s au)tai=s</label>
+               <p>
+                  <lb/>o( pri\n *)iousti=nos perikalle/a dei/mato nho\n
+<lb/>tou=ton mhtri\ *qeou=, ka/llei+ lampo/menon:
+<lb/>o(pxo/teros de\ met' au)to\n *)iousti=nos basileu/wn
+<lb/>krei/ssona th=s prote/rhs w)/pasen a)glai+/hn.
+<pb id="v.1.p.4"/>
+               </p>
+            </div2>
+            <div2 type="chapter" n="4">
+               <docAuthor lang="la">
+                  <persName lang="la" key="tlg-0138"><foreign lang="la">anonymi epigrammatici</foreign></persName>
+               </docAuthor>
+               <label>ei)s to\n nao\n tou= *prodro/mou e)n tw=| *stoudi/ou</label>
+               <p>
+                  <lb/> tou=ton *)iwa/nnh|, *xristou= mega/lw| qera/ponti,
+<lb/> *stou/dios a)glao\n oi)=kon e)dei/mato: karpali/mws de\
+<lb/> tw=n ka/men eu(/reto misqo/n, e(lw\n u(pathi/da r(a/bdon.
+</p>
+            </div2>
+            <div2 type="chapter" n="5">
+               <docAuthor lang="la">
+                  <persName lang="la" key="tlg-0138"><foreign lang="la">anonymi epigrammatici</foreign></persName>
+               </docAuthor>
+               <label>ei)s to\n nao\n tou= a(gi/ou a)posto/lou *qwma= e)n toi=s *)amanti/ou</label>
+               <p>
+                  <lb/>to/nde *qew=| ka/mes oi)=kon, *)ama/ntie, messo/qi po/ntou,
+<lb/>toi=s poludinh/tois ku/masi marna/menos.
+<lb/>ou) no/tos, ou) bore/hs i(ero\n se/o dw=ma tina/cei,
+<lb/> nhw=| qespesi/w| tw=|de fulasso/menon.
+<milestone unit="lnum" n="5"/>
+                  <lb/> zw/ois h)/mata polla/: su\ ga\r neoqhle/a *(rw/mhn,
+<lb/> po/ntw| e)pai+/cas, qh/kao faidrote/rhn.
+</p>
+            </div2>
+            <div2 type="chapter" n="6">
+               <docAuthor lang="la">
+                  <persName lang="la" key="tlg-0138"><foreign lang="la">anonymi epigrammatici</foreign></persName>
+               </docAuthor>
+               <label>ei)s to\n nao\n tou= a(gi/ou *qeodw/rou e)n toi=s *sfwraki/ou</label>
+               <p>
+                  <lb/>*sfwra/kios poi/hse fugw\n flo/ga ma/rturi nho/n.
+</p>
+            </div2>
+            <div2 type="chapter" n="7">
+               <docAuthor lang="la">
+                  <persName lang="la" key="tlg-0138"><foreign lang="la">anonymi epigrammatici</foreign></persName>
+               </docAuthor>
+               <label>ei)s to\n au)to/n</label>
+               <p>
+                  <lb/> *sfwra/kie, zw/onti fi/la qrepth/ria ti/nwn
+<lb/> gh/qeen *)anto/lios, so\s a)neyio/s: oi)xome/nw| de\
+<lb/>ai)ei/ soi gerarh\n tele/ei xa/rin w(/ste kai\ a)/llhn
+<lb/> eu(=re, kai\ e)n nhw=| s1' a)neqh/kato, to\n ka/mes au)to/s.
+</p>
+            </div2>
+            <div2 type="chapter" n="8">
+               <docAuthor lang="la">
+                  <persName lang="la" key="tlg-0138"><foreign lang="la">anonymi epigrammatici</foreign></persName>
+               </docAuthor>
+               <label>ei)s to\n nao\n tw=n a(gi/wn a)posto/lwn plhsi/on tou= a(gi/ou *sergi/ou ei)s ta\ *(ormi/sdou</label>
+               <p>
+                  <lb/> *xristo\n pambasilh=a fi/lois kama/toisi gerai/rwn
+<lb/>tou=ton *)ioustiniano\s a)gakle/a dei/mato nho\n
+<pb id="v.1.p.6"/>
+                  <lb/> *pe/trw| kai\ *pau/lw|: qera/pousi ga\r eu)=xos o)pa/zwn
+<lb/>au)tw=| dh/ tis a)/nakti fe/rei polukude/a timh/n,
+<milestone unit="lnum" n="5"/>
+                  <lb/> e)nqa/de kai\ yuxh=| kai\ o)/mmasi ke/rdos e(toi=mon
+<lb/>eu)xai=sin me\n e(/kastos o(/ ti xre/os e)sti\n e(le/sqw,
+<lb/> terpe/sqw de\ o(rw=n ka/llos kai\ dw/matos ai)/glhn.
+</p>
+            </div2>
+            <div2 type="chapter" n="9">
+               <docAuthor lang="la">
+                  <persName lang="la" key="tlg-0138"><foreign lang="la">anonymi epigrammatici</foreign></persName>
+               </docAuthor>
+               <label>ei)s to\n nao\n tou=) *)arxagge/lou e)n *boqre/ptw|</label>
+               <p>
+                  <lb/> kai\ to/de sw=n kama/twn panaoi/dimon e)/rgon e)tu/xqh,
+<lb/>*gerra/die kluto/mhti: su\ ga\r perikalle/a nho\n
+<lb/> a)ggelikh=s stratih=s shma/ntoros au)=tis e)/deicas.
+</p>
+            </div2>
+            <div2 type="chapter" n="10">
+               <docAuthor lang="la">
+                  <persName lang="la" key="tlg-0138"><foreign lang="la">anonymi epigrammatici</foreign></persName>
+               </docAuthor>
+               <label>ei)s to\n nao\n tou= a(gi/ou ma/rturos *polueu/ktou</label>
+               <p>
+                  <lb/>*eu)doki/h me\n a)/nassa *qeo\n speu/dousa gerai/rein,
+<lb/> prw/th nho\n e)/teuce qeofrade/os *polueu/ktou
+<lb/> a)ll' ou) toi=on e)/teuce kai\ ou) to/son ou)/ tini feidoi=,
+<lb/>ou) ktea/twn xate/ousa &mdash; ti/nos basi/leia xati/zei;  &mdash;
+<milestone unit="lnum" n="5"/>
+                  <lb/> a)ll' w(s qumo\n e)/xousa qeopro/pon, o(/tti gene/qlhn
+<lb/> kallei/yei dedaui=an a)mei/nona ko/smon o)pa/zein.
+<lb/> e)/nqen *)ioulianh/, zaqe/wn a)ma/rugma tokh/wn,
+<lb/> te/traton e)k kei/nwn basilh/ion ai(=ma laxou=sa,
+<lb/> e)lpi/das ou)k e)/yeusen a)ristw/dinos a)na/sshs:
+<milestone unit="lnum" n="10"/>
+                  <lb/>a)lla/ min e)k baioi=o me/gan kai\ toi=on e)gei/rei,
+<lb/> ku=dos a)ech/sasa poluskh/ptrwn geneth/rwn
+<lb/> pa/nta ga\r o(/ssa te/lessen u(pe/rtera teu=ce tokh/wn,
+<lb/> o)rqh\n pi/stin e)/xousa filoxri/stoio menoinh=s.
+<lb/>ti/s ga\r *)ioulianh\n ou)k e)/kluen, o(/tti kai\ au)tou\s
+<milestone unit="lnum" n="15"/>
+                  <lb/>eu)kama/tois e)/rgoisin e(ou\s fai/drune tokh=as,
+<lb/>eu)sebi/hs a)le/gousa; mo/nh d' i(drw=ti dikai/w|
+<lb/> a)/cion oi)=kon e)/teucen a)eizw/w| *polueu/ktw|.
+<lb/> kai\ ga\r a)ei\ deda/hken a)memfe/a dw=ra komi/zein
+<lb/> pa=sin a)eqlhth=rsin e)pourani/ou basilh=os.
+<pb id="v.1.p.8"/>
+                  <milestone unit="lnum" n="20"/>
+                  <lb/> pa=sa xqw\n boa/a|, pa=sa pto/lis, o(/tti tokh=as
+<lb/> faidrote/rous poi/hsen a)reiote/roisin e)p' e)/rgois,
+<lb/> pou= ga\r *)ioulianh\n a(gi/ois ou)k e)/stin i)de/sqai
+<lb/> nho\n a)nasth/sasan a)gakle/a; pou= se/o mou/nhs
+<lb/>eu)sebe/wn ou)k e)/stin i)dei=n shmh/ia xeirw=n;
+<milestone unit="lnum" n="25"/>
+                  <lb/> poi=os d' e)/pleto xw=ros, o(\s ou) ma/qe sei=o menoinh\n
+<lb/>eu)sebi/hs plh/qousan; o(/lhs xqono\s e)nnaeth=res
+<lb/> sou\s kama/tous me/lpousin a)eimnh/stous gegaw=tas.
+<lb/> e)/rga ga\r eu)sebi/hs ou) kru/ptetai: ou) ga\r a)e/qlous
+<lb/> lh/qh a)posbe/nnusin a)ristopo/nwn a)reta/wn.
+<milestone unit="lnum" n="30"/>
+                  <lb/> o(/ssa de\ sh\ pala/mh qeopeiqe/a dw/mata teu/xei
+<lb/>ou)d' au)th\ deda/hkas: a)metrh/tous ga/r, o)i/w,
+<lb/> mou/nh su\ cu/mpasan a)na\ xqo/na dei/mao naou/s,
+<lb/>ou)rani/ou qera/pontas a)ei\ trome/ousa *qeoi=o.
+<lb/>i)/xnesi d' eu)kama/toisin e)fespome/nh geneth/rwn
+<milestone unit="lnum" n="35"/>
+                  <lb/> pa=sin, a)eizw/ousan e(h\n tekth/nato fu/tlhn,
+<lb/>eu)sebi/hs cu/mpasan a)ei\ pate/ousa porei/hn.
+<lb/>tou)/neka/ min qera/pontes e)pourani/ou basilh=os,
+<lb/> o(/ssois dw=ra di/dwsin, o(/sois dwmh/sato nhou/s,
+<lb/> profrone/ws e)ru/esqe su\n ui(e/i, toi=o/ te kou/rais:
+<milestone unit="lnum" n="40"/>
+                  <lb/> mi/mnoi d' a)/speton eu)=xos a)ristopo/noio gene/qlhs,
+<lb/> ei)so/ken h)e/lios purilampe/a di/fron e)lau/nei.</p>
+               <div3>
+                  <label>e)n th=| ei)so/dw| tou= au)tou= naou= e)/cw tou= na/rqhkos pro\s th\n a(yi=da</label>
+                  <p>
+                     <lb/> poi=os *)ioulianh=s xoro\s a)/rkio/s e)stin a)e/qlois,
+<lb/>h(\ meta\ *kwnstanti=non e(h=s kosmh/tora *(rw/mhs,
+<lb/>kai\ meta\ *qeudosi/ou pagxru/seon i(ero\n o)/mma,
+<milestone unit="lnum" n="45"/>
+                     <lb/>kai\ meta\ tossati/wn progo/nwn basilhi/da r(i/zan,
+<lb/> a)/cion h(=s geneh=s kai\ u(pe/rteron h)/nusen e)/rgon
+<lb/> ei)n o)li/gois e)/tesin; xro/non h(/d' e)bih/sato mou/nh,
+<pb id="v.1.p.10"/>
+                     <lb/> kai\ sofi/hn pare/lassen a)eidome/nou *solomw=nos,
+<lb/> nho\n a)nasth/sasa qehdo/xon, ou(= me/gas ai)w\n
+<milestone unit="lnum" n="50"/>
+                     <lb/>ou) du/natai me/lyai xari/twn poludai/dalon ai)/glhn
+<lb/> oi(=os me\n probe/bhke baqurri/zoisi qeme/qlois,
+<lb/> ne/rqen a)naqrw/skwn kai\ ai)qe/ros a)/stra diw/kwn
+<lb/> oi(=os d' a)ntoli/hs mhku/netai e)s du/sin e(/rpwn,
+<lb/>a)rrh/tws *fae/qontos u(pastra/ptwn a)marugai=s,
+<milestone unit="lnum" n="55"/>
+                     <lb/>th=| kai\ th=| pleurh=|si: me/shs d' e(ka/terqe porei/hs
+<lb/> ki/ones a)rrh/ktois e)pi\ ki/osin e(sthw=tes
+<lb/>xrusoro/fou a)kti=nas a)erta/zousi kalu/ptrhs.
+<lb/> ko/lpoi d' a)mfote/rwqen e)p' a)yi/dessi xuqe/ntes
+<lb/> fe/ggos a)eidi/nhton e)maiw/santo selh/nhs:
+<milestone unit="lnum" n="60"/>
+                     <lb/> toi=xoi d' a)ntipe/rhqen a)metmh/toisi keleu/qois
+<lb/> qespesi/ous leimw=nas a)nezw/santo meta/llwn,
+<lb/>ou(\s fu/sis a)nqh/sasa me/sois e)ni\ be/nqesi pe/trhs
+<lb/>a)lglai+/hn e)/klepte, *qeou= d' e)fu/lasse mela/qrois,
+<lb/> dw=ron *)ioulianh=s, i(/na qe/skela e)/rga tele/ssh|
+<milestone unit="lnum" n="65"/>
+                     <lb/> a)xra/ntois kradi/hs u(po\ neu/masi tau=ta kamou=sa.
+<lb/>ti/s  de\ fe/rwn qoo\n i)/xnos e)pi\ zefurhi/das au)/ras
+<lb/> u(mnopo/los sofi/hs, e(kato\n blefa/roisi pepoiqw/s,
+<lb/> toceu/sei e(ka/terqe polu/tropa dh/nea te/xnhs,
+<lb/>oi)=kon i)dw\n la/mponta, peri/dromon, a)/llon e)p' a)/llw|,
+<milestone unit="lnum" n="70"/>
+                     <lb/> e)/nq' i(/na kai\ grafi/dwn i(erw=n u(pe\r a)/ntugos au)lh=s
+<lb/> e)/stin i)dei=n me/ga qau=ma, polu/frona *kwnstanti=non,
+<lb/> pw=s profugw\n ei)/dwla qehma/xon e)/sbese lu/sshn,
+<lb/> kai\ *tria/dos fa/os eu(=ren e)n u(/dasi gui=a kaqh/ras.
+<lb/>toi=on *)ioulianh/, meta\ muri/on e(smo\n a)e/qlwn,
+<milestone unit="lnum" n="75"/>
+                     <lb/> h)/nuse tou=ton a)/eqlon u(pe\r yuxh=s geneth/rwn,
+<lb/>kai\ sfete/rou bio/toio, kai\ e)ssome/nwn kai\ e)o/ntwn.
+<pb id="v.1.p.12"/>
+                  </p>
+               </div3>
+            </div2>
+            <div2 type="chapter" n="11">
+               <docAuthor lang="la">
+                  <persName lang="la" key="tlg-0138"><foreign lang="la">anonymi epigrammatici</foreign></persName>
+               </docAuthor>
+               <label>ei)s tou\s a(gi/ous *)anargu/rous tou\s ei)s ta\ *basili/skou</label>
+               <p>
+                  <lb/> toi=s soi=s qera/pousin h( qera/paina prosfe/rw
+<lb/> sofi/a to\ dw=ron. xriste/, prosde/xou ta\ sa/,
+<lb/> kai\ tw=| basilei= mou misqo\n *)iousti/nw| di/dou,
+<lb/> ni/kas e)pi\ ni/kais kata\ no/swn kai\ barba/rwn.
+</p>
+            	</div2>
+        	</div1>
+    	</body>
+	</text>
+</TEI.2>

@@ -996,6 +996,18 @@ semno/teron *)idoumai/an w)no/masan.
         self.assertEquals(divisions.count(), 4)
         self.assertEquals(divisions[0].title, "lines 1-48")
         
+    def test_load_book_only_bottom_division_readable(self):
+        # See #469, http://lukemurphey.net/issues/469
+        
+        book_xml = self.load_test_resource('01_gk.xml')
+        book_doc = parseString(book_xml)
+        self.importer.only_leaf_divisions_readable = True
+        self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=self.importer.work)
+        
+        self.assertEquals(divisions.filter(readable_unit=True).count(), 11) #is 13 without using only_leaf_divisions_readable = True 
+        
     def test_xml_use_line_numbers(self):
         
         tei_node_portion_xml = """
