@@ -58,7 +58,7 @@ LANGUAGE_CODE = 'en-us'
 SITE_ID = 1
 
 # Set the name in the admin interface
-GRAPPELLI_ADMIN_TITLE = "TextCritical.com"
+GRAPPELLI_ADMIN_TITLE = "TextCritical.net"
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
