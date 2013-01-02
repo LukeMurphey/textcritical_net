@@ -21,8 +21,7 @@
   
   <link rel="stylesheet" href="http://TextCritical.net/media/stylesheets/normalize.css">
   <link rel="stylesheet" href="http://TextCritical.net/media/stylesheets/main.css">
-  <link rel="stylesheet" href="file:///Users/lmurphey/Documents/SP/Workspace/TextCritical.com/src/media/stylesheets/app.css">
-  <!-- <link rel="stylesheet" href="http://TextCritical.net/media/stylesheets/app.css">-->
+  <link rel="stylesheet" href="http://TextCritical.net/media/stylesheets/app.css">
   
   <link rel="stylesheet" href="http://TextCritical.net/media/stylesheets/bootstrap.min.css">
   <link rel="stylesheet" href="http://TextCritical.net/media/stylesheets/darkstrap.css">
@@ -125,14 +124,14 @@
     	 } 
     	 
     	 function site_available(){
-    		 console.log("Site is now available, reloading page");
+    		 console.log("Site is now available");
     		 $("#website_available").show();
     		 $("#website_unavailable").hide();
     	 }
     	 
     	 function go_check(){
     		 $.ajax({
- 	    	    url: "http://textcritical.com",
+ 	    	    url: "http://textcritical.net",
  	    	    type: "GET",
  	    	    data: {
  	    	        //Set an empty response to see the error
