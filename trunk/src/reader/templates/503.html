@@ -1,0 +1,167 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>TextCritical.net</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" href="http://TextCritical.net/media/images/favicon.ico" />
+  <link rel="apple-touch-icon" href="http://TextCritical.net/media/images/apple-touch-icon.png">
+  <link rel="apple-touch-icon-precomposed" href="http://TextCritical.net/media/images/apple-touch-icon-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="57x57" href="http://TextCritical.net/media/images/apple-touch-icon-57x57-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://TextCritical.net/media/images/apple-touch-icon-72x72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://TextCritical.net/media/images/apple-touch-icon-114x114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://TextCritical.net/media/images/apple-touch-icon-144x144-precomposed.png">
+  
+  <link rel="stylesheet" href="http://TextCritical.net/media/stylesheets/normalize.css">
+  <link rel="stylesheet" href="http://TextCritical.net/media/stylesheets/main.css">
+  <link rel="stylesheet" href="file:///Users/lmurphey/Documents/SP/Workspace/TextCritical.com/src/media/stylesheets/app.css">
+  <!-- <link rel="stylesheet" href="http://TextCritical.net/media/stylesheets/app.css">-->
+  
+  <link rel="stylesheet" href="http://TextCritical.net/media/stylesheets/bootstrap.min.css">
+  <link rel="stylesheet" href="http://TextCritical.net/media/stylesheets/darkstrap.css">
+  <style>
+      body {
+        /*padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+  </style>
+  <link rel="stylesheet" href="http://TextCritical.net/media/stylesheets/bootstrap-responsive.min.css">
+  <script src="http://TextCritical.net/media/javascripts/libs/modernizr-2.6.1.min.js"></script>
+  
+</head>
+<body class="dark">
+  <!--[if lt IE 7]>
+  	 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+  <![endif]-->
+  
+  <script src="http://TextCritical.net/media/javascripts/libs/require.js"></script>
+  <script src="http://TextCritical.net/media/javascripts/main.min.js"></script>
+  
+  <script language="javascript">
+  	  var textcritical = textcritical || {}; 
+      require(["jquery", "bootstrap"]);
+  </script>
+  
+    <div class="navbar navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container">
+          <a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a href="/" title="TextCritical.net homepage" class="brand">TextCritical.net</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+    
+    	<div id="website_unavailable">
+			<h1>Temporarily unavailable</h1>
+			TextCritical.net is not available right now.
+			Please try again in a few moments.
+	    	
+	    	<p class="actions_500">
+	    		<a id="refresh_page" href="" class="btn"><i class="icon-refresh dialog_button_icon"></i>Try again</a>
+	    	</p>
+    	</div>
+    	
+    	<div id="website_available">
+    	
+			<div id="site_back_online_dialog" class="alert alert-block alert-success fade in">
+	            <strong>Disaster Averted!</strong> TextCritical.net online again
+	        </div>
+    	
+			<h1>And ... were back</h1>
+			After a brief hiatus, TextCritical.net is back online.
+			Sorry for the delay, we'll try to make sure it doesn't happen again.
+	    	
+	    	<p class="actions_500">
+	    		<a id="reload_page" href="" class="btn btn-success"><i class="icon-refresh icon-white dialog_button_icon"></i>Reload page</a>
+	    	</p>
+    	</div>
+    	
+	    <footer>
+	        <hr>
+	        <div class="pull-left">
+	        &copy; <a target="_blank" href="http://LukeMurphey.net">Luke Murphey</a> 2012
+	        </div>
+	        
+	        <div class="pull-right">
+	        <ul class="footer-links">
+	          <li><a href="http://lukemurphey.net/projects/ancient-text-reader/wiki/Source_Code">Source code</a></li>
+	          <li class="muted">·</li>
+	          <li><a href="http://lukemurphey.net/projects/ancient-text-reader/issues?utf8=%E2%9C%93&amp;set_filter=1&amp;f%5B%5D=status_id&amp;op%5Bstatus_id%5D=o&amp;f%5B%5D=&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=updated_on&amp;c%5B%5D=due_date&amp;c%5B%5D=done_ratio&amp;group_by=fixed_version">Issues</a></li>
+	          <li class="muted">·</li>
+	          <li><a href="http://lukemurphey.net/projects/ancient-text-reader/issues/new">Report issue</a></li>
+	        </ul>
+	        </div>
+	    </footer>
+
+  </div>
+  <script src="http://textcritical.net/media//javascripts/libs/require.js"></script>
+  
+  <script src="http://textcritical.net/media//javascripts/main.min.js"></script>
+  
+  
+  <script language="javascript">
+  	  var textcritical = textcritical || {}; 
+      require(["jquery", "bootstrap"]);
+      
+      require(["jquery", "underscore"], function($) {
+    	  
+    	 check_timeout = 3000;
+    	 
+    	 function site_unavailable(){
+    		 console.log("Site is still not available");
+    		 window.setTimeout(go_check, check_timeout);
+    	 } 
+    	 
+    	 function site_available(){
+    		 console.log("Site is now available, reloading page");
+    		 $("#website_available").show();
+    		 $("#website_unavailable").hide();
+    	 }
+    	 
+    	 function go_check(){
+    		 $.ajax({
+ 	    	    url: "http://textcritical.com",
+ 	    	    type: "GET",
+ 	    	    data: {
+ 	    	        //Set an empty response to see the error
+ 	    	        xml: "<response></response>"   
+ 	    	    },
+ 	    	    dataType:"text",
+ 	    	    complete: function(xhr, textStatus) {
+ 	    	    	
+ 	    	    	if( xhr.status == 503 ){
+ 	    	    		site_unavailable();
+ 	    	    	}
+ 	    	    	else{
+ 	    	    		site_available();
+ 	    	    	}
+ 	    	    }
+ 	    	});
+    	 }
+    	 
+    	 window.setTimeout(go_check, check_timeout);
+    	  
+      });
+	      
+      
+  </script>
+  
+  <!-- end scripts -->
+
+  
+
+</body>
+
+</html>
