@@ -341,3 +341,28 @@ body.dark .dataTables_filter > label > input {
 
 #works_list {
   display: none; }
+
+.actions_404 {
+  margin-top: 10px;
+  margin-bottom: 20px; }
+
+.search_404 {
+  margin-top: 16px; }
+
+.actions_500 {
+  padding-top: 20px; }
+
+.refresh_button {
+  margin-right: 4px; }
+
+.reload_button {
+  margin-right: 4px; }
+
+#website_available {
+  display: none; }
+
+.dialog_button_icon {
+  padding-right: 8px; }
+
+#site_back_online_dialog {
+  display: none; }
