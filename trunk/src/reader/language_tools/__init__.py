@@ -1,13 +1,14 @@
 from reader.language_tools.greek import Greek
 import unicodedata
 
-def transform_text( text, language ):
+def transform_text( text, language, return_as_unicode=False ):
     """
     Convert the content according to the rules necessary to make the content work for the given language.
     
     Arguments:
     text -- the text to convert
     language -- the language to use for applying the conversion rules
+    return_as_unicode -- indicates if the content returned ought to be Unicode instead of a string
     """
     
     # Don't try to process a null string as this will fail
@@ -22,7 +23,10 @@ def transform_text( text, language ):
     elif language.lower() == "greek":
         text_unicode = Greek.beta_code_to_unicode(text)
         
-        return text_unicode.encode('utf-8')
+        if return_as_unicode:
+            return text_unicode
+        else:
+            return text_unicode.encode('utf-8')
     
     # By default, just return the text
     else:

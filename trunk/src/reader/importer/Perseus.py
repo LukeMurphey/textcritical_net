@@ -1005,7 +1005,7 @@ class PerseusTextImporter(TextImporter):
         text -- The content from the XML text node
         """
         if self.work is not None:
-            return transform_text(text, self.work.language)
+            return transform_text(text, self.work.language, return_as_unicode=True)
         else:
             return text
         
