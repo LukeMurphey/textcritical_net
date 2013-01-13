@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     
     url(r'^about/?$', 'reader.views.about', name='about' ),
     url(r'^contact/?$', 'reader.views.contact', name='contact' ),
+    url(r'^search/?$', 'reader.views.search', name='search' ),
     
     url(r'^tests/?$', 'reader.views.tests', name='tests' ),
     
