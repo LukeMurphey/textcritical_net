@@ -20,6 +20,18 @@
   background-image: linear-gradient(to top, #ededed 0%, #fefefe 100%); }
 
 /* The following is necessary to work with darkstrap */
+body.dark .well, body.dark .breadcrumb, body.dark input, body.dark input[type="file"], body.dark select, body.dark textarea, body.dark .progress, body.dark code, body.dark pre {
+  -moz-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
+  -webkit-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
+  -o-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
+  box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
+  background: #202020;
+  background-color: rgba(0, 0, 0, 0.3); }
+
+body.dark input, body.dark input[type="file"], body.dark select, body.dark textarea {
+  color: white;
+  border-color: #111111; }
+
 body.dark .pagination ul > li > a, body.dark .pagination ul > li > span {
   background-color: transparent; }
 
