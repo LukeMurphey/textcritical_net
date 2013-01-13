@@ -9,7 +9,7 @@ import logging
 import math
 import difflib
 
-from reader.models import Work, Division, Verse, WordDescription
+from reader.models import Work, Division, Verse, WordDescription, Author
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import uniquefy
@@ -38,6 +38,17 @@ def contact(request):
     return render_to_response('contact.html',
                               {},
                               context_instance=RequestContext(request))
+
+def search(request):
+    
+    authors = Author.objects.all().order_by("name")
+    works = Work.objects.all().order_by("title")
+    
+    return render_to_response('search.html',
+                              {'authors' : authors,
+                               'works'   : works
+                               },
+                              context_instance=RequestContext(request)) 
 
 def works_index(request):
     

@@ -1,0 +1,63 @@
+{% extends "base_with_nav.html" %}
+{% block content %}
+
+
+<form class="form-horizontal">
+	<fieldset>
+	
+	<legend>Search</legend>
+	<div class="control-group">
+		<label class="control-label" for="Search">Search</label>
+        <div class="controls">
+			<input class="input-xxlarge" type="text" id="Search" placeholder="Search terms">
+			<p class="help-block">Enter the text to search for. Greek can be entered as beta-code.</p>
+		</div>
+	</div>
+	
+	<div class="control-group">
+		<label class="control-label" for="Author">Author</label>
+		
+		<div class="controls">
+			<select class="input-xxlarge">
+				<option>(All authors)</option>
+			{% for author in authors %}
+				<option>{{author}}</option>
+			{% endfor %}
+            </select>
+		</div>
+	</div>
+	
+	<div class="control-group">
+		<label class="control-label" for="Work">Work</label>
+		
+		<div class="controls">
+			<select class="input-xxlarge">
+				<option>(All works)</option>
+			{% for work in works %}
+				<option>{{work.title}}
+				{% if work.authors.all.count > 0 %} By {{work.authors.all|join:", "}}{% endif %}
+				{% if work.editors.all.count > 0 %} ({{work.editors.all|join:", "}}){% endif %}</option>
+			{% endfor %}
+            </select>
+		</div>
+	</div>
+	
+	<div class="form-actions">
+    	<button class="btn btn-primary" type="submit">Search</button>
+    </div>
+	
+	</fieldset>
+</form>
+		
+		
+{% endblock %}
+
+{% block javascript %}
+<script language="javascript">
+
+require(["jquery", "store", "app", "underscore"], function($) {
+
+
+});
+</script>
+{% endblock %}
