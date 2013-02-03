@@ -51,9 +51,9 @@
          ================================= -->
     <target name="package_app" depends="get_build_number" description="Create the application package (sans media)">
         <mkdir dir="${value.build.packageoutput.directory}" />
-        <zip destfile="${value.build.packageoutput.directory}/textcritical_app_${svn.revision.max}.zip"
+        <zip destfile="${value.build.packageoutput.directory}/textcritical_${svn.revision.max}.zip"
             basedir="src"
-            excludes="reader/test/**, reader/tests.py, admin/**, media/**, **/*.pyc, textcritical/settings.py"
+            excludes="reader/test/**, reader/tests.py, **/*.pyc, textcritical/settings.py"
             whenempty="create"
         />
     </target>
