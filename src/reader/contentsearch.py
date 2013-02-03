@@ -3,16 +3,22 @@ from whoosh.qparser import QueryParser
 from whoosh.filedb.filestore import FileStorage
 from whoosh.fields import Schema, NUMERIC, TEXT
 
+from time import time
+import logging
 from reader.models import Verse, Division, Work
 
 import os
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 class WorkIndexer:
     """
     The WorkIndexer performs the operations necessary to index Work models using Whoosh.
     """
     
-    def get_schema(self):
+    @classmethod
+    def get_schema(cls):
         """
         Returns a schema for searching works.
         """
@@ -22,14 +28,24 @@ class WorkIndexer:
                        work_id      = NUMERIC,
                        division_id  = NUMERIC)
     
-    def get_index_dir(self):
+    @classmethod
+    def get_index_dir(cls):
         """
         Gets the directory where indexes will be stored.
         """
         
         return os.path.join("..", "var", "indexes")
     
-    def get_index(self, create=False):
+    @classmethod
+    def index_dir_exists(cls):
+        """
+        Determines if the index directory exists.
+        """
+        
+        return os.path.exists( cls.get_index_dir() )
+        
+    @classmethod
+    def get_index(cls, create=False):
         """
         Get a Whoosh index.
         
@@ -38,17 +54,18 @@ class WorkIndexer:
         """
         
         # Get a reference to the indexes path
-        index_dir = self.get_index_dir()
+        index_dir = cls.get_index_dir()
         
         # Make the directory if it does not exist
         if create and not os.path.exists(index_dir):
+            logger.info("Creating the index directories")
             os.makedirs(index_dir)
         
         # Make the storage object with a reference to the indexes directory
         storage = FileStorage( index_dir )
         
         # Get a reference to the schema
-        schema = self.get_schema()
+        schema = cls.get_schema()
         
         # Create the verses index
         if create:
@@ -56,20 +73,22 @@ class WorkIndexer:
         
         # Open the index
         else:
-            inx = whoosh.index.open_dir(index_dir) #storage.open_index(indexname=schema)
+            inx = whoosh.index.open_dir(index_dir)
         
         # Return a reference to the index
         return inx
     
-    def index_all_works(self):
+    @classmethod
+    def index_all_works(cls):
         """
         Indexes all verses for all works.
         """
         
         for work in Work.objects.all():
-            self.index_work(work)
+            cls.index_work(work)
     
-    def index_work(self, work):
+    @classmethod
+    def index_work(cls, work):
         """
         Indexes all verses within the given work.
         
@@ -77,10 +96,16 @@ class WorkIndexer:
         work -- The work that the verse is associated with
         """
         
+        # Record the start time so that we can measure performance
+        start_time = time()
+        
         for division in Division.objects.filter(work=work):
-            self.index_division(division)
+            cls.index_division(division)
+            
+        logger.info("Successfully indexed work, work=%s, duration=%i", str(work), time() - start_time )
     
-    def index_division(self, division):
+    @classmethod
+    def index_division(cls, division):
         """
         Indexes all verse within the provided division.
         
@@ -88,10 +113,17 @@ class WorkIndexer:
         division -- The division that the verse is associated with
         """
         
+        inx = cls.get_index()
+        writer = inx.writer()
+        
         for verse in Verse.objects.filter(division=division):
-            self.index_verse(verse, division=division)
+            cls.index_verse(verse, division=division, writer=writer, commit=False)
+            
+        writer.commit()
+        logger.info("Successfully indexed division, division=%s", str(division) )
     
-    def index_verse(self, verse, work=None, division=None):
+    @classmethod
+    def index_verse(cls, verse, work=None, division=None, commit=False, writer=None):
         """
         Indexes the provided verse.
         
@@ -102,10 +134,11 @@ class WorkIndexer:
         """
         
         # Get the index
-        inx = self.get_index()
+        inx = cls.get_index()
         
         # Get a writer
-        writer = inx.writer()
+        if writer is None:
+            writer = inx.writer()
         
         # Determine the division ID
         division_id = None
@@ -125,7 +158,7 @@ class WorkIndexer:
         elif verse.division is not None and verse.division.work is not None:
             work_id = verse.division.work.id
         
-        # Add th content
+        # Add the content
         writer.add_document(content     = verse.content,
                             verse_id    = verse.id,
                             work_id     = work_id,
@@ -133,9 +166,10 @@ class WorkIndexer:
                             )
     
         # Commit it
-        writer.commit()
+        if commit:
+            writer.commit()
     
-
+        logger.info("Successfully indexed verse, verse=%s", str(verse))
     
 def search_verses( search_text, inx=None ):
     """
@@ -150,7 +184,7 @@ def search_verses( search_text, inx=None ):
     search_text = unicode(search_text)
     
     if inx is None:
-        inx = WorkIndexer().get_index()
+        inx = WorkIndexer.get_index()
     
     with inx.searcher() as searcher:
         query = QueryParser("content", inx.schema).parse(search_text)
