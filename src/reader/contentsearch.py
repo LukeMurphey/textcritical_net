@@ -3,20 +3,39 @@ from whoosh.qparser import QueryParser
 from whoosh.filedb.filestore import FileStorage
 from whoosh.fields import Schema, NUMERIC, TEXT
 
+from reader.models import Verse, Division, Work
+
 import os
 
 class WorkIndexer:
+    """
+    The WorkIndexer performs the operations necessary to index Work models using Whoosh.
+    """
     
     def get_schema(self):
+        """
+        Returns a schema for searching works.
+        """
+        
         return Schema( verse_id     = NUMERIC(unique=True, stored=True),
                        content      = TEXT,
                        work_id      = NUMERIC,
                        division_id  = NUMERIC)
     
     def get_index_dir(self):
+        """
+        Gets the directory where indexes will be stored.
+        """
+        
         return os.path.join("..", "var", "indexes")
     
     def get_index(self, create=False):
+        """
+        Get a Whoosh index.
+        
+        Arguments:
+        create -- If true, the index files be initialized
+        """
         
         # Get a reference to the indexes path
         index_dir = self.get_index_dir()
@@ -43,15 +62,44 @@ class WorkIndexer:
         return inx
     
     def index_all_works(self):
-        pass
+        """
+        Indexes all verses for all works.
+        """
+        
+        for work in Work.objects.all():
+            self.index_work(work)
     
     def index_work(self, work):
-        pass
+        """
+        Indexes all verses within the given work.
+        
+        Arguments:
+        work -- The work that the verse is associated with
+        """
+        
+        for division in Division.objects.filter(work=work):
+            self.index_division(division)
     
     def index_division(self, division):
-        pass
+        """
+        Indexes all verse within the provided division.
+        
+        Arguments:
+        division -- The division that the verse is associated with
+        """
+        
+        for verse in Verse.objects.filter(division=division):
+            self.index_verse(verse, division=division)
     
     def index_verse(self, verse, work=None, division=None):
+        """
+        Indexes the provided verse.
+        
+        Arguments:
+        verse -- The verse to index
+        work -- The work that the verse is associated with
+        division -- The division that the verse is associated with
+        """
         
         # Get the index
         inx = self.get_index()
@@ -90,6 +138,13 @@ class WorkIndexer:
 
     
 def search_verses( search_text, inx=None ):
+    """
+    Search all verses for those with the given text.
+    
+    Arguments:
+    search_text -- The content to search for
+    inx -- The Whoosh index to use
+    """
     
     # Convert the search text to unicode
     search_text = unicode(search_text)

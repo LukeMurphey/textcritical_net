@@ -1355,15 +1355,7 @@ class TestContentSearch(TestReader):
         # Remove any existing index files from previous tests
         self.indexer.delete_index()
 
-    
-    def tearDown(self):
-        
-        # Remove the index files so they don't cause problems with future tests
-        self.indexer.delete_index()
-    
-    def test_add_doc(self):
-        
-        # Make a work
+    def make_work(self):
         author = Author()
         author.name = "Luke"
         author.save()
@@ -1377,8 +1369,44 @@ class TestContentSearch(TestReader):
         verse = Verse(division=division, indicator="1", sequence_number=1, content="Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
         verse.save()
         
+        return verse, division, work
+    
+    def tearDown(self):
+        
+        # Remove the index files so they don't cause problems with future tests
+        self.indexer.delete_index()
+    
+    def test_index_verse(self):
+        
+        # Make a work
+        verse, division, work = self.make_work()
+        
         self.indexer.get_index(create=True)
         self.indexer.index_verse(verse)
+        
+        results = search_verses( "amet", self.indexer.get_index() )
+        
+        self.assertEquals( len(results), 1 )
+        
+    def test_index_work(self):
+        
+        # Make a work
+        verse, division, work = self.make_work()
+        
+        self.indexer.get_index(create=True)
+        self.indexer.index_work(work)
+        
+        results = search_verses( "amet", self.indexer.get_index() )
+        
+        self.assertEquals( len(results), 1 )
+        
+    def test_index_division(self):
+        
+        # Make a work
+        verse, division, work = self.make_work()
+        
+        self.indexer.get_index(create=True)
+        self.indexer.index_division(division)
         
         results = search_verses( "amet", self.indexer.get_index() )
         
