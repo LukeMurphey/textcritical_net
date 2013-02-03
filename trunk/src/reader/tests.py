@@ -1338,11 +1338,13 @@ class TestDiogenesAnalysesImport(TestReader):
     
 class TestWorkIndexer(WorkIndexer):
     
-    def get_index_dir(self):
+    @classmethod
+    def get_index_dir(cls):
         return os.path.join("..", "var", "tests", "indexes")
     
-    def delete_index(self):
-        shutil.rmtree( self.get_index_dir(), ignore_errors=True )
+    @classmethod
+    def delete_index(cls):
+        shutil.rmtree( cls.get_index_dir(), ignore_errors=True )
     
 class TestContentSearch(TestReader):
     
@@ -1350,7 +1352,7 @@ class TestContentSearch(TestReader):
     
     def setUp(self):
         
-        self.indexer = TestWorkIndexer()
+        self.indexer = TestWorkIndexer
         
         # Remove any existing index files from previous tests
         self.indexer.delete_index()
