@@ -15,9 +15,11 @@ from reader.importer import TextImporter, LineNumber
 from reader.importer.Diogenes import DiogenesLemmataImporter, DiogenesAnalysesImporter
 from reader.language_tools.greek import Greek
 from reader import language_tools
-from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Case
+from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Case, Work
 from reader.views import get_division
+from reader.contentsearch import WorkIndexer, search_verses
 
+import shutil
 import time
 
 def time_function_call(fx):
@@ -1334,5 +1336,50 @@ class TestDiogenesAnalysesImport(TestReader):
         self.assertEquals( DiogenesAnalysesImporter.import_analysis_entry(desc, word_form), None )
     
     
-        
+class TestWorkIndexer(WorkIndexer):
     
+    def get_index_dir(self):
+        return os.path.join("..", "var", "tests", "indexes")
+    
+    def delete_index(self):
+        shutil.rmtree( self.get_index_dir(), ignore_errors=True )
+    
+class TestContentSearch(TestReader):
+    
+    indexer = None
+    
+    def setUp(self):
+        
+        self.indexer = TestWorkIndexer()
+        
+        # Remove any existing index files from previous tests
+        self.indexer.delete_index()
+
+    
+    def tearDown(self):
+        
+        # Remove the index files so they don't cause problems with future tests
+        self.indexer.delete_index()
+    
+    def test_add_doc(self):
+        
+        # Make a work
+        author = Author()
+        author.name = "Luke"
+        author.save()
+        
+        work = Work(title="test_add_doc")
+        work.save()
+        
+        division = Division(work=work, title="test_add_doc(division)", readable_unit=True, level=1, sequence_number=1)
+        division.save()
+        
+        verse = Verse(division=division, indicator="1", sequence_number=1, content="Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+        verse.save()
+        
+        self.indexer.get_index(create=True)
+        self.indexer.index_verse(verse)
+        
+        results = search_verses( "amet", self.indexer.get_index() )
+        
+        self.assertEquals( len(results), 1 )
