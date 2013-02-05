@@ -274,3 +274,37 @@ TextCritical.highlight_word = function( word ){
   		return pattern.test($(this).text())
 	}).addClass('highlighted');
 }
+
+/**
+ * Perform a search and render the results.
+ **/
+TextCritical.do_search = function( ){
+	
+	console.info( "Initializing a search" );
+	word = $("#Search").val();
+	$('#searching').show();
+	$('#search-results-content').hide();
+	
+	// Submit the AJAX request to display the information
+	$.ajax({
+		url: "/api/search/?q=" + word
+	}).done(function(search_results) {
+		
+		var search_results_template = $("#search-results").html();
+		$("#search-results-content").html(_.template(search_results_template,{ word:_.escape(word), search_results:search_results }));
+		
+		console.info( "Successfully searched for " + word );
+		
+		$('#searching').hide();
+		$('#search-results-content').show();
+		
+	}).error( function(jqXHR, textStatus, errorThrown) {
+		$("#search-results-content").html( "<h4>Search failed</h4> The search request could not be completed" );
+		console.error( "The request to search failed for " + word );
+		
+		$('#searching').hide();
+		$('#search-results-content').show();
+	});
+	
+	return false;
+}

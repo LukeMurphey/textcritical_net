@@ -2,7 +2,21 @@
 {% block content %}
 
 
-<form class="form-horizontal">
+<script type="text/html" id='search-results'>
+<ul>
+	<% if( search_results.length == 0){ %>
+<div class="alert alert-block">
+  No results were found matching the provided search
+</div>
+	<% } %>
+	<% for (var i = 0; i < search_results.length; i++) { %>
+		<% var search_result = search_results[i]; %>
+		<li><a href="<%= search_result["url"] %>?highlight=<%= word %>"><%= search_result["work"] %>, <%= search_result["description"] %></a></li>
+	<% } %>
+</ul>
+</script>
+
+<form id="search-form" class="form-horizontal">
 	<fieldset>
 	
 	<legend>Search</legend>
@@ -13,15 +27,15 @@
 			<p class="help-block">Enter the text to search for. Greek can be entered as beta-code.</p>
 		</div>
 	</div>
-	
+	<!-- 
 	<div class="control-group">
 		<label class="control-label" for="Author">Author</label>
 		
 		<div class="controls">
-			<select class="input-xxlarge">
+			<select name="author" class="input-xxlarge">
 				<option>(All authors)</option>
 			{% for author in authors %}
-				<option>{{author}}</option>
+				<option value="{{author.id}}">{{author}}</option>
 			{% endfor %}
             </select>
 		</div>
@@ -31,7 +45,7 @@
 		<label class="control-label" for="Work">Work</label>
 		
 		<div class="controls">
-			<select class="input-xxlarge">
+			<select name="work" class="input-xxlarge">
 				<option>(All works)</option>
 			{% for work in works %}
 				<option>{{work.title}}
@@ -41,14 +55,16 @@
             </select>
 		</div>
 	</div>
-	
+	 -->
 	<div class="form-actions">
-    	<button class="btn btn-primary" type="submit">Search</button>
+    	<button id="search_button" class="btn btn-primary" type="submit">Search</button>
     </div>
 	
 	</fieldset>
 </form>
 		
+<div id="searching" class="searching_animation">Searching ...</div>
+<div id="search-results-content"></div>
 		
 {% endblock %}
 
@@ -56,7 +72,10 @@
 <script language="javascript">
 
 require(["jquery", "store", "app", "underscore"], function($) {
-
+	
+	$(document).ready(function() {
+		$("#search_button").click( TextCritical.do_search);
+	});
 
 });
 </script>
