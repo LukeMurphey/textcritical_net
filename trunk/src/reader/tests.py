@@ -1384,7 +1384,7 @@ class TestContentSearch(TestReader):
         verse, division, work = self.make_work()
         
         self.indexer.get_index(create=True)
-        self.indexer.index_verse(verse)
+        self.indexer.index_verse(verse, commit=True)
         
         results = search_verses( "amet", self.indexer.get_index() )
         

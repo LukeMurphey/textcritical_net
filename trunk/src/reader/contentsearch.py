@@ -2,6 +2,7 @@ import whoosh
 from whoosh.qparser import QueryParser
 from whoosh.filedb.filestore import FileStorage
 from whoosh.fields import Schema, NUMERIC, TEXT
+from whoosh.query import *
 
 from time import time
 import logging
@@ -25,8 +26,18 @@ class WorkIndexer:
         
         return Schema( verse_id     = NUMERIC(unique=True, stored=True),
                        content      = TEXT,
+                       work_id      = TEXT,
+                       section_id   = TEXT,
+                       work         = TEXT,
+                       section      = TEXT,
+                       author       = TEXT)
+        """
+        return Schema( verse_id     = NUMERIC(unique=True, stored=True),
+                       content      = TEXT,
                        work_id      = NUMERIC,
                        division_id  = NUMERIC)
+        """
+                       
     
     @classmethod
     def get_index_dir(cls):
@@ -84,8 +95,13 @@ class WorkIndexer:
         Indexes all verses for all works.
         """
         
+        # Record the start time so that we can measure performance
+        start_time = time()
+        
         for work in Work.objects.all():
             cls.index_work(work)
+    
+        logger.info("Successfully indexed all works, duration=%i", time() - start_time )
     
     @classmethod
     def index_work(cls, work):
@@ -140,6 +156,13 @@ class WorkIndexer:
         if writer is None:
             writer = inx.writer()
         
+        if division is None and verse is not None:
+            division = verse.division
+            
+        if work is None and division is not None:
+            work = division.work
+        
+        """
         # Determine the division ID
         division_id = None
         
@@ -157,12 +180,22 @@ class WorkIndexer:
             work_id = division.work.id
         elif verse.division is not None and verse.division.work is not None:
             work_id = verse.division.work.id
+        """
+        
+        # Get the author
+        if work.authors.count() > 0:
+            author_str = unicode(work.authors.all()[:1][0].name)
+        else:
+            author_str = unicode()
         
         # Add the content
         writer.add_document(content     = verse.content,
                             verse_id    = verse.id,
-                            work_id     = work_id,
-                            division_id = division_id
+                            work_id     = work.title_slug,
+                            section_id  = division.title_slug,
+                            work        = unicode(work.title),
+                            section     = unicode(division.get_division_description(use_titles=False).decode("UTF-8")),
+                            author      = author_str
                             )
     
         # Commit it
@@ -171,7 +204,7 @@ class WorkIndexer:
     
         logger.info("Successfully indexed verse, verse=%s", str(verse))
     
-def search_verses( search_text, inx=None ):
+def search_verses( search_text, inx=None, page=1, pagelen=20 ):
     """
     Search all verses for those with the given text.
     
@@ -186,7 +219,29 @@ def search_verses( search_text, inx=None ):
     if inx is None:
         inx = WorkIndexer.get_index()
     
+    verses = []
+    
     with inx.searcher() as searcher:
-        query = QueryParser("content", inx.schema).parse(search_text)
-        return searcher.search(query)
-
+        
+        """
+        if work_id is not None:
+            search_query = And([Term("content", search_text), Term("work_id", work_id)])
+        elif author_id is not None:
+            search_query = And([Term("content", search_text), Term("author_id", author_id)])
+        else:
+            search_query = Term("content", search_text)
+        """
+        
+        # Make a parser to convert the incoming search string into a search
+        parser = QueryParser("content", inx.schema)
+        
+        # Parse the search string into an actual search
+        search_query = parser.parse(search_text)
+        
+        #query =  QueryParser("content", inx.schema).parse(search_text)
+        #search_query = Term("content", search_text)
+        
+        for r in searcher.search_page(search_query, page, pagelen):
+            verses.append(r['verse_id'])
+            
+    return verses

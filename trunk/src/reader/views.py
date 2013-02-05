@@ -13,6 +13,7 @@ from reader.models import Work, Division, Verse, WordDescription, Author
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import uniquefy
+from reader.contentsearch import search_verses
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
 
@@ -319,6 +320,14 @@ def render_api_response(request, content):
     
     return HttpResponse(raw_content, content_type=JSON_CONTENT_TYPE)
 
+def render_api_error(request, message, status=400):
+    
+    content = { 'message' : message }
+    
+    raw_content = json.dumps(content)
+    
+    return HttpResponse(raw_content, content_type=JSON_CONTENT_TYPE, status=status)
+
 def render_queryset_api_response(request, content):
     
     response = HttpResponse(content_type=JSON_CONTENT_TYPE)
@@ -349,6 +358,61 @@ def description_id_fun(x):
     """
     
     return str(x)
+
+def api_search(request, search_text=None):
+    
+    if search_text is not None and len(search_text) > 0:
+        pass
+    elif 'q' in request.GET:
+        search_text = request.GET['q']
+    else:
+        return render_api_error(request, "No search query was provided", 400)
+    
+    page = 1
+    pagelen = 20
+    
+    if 'page' in request.GET:
+        page = int(request.GET['page'])
+        
+    if 'pagelen' in request.GET:
+        pagelen = int(request.GET['pagelen'])
+    
+    # Perform the search
+    results = search_verses( search_text, page=page, pagelen=pagelen )
+    
+    # This will be were the results are stored
+    results_lists = []
+    
+    # Prepare the results
+    for verse_id in results:
+        
+        verse = Verse.objects.get(id=verse_id)
+        
+        d = {}
+        
+        # Build the list of arguments necessary to make the URL
+        args = [ verse.division.work.title_slug ]
+        args.extend( verse.division.get_division_indicators() )
+        args.append( str(verse) )
+        
+        d['url'] = reverse('read_work', args=args )
+        #d['content'] = verse.content
+        #d['content'] = verse.content
+        d['verse'] = str(verse)
+        d['division'] = verse.division.get_division_description()
+        
+        if '.' in d['division']:
+            d['description'] = d['division'] + "." + d['verse']
+        else:
+            d['description'] = d['division'] + ":" + d['verse']
+        
+        d['work_title_slug'] =  verse.division.work.title_slug
+        d['work'] = verse.division.work.title
+        
+        results_lists.append(d)
+    
+    # Return the results
+    return render_api_response(request, results_lists)
 
 def api_word_parse(request, word=None):
     
@@ -430,6 +494,21 @@ def api_beta_code_to_unicode(request, word=None):
     d['beta-code'] = word
     
     return render_api_response(request, d)
+
+def api_works_list_for_author(request, author):
+    
+    works = Work.objects.filter(authors__name=author)
+    
+    results = []
+    
+    for work in works:
+        result = {}
+        result['title'] = work.title
+        result['title_slug'] = work.title_slug
+        
+        results.append(result)
+    
+    return render_api_response(request, results)
 
 def api_works_list(request):
     
