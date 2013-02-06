@@ -384,30 +384,29 @@ def api_search(request, search_text=None):
     results_lists = []
     
     # Prepare the results
-    for verse_id in results:
-        
-        verse = Verse.objects.get(id=verse_id)
+    for result in results:
         
         d = {}
         
         # Build the list of arguments necessary to make the URL
-        args = [ verse.division.work.title_slug ]
-        args.extend( verse.division.get_division_indicators() )
-        args.append( str(verse) )
+        args = [ result.verse.division.work.title_slug ]
+        args.extend( result.verse.division.get_division_indicators() )
+        args.append( str(result.verse) )
         
         d['url'] = reverse('read_work', args=args )
         #d['content'] = verse.content
         #d['content'] = verse.content
-        d['verse'] = str(verse)
-        d['division'] = verse.division.get_division_description()
+        d['verse'] = str(result.verse)
+        d['division'] = result.verse.division.get_division_description()
         
         if '.' in d['division']:
             d['description'] = d['division'] + "." + d['verse']
         else:
             d['description'] = d['division'] + ":" + d['verse']
         
-        d['work_title_slug'] =  verse.division.work.title_slug
-        d['work'] = verse.division.work.title
+        d['work_title_slug'] =  result.verse.division.work.title_slug
+        d['work'] = result.verse.division.work.title
+        d['highlights'] = result.highlights
         
         results_lists.append(d)
     

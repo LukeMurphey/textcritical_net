@@ -4,7 +4,7 @@
    Search
    ----------------------------------------- */
 
-.searching_animation{
+.searching-animation{
     margin-left:auto;
     margin-right:auto;
     width: 100px;
@@ -16,6 +16,25 @@
     display: none;
 }
 
-.dark .searching_animation{
+.dark .searching-animation{
 	background-image: url(../images/ajax_loader_dark.gif);
+}
+
+b.match{
+	font-weight: bold;
+	background-color: #3a87ad;
+	color: white;
+	@include rounded(3px);
+}
+
+.search-results{
+
+	.highlights{
+		
+	}
+	
+	.work-description{
+		margin-top: 16px;
+	}
+	
 }

@@ -281,7 +281,8 @@ TextCritical.highlight_word = function( word ){
 TextCritical.do_search = function( ){
 	
 	console.info( "Initializing a search" );
-	word = $("#Search").val();
+	word = $("#search-term").val();
+	
 	$('#searching').show();
 	$('#search-results-content').hide();
 	
