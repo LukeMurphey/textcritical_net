@@ -1,6 +1,6 @@
 {% extends "base_with_nav.html" %}
 {% block content %}
-
+{% load string_utils %}
 
 <script type="text/html" id='search-results'>
 
@@ -24,7 +24,7 @@
 <form id="search-form">
 	<legend>Search</legend>
 	<div class="input-append">
-	 	<input class="span10" id="search-term" placeholder="Enter the text to search for" type="text" />
+	 	<input class="span10" id="search-term" placeholder="Enter the text to search for" type="text" value="{{query|addspaceifnotempty}}"/>
 	 	<input type="hidden" />
 	 	<button id="search-button" class="btn btn-primary" type="button" >Submit Search</button>
 	</div>
@@ -41,6 +41,14 @@
 require(["jquery", "store", "app", "underscore"], function($) {
 	
 	$(document).ready(function() {
+		
+		// Execute the search if we already got a search term
+		if ( $("#search-term").val().length > 0 && TextCritical.contains_search_words($("#search-term").val()) ){
+			TextCritical.do_search();
+		}
+		
+		TextCritical.set_caret_at_end( $("#search-term")[0] );
+		
 		$("#search-button").click( TextCritical.do_search );
 		$("#search-form").submit( TextCritical.do_search );
 	});

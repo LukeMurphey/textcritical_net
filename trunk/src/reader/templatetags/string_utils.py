@@ -48,3 +48,15 @@ def endswith(value, arg):
         return False
     
     return value.endswith(arg)
+
+@register.filter()
+def addspaceifnotempty(obj):
+    """
+    Usage:
+    {{query|addspaceifnotempty}}
+    """
+    
+    if obj is not None and not str(obj).endswith(" "):
+        return str(obj) + " "
+    else:
+        return obj

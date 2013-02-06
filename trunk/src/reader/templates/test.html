@@ -90,6 +90,33 @@ require(["jquery", "qunit", "app"], function($) {
         
         equal( strReturn[0]['meaning'], "starting-point", "The meaning of ἀφορμάν ought to be 'starting-point'" );
     });
+    
+    test( "search", function() {
+        
+        var request = $.ajax({
+              url: "/api/search/και",
+              async : false,
+              success: function(html) {
+                  strReturn = html;
+              },
+              type: "GET"
+        });
+        
+        ok( strReturn.length > 0, "Search results ought to be provided" );
+        ok( strReturn[0]["url"].search("work") >= 0, "Search results ought to include a URL" );
+        ok( strReturn[0]["description"].length > 0, "Search results ought to include a description" );
+        ok( strReturn[0]["division"].length > 0, "Search results ought to include a division" );
+        ok( strReturn[0]["highlights"].search("<b") >= 0, "Search results ought to include highlights" );
+        ok( strReturn[0]["work"].length > 0, "Search results ought to include a work" );
+        ok( strReturn[0]["work_title_slug"].length > 0, "Search results ought to include a work title" );
+    });
+    
+    test( "contains_search_words", function() {
+        ok( TextCritical.contains_search_words("λόγους work_id:new-testament"), "Search term is included and ought to be designated as such" );
+        ok( !TextCritical.contains_search_words("work_id:new-testament"), "Search term not included and ought to be designated as such" );
+        ok( !TextCritical.contains_search_words("work:\"New Testament\""), "Search term not included and ought to be designated as such" );
+    });
+    
 	
     {% comment %}
     ##############################
@@ -103,7 +130,7 @@ require(["jquery", "qunit", "app"], function($) {
     	
     	TextCritical.resolve_path(reference, division_ids);
         
-        equal( TextCritical.resolve_path(reference, division_ids), "/tests/1 Thessalonians/1/4", "A reference to 1 Thessalonians 1:4 ought to be translated to the path '/1 Thessalonians/1/4' and not '/1/Thessalonians/1/4'" );
+        equal( TextCritical.resolve_path(reference, division_ids), "/tests/1 thessalonians/1/4", "A reference to 1 Thessalonians 1:4 ought to be translated to the path '/1 Thessalonians/1/4' and not '/1/Thessalonians/1/4'" );
     });
     
     test( "resolve_path_name_no_spaces", function() {
@@ -113,7 +140,7 @@ require(["jquery", "qunit", "app"], function($) {
     	
     	TextCritical.resolve_path(reference, division_ids);
         
-        equal( TextCritical.resolve_path(reference, division_ids), "/tests/1/Thessalonians/1/4", "A reference to 1 Thessalonians 1:4 ought to be translated to the path '/1/Thessalonians/1/4' and not '/1 Thessalonians/1/4' since the division IDs provided didn't include '1 Thessalonians'" );
+        equal( TextCritical.resolve_path(reference, division_ids), "/tests/1/thessalonians/1/4", "A reference to 1 Thessalonians 1:4 ought to be translated to the path '/1/Thessalonians/1/4' and not '/1 Thessalonians/1/4' since the division IDs provided didn't include '1 Thessalonians'" );
     });
     
     test( "slugify", function() {
