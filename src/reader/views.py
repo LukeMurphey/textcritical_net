@@ -40,14 +40,20 @@ def contact(request):
                               {},
                               context_instance=RequestContext(request))
 
-def search(request):
+def search(request, query=None):
     
     authors = Author.objects.all().order_by("name")
     works = Work.objects.all().order_by("title")
     
+    if 'q' in request.GET:
+        query = request.GET['q']
+    else:
+        query = None
+    
     return render_to_response('search.html',
                               {'authors' : authors,
-                               'works'   : works
+                               'works'   : works,
+                               'query'   : query
                                },
                               context_instance=RequestContext(request)) 
 
@@ -393,20 +399,17 @@ def api_search(request, search_text=None):
         args.extend( result.verse.division.get_division_indicators() )
         args.append( str(result.verse) )
         
-        d['url'] = reverse('read_work', args=args )
-        #d['content'] = verse.content
-        #d['content'] = verse.content
-        d['verse'] = str(result.verse)
-        d['division'] = result.verse.division.get_division_description()
+        d['url']             = reverse('read_work', args=args )
+        d['verse']           = str(result.verse)
+        d['division']        = result.verse.division.get_division_description()
+        d['work_title_slug'] =  result.verse.division.work.title_slug
+        d['work']            = result.verse.division.work.title
+        d['highlights']      = result.highlights
         
         if '.' in d['division']:
             d['description'] = d['division'] + "." + d['verse']
         else:
             d['description'] = d['division'] + ":" + d['verse']
-        
-        d['work_title_slug'] =  result.verse.division.work.title_slug
-        d['work'] = result.verse.division.work.title
-        d['highlights'] = result.highlights
         
         results_lists.append(d)
     
