@@ -204,6 +204,12 @@ class WorkIndexer:
     
         logger.info("Successfully indexed verse, verse=%s", str(verse))
     
+class VerseSearchResult:
+    
+    def __init__(self, verse, highlights):
+        self.verse = verse
+        self.highlights = highlights
+    
 def search_verses( search_text, inx=None, page=1, pagelen=20 ):
     """
     Search all verses for those with the given text.
@@ -242,6 +248,11 @@ def search_verses( search_text, inx=None, page=1, pagelen=20 ):
         #search_query = Term("content", search_text)
         
         for r in searcher.search_page(search_query, page, pagelen):
-            verses.append(r['verse_id'])
+            
+            # Get the verse so that the highlighting can be done
+            verse = Verse.objects.get(id=r['verse_id'])
+            
+            #print "Highlights:", r.highlights("content", text=verse.content)
+            verses.append( VerseSearchResult(verse, r.highlights("content", text=verse.content) ) )
             
     return verses

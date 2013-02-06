@@ -354,6 +354,34 @@ body.dark .dataTables_filter > label > input {
 #works_list {
   display: none; }
 
+/* -----------------------------------------
+   Search
+   ----------------------------------------- */
+.searching-animation {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100px;
+  margin-top: 100px;
+  padding-left: 22px;
+  background-repeat: no-repeat;
+  background-position: 1px 2px;
+  background-image: url(../images/ajax_loader.gif);
+  display: none; }
+
+.dark .searching-animation {
+  background-image: url(../images/ajax_loader_dark.gif); }
+
+b.match {
+  font-weight: bold;
+  background-color: #3a87ad;
+  color: white;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px; }
+
+.search-results .work-description {
+  margin-top: 16px; }
+
 .actions_404 {
   margin-top: 10px;
   margin-bottom: 20px; }
