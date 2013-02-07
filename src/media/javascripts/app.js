@@ -184,14 +184,17 @@ TextCritical.go_to_chapter = function( reference, division_ids ){
  * Opens the morphology dialog on the word within the text clicked.
  **/
 TextCritical.word_lookup = function (){
-	TextCritical.open_morphology_dialog( $(this).text() );
+	
+	work = $("h1[data-work-title-slug]").data("work-title-slug");
+	
+	TextCritical.open_morphology_dialog( $(this).text(), work );
 	return false;
 }
 
 /**
  * Opens a dialog that obtains the morphology of a word.
  **/
-TextCritical.open_morphology_dialog = function( word ){
+TextCritical.open_morphology_dialog = function( word, work ){
 	
 	console.info( "Obtaining the morphology of " + word );
 	
@@ -220,7 +223,7 @@ TextCritical.open_morphology_dialog = function( word ){
 		
 		// Render the lemma information
 		var template = $("#morphology-info").html();
-		$("#morphology-dialog-content").html(_.template(template,{parses:data, word: _.escape(word)}));
+		$("#morphology-dialog-content").html(_.template(template,{parses:data, word: _.escape(word), work: work}));
 		
 		// Set the lemmas to be links
 		$("a.lemma").click(TextCritical.word_lookup);
@@ -273,6 +276,47 @@ TextCritical.highlight_word = function( word ){
 	$('.word').filter(function(){
   		return pattern.test($(this).text())
 	}).addClass('highlighted');
+}
+
+/**
+ * Determine if the results has actual words to kick off a search to look for (other than just the parts of the search specifying
+ * the work to search).
+ **/
+TextCritical.contains_search_words = function( query ){
+	split_query = query.match(/([_0-9a-z]+[:][-_0-9a-z]+)|([\w_]+[:]["][-\w ]*["])|([^ :]+)/gi);
+	
+	for( c = 0; c < split_query.length; c++){
+		if( split_query[c].search(":") < 0 ){
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+/**
+ * Set the cursor to the end of an input.
+ **/
+TextCritical.set_caret_at_end = function(elem) {
+    var elemLen = elem.value.length;
+    // For IE Only
+    if (document.selection) {
+        // Set focus
+        elem.focus();
+        // Use IE Ranges
+        var oSel = document.selection.createRange();
+        // Reset position to 0 & then set at end
+        oSel.moveStart('character', -elemLen);
+        oSel.moveStart('character', elemLen);
+        oSel.moveEnd('character', 0);
+        oSel.select();
+    }
+    else if (elem.selectionStart || elem.selectionStart == '0') {
+        // Firefox/Chrome
+        elem.selectionStart = elemLen;
+        elem.selectionEnd = elemLen;
+        elem.focus();
+    }
 }
 
 /**

@@ -24,7 +24,7 @@
 <form id="search-form">
 	<legend>Search</legend>
 	<div class="input-append">
-	 	<input class="span10" id="search-term" placeholder="Enter the text to search for" type="text" value="{{query|addspaceifnotempty}}"/>
+	 	<input class="span10" id="search-term" placeholder="Enter the text to search for" type="text" value="{{query|addspaceifnotempty|default_if_none:""}}"/>
 	 	<input type="hidden" />
 	 	<button id="search-button" class="btn btn-primary" type="button" >Submit Search</button>
 	</div>
