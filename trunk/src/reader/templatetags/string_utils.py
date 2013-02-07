@@ -56,7 +56,7 @@ def addspaceifnotempty(obj):
     {{query|addspaceifnotempty}}
     """
     
-    if obj is not None and not str(obj).endswith(" "):
-        return str(obj) + " "
+    if obj is not None and not obj.endswith(" "):
+        return obj + " "
     else:
         return obj
