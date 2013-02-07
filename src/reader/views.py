@@ -12,7 +12,7 @@ import difflib
 from reader.models import Work, Division, Verse, WordDescription, Author
 from reader.language_tools.greek import Greek
 from reader import language_tools
-from reader.shortcuts import uniquefy
+from reader.shortcuts import uniquefy, string_limiter
 from reader.contentsearch import search_verses
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
@@ -405,6 +405,7 @@ def api_search(request, search_text=None):
         d['work_title_slug'] =  result.verse.division.work.title_slug
         d['work']            = result.verse.division.work.title
         d['highlights']      = result.highlights
+        d['content_snippet'] = string_limiter(result.verse.content, 80)
         
         if '.' in d['division']:
             d['description'] = d['division'] + "." + d['verse']
