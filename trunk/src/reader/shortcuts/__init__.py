@@ -303,3 +303,19 @@ def uniquefy(seq, idfun=None):
         result.append(item)
         
     return result
+
+def string_limiter(text, limit):
+    """
+    Reduces the number of words in the string to length provided.
+    
+    Arguments:
+    text -- The string to reduce the length of
+    limit -- The number of characters that are allowed in the string
+    """
+    
+    for i in range(len(text)):
+        
+        if i >= limit and text[i] == " ":
+            break
+    
+    return text[:i]

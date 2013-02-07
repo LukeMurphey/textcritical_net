@@ -15,7 +15,11 @@
 			<a href="<%= search_result["url"] %>"><%= search_result["work"] %>, <%= search_result["description"] %></a>
 		</div>
 		<div class="highlights">
+			<% if( search_result["highlights"].length > 0 ){ %>
 			<%= search_result["highlights"] %>
+			<% } else { %>
+			<%= search_result["content_snippet"] %>
+			<% } %>
 		</div>
 	<% } %>
 </script>
