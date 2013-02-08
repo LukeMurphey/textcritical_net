@@ -320,6 +320,13 @@ TextCritical.set_caret_at_end = function(elem) {
 }
 
 /**
+ * Update the URL according to the word and page specified.
+ */
+TextCritical.set_search_url = function( word, page ){
+	history.pushState( {word: word, page: page}, document.title, document.location.pathname + "?page=" + page + "&q=" + word);
+}
+
+/**
  * Perform a search and render the results.
  * Note: this users the blockUI jQuery plugin.
  **/
@@ -328,9 +335,16 @@ TextCritical.do_search = function( page ){
 	word = $("#search-term").val();
 	
 	if( page == undefined ){
-		page = 1;
+		
+		if ( $("#page-number").val().length > 0 ){
+			page = parseInt( $("#page-number").val() );
+		}
+		else{
+			page = 1;
+		}
 	}
-	else if( page <= 0 ){
+	
+	if( page <= 0 ){
 		console.warn( "Page number is invalid (must be greater than zero)");
 		page = 1;
 	}
@@ -366,6 +380,7 @@ TextCritical.do_search = function( page ){
 		
 		$('#search-results-content').unblock();
 		console.info( "Successfully searched for " + word );
+		TextCritical.set_search_url(word, page);
 		
 		// Show the results and hide the "searching..." dialog
 		$('#searching').hide();
@@ -389,7 +404,10 @@ TextCritical.do_search_next = function( ){
 	TextCritical.change_page( 1 );
 }
 
-TextCritical.change_page = function( change ){
+/**
+ * Change to the page in the search results based on the offset provided. An offset of -1 goes back one page, an offset of 1 goes forward one.
+ */
+TextCritical.change_page = function( offset ){
 	
 	// Get the page number
 	page = parseInt( $('#search-results-content').attr("data-page-number") );
@@ -402,7 +420,7 @@ TextCritical.change_page = function( change ){
 		page = 1;
 	}
 	else{
-		page = page + change;
+		page = page + offset;
 	}
 	
 	TextCritical.do_search( page );
