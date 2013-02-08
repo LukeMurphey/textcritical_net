@@ -49,11 +49,17 @@ def search(request, query=None):
         query = request.GET['q']
     else:
         query = None
+        
+    if 'page' in request.GET:
+        page = request.GET['page']
+    else:
+        page = None
     
     return render_to_response('search.html',
                               {'authors' : authors,
                                'works'   : works,
-                               'query'   : query
+                               'query'   : query,
+                               'page'    : page
                                },
                               context_instance=RequestContext(request)) 
 
