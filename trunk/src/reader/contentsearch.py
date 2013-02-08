@@ -204,6 +204,43 @@ class WorkIndexer:
     
         logger.info("Successfully indexed verse, verse=%s", str(verse))
     
+class VerseSearchResults:
+    
+    def __init__(self, results, page, pagelen ):
+        
+        self.page = page
+        self.pagelen = pagelen
+        
+        self.verses = []
+        
+        # Create the list of search results
+        for r in results:
+            
+            # Get the verse so that the highlighting can be done
+            verse = Verse.objects.get(id=r['verse_id'])
+            
+            self.verses.append( VerseSearchResult(verse, r.highlights("content", text=verse.content) ) )
+        
+        self.result_count = len(results)
+        
+        """
+        self.actual_length = 0
+        self.is_exact = True
+        self.estimated_min_length = 0
+        self.estimated_length = 0
+        
+        
+        # Assign values to the parameters
+        if results.has_exact_length():
+            self.is_exact = True
+            self.actual_length = len(results)
+        else:
+            self.is_exact = False
+            self.estimated_min_length = results.estimated_min_length()
+            self.estimated_length = results.estimated_length()
+        """
+        
+    
 class VerseSearchResult:
     
     def __init__(self, verse, highlights):
@@ -225,8 +262,6 @@ def search_verses( search_text, inx=None, page=1, pagelen=20 ):
     if inx is None:
         inx = WorkIndexer.get_index()
     
-    verses = []
-    
     with inx.searcher() as searcher:
         
         """
@@ -246,7 +281,9 @@ def search_verses( search_text, inx=None, page=1, pagelen=20 ):
         
         #query =  QueryParser("content", inx.schema).parse(search_text)
         #search_query = Term("content", search_text)
+        search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen), page, pagelen)
         
+        """
         for r in searcher.search_page(search_query, page, pagelen):
             
             # Get the verse so that the highlighting can be done
@@ -254,5 +291,6 @@ def search_verses( search_text, inx=None, page=1, pagelen=20 ):
             
             #print "Highlights:", r.highlights("content", text=verse.content)
             verses.append( VerseSearchResult(verse, r.highlights("content", text=verse.content) ) )
+        """
             
-    return verses
+    return search_results

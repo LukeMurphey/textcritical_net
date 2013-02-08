@@ -321,25 +321,53 @@ TextCritical.set_caret_at_end = function(elem) {
 
 /**
  * Perform a search and render the results.
+ * Note: this users the blockUI jQuery plugin.
  **/
-TextCritical.do_search = function( ){
+TextCritical.do_search = function( page ){
 	
-	console.info( "Initializing a search" );
 	word = $("#search-term").val();
 	
+	if( page == undefined ){
+		page = 1;
+	}
+	else if( page <= 0 ){
+		console.warn( "Page number is invalid (must be greater than zero)");
+		page = 1;
+	}
+	
+	// Set the data to store the page number
+	$('#search-results-content').attr("data-page-number", page);
+	
 	$('#searching').show();
-	$('#search-results-content').hide();
+	//$('#search-results-content').hide();
+	$('#search-results-content').block({ message: null, overlayCSS: { backgroundColor: '#2f2f2f', opacity: 0.8 } }); 
+	
+	console.info( "Executing search on page " + page + " for " + word );
 	
 	// Submit the AJAX request to display the information
 	$.ajax({
-		url: "/api/search/?q=" + word
+		url: "/api/search/?q=" + word + "&page=" + page
 	}).done(function(search_results) {
 		
 		var search_results_template = $("#search-results").html();
 		$("#search-results-content").html(_.template(search_results_template,{ word:_.escape(word), search_results:search_results }));
 		
+		// Setup the click handlers
+		
+		// If we have more pages, then setup the link to the "next" button		
+		if( search_results.result_count > ( search_results.page * search_results.page_len ) ){
+			$(".next-page-link").click( TextCritical.do_search_next );
+		}
+		
+		// If we are not on the first page, then setup a link to go to the previous page
+		if( search_results.page > 1 ){
+			$(".previous-page-link").click( TextCritical.do_search_previous );
+		}
+		
+		$('#search-results-content').unblock();
 		console.info( "Successfully searched for " + word );
 		
+		// Show the results and hide the "searching..." dialog
 		$('#searching').hide();
 		$('#search-results-content').show();
 		
@@ -352,4 +380,45 @@ TextCritical.do_search = function( ){
 	});
 	
 	return false;
+}
+
+/**
+ * Go to the next page in the search results.
+ **/
+TextCritical.do_search_next = function( ){
+	TextCritical.change_page( 1 );
+}
+
+TextCritical.change_page = function( change ){
+	
+	// Get the page number
+	page = parseInt( $('#search-results-content').attr("data-page-number") );
+	
+	if( page == undefined ){
+		page = 1;
+	}
+	else if( isNaN(page) ){
+		console.warn( "Page number is invalid");
+		page = 1;
+	}
+	else{
+		page = page + change;
+	}
+	
+	TextCritical.do_search( page );
+}
+
+/**
+ * Go to the previous page in the search results.
+ **/
+TextCritical.do_search_previous = function( ){
+	TextCritical.change_page( -1 );
+}
+
+
+/**
+ * Update the next and previous buttons based on the page.
+ **/
+TextCritical.update_search_pagination = function( ){
+	//$(".next-page-link");
 }

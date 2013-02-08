@@ -367,6 +367,7 @@ def description_id_fun(x):
 
 def api_search(request, search_text=None):
     
+    # Get the text to search for
     if search_text is not None and len(search_text) > 0:
         pass
     elif 'q' in request.GET:
@@ -374,23 +375,32 @@ def api_search(request, search_text=None):
     else:
         return render_api_error(request, "No search query was provided", 400)
     
-    page = 1
-    pagelen = 20
-    
+    # Get the page number
     if 'page' in request.GET:
-        page = int(request.GET['page'])
-        
+        try:
+            page = int(request.GET['page'])
+        except ValueError:
+            page = 1
+    else:
+        page = 1
+    
+    # Get the page length
     if 'pagelen' in request.GET:
-        pagelen = int(request.GET['pagelen'])
+        try:
+            pagelen = int(request.GET['pagelen'])
+        except ValueError:
+            pagelen = 10
+    else:
+        pagelen = 10
     
     # Perform the search
-    results = search_verses( search_text, page=page, pagelen=pagelen )
+    search_results = search_verses( search_text, page=page, pagelen=pagelen )
     
     # This will be were the results are stored
     results_lists = []
     
     # Prepare the results
-    for result in results:
+    for result in search_results.verses:
         
         d = {}
         
@@ -414,8 +424,16 @@ def api_search(request, search_text=None):
         
         results_lists.append(d)
     
+    results_set = {
+                   'result_count' : search_results.result_count,
+                   'page' : search_results.page,
+                   'page_len' : search_results.pagelen,
+                   'results'  : results_lists
+                   }
+    
+    
     # Return the results
-    return render_api_response(request, results_lists)
+    return render_api_response(request, results_set)
 
 def api_word_parse(request, word=None):
     

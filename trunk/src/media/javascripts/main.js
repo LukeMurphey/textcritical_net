@@ -39,6 +39,10 @@ require.config({
         
         app: [
              "app"
+        ],
+
+        blockui: [
+             "libs/jquery.blockUI"
         ]
     },
     shim: {
