@@ -331,15 +331,18 @@ body.dark .dataTables_filter > label > input {
    Search
    ----------------------------------------- */
 .searching-animation {
-  margin-left: auto;
-  margin-right: auto;
   width: 100px;
   margin-top: 100px;
   padding-left: 22px;
   background-repeat: no-repeat;
   background-position: 1px 2px;
   background-image: url(../images/ajax_loader.gif);
-  display: none; }
+  display: none;
+  top: 100px;
+  left: 50%;
+  margin-left: -100px;
+  position: absolute;
+  z-index: 10000; }
 
 .dark .searching-animation {
   background-image: url(../images/ajax_loader_dark.gif); }
