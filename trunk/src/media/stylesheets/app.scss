@@ -13,6 +13,10 @@
 /* -----------------------------------------
    Shared Styles
    ----------------------------------------- */
+body > .container{
+	margin-top: 20px;
+}
+   
 .header{
     background-color: #ededed;
     background-image: -ms-linear-gradient(bottom, #EDEDED 0%, #FEFEFE 100%);

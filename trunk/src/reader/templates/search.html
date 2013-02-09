@@ -39,6 +39,8 @@ else{
 }
 %>
 
+<div class="search-results-page-info">Page <%= search_results.page %> of <%= Math.ceil(search_results.result_count / search_results.page_len) %></div>
+
 <ul class="pager">
 	<li class="previous <% if( has_previous == false ) { %>disabled<% } %>">
 		<a href="#" class="previous-page-link">&larr; Previous</a>
@@ -80,8 +82,8 @@ require(["jquery", "store", "app", "underscore", "blockui"], function($) {
 		
 		TextCritical.set_caret_at_end( $("#search-term")[0] );
 		
-		$("#search-button").click( TextCritical.do_search );
-		$("#search-form").submit( TextCritical.do_search );
+		$("#search-button").click( TextCritical.do_fresh_search );
+		$("#search-form").submit( TextCritical.do_fresh_search );
 		
 		$(".next-page-link").click( TextCritical.do_search_next );
 		$(".previous-page-link").click( TextCritical.do_search_previous );

@@ -10,6 +10,9 @@
 /* -----------------------------------------
    Shared Styles
    ----------------------------------------- */
+body > .container {
+  margin-top: 20px; }
+
 .header {
   background-color: #ededed;
   background-image: -ms-linear-gradient(bottom, #ededed 0%, #fefefe 100%);
@@ -357,6 +360,9 @@ b.match {
 
 .search-results .work-description {
   margin-top: 16px; }
+
+.search-results-page-info {
+  margin-top: 24px; }
 
 .actions_404 {
   margin-top: 10px;
