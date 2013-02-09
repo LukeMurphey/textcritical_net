@@ -338,10 +338,15 @@ TextCritical.do_search = function( page ){
 		
 		if ( $("#page-number").val().length > 0 ){
 			page = parseInt( $("#page-number").val() );
+			console.info("Getting page from #page-number:" + $("#page-number").val());
 		}
 		else{
 			page = 1;
+			console.info("Setting page to 1");
 		}
+	}
+	else{
+		console.info("Using provided page: " + page );
 	}
 	
 	if( page <= 0 ){
@@ -380,11 +385,12 @@ TextCritical.do_search = function( page ){
 		
 		$('#search-results-content').unblock();
 		console.info( "Successfully searched for " + word );
-		TextCritical.set_search_url(word, page);
 		
 		// Show the results and hide the "searching..." dialog
 		$('#searching').hide();
 		$('#search-results-content').show();
+		
+		TextCritical.set_search_url(word, page);
 		
 	}).error( function(jqXHR, textStatus, errorThrown) {
 		$("#search-results-content").html( "<h4>Search failed</h4> The search request could not be completed" );
@@ -395,6 +401,13 @@ TextCritical.do_search = function( page ){
 	});
 	
 	return false;
+}
+
+/**
+ * Do a search, starting from page 1.
+ **/
+TextCritical.do_fresh_search = function( ){
+	return TextCritical.do_search( 1 );
 }
 
 /**
