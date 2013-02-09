@@ -2,6 +2,11 @@
 {% block content %}
 {% load string_utils %}
 
+        <ul class="breadcrumb">
+            <li><a href="{% url home %}">Home</a> <span class="divider">/</span></li>
+            <li class="active">Search</li>
+        </ul>
+
 <script type="text/html" id='search-results'>
 
 	<% if( search_results.results.length == 0){ %>
