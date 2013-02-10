@@ -1,10 +1,7 @@
 {% extends "base_with_nav.html" %}
 {% block content %}
-
-        
         <h1>Tests</h1>
         
-
         <div id="qunit"></div>
         <div id="qunit-fixture"></div>
  
@@ -117,6 +114,7 @@ require(["jquery", "qunit", "app"], function($) {
     });
     
     test( "contains_search_words", function() {
+        ok( TextCritical.contains_search_words("λόγους work:new-testament"), "Search term is included and ought to be designated as such" );
         ok( TextCritical.contains_search_words("λόγους work_id:new-testament"), "Search term is included and ought to be designated as such" );
         ok( !TextCritical.contains_search_words("work_id:new-testament"), "Search term not included and ought to be designated as such" );
         ok( !TextCritical.contains_search_words("work:\"New Testament\""), "Search term not included and ought to be designated as such" );
