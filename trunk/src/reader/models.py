@@ -123,7 +123,7 @@ class Division(models.Model):
 
         super(Division, self).save(*args, **kwargs)
         
-    def get_division_description(self, use_titles=False):
+    def get_division_description(self, use_titles=False, verse=None):
         
         s = ""
         prior_was_number = False
@@ -159,7 +159,20 @@ class Division(models.Model):
             # Get the next division
             next_division = next_division.parent_division
             
-        return s.strip()
+        # Make sure we don't have any trailing spaces
+        s = s.strip()
+            
+        # Add the verse information and use the correct separator
+        if verse:
+            if '.' in s:
+                s = s + "." + str(verse)
+            else:
+                s = s + ":" + str(verse)
+            
+            s = s.strip()
+        
+        # Return the result
+        return s
     
     def get_division_description_titles(self):
         return self.get_division_description(True)
