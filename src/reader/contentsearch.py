@@ -3,6 +3,7 @@ from whoosh.qparser import QueryParser
 from whoosh.filedb.filestore import FileStorage
 from whoosh.fields import Schema, NUMERIC, TEXT
 from whoosh.query import *
+from reader.language_tools import strip_accents
 
 from time import time
 import logging
@@ -24,13 +25,14 @@ class WorkIndexer:
         Returns a schema for searching works.
         """
         
-        return Schema( verse_id     = NUMERIC(unique=True, stored=True),
-                       content      = TEXT,
-                       work_id      = TEXT,
-                       section_id   = TEXT,
-                       work         = TEXT,
-                       section      = TEXT,
-                       author       = TEXT)
+        return Schema( verse_id      = NUMERIC(unique=True, stored=True),
+                       content       = TEXT,
+                       no_diacritics = TEXT,
+                       work_id       = TEXT,
+                       section_id    = TEXT,
+                       work          = TEXT,
+                       section       = TEXT,
+                       author        = TEXT)
         """
         return Schema( verse_id     = NUMERIC(unique=True, stored=True),
                        content      = TEXT,
@@ -189,13 +191,14 @@ class WorkIndexer:
             author_str = unicode()
         
         # Add the content
-        writer.add_document(content     = verse.content,
-                            verse_id    = verse.id,
-                            work_id     = work.title_slug,
-                            section_id  = division.title_slug,
-                            work        = unicode(work.title),
-                            section     = unicode(division.get_division_description(use_titles=False).decode("UTF-8")),
-                            author      = author_str
+        writer.add_document(content       = verse.content,
+                            no_diacritics = strip_accents(verse.content),
+                            verse_id      = verse.id,
+                            work_id       = work.title_slug,
+                            section_id    = division.title_slug,
+                            work          = unicode(work.title) + ", " + work.title_slug,
+                            section       = unicode(division.get_division_description(use_titles=False).decode("UTF-8")) + ", " + unicode(division.get_division_description(use_titles=True).decode("UTF-8")),
+                            author        = author_str
                             )
     
         # Commit it
@@ -222,23 +225,6 @@ class VerseSearchResults:
             self.verses.append( VerseSearchResult(verse, r.highlights("content", text=verse.content) ) )
         
         self.result_count = len(results)
-        
-        """
-        self.actual_length = 0
-        self.is_exact = True
-        self.estimated_min_length = 0
-        self.estimated_length = 0
-        
-        
-        # Assign values to the parameters
-        if results.has_exact_length():
-            self.is_exact = True
-            self.actual_length = len(results)
-        else:
-            self.is_exact = False
-            self.estimated_min_length = results.estimated_min_length()
-            self.estimated_length = results.estimated_length()
-        """
         
     
 class VerseSearchResult:
@@ -282,15 +268,5 @@ def search_verses( search_text, inx=None, page=1, pagelen=20 ):
         #query =  QueryParser("content", inx.schema).parse(search_text)
         #search_query = Term("content", search_text)
         search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen), page, pagelen)
-        
-        """
-        for r in searcher.search_page(search_query, page, pagelen):
-            
-            # Get the verse so that the highlighting can be done
-            verse = Verse.objects.get(id=r['verse_id'])
-            
-            #print "Highlights:", r.highlights("content", text=verse.content)
-            verses.append( VerseSearchResult(verse, r.highlights("content", text=verse.content) ) )
-        """
             
     return search_results

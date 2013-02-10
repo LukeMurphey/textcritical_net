@@ -1186,6 +1186,23 @@ class TestDivisionModel(TestReader):
         
         self.assertEquals( division.get_division_indicators(), [u'Matthew', u'1'] )
         
+    def test_get_division_description(self):
+        
+        book_xml = self.load_test_resource('nt_gk.xml')        
+        self.importer.import_xml_string(book_xml)
+        
+        # Build a description
+        division = Division.objects.filter(work=self.importer.work)[1]
+        self.assertEquals( division.get_division_description(), "Matthew 1" )
+        
+        # Build a description using the titles
+        division = Division.objects.filter(work=self.importer.work)[1]
+        self.assertEquals( division.get_division_description(use_titles=True), "ΚΑΤΑ ΜΑΘΘΑΙΟΝ chapter 1" )
+        
+        # Build a description with a verse
+        verse = Verse.objects.filter(division=division).order_by("sequence_number")[0]
+        self.assertEquals( division.get_division_description(verse=verse), "Matthew 1:1" )
+        
 class TestViews(TestReader):
     
     def test_get_division(self):
@@ -1357,18 +1374,29 @@ class TestContentSearch(TestReader):
         # Remove any existing index files from previous tests
         self.indexer.delete_index()
 
-    def make_work(self):
+    def make_work(self, content="Lorem ipsum dolor sit amet, consectetur adipiscing elit.", division_title="test_add_doc(division)", work_title="test_add_doc", work_title_slug=None, division_title_slug=None, division_descriptor=None):
         author = Author()
         author.name = "Luke"
         author.save()
         
-        work = Work(title="test_add_doc")
+        work = Work(title=work_title)
+        
+        if work_title_slug:
+            work.title_slug = work_title_slug
+        
         work.save()
         
-        division = Division(work=work, title="test_add_doc(division)", readable_unit=True, level=1, sequence_number=1)
+        division = Division(work=work, title=division_title, readable_unit=True, level=1, sequence_number=1)
+        
+        if division_title_slug:
+            division.title_slug = division_title_slug
+            
+        if division_descriptor:
+            division.descriptor = division_descriptor
+        
         division.save()
         
-        verse = Verse(division=division, indicator="1", sequence_number=1, content="Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+        verse = Verse(division=division, indicator="1", sequence_number=1, content=content)
         verse.save()
         
         return verse, division, work
@@ -1388,7 +1416,51 @@ class TestContentSearch(TestReader):
         
         results = search_verses( "amet", self.indexer.get_index() )
         
-        self.assertEquals( len(results), 1 )
+        self.assertEquals( len(results.verses), 1 )
+        
+    def test_search_verse_no_diacritic(self):
+        
+        # Make a work
+        verse, division, work = self.make_work(u"ἐξ ἔργων νόμου οὐ δικαιωθήσεται πᾶσα σὰρξ")
+        
+        self.indexer.get_index(create=True)
+        self.indexer.index_verse(verse, commit=True)
+        
+        results = search_verses( u"no_diacritics:νομου", self.indexer.get_index() )
+        
+        self.assertEquals( len(results.verses), 1 )
+        
+    def test_search_verse_work_by_slug(self):
+        
+        # Make a work
+        verse, division, work = self.make_work(work_title="New Testament", work_title_slug=u"test_search_verse_work_by_slug")
+        
+        self.indexer.get_index(create=True)
+        self.indexer.index_verse(verse, commit=True)
+        
+        results = search_verses( u"work_id:test_search_verse_work_by_slug", self.indexer.get_index() )
+        self.assertEquals( len(results.verses), 1 )
+        
+        results = search_verses( u"work:test_search_verse_work_by_slug", self.indexer.get_index() )
+        self.assertEquals( len(results.verses), 1 )
+
+        results = search_verses( u'work:"New Testament"', self.indexer.get_index() )
+        self.assertEquals( len(results.verses), 1 )        
+        
+    def test_search_division_by_slug(self):
+        
+        # Make a work
+        verse, division, work = self.make_work(division_title="Some Division", division_descriptor=u"division_descriptor")
+        
+        self.indexer.get_index(create=True)
+        self.indexer.index_verse(verse, commit=True)
+        
+        results = search_verses( u"section:division_descriptor", self.indexer.get_index() )
+        self.assertEquals( len(results.verses), 1 )
+
+        results = search_verses( u'section:"Some Division"', self.indexer.get_index() )
+        self.assertEquals( len(results.verses), 1 )        
+        
         
     def test_index_work(self):
         
@@ -1400,7 +1472,7 @@ class TestContentSearch(TestReader):
         
         results = search_verses( "amet", self.indexer.get_index() )
         
-        self.assertEquals( len(results), 1 )
+        self.assertEquals( len(results.verses), 1 )
         
     def test_index_division(self):
         
@@ -1412,4 +1484,4 @@ class TestContentSearch(TestReader):
         
         results = search_verses( "amet", self.indexer.get_index() )
         
-        self.assertEquals( len(results), 1 )
+        self.assertEquals( len(results.verses), 1 )

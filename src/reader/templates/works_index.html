@@ -26,7 +26,7 @@
 			        <td><i class="icon-book {% if USE_DARK_THEME|default:0 %}icon-white{% endif %}"></i> <a href="{% url read_work work.title_slug %}">{{work.title}}</a></td>
 			        <td>{{work.authors.all|join:", "}}</td>
 			        <td class="hidden-phone">{{work.editors.all|join:", "}}</td>
-			        <td><a href="{% url search %}?q=work_id:{{work.title_slug}}">Search this work</a></td>
+			        <td><a href="{% url search %}?q=work:{{work.title_slug}}">Search this work</a></td>
 			    </tr>
 		    {% endfor %}
 		    </tbody>

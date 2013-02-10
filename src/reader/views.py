@@ -418,7 +418,7 @@ def api_search(request, search_text=None):
         d['url']             = reverse('read_work', args=args )
         d['verse']           = str(result.verse)
         d['division']        = result.verse.division.get_division_description()
-        d['work_title_slug'] =  result.verse.division.work.title_slug
+        d['work_title_slug'] = result.verse.division.work.title_slug
         d['work']            = result.verse.division.work.title
         d['highlights']      = result.highlights
         d['content_snippet'] = string_limiter(result.verse.content, 80)
