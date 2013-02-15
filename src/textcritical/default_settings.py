@@ -42,6 +42,9 @@ else:
 if not TESTING:
     DATABASE_ROUTERS = ['textcritical.routers.PreLoadedWorksRouter']
 
+# This is the location where the indexes are located
+SEARCH_INDEXES = os.path.join("..", "var", "indexes")
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.

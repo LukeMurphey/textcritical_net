@@ -4,6 +4,7 @@ from whoosh.filedb.filestore import FileStorage
 from whoosh.fields import Schema, NUMERIC, TEXT
 from whoosh.query import *
 from reader.language_tools import strip_accents
+from django.conf import settings
 
 from time import time
 import logging
@@ -47,7 +48,10 @@ class WorkIndexer:
         Gets the directory where indexes will be stored.
         """
         
-        return os.path.join("..", "var", "indexes")
+        if settings.SEARCH_INDEXES:
+            return settings.SEARCH_INDEXES
+        else:
+            return os.path.join("..", "var", "indexes")
     
     @classmethod
     def index_dir_exists(cls):
