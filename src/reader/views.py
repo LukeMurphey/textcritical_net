@@ -413,7 +413,13 @@ def api_search(request, search_text=None):
         # Build the list of arguments necessary to make the URL
         args = [ result.verse.division.work.title_slug ]
         args.extend( result.verse.division.get_division_indicators() )
-        args.append( str(result.verse) )
+        
+        # Determine if the last verse is a lone verse. If it is, then don't put the verse in the URL args.
+        if Verse.objects.filter(division=result.verse.division).count() > 1:
+            division_has_multiple_verses = True
+            args.append( str(result.verse) )
+        else:
+            division_has_multiple_verses = False
         
         d['url']             = reverse('read_work', args=args )
         d['verse']           = str(result.verse)
@@ -423,11 +429,19 @@ def api_search(request, search_text=None):
         d['highlights']      = result.highlights
         d['content_snippet'] = string_limiter(result.verse.content, 80)
         
-        if '.' in d['division']:
-            d['description'] = d['division'] + "." + d['verse']
+        # If the verse is not a lone verse (has other verses next to it under the parent division) then add the verse information to the list
+        if division_has_multiple_verses:
+            
+            if '.' in d['division']:
+                d['description'] = d['division'] + "." + d['verse']
+            else:
+                d['description'] = d['division'] + ":" + d['verse']
+                
+        # If the verse is a lone verse, don't bother adding it
         else:
-            d['description'] = d['division'] + ":" + d['verse']
+            d['description'] = d['division']
         
+        # Append the results
         results_lists.append(d)
     
     results_set = {
