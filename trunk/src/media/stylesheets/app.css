@@ -364,6 +364,14 @@ b.match {
 .search-results-page-info {
   margin-top: 24px; }
 
+.next-page-link {
+  cursor: hand;
+  cursor: pointer; }
+
+.previous-page-link {
+  cursor: hand;
+  cursor: pointer; }
+
 .actions_404 {
   margin-top: 10px;
   margin-bottom: 20px; }
