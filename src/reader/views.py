@@ -8,6 +8,7 @@ import json
 import logging
 import math
 import difflib
+import re
 
 from reader.models import Work, Division, Verse, WordDescription, Author
 from reader.language_tools.greek import Greek
@@ -454,6 +455,57 @@ def api_search(request, search_text=None):
     
     # Return the results
     return render_api_response(request, results_set)
+
+def api_convert_query_beta_code(request, search_query):
+    
+    if search_query is None or len(search_query) == 0 and 'q' in request.GET:
+        search_query = request.GET['q']
+        
+    # Break up the query into individual search strings
+    
+    queries = search_query.split(" ")
+    
+    # convert all items that
+    beta_fields = ["content", "no_diacritics", "section", None]
+    
+    # This will be the new search string
+    new_queries = []
+    
+    for q in queries:
+        
+        # By default, assume that the query is unchanged
+        new_q = q
+        
+        # If the query has the field specified, then separate it
+        if ":" in q:
+            field, value = re.split("[:]", q, 1)
+                    
+        # If the query has no field, then set the field to none
+        else:
+            field = None
+            value = q
+            
+        # If the field is for a field that can contain beta-code, then convert it
+        if field in beta_fields:
+            
+            # Add the field to the query if it exists
+            if field is not None:
+                new_q = field + ":"
+            else:
+                new_q = ""
+                
+            # Add and convert the field
+            if re.match("\w+", value ):
+                # If is just ASCII, then convert it
+                new_q = new_q + Greek.beta_code_to_unicode(value)
+            else:
+                # Otherwise, don't. It may be Greek already
+                new_q = new_q + value
+            
+        # Add the query to the list
+        new_queries.append(new_q) 
+            
+    return render_api_response(request, " ".join(new_queries) )
 
 def api_word_parse(request, word=None):
     
