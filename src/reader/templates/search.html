@@ -50,10 +50,10 @@ else{
 
 <ul class="pager">
 	<li class="previous <% if( has_previous == false ) { %>disabled<% } %>">
-		<a href="#" class="previous-page-link">&larr; Previous</a>
+		<a class="previous-page-link">&larr; Previous</a>
 	</li>
 	<li class="next <% if( has_next == false ) { %>disabled<% } %>">
-		<a href="#" class="next-page-link">Next &rarr;</a>
+		<a class="next-page-link">Next &rarr;</a>
 	</li>
 </ul>
 </script>
@@ -84,7 +84,7 @@ require(["jquery", "store", "app", "underscore", "blockui"], function($) {
 		
 		// Execute the search if we already got a search term
 		if ( $("#search-term").val().length > 0 && TextCritical.contains_search_words($("#search-term").val()) ){
-			TextCritical.do_search();
+			TextCritical.do_search(null, false);
 		}
 		
 		TextCritical.set_caret_at_end( $("#search-term")[0] );
@@ -94,6 +94,8 @@ require(["jquery", "store", "app", "underscore", "blockui"], function($) {
 		
 		$(".next-page-link").click( TextCritical.do_search_next );
 		$(".previous-page-link").click( TextCritical.do_search_previous );
+		
+		window.addEventListener('popstate', TextCritical.search_page_popstate );
 	});
 
 });
