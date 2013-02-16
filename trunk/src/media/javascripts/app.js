@@ -322,19 +322,30 @@ TextCritical.set_caret_at_end = function(elem) {
 /**
  * Update the URL according to the word and page specified.
  */
-TextCritical.set_search_url = function( word, page ){
-	history.pushState( {word: word, page: page}, document.title, document.location.pathname + "?page=" + page + "&q=" + word);
+TextCritical.set_search_url = function( query, page ){
+	
+	// Get the appropriate URL
+	if( page <= 1 || parseInt(page) <= 1 ){
+		url = document.location.pathname + "?&q=" + query;
+		page = 1;
+	}
+	else{
+		url = document.location.pathname + "?q=" + query + "&page=" + page;
+	}
+	
+	// Push the state
+	history.pushState( {query: query, page: page}, document.title, url);
 }
 
 /**
  * Perform a search and render the results.
  * Note: this users the blockUI jQuery plugin.
  **/
-TextCritical.do_search = function( page ){
+TextCritical.do_search = function( page, update_url ){
 	
 	word = $("#search-term").val();
 	
-	if( page == undefined ){
+	if( page == undefined || page == null ){
 		
 		if ( $("#page-number").val().length > 0 ){
 			page = parseInt( $("#page-number").val() );
@@ -347,6 +358,10 @@ TextCritical.do_search = function( page ){
 	}
 	else{
 		console.info("Using provided page: " + page );
+	}
+	
+	if( update_url == undefined ){
+		update_url = true;
 	}
 	
 	if( page <= 0 ){
@@ -390,7 +405,9 @@ TextCritical.do_search = function( page ){
 		$('#searching').hide();
 		$('#search-results-content').show();
 		
-		TextCritical.set_search_url(word, page);
+		if( update_url ){
+			TextCritical.set_search_url(word, page);
+		}
 		
 	}).error( function(jqXHR, textStatus, errorThrown) {
 		$("#search-results-content").html( "<h4>Search failed</h4> The search request could not be completed" );
@@ -414,7 +431,7 @@ TextCritical.do_fresh_search = function( ){
  * Go to the next page in the search results.
  **/
 TextCritical.do_search_next = function( ){
-	TextCritical.change_page( 1 );
+	return TextCritical.change_page( 1 );
 }
 
 /**
@@ -443,13 +460,23 @@ TextCritical.change_page = function( offset ){
  * Go to the previous page in the search results.
  **/
 TextCritical.do_search_previous = function( ){
-	TextCritical.change_page( -1 );
+	return TextCritical.change_page( -1 );
 }
 
 
 /**
  * Update the next and previous buttons based on the page.
  **/
-TextCritical.update_search_pagination = function( ){
-	//$(".next-page-link");
+TextCritical.search_page_popstate = function( event ){
+	
+	// Ignore events made from replace states
+	if (event.state == null) {
+		return;
+	}
+	  
+	// Update the query if necessary
+	$("#search-term").val( event.state.query );
+	
+	// Invoke the search, but don't update the URL (otherwise users will keep adding a new state and can never get back more than one)
+	TextCritical.do_search( event.state.page, false );
 }
