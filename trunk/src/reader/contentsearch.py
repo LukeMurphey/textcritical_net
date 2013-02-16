@@ -33,14 +33,8 @@ class WorkIndexer:
                        section_id    = TEXT,
                        work          = TEXT,
                        section       = TEXT,
-                       author        = TEXT)
-        """
-        return Schema( verse_id     = NUMERIC(unique=True, stored=True),
-                       content      = TEXT,
-                       work_id      = NUMERIC,
-                       division_id  = NUMERIC)
-        """
-                       
+                       #beta_code     = TEXT,
+                       author        = TEXT)           
     
     @classmethod
     def get_index_dir(cls):

@@ -465,7 +465,7 @@ TextCritical.do_search_previous = function( ){
 
 
 /**
- * Update the next and previous buttons based on the page.
+ * Update the search results when the user presses the back button.
  **/
 TextCritical.search_page_popstate = function( event ){
 	
@@ -479,4 +479,19 @@ TextCritical.search_page_popstate = function( event ){
 	
 	// Invoke the search, but don't update the URL (otherwise users will keep adding a new state and can never get back more than one)
 	TextCritical.do_search( event.state.page, false );
+}
+
+/**
+ * Update the search results when the user presses the back button.
+ **/
+TextCritical.convert_search_query_beta_code = function( ){
+	
+	query = $("#search-term").val();
+	
+	// Submit the AJAX request to display the information
+	$.ajax({
+		url: "/api/convert_query_beta_code/?q=" + query
+	}).done(function(converted_query) {
+		$("#search-term").val(converted_query);
+	});
 }
