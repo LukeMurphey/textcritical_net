@@ -9,6 +9,7 @@ from django.conf import settings
 from time import time
 import logging
 from reader.models import Verse, Division, Work
+from reader.language_tools.greek import Greek
 
 import os
 
@@ -33,7 +34,6 @@ class WorkIndexer:
                        section_id    = TEXT,
                        work          = TEXT,
                        section       = TEXT,
-                       #beta_code     = TEXT,
                        author        = TEXT)           
     
     @classmethod
@@ -207,6 +207,30 @@ class WorkIndexer:
     
 class VerseSearchResults:
     
+    def add_to_results_string(self, to_str, from_str, separator="..."):
+        
+        if to_str is None:
+            to_str = ''
+            
+        if from_str is not None:
+            
+            if to_str is not None and len(to_str) > 0:
+                to_str = to_str + separator + from_str
+            else:
+                to_str = from_str
+                
+        return to_str
+    
+    def get_highlights(self, result, verse):
+        
+        highlights_str = ''
+        
+        highlights_str = self.add_to_results_string(highlights_str, result.highlights("content", text=verse.content))
+        
+        highlights_str = self.add_to_results_string(highlights_str, result.highlights("no_diacritics", text=strip_accents(verse.content)) )        
+    
+        return highlights_str
+        
     def __init__(self, results, page, pagelen ):
         
         self.page = page
@@ -220,7 +244,19 @@ class VerseSearchResults:
             # Get the verse so that the highlighting can be done
             verse = Verse.objects.get(id=r['verse_id'])
             
-            self.verses.append( VerseSearchResult(verse, r.highlights("content", text=verse.content) ) )
+            """
+            if r.highlights("content", text=verse.content):
+                highlights = r.highlights("content", text=verse.content)
+            
+            elif r.highlights("no_diacritics", text=strip_accents(verse.content)):
+                highlights =  r.highlights("no_diacritics", text=strip_accents(verse.content))
+            else:
+                highlights = ""
+            """
+            
+            highlights = self.get_highlights( r, verse )
+            
+            self.verses.append( VerseSearchResult(verse, highlights ) )
         
         self.result_count = len(results)
         
