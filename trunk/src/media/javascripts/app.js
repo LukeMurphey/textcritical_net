@@ -420,10 +420,41 @@ TextCritical.do_search = function( page, update_url ){
 	return false;
 }
 
+
+TextCritical.show_search_help = function( show ){
+
+	if( show == undefined ){
+		show = true;
+	}
+	
+	if( show ){
+		$("#search-help").show();
+		$('#search-results-content').hide();
+	}
+	else{
+		$("#search-help").hide();
+		$('#search-results-content').show();
+	}
+}
+
+TextCritical.toggle_search_help  = function( ){
+	
+	if( $("#search-help").is(":visible") ){
+		TextCritical.show_search_help( false );
+	}
+	else{
+		TextCritical.show_search_help( true );
+	}
+	
+	return false;
+	
+}
+
 /**
  * Do a search, starting from page 1.
  **/
 TextCritical.do_fresh_search = function( ){
+	TextCritical.show_search_help( false );
 	return TextCritical.do_search( 1 );
 }
 
