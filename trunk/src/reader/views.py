@@ -382,6 +382,8 @@ def api_search(request, search_text=None):
     else:
         return render_api_error(request, "No search query was provided", 400)
     
+    search_text = language_tools.normalize_unicode(search_text)
+    
     # Get the page number
     if 'page' in request.GET:
         try:
