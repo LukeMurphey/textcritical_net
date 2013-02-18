@@ -58,12 +58,15 @@ else{
 </ul>
 </script>
 
-
 <form id="search-form">
 	<legend>Search</legend>
-	<div class="input-append">
+	<div id="search-help-link"><i class="icon-question-sign icon-white"> </i> <a href="#">Search help</a></div>
+	
+	<div class="input-append ">
+
 	 	<input class="span10" id="search-term" placeholder="Enter the text to search for" type="text" value="{{query|addspaceifnotempty|default_if_none:""}}"/>
 	 	<input type="hidden" id="page-number" name="page" value="{{page|default_if_none:""}}" />
+	 	
 	 	<button id="search-button" class="btn btn-primary" type="button" >Submit Search</button>
 	</div>
 </form>
@@ -71,7 +74,84 @@ else{
 <div id="searching" class="searching-animation">Searching ...</div>
 <div class="search-results" id="search-results-content"></div>
 		
+<div id="search-help">
+	<div id="search-help-hide">
+		<i class="icon-remove-sign icon-white" ></i> <a id="search-help-hide-link" href="">Close search help</a>
+	</div>
+	
+	<h2>Search Operations</h2>
+	
+	<p>
+	The search language used by TextCritical.net allows several operations. Here are some common ones:
+	</p>
+	
+	<p>
+	Search for verses with both ἱστορίας and νόμον:
+	<div class="search-example">ἱστορίας νόμον</div>
+	</p>
+	
+	<p>
+	Search for verses with the phrase "ἱστορίας νόμον":
+	
+	<div class="search-example">"ἱστορίας νόμον"</div>
+	</p>
+	
+	<p>
+	Search for verses with the word ἱστορίας or νόμον:
+	<div class="search-example">ἱστορίας OR νόμον</div>
+	</p>
+	
+	
+	<p>
+	Search for verses with the word συγγνώμην provided they don't include either ἱστορίας or νόμον:
+	<div class="search-example">συγγνώμην NOT (ἱστορίας OR νόμον)</div>
+	</p>
+	
+	
+	<p>
+	The search engine accepts beta-code representations of Greek words. Thus, a search for no/mon is equivalent to a search for νόμον:
+	<div class="search-example">no/mon</div>
+	</p>
+	
+	<h2>Search Fields</h2>
+	
+	Several fields exist that can be be searched. Just append the field name to the search with a colon to search it (e.g. work:new-testament).
+	
+	Below are the available fields
+	
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Field</th>
+				<th>Description</th>
+				<th>Example</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>work</td>
+				<td>Search for items within a particular work (New Testament, Agammenon, etc.)</td>
+				<td><span class="search-example"><span class="search-example">work:"New Testament"</span></td>
+			</tr>
+			<tr>
+				<td>no_diacritics</td>
+				<td>Search for words disregarding the diacritical marks. Searching for no_diacritics:και will match on καὶ and καῖ</td>
+				<td><span class="search-example">no_diacritics:ευαγγελιον</span></td>
+			</tr>
+			<tr>
+				<td>section</td>
+				<td>Search for items within a section (chapter, division, book, etc.)</td>
+				<td><span class="search-example">section:"Matthew 5"</span></td>
+			</tr>
+			<tr>
+				<td>author</td>
+				<td>Search for verses within works created by a particular author.</td>
+				<td><span class="search-example">author:"Flavius Josephus"</span></td>
+			</tr>
+		</tbody>
+	</table>
 
+</div>
 		
 {% endblock %}
 
@@ -96,6 +176,9 @@ require(["jquery", "store", "app", "underscore", "blockui"], function($) {
 		$(".previous-page-link").click( TextCritical.do_search_previous );
 		
 		window.addEventListener('popstate', TextCritical.search_page_popstate );
+		
+		$('#search-help-link').click( function() { TextCritical.toggle_search_help(); return false; } );
+		$('#search-help-hide-link').click( function() { TextCritical.show_search_help(false); return false; } );
 	});
 
 });

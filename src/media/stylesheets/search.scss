@@ -55,3 +55,30 @@ b.match{
 	cursor: hand;
 	cursor: pointer;
 }
+
+#search-help-link{
+	position: relative;
+	top: -45px;
+	float: right;
+	margin-right: 100px;
+}
+
+#search-help-hide-link{
+	margin-right: 63px;
+}
+
+#search-help-hide{
+	float: right;
+}
+
+#search-help{
+	display:none;
+}
+
+.search-example{
+	font-family: monospace;
+}
+
+div.search-example{
+	margin-left: 32px;
+}	
