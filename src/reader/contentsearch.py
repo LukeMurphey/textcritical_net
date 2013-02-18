@@ -2,8 +2,13 @@ import whoosh
 from whoosh.qparser import QueryParser
 from whoosh.filedb.filestore import FileStorage
 from whoosh.fields import Schema, NUMERIC, TEXT
+from whoosh.analysis import CharsetFilter, StemmingAnalyzer, SpaceSeparatedTokenizer, SimpleAnalyzer
+from whoosh.support.charset import accent_map
 from whoosh.query import *
-from reader.language_tools import strip_accents
+from whoosh.analysis import Filter
+from whoosh.util import rcompile
+
+from reader.language_tools import strip_accents, normalize_unicode
 from django.conf import settings
 
 from time import time
@@ -27,8 +32,11 @@ class WorkIndexer:
         Returns a schema for searching works.
         """
         
+        # Add an accent-folding filter to a stemming analyzer so that we can search irrespective to accents
+        analyzer = SimpleAnalyzer( rcompile(r"[\w/*()=\+|&']+(\.?[\w/*()=\+|&']+)*") )
+        
         return Schema( verse_id      = NUMERIC(unique=True, stored=True),
-                       content       = TEXT,
+                       content       = TEXT(analyzer=analyzer),
                        no_diacritics = TEXT,
                        work_id       = TEXT,
                        section_id    = TEXT,
@@ -162,26 +170,6 @@ class WorkIndexer:
         if work is None and division is not None:
             work = division.work
         
-        """
-        # Determine the division ID
-        division_id = None
-        
-        if division is not None:
-            division_id = division.id
-        elif verse.division is not None:
-            division_id = verse.division.id
-        
-        # Determine the work ID
-        work_id = None
-        
-        if work is not None:
-            work_id = work.id
-        elif division is not None and division.work is not None:
-            work_id = division.work.id
-        elif verse.division is not None and verse.division.work is not None:
-            work_id = verse.division.work.id
-        """
-        
         # Get the author
         if work.authors.count() > 0:
             author_str = unicode(work.authors.all()[:1][0].name)
@@ -189,7 +177,7 @@ class WorkIndexer:
             author_str = unicode()
         
         # Add the content
-        writer.add_document(content       = verse.content,
+        writer.add_document(content       = normalize_unicode(verse.content),
                             no_diacritics = strip_accents(verse.content),
                             verse_id      = verse.id,
                             work_id       = work.title_slug,
@@ -225,7 +213,7 @@ class VerseSearchResults:
         
         highlights_str = ''
         
-        highlights_str = self.add_to_results_string(highlights_str, result.highlights("content", text=verse.content))
+        highlights_str = self.add_to_results_string(highlights_str, result.highlights("content", text=normalize_unicode(verse.content)))
         
         highlights_str = self.add_to_results_string(highlights_str, result.highlights("no_diacritics", text=strip_accents(verse.content)) )        
     
@@ -244,16 +232,6 @@ class VerseSearchResults:
             # Get the verse so that the highlighting can be done
             verse = Verse.objects.get(id=r['verse_id'])
             
-            """
-            if r.highlights("content", text=verse.content):
-                highlights = r.highlights("content", text=verse.content)
-            
-            elif r.highlights("no_diacritics", text=strip_accents(verse.content)):
-                highlights =  r.highlights("no_diacritics", text=strip_accents(verse.content))
-            else:
-                highlights = ""
-            """
-            
             highlights = self.get_highlights( r, verse )
             
             self.verses.append( VerseSearchResult(verse, highlights ) )
@@ -266,6 +244,20 @@ class VerseSearchResult:
     def __init__(self, verse, highlights):
         self.verse = verse
         self.highlights = highlights
+    
+def greek_variations(text):
+    return [text, normalize_unicode(Greek.beta_code_to_unicode(text))]
+    
+class GreekVariations(Variations):
+    """
+    Provides variations of a Greek word including a beta-code representation. This way, users can search using beta-code if they don't have a Greek keyboard enabled.
+    """
+    
+    def _words(self, ixreader):
+        fieldname = self.fieldname
+        
+        return [word for word in greek_variations(self.text)
+                if (fieldname, word) in ixreader]
     
 def search_verses( search_text, inx=None, page=1, pagelen=20 ):
     """
@@ -284,23 +276,14 @@ def search_verses( search_text, inx=None, page=1, pagelen=20 ):
     
     with inx.searcher() as searcher:
         
-        """
-        if work_id is not None:
-            search_query = And([Term("content", search_text), Term("work_id", work_id)])
-        elif author_id is not None:
-            search_query = And([Term("content", search_text), Term("author_id", author_id)])
-        else:
-            search_query = Term("content", search_text)
-        """
-        
         # Make a parser to convert the incoming search string into a search
-        parser = QueryParser("content", inx.schema)
+        parser = QueryParser("content", inx.schema, termclass=GreekVariations)
+        #parser = QueryParser("content", WorkIndexer.get_schema(), termclass=GreekVariations)
         
         # Parse the search string into an actual search
         search_query = parser.parse(search_text)
         
-        #query =  QueryParser("content", inx.schema).parse(search_text)
-        #search_query = Term("content", search_text)
+        # Get the search result
         search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen), page, pagelen)
             
     return search_results

@@ -2,12 +2,11 @@
 
 from django.test import TestCase
 
-from xml.dom.minidom import parse, parseString
+from xml.dom.minidom import parseString
 import unicodedata
 import os
 
-from textcritical.default_settings import SITE_ROOT
-from reader.shortcuts import convert_xml_to_html5, convert_xml_to_html5_minidom
+from reader.shortcuts import convert_xml_to_html5
 from reader.templatetags.reader_extras import perseus_xml_to_html5
 from reader.importer.Perseus import PerseusTextImporter
 from reader.importer.PerseusBatchImporter import ImportPolicy, PerseusBatchImporter, WorkDescriptor, wildcard_to_re, ImportTransforms
@@ -15,7 +14,7 @@ from reader.importer import TextImporter, LineNumber
 from reader.importer.Diogenes import DiogenesLemmataImporter, DiogenesAnalysesImporter
 from reader.language_tools.greek import Greek
 from reader import language_tools
-from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Case, Work
+from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Work
 from reader.views import get_division
 from reader.contentsearch import WorkIndexer, search_verses
 
@@ -1430,6 +1429,30 @@ class TestContentSearch(TestReader):
         
         self.assertEquals( len(results.verses), 1 )
         
+    def test_search_verse_beta_code(self):
+        
+        # Make a work
+        verse, division, work = self.make_work( u"ἐξ ἔργων νόμου οὐ δικαιωθήσεται πᾶσα σὰρξ" )
+        
+        self.indexer.get_index(create=True)
+        self.indexer.index_verse(verse, commit=True)
+        
+        results = search_verses( u'NO/MOU', self.indexer.get_index() )
+        
+        self.assertEquals( len(results.verses), 1 )
+        
+    def test_search_verse_beta_code_no_diacritics(self):
+        
+        # Make a work
+        verse, division, work = self.make_work(u"ἐξ ἔργων νομου οὐ δικαιωθήσεται πᾶσα σὰρξ")
+        
+        self.indexer.get_index(create=True)
+        self.indexer.index_verse(verse, commit=True)
+        
+        results = search_verses( u"NOMOU", self.indexer.get_index() )
+        
+        self.assertEquals( len(results.verses), 1 )
+    
     def test_search_verse_work_by_slug(self):
         
         # Make a work
