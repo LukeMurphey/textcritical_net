@@ -247,23 +247,6 @@ class VerseSearchResult:
         self.verse = verse
         self.highlights = highlights
     
-def greek_variations(text, include_beta_code=True, include_alternate_forms=True, ignore_diacritics=False):
-    
-    forms = []
-    
-    if include_beta_code:
-        forms.append(normalize_unicode(Greek.beta_code_to_unicode(text)))
-                     
-    if include_alternate_forms:
-        
-        # Get the related forms
-        related_forms = get_all_related_forms(text, ignore_diacritics)
-        
-        for r in related_forms:
-            forms.append(r.form)
-    
-    return forms #[text, normalize_unicode(Greek.beta_code_to_unicode(text))]
-    
 class GreekVariations(Variations):
     """
     Provides variations of a Greek word including a beta-code representation and all related forms. This way, users can search
@@ -275,6 +258,26 @@ class GreekVariations(Variations):
         
         self.include_beta_code       = include_beta_code
         self.include_alternate_forms = include_alternate_forms
+    
+    def get_variations(self, text, include_beta_code=True, include_alternate_forms=True, ignore_diacritics=False):
+        
+        forms = []
+        
+        if include_beta_code:
+            forms.append(normalize_unicode(Greek.beta_code_to_unicode(text)))
+                         
+        if include_alternate_forms:
+            
+            # Get the related forms
+            related_forms = get_all_related_forms(text, ignore_diacritics)
+            
+            for r in related_forms:
+                if ignore_diacritics:
+                    forms.append(strip_accents(r.form))
+                else:
+                    forms.append(r.form)
+        
+        return forms
     
     def _words(self, ixreader):
         fieldname = self.fieldname
@@ -294,11 +297,13 @@ class GreekVariations(Variations):
         else:
             prepared_text = self.text
             
+        # Add the text we are searching for as a variation
         variations.append( prepared_text )
         
-        # Add the variations
-        variations.extend( greek_variations(prepared_text, self.include_beta_code, self.include_alternate_forms, ignore_diacritics) )
+        # Add the other Greek variations
+        variations.extend( self.get_variations(prepared_text, self.include_beta_code, self.include_alternate_forms, ignore_diacritics) )
         
+        # Return the variations list
         return [word for word in variations
                 if (fieldname, word) in ixreader]
         
