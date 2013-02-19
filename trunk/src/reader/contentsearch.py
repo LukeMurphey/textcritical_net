@@ -247,9 +247,9 @@ class VerseSearchResult:
         self.verse = verse
         self.highlights = highlights
     
-def greek_variations(text, include_beta_code=True, include_alternate_forms=True):
+def greek_variations(text, include_beta_code=True, include_alternate_forms=True, ignore_diacritics=False):
     
-    forms = [text]
+    forms = []
     
     if include_beta_code:
         forms.append(normalize_unicode(Greek.beta_code_to_unicode(text)))
@@ -257,7 +257,7 @@ def greek_variations(text, include_beta_code=True, include_alternate_forms=True)
     if include_alternate_forms:
         
         # Get the related forms
-        related_forms = get_all_related_forms(text)
+        related_forms = get_all_related_forms(text, ignore_diacritics)
         
         for r in related_forms:
             forms.append(r.form)
@@ -279,7 +279,27 @@ class GreekVariations(Variations):
     def _words(self, ixreader):
         fieldname = self.fieldname
         
-        return [word for word in greek_variations(self.text, self.include_beta_code, self.include_alternate_forms)
+        # Determine if we are searching the field that is stripped of diacritical marks
+        if self.fieldname == "no_diacritics":
+            ignore_diacritics = True
+        else:
+            ignore_diacritics = False
+        
+        # This will be the array of variations
+        variations = []
+        
+        # If the field doesn't contain diacritics then make sure to strip them from the word
+        if ignore_diacritics:
+            prepared_text = strip_accents(self.text) 
+        else:
+            prepared_text = self.text
+            
+        variations.append( prepared_text )
+        
+        # Add the variations
+        variations.extend( greek_variations(prepared_text, self.include_beta_code, self.include_alternate_forms, ignore_diacritics) )
+        
+        return [word for word in variations
                 if (fieldname, word) in ixreader]
         
 class GreekBetaCodeVariations(GreekVariations):
