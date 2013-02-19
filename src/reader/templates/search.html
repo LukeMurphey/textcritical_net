@@ -64,11 +64,16 @@ else{
 	
 	<div class="input-append ">
 
-	 	<input class="span10" id="search-term" placeholder="Enter the text to search for" type="text" value="{{query|addspaceifnotempty|default_if_none:""}}"/>
+	 	<input class="span10" id="search-term" placeholder="Enter the text to search for (e.g. νόμου or no/mou)" type="text" value="{{query|addspaceifnotempty|default_if_none:""}}"/>
 	 	<input type="hidden" id="page-number" name="page" value="{{page|default_if_none:""}}" />
 	 	
 	 	<button id="search-button" class="btn btn-primary" type="button" >Submit Search</button>
 	</div>
+	<label class="checkbox-label" for="related_forms">
+		<input class="checkbox" type="checkbox" id="related_forms" name="related_forms">Search related forms (slower but more thorough)</input>
+	</label>
+
+	
 </form>
 
 <div id="searching" class="searching-animation">Searching ...</div>
@@ -79,7 +84,7 @@ else{
 		<i class="icon-remove-sign icon-white" ></i> <a id="search-help-hide-link" href="">Close search help</a>
 	</div>
 	
-	<h2>Search Operations</h2>
+	<h3>Search Operations</h3>
 	
 	<p>
 	The search language used by TextCritical.net allows several operations. Here are some common ones:
@@ -109,47 +114,57 @@ else{
 	
 	
 	<p>
-	The search engine accepts beta-code representations of Greek words. Thus, a search for no/mon is equivalent to a search for νόμον:
+	The search engine accepts <a target="_blank" href="http://en.wikipedia.org/wiki/Beta_code">beta-code</a> representations of Greek words. Thus, a search for no/mon is equivalent to a search for νόμον:
 	<div class="search-example">no/mon</div>
 	</p>
 	
-	<h2>Search Fields</h2>
+	
+	<h3>Searching Related Forms</h3>
+	<p>
+	Searching for related forms causes the search engine to look for all other variations of a word. For example, a search for ἀδελφός would also search for ἀδελφοί, ἀδελφοῦ, ἀδελφοί, etc.
+	</p>
+	<p>
+	<span class="label label-info">Heads up!</span> Searching for related forms is considerably slower than searching for a particular form.
+	</p>
+	
+	<h3>Search Fields</h3>
 	
 	Several fields exist that can be be searched. Just append the field name to the search with a colon to search it (e.g. work:new-testament).
 	
 	Below are the available fields
-	
-	<table class="table table-bordered">
-		<thead>
-			<tr>
-				<th>Field</th>
-				<th>Description</th>
-				<th>Example</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>work</td>
-				<td>Search for items within a particular work (New Testament, Agammenon, etc.)</td>
-				<td><span class="search-example"><span class="search-example">work:"New Testament"</span></td>
-			</tr>
-			<tr>
-				<td>no_diacritics</td>
-				<td>Search for words disregarding the diacritical marks. Searching for no_diacritics:και will match on καὶ and καῖ</td>
-				<td><span class="search-example">no_diacritics:ευαγγελιον</span></td>
-			</tr>
-			<tr>
-				<td>section</td>
-				<td>Search for items within a section (chapter, division, book, etc.)</td>
-				<td><span class="search-example">section:"Matthew 5"</span></td>
-			</tr>
-			<tr>
-				<td>author</td>
-				<td>Search for verses within works created by a particular author.</td>
-				<td><span class="search-example">author:"Flavius Josephus"</span></td>
-			</tr>
-		</tbody>
-	</table>
+	<p>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>Field</th>
+					<th>Description</th>
+					<th>Example</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>work</td>
+					<td>Search for items within a particular work (New Testament, Agammenon, etc.)</td>
+					<td><span class="search-example"><span class="search-example">work:"New Testament"</span></td>
+				</tr>
+				<tr>
+					<td>no_diacritics</td>
+					<td>Search for words disregarding the diacritical marks. Searching for no_diacritics:και will match on καὶ and καῖ</td>
+					<td><span class="search-example">no_diacritics:ευαγγελιον</span></td>
+				</tr>
+				<tr>
+					<td>section</td>
+					<td>Search for items within a section (chapter, division, book, etc.)</td>
+					<td><span class="search-example">section:"Matthew 5"</span></td>
+				</tr>
+				<tr>
+					<td>author</td>
+					<td>Search for verses within works created by a particular author.</td>
+					<td><span class="search-example">author:"Flavius Josephus"</span></td>
+				</tr>
+			</tbody>
+		</table>
+	</p>
 
 </div>
 		

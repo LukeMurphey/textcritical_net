@@ -14,7 +14,9 @@ from reader.models import Work, Division, Verse, WordDescription, Author
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import uniquefy, string_limiter
+from reader.utils import get_word_descriptions
 from reader.contentsearch import search_verses
+from reader.language_tools import normalize_unicode
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
 
@@ -372,7 +374,7 @@ def description_id_fun(x):
     
     return str(x)
 
-def api_search(request, search_text=None):
+def api_search(request, search_text=None, ):
     
     # Get the text to search for
     if search_text is not None and len(search_text) > 0:
@@ -382,6 +384,7 @@ def api_search(request, search_text=None):
     else:
         return render_api_error(request, "No search query was provided", 400)
     
+    # Normalize the query string
     search_text = language_tools.normalize_unicode(search_text)
     
     # Get the page number
@@ -401,9 +404,18 @@ def api_search(request, search_text=None):
             pagelen = 10
     else:
         pagelen = 10
+        
+    # Determine if the related forms ought to be included
+    if 'related_forms' in request.GET:
+        try:
+            include_related_forms = bool( int(request.GET['related_forms']) )
+        except ValueError:
+            include_related_forms = False
+    else:
+        include_related_forms = False
     
     # Perform the search
-    search_results = search_verses( search_text, page=page, pagelen=pagelen )
+    search_results = search_verses( search_text, page=page, pagelen=pagelen, include_related_forms=include_related_forms )
     
     # This will be were the results are stored
     results_lists = []
@@ -514,20 +526,16 @@ def api_word_parse(request, word=None):
     if word is None or len(word) == 0 and 'word' in request.GET:
         word = request.GET['word']
     
+    word_basic_form = language_tools.strip_accents( normalize_unicode(word) )
+    
     # Do a search for the parse
-    word_lookup = language_tools.normalize_unicode( word.lower() )
     ignoring_diacritics = False
-    descriptions = WordDescription.objects.filter( word_form__form=word_lookup )
+    descriptions = get_word_descriptions( word, False )
     
-    # If the lookup for the word failed, try doing a lookup without the diacritics
-    word_basic_form = language_tools.strip_accents(word_lookup)
-    
-    if descriptions.count() == 0:
+    # If we couldn't find the word, then try again ignoring diacritical marks
+    if len(descriptions) == 0:
         ignoring_diacritics = True
-        descriptions = WordDescription.objects.all().filter( word_form__basic_form=word_basic_form )
-        
-    # Make the list distinct
-    descriptions = uniquefy(descriptions, description_id_fun)
+        descriptions = get_word_descriptions( word, True )
     
     # Make the final result to be returned
     results = []
