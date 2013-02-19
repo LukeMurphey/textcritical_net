@@ -343,8 +343,10 @@ TextCritical.set_search_url = function( query, page ){
  **/
 TextCritical.do_search = function( page, update_url ){
 	
+	// Get the word to search for
 	word = $("#search-term").val();
 	
+	// Get the page number
 	if( page == undefined || page == null ){
 		
 		if ( $("#page-number").val().length > 0 ){
@@ -360,10 +362,26 @@ TextCritical.do_search = function( page, update_url ){
 		console.info("Using provided page: " + page );
 	}
 	
+	// Determined if we are to search for related forms
+	related_forms = $("#related_forms:checked").length;
+	
+	// Assign a default value to the update_url argument if it was not provided
 	if( update_url == undefined ){
 		update_url = true;
 	}
 	
+	// Assign a default value to the related_forms argument if it was not provided
+	if( related_forms == undefined ){
+		related_forms = 0;
+	}
+	else if (!related_forms){
+		related_forms = 0;
+	}
+	else{
+		related_forms = 1;
+	}
+	
+	// Assign a value to the page number if it is not valid
 	if( page <= 0 ){
 		console.warn( "Page number is invalid (must be greater than zero)");
 		page = 1;
@@ -380,7 +398,7 @@ TextCritical.do_search = function( page, update_url ){
 	
 	// Submit the AJAX request to display the information
 	$.ajax({
-		url: "/api/search/?q=" + word + "&page=" + page
+		url: "/api/search/?q=" + word + "&page=" + page + "&related_forms=" + related_forms
 	}).done(function(search_results) {
 		
 		var search_results_template = $("#search-results").html();

@@ -8,13 +8,15 @@ from whoosh.query import *
 from whoosh.analysis import Filter
 from whoosh.util import rcompile
 
-from reader.language_tools import strip_accents, normalize_unicode
 from django.conf import settings
 
 from time import time
 import logging
+
 from reader.models import Verse, Division, Work
 from reader.language_tools.greek import Greek
+from reader.language_tools import strip_accents, normalize_unicode
+from reader.utils import get_all_related_forms
 
 import os
 
@@ -245,40 +247,80 @@ class VerseSearchResult:
         self.verse = verse
         self.highlights = highlights
     
-def greek_variations(text):
-    return [text, normalize_unicode(Greek.beta_code_to_unicode(text))]
+def greek_variations(text, include_beta_code=True, include_alternate_forms=True):
+    
+    forms = [text]
+    
+    if include_beta_code:
+        forms.append(normalize_unicode(Greek.beta_code_to_unicode(text)))
+                     
+    if include_alternate_forms:
+        
+        # Get the related forms
+        related_forms = get_all_related_forms(text)
+        
+        for r in related_forms:
+            forms.append(r.form)
+    
+    return forms #[text, normalize_unicode(Greek.beta_code_to_unicode(text))]
     
 class GreekVariations(Variations):
     """
-    Provides variations of a Greek word including a beta-code representation. This way, users can search using beta-code if they don't have a Greek keyboard enabled.
+    Provides variations of a Greek word including a beta-code representation and all related forms. This way, users can search
+    using beta-code if they don't have a Greek keyboard enabled. Additionally, then can get 
     """
+    
+    def __init__(self, fieldname, text, boost=1.0, include_beta_code=True, include_alternate_forms=True):
+        super(GreekVariations,self).__init__( fieldname, text, boost )
+        
+        self.include_beta_code       = include_beta_code
+        self.include_alternate_forms = include_alternate_forms
     
     def _words(self, ixreader):
         fieldname = self.fieldname
         
-        return [word for word in greek_variations(self.text)
+        return [word for word in greek_variations(self.text, self.include_beta_code, self.include_alternate_forms)
                 if (fieldname, word) in ixreader]
+        
+class GreekBetaCodeVariations(GreekVariations):
+    """
+    Provides variations of a Greek word including a beta-code representation. This way, users can search
+    using beta-code if they don't have a Greek keyboard enabled.
     
-def search_verses( search_text, inx=None, page=1, pagelen=20 ):
+    Note that other forms related to the same lemma will not be included.
+    """
+    
+    def __init__(self, fieldname, text, boost=1.0):
+        super(GreekBetaCodeVariations,self).__init__( fieldname, text, boost, True, False )
+    
+    
+def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_forms=True ):
     """
     Search all verses for those with the given text.
     
     Arguments:
     search_text -- The content to search for
     inx -- The Whoosh index to use
+    page -- Indicates the page number to retrieve
+    pagelen -- Indicates how many entries constitute a page
+    include_related_forms -- Expand the word into all of the related forms
     """
     
     # Convert the search text to unicode
     search_text = unicode(search_text)
     
+    # Get the index if provided
     if inx is None:
         inx = WorkIndexer.get_index()
     
+    # Perform the search
     with inx.searcher() as searcher:
         
         # Make a parser to convert the incoming search string into a search
-        parser = QueryParser("content", inx.schema, termclass=GreekVariations)
-        #parser = QueryParser("content", WorkIndexer.get_schema(), termclass=GreekVariations)
+        if include_related_forms:
+            parser = QueryParser("content", inx.schema, termclass=GreekVariations)
+        else:
+            parser = QueryParser("content", inx.schema, termclass=GreekBetaCodeVariations)
         
         # Parse the search string into an actual search
         search_query = parser.parse(search_text)

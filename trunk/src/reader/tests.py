@@ -17,6 +17,7 @@ from reader import language_tools
 from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Work
 from reader.views import get_division
 from reader.contentsearch import WorkIndexer, search_verses
+from reader import utils
 
 import shutil
 import time
@@ -1250,6 +1251,34 @@ class TestDiogenesLemmaImport(TestReader):
         
         self.assertEquals(lemma.lexical_form, Greek.beta_code_str_to_unicode("a(/bra"))
         self.assertEquals(lemma.reference_number, 537850)
+
+class TestReaderUtils(TestReader):
+    
+    @time_function_call
+    def test_get_word_descriptions(self):
+        
+        # Get the lemmas so that we can match up the analyses
+        DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
+        
+        # Import the analyses
+        DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
+        
+        descriptions = utils.get_word_descriptions(u"ἅβρυνα", False)
+        
+        self.assertEquals( len(descriptions), 2 )
+        
+    @time_function_call
+    def test_get_all_related_forms(self):
+        
+        # Get the lemmas so that we can match up the analyses
+        DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
+        
+        # Import the analyses
+        DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
+        
+        forms = utils.get_all_related_forms(u"ἅβραν", False) #a(/bran
+        
+        self.assertEquals( len(forms), 6 )   
 
 class TestDiogenesAnalysesImport(TestReader):
     
