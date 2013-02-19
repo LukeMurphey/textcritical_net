@@ -1278,7 +1278,20 @@ class TestReaderUtils(TestReader):
         
         forms = utils.get_all_related_forms(u"ἅβραν", False) #a(/bran
         
-        self.assertEquals( len(forms), 6 )   
+        self.assertEquals( len(forms), 6 )
+        
+    @time_function_call
+    def test_get_all_related_forms_no_diacritics(self):
+        
+        # Get the lemmas so that we can match up the analyses
+        DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
+        
+        # Import the analyses
+        DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
+        
+        forms = utils.get_all_related_forms(u"αβραν", True) #a(/bran
+        
+        self.assertEquals( len(forms), 6 ) 
 
 class TestDiogenesAnalysesImport(TestReader):
     
