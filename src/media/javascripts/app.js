@@ -438,7 +438,9 @@ TextCritical.do_search = function( page, update_url ){
 	return false;
 }
 
-
+/**
+ * Show or hide the search help depending on the parameter (by default, it shows it).
+ */
 TextCritical.show_search_help = function( show ){
 
 	if( show == undefined ){
@@ -455,6 +457,9 @@ TextCritical.show_search_help = function( show ){
 	}
 }
 
+/**
+ * Show the search help if it is not shown; hide it otherwise.
+ */
 TextCritical.toggle_search_help  = function( ){
 	
 	if( $("#search-help").is(":visible") ){
