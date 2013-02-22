@@ -43,13 +43,7 @@
     <!-- ================================= 
           target: package
          ================================= -->
-	<target name="package" depends="package_app,package_media" description="Create the package">
-	</target>
-	
-    <!-- ================================= 
-          target: package_app
-         ================================= -->
-    <target name="package_app" depends="get_build_number" description="Create the application package (sans media)">
+    <target name="package" depends="get_build_number" description="Create the application package (sans media)">
         <mkdir dir="${value.build.packageoutput.directory}" />
         <zip destfile="${value.build.packageoutput.directory}/textcritical_${svn.revision.max}.zip"
             basedir="src"
@@ -58,18 +52,6 @@
         />
     </target>
 	
-    <!-- ================================= 
-          target: package_media
-         ================================= -->
-    <target name="package_media" depends="minify_js,compile_scss,get_build_number" description="Create the media-only package">
-        <mkdir dir="${value.build.packageoutput.directory}" />
-        <zip destfile="${value.build.packageoutput.directory}/textcritical_media_${svn.revision.max}.zip"
-            basedir="src"
-        	includes="admin/**, media/**"
-            excludes="**/*.sass"
-            whenempty="create"
-        />
-    </target>
 	
     <!-- ================================= 
           target: verify
