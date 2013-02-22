@@ -268,6 +268,9 @@ class GreekVariations(Variations):
                          
         if include_alternate_forms:
             
+            # Convert the content from beta-code if necessary
+            text = normalize_unicode(Greek.beta_code_to_unicode(text) )
+            
             # Get the related forms
             related_forms = get_all_related_forms(text, ignore_diacritics)
             
