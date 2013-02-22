@@ -511,12 +511,27 @@ TextCritical.change_page = function( offset ){
 }
 
 /**
+ * Go to search page to execute a search on the current work.
+ **/
+TextCritical.search_this_work = function( ){
+	
+	// Get the work that we are to search
+	work = $("h1[data-work-title-slug]").data("work-title-slug");
+	
+	// Make the URL
+	search_uri = "/search?q=work:" + work;
+	
+	// Go to the search page
+	document.location = search_uri;
+	return false;
+}
+
+/**
  * Go to the previous page in the search results.
  **/
 TextCritical.do_search_previous = function( ){
 	return TextCritical.change_page( -1 );
 }
-
 
 /**
  * Update the search results when the user presses the back button.

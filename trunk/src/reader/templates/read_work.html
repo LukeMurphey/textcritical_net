@@ -34,8 +34,9 @@
         <div class="control-group {% if verse_not_found %}error{% endif %}">
         	<div class="input-append">
         		<input class="span2" placeholder="Jump to reference..." id="chapter" value="{{chapter.get_division_description}}{% if verse_to_highlight %}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse_to_highlight}}{% endif %}" type="text">
-			    <button class="btn" type="submit" id="change_reference">Go</button>
-			    <button class="btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show_table_of_contents">Table of Contents</button>
+			    <button class="btn" type="submit" id="change-reference"><!-- <i class="icon-play"></i>  -->Go</button>
+			    <button class="btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show-table-of-contents"><!-- <i class="icon-book"></i> -->Table of Contents</button>
+			    <button class="btn" type="submit" id="search-work"><!-- <i class="icon-search"></i>  -->Search</button>
 			    <button id="align_break" class="btn"><i class="icon-align-left"></i></button>
 			</div>
         </div>
@@ -224,8 +225,9 @@ Search for other instances of <%= word %> <a href="/search?q=work:<%= work %>%20
 
 require(["jquery", "store", "app", "underscore"], function($) {
 	TextCritical.loadStoreSettings();
-    $('#align_break').click( TextCritical.toggleVerseBreak );
-    $('#show_table_of_contents').click( TextCritical.toggleTOC );
+    $('#align-break').click( TextCritical.toggleVerseBreak );
+    $('#show-table-of-contents').click( TextCritical.toggleTOC );
+    $('#search-work').click( TextCritical.search_this_work );
     
     // Get the division IDs
     division_ids = [];
@@ -250,7 +252,7 @@ require(["jquery", "store", "app", "underscore"], function($) {
         return true;
     }
     
-    $("#change_reference").click( go_to_selected_chapter );
+    $("#change-reference").click( go_to_selected_chapter );
     
     $(".verse_link").click(function() {
     	$("#chapter").val( $(this).attr("data-verse-descriptor") );
