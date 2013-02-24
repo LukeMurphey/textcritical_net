@@ -34,7 +34,7 @@ class WorkIndexer:
         Returns a schema for searching works.
         """
         
-        # Add an accent-folding filter to a stemming analyzer so that we can search irrespective to accents
+        # Add an analyzer that allows diacritical marks to be within the search queries
         analyzer = SimpleAnalyzer( rcompile(r"[\w/*()=\+|&']+(\.?[\w/*()=\+|&']+)*") )
         
         return Schema( verse_id      = NUMERIC(unique=True, stored=True),
@@ -253,19 +253,34 @@ class GreekVariations(Variations):
     using beta-code if they don't have a Greek keyboard enabled. Additionally, then can get 
     """
     
+    variation_fields = ['no_diacritics', 'content']
+    
     def __init__(self, fieldname, text, boost=1.0, include_beta_code=True, include_alternate_forms=True):
         super(GreekVariations,self).__init__( fieldname, text, boost )
         
         self.include_beta_code       = include_beta_code
         self.include_alternate_forms = include_alternate_forms
-    
-    def get_variations(self, text, include_beta_code=True, include_alternate_forms=True, ignore_diacritics=False):
+        
+        # This cache helps improve performance by reducing unnecessary database queries for variations that we have already looked up.
+        # This was added because it was found that Whoosh makes multiple requests for the same variation repeatedly.
+        self.cached_variations = {}
+        
+    def get_variations(self, text, include_beta_code=True, include_alternate_forms=True, ignore_diacritics=False, messages=None):
+        
+        # Make a signature so that we can be used to find cached results for the same request
+        signature = str(include_beta_code) + "." + str(include_alternate_forms) + "." + str(ignore_diacritics) + "." + text
+        
+        # Get the result from the cache if available
+        if signature in self.cached_variations:
+            return self.cached_variations[ signature ]
+        
+        logger.debug( "Looking for variations of the search term in order to perform a search, word=%s", text )
         
         forms = []
         
         if include_beta_code:
             forms.append(normalize_unicode(Greek.beta_code_to_unicode(text)))
-                         
+        
         if include_alternate_forms:
             
             # Convert the content from beta-code if necessary
@@ -274,16 +289,38 @@ class GreekVariations(Variations):
             # Get the related forms
             related_forms = get_all_related_forms(text, ignore_diacritics)
             
+            # If we couldn't find any related forms, then try finding them without diacritical marks
+            if len(related_forms) == 0 and ignore_diacritics == False:
+                related_forms = get_all_related_forms(text, True)
+                
+                if len(related_forms) > 0:
+                    logger.debug( "Variations could be only found by ignoring diacritical marks, word=%s", text )
+                
+                # Make a message noting that we couldn't find any variations of the word
+                if len(related_forms) > 0 and messages is not None:
+                    messages.append("Variations of %s could be only found by ignoring diacritical marks" % text)
+            
+            # Make a message noting that we couldn't find any variations of the word
+            if len(related_forms) == 0 and messages is not None:
+                messages.append("No variations of %s could be found" % text)
+                
+            if len(related_forms) == 0:
+                logger.debug( "No variations could be found, word=%s", text )
+            
+            # Add the related forms
             for r in related_forms:
                 if ignore_diacritics:
                     forms.append(strip_accents(r.form))
                 else:
                     forms.append(r.form)
         
+        # Cache the result
+        self.cached_variations[ signature ] = forms
+        
+        # Return the forms
         return forms
     
     def _words(self, ixreader):
-        fieldname = self.fieldname
         
         # Determine if we are searching the field that is stripped of diacritical marks
         if self.fieldname == "no_diacritics":
@@ -304,11 +341,12 @@ class GreekVariations(Variations):
         variations.append( prepared_text )
         
         # Add the other Greek variations
-        variations.extend( self.get_variations(prepared_text, self.include_beta_code, self.include_alternate_forms, ignore_diacritics) )
+        if GreekVariations.variation_fields is None or self.fieldname in GreekVariations.variation_fields:
+            variations.extend( self.get_variations(prepared_text, self.include_beta_code, self.include_alternate_forms, ignore_diacritics) )
         
         # Return the variations list
         return [word for word in variations
-                if (fieldname, word) in ixreader]
+                if (self.fieldname, word) in ixreader]
         
 class GreekBetaCodeVariations(GreekVariations):
     """
