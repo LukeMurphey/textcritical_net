@@ -68,7 +68,7 @@ def search(request, query=None):
 
 def works_index(request):
     
-    works = Work.objects.all().order_by("title")
+    works = Work.objects.all().order_by("title").prefetch_related('authors').prefetch_related('editors')
     
     if 'search' in request.GET:
         search_filter = request.GET['search']
