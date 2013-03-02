@@ -564,3 +564,28 @@ TextCritical.convert_search_query_beta_code = function( ){
 		$("#search-term").val(converted_query);
 	});
 }
+
+/**
+ * Retrieves a list of the typeahead hints used for the works list.
+ **/
+TextCritical.works_search_typeahead_hints = [];
+
+TextCritical.get_works_search_typeahead_hints = function( ){
+	
+	if( TextCritical.works_search_typeahead_hints.length > 0){
+		return TextCritical.works_search_typeahead_hints;
+	}
+	else{
+		console.info("Retrieving list of typeahead hints from the server");
+    	var request = $.ajax({
+  		  url: "/api/works_typehead_hints",
+  		  async : false,
+  		  success: function(html) {
+  			TextCritical.works_search_typeahead_hints = html;
+  		  },
+  		  type: "GET"
+  		});
+    	
+    	return TextCritical.works_search_typeahead_hints;
+	}
+}

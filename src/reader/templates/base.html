@@ -69,6 +69,7 @@
   	  var textcritical = textcritical || {}; 
       require(["jquery", "bootstrap"]);
   </script>
+  {% block javascript_base %}{% endblock %}
   {% block javascript %}{% endblock %}
 
   {% if google_analytics_id %}
