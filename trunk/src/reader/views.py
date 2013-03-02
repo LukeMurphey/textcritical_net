@@ -375,7 +375,20 @@ def description_id_fun(x):
     
     return str(x)
 
-def api_search(request, search_text=None, ):
+def api_works_typehead_hints(request ):
+    
+    hints = []
+    
+    # Get the names of works
+    hints.extend( Work.objects.all().values_list('title', flat=True) )
+    
+    # Get the author names
+    hints.extend( Author.objects.all().values_list('name', flat=True) )
+    
+    # Return the results
+    return render_api_response(request, hints)
+
+def api_search(request, search_text=None ):
     
     # Get the text to search for
     if search_text is not None and len(search_text) > 0:
