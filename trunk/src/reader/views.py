@@ -323,6 +323,7 @@ def not_found_404(request):
 
 def tests(request):
     return render_to_response('test.html',
+                              {'include_default_css' : 0},
                               context_instance=RequestContext(request))
     
 # -----------------------------------
