@@ -58,7 +58,7 @@
 	            </li>
 	               {% else %}
                 <li class="division_{{division_part.level}}">
-                    <a data-division-descriptor="{{division_part.descriptor}}" href="{% url read_work work.title_slug%}/{{ division_part.get_division_indicators|join:"/" }}"><i class="icon-book {% if USE_DARK_THEME|default:0 %}icon-white{% endif %}"></i>{{division_part|capfirst}}</a>
+                    <a data-division-descriptor="{{division_part.descriptor}}" href="{% url read_work work.title_slug%}/{{ division_part.get_division_indicators|join:"/" }}"><i class="icon-book {% if USE_DARK_THEME|default_if_none:0 %}icon-white{% endif %}"></i>{{division_part|capfirst}}</a>
                 </li>
 	               {% endif %}
 	            {% endfor %}

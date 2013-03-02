@@ -1,124 +1,122 @@
-{% extends "base_with_nav.html" %}
-{% block content %}
-        <h1>Tests</h1>
-        
-        <div id="qunit"></div>
-        <div id="qunit-fixture"></div>
+{% extends "base.html" %}
+{% block base_content %}
  
+ 		<div id="HTMLReporter" class="jasmine_reporter">
+ 			<div class="banner">
+ 				<span class="title">TextCritical.net Javascript Unit Tests</span>
+ 				<span class="version"></span>
+ 			</div>
+ 		</div>
 
 {% endblock %}
 
 {% block javascript %}
 <script language="javascript">
 
-require(["jquery", "qunit", "app"], function($) {
+require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
+	
+	function getAsync( url ){
+    	var request = $.ajax({
+  		  url: url,
+  		  async : false,
+  		  success: function(html) {
+  		      strReturn = html;
+  		  },
+  		  type: "GET"
+  		});
+    	
+    	return strReturn;
+		
+	}
 	
     {% comment %}
     ##############################
     # API Tests
     ##############################
-    {% endcomment %} 
-    test( "betacode_to_unicode_as_get_param", function() {
+    {% endcomment %}
+    describe("Conversion of beta-code and unicode", function() {
     	
-    	var request = $.ajax({
-    		  url: "/api/betacode_to_unicode/?word=*th/nios",
-    		  async : false,
-    		  success: function(html) {
-    		      strReturn = html;
-    		  },
-    		  type: "GET"
-    	});
+		// Test beta-code to unicode
+		it("from beta-code to unicode (as get parameter)", function() {
+			expect( getAsync("/api/betacode_to_unicode/?word=*th/nios")['unicode'] ).toBe( "Τήνιος" );
+   		});
+    	  
+		// Test unicode the beta-code
+		it("from unicode to beta-code (as get parameter)", function() {
+			expect( getAsync("/api/unicode_to_betacode/?word=Τήνιος")['beta-code'].toLowerCase() ).toBe( "*th/nios" );
+		});
+    	  
+		// Test beta-code to unicode
+		it("from beta-code to unicode (with argument in URL)", function() {
+    		expect( getAsync("/api/unicode_to_betacode/Τήνιος")['beta-code'].toLowerCase() ).toBe( "*th/nios" );
+		});
+     });
+    
+    describe("Parsing of Greek words", function() {
     	
-        equal( strReturn['unicode'], "Τήνιος", "The beta-code of '*th/nios'  value ought to be Τήνιος" );
-     });
-    
-    test( "unicode_to_betacode_as_get_param", function() {
-        
-        var request = $.ajax({
-              url: "/api/unicode_to_betacode/?word=Τήνιος",
-              async : false,
-              success: function(html) {
-                  strReturn = html;
-              },
-              type: "GET"
-        });
-        
-        equal( strReturn['beta-code'].toLowerCase(), "*th/nios", "Τήνιος ought to be the beta-code '*th/nios'" );
-     });
-    
-    test( "unicode_to_betacode", function() {
-        
-        var request = $.ajax({
-              url: "/api/unicode_to_betacode/Τήνιος",
-              async : false,
-              success: function(html) {
-                  strReturn = html;
-              },
-              type: "GET"
-        });
-        
-        equal( strReturn['beta-code'].toLowerCase(), "*th/nios", "Τήνιος ought to be the beta-code '*th/nios'" );
-     });
-    
-    test( "word_parse", function() {
-        
-        var request = $.ajax({
-              url: "/api/word_parse/?word=ἀφορμάν",
-              async : false,
-              success: function(html) {
-                  strReturn = html;
-              },
-              type: "GET"
-        });
-        
-        equal( strReturn[0]['meaning'], "starting-point", "The meaning of ἀφορμάν ought to be 'starting-point'" );
-     });
-    
-    test( "word_parse_beta_code", function() {
-        
-        var request = $.ajax({
-              url: "/api/word_parse_beta_code/?word=A)FORMA/N",
-              async : false,
-              success: function(html) {
-                  strReturn = html;
-              },
-              type: "GET"
-        });
-        
-        equal( strReturn[0]['meaning'], "starting-point", "The meaning of ἀφορμάν ought to be 'starting-point'" );
+		// Test beta-code to unicode
+		it("in unicode", function() {
+			expect( getAsync("/api/word_parse/?word=ἀφορμάν")[0]['meaning'] ).toBe( "starting-point" );
+   		});
+    	
+		// Test beta-code to unicode
+		it("in beta-code", function() {
+			expect( getAsync("/api/word_parse_beta_code/?word=A)FORMA/N")[0]['meaning'] ).toBe( "starting-point" );
+   		});
+  		
     });
     
-    test( "search", function() {
-        
-        var request = $.ajax({
-              url: "/api/search/και",
-              async : false,
-              success: function(html) {
-                  strReturn = html;
-              },
-              type: "GET"
-        });
-        
-        ok( strReturn.results.length > 0, "Search results ought to be provided" );
-        ok( strReturn.results[0]["url"].search("work") >= 0, "Search results ought to include a URL" );
-        ok( strReturn.results[0]["description"].length > 0, "Search results ought to include a description" );
-        ok( strReturn.results[0]["division"].length > 0, "Search results ought to include a division" );
-        ok( strReturn.results[0]["highlights"].search("<b") >= 0, "Search results ought to include highlights" );
-        ok( strReturn.results[0]["work"].length > 0, "Search results ought to include a work" );
-        ok( strReturn.results[0]["work_title_slug"].length > 0, "Search results ought to include a work title" );
-        
-        // Verify the meta-data
-        ok( strReturn["page"] == "1", "Search results ought to include the page number" );
-        ok( parseInt( strReturn["result_count"]) > 0, "Search results ought to include the number of results" );
-        ok( parseInt( strReturn["page_len"]) == strReturn.results.length, "Search results ought to include the page length and this ought to match the results length" );
+    describe("Content search", function() {
+    	
+		// Test search for unicode
+		it("on unicode content", function() {
+			search_results = getAsync("/api/search/και");
+			
+	        expect( search_results["results"].length ).toBeGreaterThan( 0 );
+			expect( search_results["results"][0]["url"].search("work")  ).not.toBeLessThan( 0 );
+			expect( search_results["results"][0]["description"].length ).toBeGreaterThan( 0 );
+			expect( search_results["results"][0]["division"].length ).toBeGreaterThan( 0 );
+			expect( search_results["results"][0]["highlights"].search("<b") ).toBeGreaterThan( 0 );
+			expect( search_results["results"][0]["work"].length ).toBeGreaterThan( 0 );
+			expect( search_results["results"][0]["work_title_slug"].length ).toBeGreaterThan( 0 );
+	        
+	        // Verify the meta-data
+	        expect( search_results["page"] ).toEqual( 1 );
+	        expect( parseInt(search_results["result_count"]) ).toBeGreaterThan( 0 );
+	        expect( parseInt(search_results["page_len"]) ).toEqual( search_results["results"].length );
+	       
+   		});
+		
+		// Test search for beta-code
+		it("on beta-code content", function() {
+			search_results = getAsync("/api/search/kai");
+			
+	        expect( search_results["results"].length ).toBeGreaterThan( 0 );
+	       
+   		});
+  		
     });
     
-    test( "contains_search_words", function() {
-        ok( TextCritical.contains_search_words("λόγους work:new-testament"), "Search term is included and ought to be designated as such" );
-        ok( TextCritical.contains_search_words("λόγους work_id:new-testament"), "Search term is included and ought to be designated as such" );
-        ok( !TextCritical.contains_search_words("work_id:new-testament"), "Search term not included and ought to be designated as such" );
-        ok( !TextCritical.contains_search_words("work:\"New Testament\""), "Search term not included and ought to be designated as such" );
+    describe("Determination if search contains search words", function() {
+    	
+		it("when work is specified", function() {
+			expect( TextCritical.contains_search_words("λόγους work:new-testament") ).toBe( true );
+   		});
+    	
+		it("when work is specified by ID", function() {
+			expect( TextCritical.contains_search_words("λόγους work_id:new-testament") ).toBe( true );
+   		});
+  		
+		it("when work is specified without a search word", function() {
+			expect( TextCritical.contains_search_words("work:new-testament") ).toBe( false );
+   		});
+    	
+		it("when work is specified by ID without a search word", function() {
+			expect( TextCritical.contains_search_words("work_id:new-testament") ).toBe( false );
+   		});
     });
+    
+
     
 	
     {% comment %}
@@ -126,42 +124,82 @@ require(["jquery", "qunit", "app"], function($) {
     # Reading View Tests
     ##############################
     {% endcomment %}
-    test( "resolve_path_name_with_spaces", function() {
-        
-    	reference = "1 Thessalonians 1:4";
-    	division_ids = ["1 Thessalonians", "1", "3"];
+    
+    describe("Resolution of path from reference", function() {
     	
-    	TextCritical.resolve_path(reference, division_ids);
-        
-        equal( TextCritical.resolve_path(reference, division_ids), "/tests/1 thessalonians/1/4", "A reference to 1 Thessalonians 1:4 ought to be translated to the path '/1 Thessalonians/1/4' and not '/1/Thessalonians/1/4'" );
-    });
-    
-    test( "resolve_path_name_no_spaces", function() {
-        
-    	reference = "1 Thessalonians 1:4";
-    	division_ids = ["1" , "Thessalonians", "1", "3"];
+		it("when division includes a number", function() {
+			
+			reference = "1 Thessalonians 1:4";
+	    	division_ids = ["1 Thessalonians", "1", "3"];
+			
+			expect( TextCritical.resolve_path(reference, division_ids) ).toEqual( "/tests/1 thessalonians/1/4" );
+   		});
+		
+		it("when division does not include a number", function() {
+			
+			reference = "1 Thessalonians 1:4";
+	    	division_ids = ["1 Thessalonians", "1", "3"];
+			
+			expect( TextCritical.resolve_path(reference, division_ids) ).toEqual( "/tests/1 thessalonians/1/4" );
+   		});
     	
-    	TextCritical.resolve_path(reference, division_ids);
-        
-        equal( TextCritical.resolve_path(reference, division_ids), "/tests/1/thessalonians/1/4", "A reference to 1 Thessalonians 1:4 ought to be translated to the path '/1/Thessalonians/1/4' and not '/1 Thessalonians/1/4' since the division IDs provided didn't include '1 Thessalonians'" );
     });
     
-    test( "slugify", function() {
-        equal( TextCritical.slugify("1 Corinthians"), "1-Corinthians", "The slug of '1 Corinthians' ought to be'1-Corinthians'" );
+    describe("Slugify path", function() {
+    	
+		it("containing a space", function() {
+			expect( TextCritical.slugify("1 Corinthians") ).toEqual( "1-Corinthians" );
+   		});
+		
     });
     
-    test( "trim_leading_space", function() {
-        equal( TextCritical.trim(" 1 Corinthians"), "1 Corinthians", "' 1 Corinthians' trimmed ought to be'1 Corinthians'" );
+    describe("Trim string", function() {
+    	
+		it("containing a leading space", function() {
+			expect(TextCritical.trim(" 1 Corinthians") ).toEqual( "1 Corinthians" );
+   		});
+		
+		it("containing a trailing space", function() {
+			expect(TextCritical.trim("1 Corinthians ") ).toEqual( "1 Corinthians" );
+   		});
+		
     });
-    
-    test( "trim_trailing_space", function() {
-        equal( TextCritical.trim("1 Corinthians "), "1 Corinthians", "' 1 Corinthians ' trimmed ought to be'1 Corinthians'" );
-    });
+
+	// Setup jasmine for execution    
+    (function() {
+    	
+    	// Configure the environment
+    	var jasmineEnv = jasmine.getEnv();
+    	jasmineEnv.updateInterval = 250;
+    	  
+    	// Use the HTML reporter for disaplying the results
+	    var htmlReporter = new jasmine.HtmlReporter();
+	    jasmineEnv.addReporter(htmlReporter);
 	    
-});
+	    jasmineEnv.specFilter = function(spec) {
+	        return htmlReporter.specFilter(spec);
+	    };
+	    
+	    var currentWindowOnload = window.onload;
+	    window.onload = function() {
+	      if (currentWindowOnload) {
+	        currentWindowOnload();
+	      }
+	
+	      // Add the version number
+	      //document.querySelector('.version').innerHTML = jasmineEnv.versionString();
+	      execJasmine();
+	    };
+	
+	    function execJasmine() {
+	      jasmineEnv.execute();
+	    }
+	  })();
+		    
+	});
 </script>
 {% endblock %}
 
 {% block style %}
-<link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/qunit.css">
+<link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/jasmine.css">
 {% endblock %}
