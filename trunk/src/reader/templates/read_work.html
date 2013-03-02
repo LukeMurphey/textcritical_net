@@ -4,7 +4,7 @@
 <link rel="previous" href="{% url read_work work.title_slug %}/{{ previous_chapter.get_division_indicators|join:"/" }}" />
 {% endif %}
 {% if next_chapter %}
-<link rel="next prefetch prerender" href="{% url read_work work.title_slug %}/{{ next_chapter.get_division_indicators|join:"/" }}" />
+<link rel="next" href="{% url read_work work.title_slug %}/{{ next_chapter.get_division_indicators|join:"/" }}" />
 {% endif %}
 {% endblock %}
 {% block content %}
