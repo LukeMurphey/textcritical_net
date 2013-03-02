@@ -116,9 +116,16 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
    		});
     });
     
-
+    describe("Typeahead hints", function() {
+    	
+		it("should be at least 400", function() {
+			expect( getAsync("/api/works_typehead_hints").length ).toBeGreaterThan( 400 );
+   		});
+  		
+    });
     
-	
+    
+   	
     {% comment %}
     ##############################
     # Reading View Tests

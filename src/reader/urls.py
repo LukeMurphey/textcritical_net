@@ -34,4 +34,8 @@ urlpatterns = patterns('',
     url(r'^api/search/(?P<search_text>[^/]*)/?$', 'reader.views.api_search', name='api_search' ),
     url(r'^api/convert_query_beta_code/(?P<search_query>[^/]*)/?$', 'reader.views.api_convert_query_beta_code', name='api_convert_query_beta_code' ),
     
+    url(r'^api/works_typehead_hints/?$', 'reader.views.api_works_typehead_hints', name='api_works_typehead_hints' ),
+    
+    
+    
 )
