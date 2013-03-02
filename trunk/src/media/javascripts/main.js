@@ -15,11 +15,6 @@ require.config({
             "libs/jquery.dataTables"
         ],
         
-        qunit: [
-            "http://code.jquery.com/qunit/qunit-1.10.0",
-            "libs/qunit"
-        ],
-        
         bootstrap: [
             "libs/bootstrap"
         ],
@@ -43,6 +38,14 @@ require.config({
 
         blockui: [
              "libs/jquery.blockUI"
+        ],
+        
+        jasmine: [
+             "libs/jasmine"
+        ],
+        
+        jasmine-html: [
+             "libs/jasmine-html"
         ]
     },
     shim: {
