@@ -273,7 +273,7 @@ class GreekVariations(Variations):
         self.cached_variations = {}
         
     def get_variations(self, text, include_beta_code=True, include_alternate_forms=True, ignore_diacritics=False, messages=None):
-        print "Looking for variations of ", text
+        
         # Make a signature so that we can be used to find cached results for the same request
         signature = str(include_beta_code) + "." + str(include_alternate_forms) + "." + str(ignore_diacritics) + "." + text
         
