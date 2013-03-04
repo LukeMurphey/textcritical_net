@@ -2,11 +2,10 @@ import whoosh
 from whoosh.qparser import QueryParser
 from whoosh.filedb.filestore import FileStorage
 from whoosh.fields import Schema, NUMERIC, TEXT
-from whoosh.analysis import CharsetFilter, StemmingAnalyzer, SpaceSeparatedTokenizer, SimpleAnalyzer
-from whoosh.support.charset import accent_map
-from whoosh.query import *
-from whoosh.analysis import Filter
+from whoosh.analysis import SimpleAnalyzer
+from whoosh.query import Variations
 from whoosh.util import rcompile
+import re
 
 from django.conf import settings
 
@@ -35,11 +34,11 @@ class WorkIndexer:
         """
         
         # Add an analyzer that allows diacritical marks to be within the search queries
-        analyzer = SimpleAnalyzer( rcompile(r"[\w/*()=\+|&']+(\.?[\w/*()=\+|&']+)*") )
+        analyzer = SimpleAnalyzer( rcompile(r"[\w/*()=\\+|&']+(\.?[\w/*()=\\+|&']+)*") )
         
         return Schema( verse_id      = NUMERIC(unique=True, stored=True),
                        content       = TEXT(analyzer=analyzer),
-                       no_diacritics = TEXT,
+                       no_diacritics = TEXT(analyzer=analyzer),
                        work_id       = TEXT,
                        section_id    = TEXT,
                        work          = TEXT,
@@ -128,15 +127,16 @@ class WorkIndexer:
         for division in Division.objects.filter(work=work):
             cls.index_division(division)
             
-        logger.info("Successfully indexed work, work=%s, duration=%i", str(work), time() - start_time )
+        logger.info('Successfully indexed work, work="%s", duration=%i', str(work), time() - start_time )
     
     @classmethod
-    def index_division(cls, division):
+    def index_division(cls, division, work=None):
         """
         Indexes all verse within the provided division.
         
         Arguments:
-        division -- The division that the verse is associated with
+        division -- The division to index
+        work -- The work that the division is associated with
         """
         
         inx = cls.get_index()
@@ -145,8 +145,15 @@ class WorkIndexer:
         for verse in Verse.objects.filter(division=division):
             cls.index_verse(verse, division=division, writer=writer, commit=False)
             
+        if work is None:
+            work = division.work
+            
         writer.commit()
-        logger.info("Successfully indexed division, division=%s", str(division) )
+        
+        if work is not None:
+            logger.info('Successfully indexed division, division="%s", work="%s"', str(division), str(work) )
+        else:
+            logger.info('Successfully indexed division, division="%s"', str(division) )
     
     @classmethod
     def index_verse(cls, verse, work=None, division=None, commit=False, writer=None):
@@ -193,7 +200,7 @@ class WorkIndexer:
         if commit:
             writer.commit()
     
-        logger.info("Successfully indexed verse, verse=%s", str(verse))
+        logger.info('Successfully indexed verse, verse=%s, division="%s", work="%s"', str(verse), str(division), str(work) )
     
 class VerseSearchResults:
     
@@ -266,7 +273,7 @@ class GreekVariations(Variations):
         self.cached_variations = {}
         
     def get_variations(self, text, include_beta_code=True, include_alternate_forms=True, ignore_diacritics=False, messages=None):
-        
+        print "Looking for variations of ", text
         # Make a signature so that we can be used to find cached results for the same request
         signature = str(include_beta_code) + "." + str(include_alternate_forms) + "." + str(ignore_diacritics) + "." + text
         
@@ -325,17 +332,20 @@ class GreekVariations(Variations):
         # Determine if we are searching the field that is stripped of diacritical marks
         if self.fieldname == "no_diacritics":
             ignore_diacritics = True
+            
+            # Strip diacritical beta-code characters in case the user wants to search for words regardless of diacritical
+            # marks but includes them in the search term
+            prepared_text = re.sub(r'[\/()*=&+|]', '', self.text) 
         else:
             ignore_diacritics = False
+            prepared_text = self.text
         
         # This will be the array of variations
         variations = []
         
         # If the field doesn't contain diacritics then make sure to strip them from the word
         if ignore_diacritics:
-            prepared_text = strip_accents(self.text) 
-        else:
-            prepared_text = self.text
+            prepared_text = strip_accents(prepared_text)
             
         # Add the text we are searching for as a variation
         variations.append( prepared_text )
@@ -371,6 +381,8 @@ def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_fo
     pagelen -- Indicates how many entries constitute a page
     include_related_forms -- Expand the word into all of the related forms
     """
+    
+    logger.info( 'Performing a search, page=%r, page_len=%r, include_related_forms=%r, search_query="%s"', page, pagelen, include_related_forms, search_text )
     
     # Convert the search text to unicode
     search_text = unicode(search_text)
