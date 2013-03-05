@@ -16,7 +16,7 @@
 		    {{warning.1}}
 		</div>
         {% endfor %}
-    
+    	
         <ul class="breadcrumb">
             <li><a href="{% url home %}">Home</a> <span class="divider">/</span></li>
             <li><a href="{% url works_index %}">Library</a> <span class="divider">/</span></li>
@@ -37,7 +37,7 @@
 			    <button class="btn" type="submit" id="change-reference"><!-- <i class="icon-play"></i>  -->Go</button>
 			    <button class="btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show-table-of-contents"><!-- <i class="icon-book"></i> -->Table of Contents</button>
 			    <button class="btn" type="submit" id="search-work"><!-- <i class="icon-search"></i>  -->Search</button>
-			    <button id="align_break" class="btn"><i class="icon-align-left"></i></button>
+			    <button id="align-break" class="btn"><i class="icon-align-left"></i></button>
 			</div>
         </div>
         {% endwith %}
@@ -106,7 +106,11 @@
             {% if verse.indicator|length > 0 %}
             <a class="verse_link" data-verse="{{verse.indicator}}" data-verse-descriptor="{{chapter_description}}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse}}" id="verse_link_{{verse.indicator}}" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}/{{verse.indicator}}"><span class="label {% if not chapter_not_found and verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
 	        {% endif %}
+	        {% if verse.original_content|length == 0 %}
+	        {{verse.content}}
+	        {% else %}
 	        {{verse.original_content|perseus_xml_to_html5:chapter.work.language|safe}}
+	        {% endif %}
         </span>
         {% endfor %}        
         {% endwith %}
