@@ -229,7 +229,6 @@ class TextImporter():
         # Make the chapter
         division = Division()
         division.sequence_number = num
-        division.indicator = str(num)
         division.descriptor = descriptor
         division.work = self.work
         
