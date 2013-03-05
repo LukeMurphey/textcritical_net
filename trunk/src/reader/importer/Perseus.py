@@ -134,7 +134,7 @@ class PerseusTextImporter(TextImporter):
         
         Arguments:
         file_name -- The file name of a Perseus XML work
-        state_set -- The state set to use
+        encoding -- The encoding to use
         """
         
         # Create the source object so that we remember where we got the file
@@ -147,7 +147,7 @@ class PerseusTextImporter(TextImporter):
         f = None
         
         try:
-            f = codecs.open( file_name, 'r', 'utf-8' )
+            f = codecs.open( file_name, 'r', encoding )
 
             file_string = f.read()
         finally:
