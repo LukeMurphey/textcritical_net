@@ -203,9 +203,9 @@ def get_division( work, division_0=None, division_1=None, division_2=None, divis
     
     # Get the division if we got one level deep of descriptors ("1")
     elif division_0 is not None:
-        
         divisions = divisions.filter(parent_division=None,
                                      descriptor__iexact=division_0)
+        
     
     # Only grab one
     divisions = divisions[:1]
