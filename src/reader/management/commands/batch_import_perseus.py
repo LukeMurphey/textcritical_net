@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from reader.importer.PerseusBatchImporter import JSONImportPolicy, PerseusBatchImporter
+from reader.importer.PerseusBatchImporter import PerseusBatchImporter
+from reader.importer.batch_import import JSONImportPolicy
 
 import os
 import sys
