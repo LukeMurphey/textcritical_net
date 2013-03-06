@@ -227,7 +227,7 @@ Search for other instances of <%= word %> <a href="/search?q=work:<%= work %>%20
 {% block javascript %}
 <script language="javascript">
 
-require(["jquery", "store", "app", "underscore"], function($) {
+require(["jquery", "store", "app", "underscore", "bootstrap"], function($) {
 	TextCritical.loadStoreSettings();
     $('#align-break').click( TextCritical.toggleVerseBreak );
     $('#show-table-of-contents').click( TextCritical.toggleTOC );
@@ -270,6 +270,24 @@ require(["jquery", "store", "app", "underscore"], function($) {
     
     $(".word").click( TextCritical.word_lookup );
     $(".word").hover(TextCritical.highlight_selected_word, TextCritical.unhighlight_all_words);
+    
+    $(".note-tag").each(function() {
+        var $pElem= $(this);
+        $pElem.popover(
+            {
+              title: "Note",
+              content: getPopContent($pElem.attr("id")),
+              html: true,
+              placement: "top",
+              trigger: "hover"
+            }
+        );
+    });
+    		
+    function getPopContent(target) {
+        return $("#content_for_" + target).html();
+    };
+    
 });
 </script>
 {% endblock %}

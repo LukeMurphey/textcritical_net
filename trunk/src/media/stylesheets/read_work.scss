@@ -108,7 +108,14 @@ body.dark .verse_container.highlighted{
     }
     
     .label{
-    	display: block;
+    	/* display: block; */
+    	margin-left: 8px;
+    	margin-right: 4px;
+    }
+    
+    .note-tag{
+    	margin-left: 4px;
+    	margin-right: 2px;
     }
     
     .lb{
