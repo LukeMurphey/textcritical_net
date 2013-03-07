@@ -107,7 +107,7 @@
             <a class="verse_link" data-verse="{{verse.indicator}}" data-verse-descriptor="{{chapter_description}}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse}}" id="verse_link_{{verse.indicator}}" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}/{{verse.indicator}}"><span class="label {% if not chapter_not_found and verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
 	        {% endif %}
 	        {% if verse.original_content|length == 0 %}
-	        {{verse.content}}
+	        {{verse.content|unbound_text_to_html5|safe}}
 	        {% else %}
 	        {{verse.original_content|perseus_xml_to_html5:chapter.work.language|safe}}
 	        {% endif %}
