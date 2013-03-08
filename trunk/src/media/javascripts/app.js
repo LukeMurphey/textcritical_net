@@ -44,10 +44,25 @@ TextCritical.toggleVerseBreak = function(){
 }
 
 /**
+ * Escape the identifier so that if it contains periods, it can still be used as a jQuery selector.
+ **/
+TextCritical.escapeIdentifier = function(id){
+	return id.replace(".", "\\.");
+}
+
+/**
  * Scrolls to the given anchor.
  **/
 TextCritical.scrolltoAnchor = function(id){
-	$('html,body').animate({scrollTop: $("#"+id).offset().top},'slow');
+	
+	scrollTo = $("#"+ id ).offset();
+	
+	if( scrollTo == undefined ){
+		console.warn("The id (" + id + ") to scroll to is undefined");
+	}
+	else{
+		$('html,body').animate({scrollTop: scrollTo.top},'slow');
+	}
 }
 
 /**
@@ -62,7 +77,8 @@ TextCritical.scrollToVerse = function(verse_number, base_chapter_url){
 	}
 	
 	// The ID of the verse number element
-	var id = "verse_" + verse_number
+	var id = "verse_" + verse_number;
+	var escapted_id = TextCritical.escapeIdentifier(id);
 	
 	// Update the URL
 	title = document.title;
@@ -74,11 +90,11 @@ TextCritical.scrollToVerse = function(verse_number, base_chapter_url){
 	$('.verse.number').removeClass('label-info');
 	
 	// Highlight the new verse
-	$('#' + id).addClass('highlighted');
-	$('#' + id + ' .label').addClass('label-info');
+	$('#' + escapted_id).addClass('highlighted');
+	$('#' + escapted_id + ' .label').addClass('label-info');
 	
 	// Scroll to the verse
-	TextCritical.scrolltoAnchor(id);
+	TextCritical.scrolltoAnchor(escapted_id);
 	
 	return false; // Stop the page from reloading
 	
