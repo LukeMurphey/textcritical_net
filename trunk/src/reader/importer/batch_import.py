@@ -277,19 +277,24 @@ class ImportTransforms():
         # Execute each of the transform functions
         for fx_name, args in transforms.items():
             
-            # Make sure the function is present
-            if fx_name in fxs and fx_name != 'run_transforms':
+            if not isinstance(args, (list, tuple)):
+                args = [args]
                 
-                # Get the function to call
-                fx = getattr(ImportTransforms, fx_name)
+            for arguments in args:
                 
-                # Execute the function
-                if args is not None:
-                    fx(work=work, **args)
-                    logger.debug("Successfully executed transforms with arguments, transform=%s", fx_name)
-                else:
-                    fx(work=work)
-                    logger.debug("Successfully executed transforms without arguments, transform=%s", fx_name)
+                # Make sure the function is present
+                if fx_name in fxs and fx_name != 'run_transforms':
                     
-            else:
-                logger.warn("Transform function could not be found, transform=%s", fx_name)
+                    # Get the function to call
+                    fx = getattr(ImportTransforms, fx_name)
+                    
+                    # Execute the function
+                    if args is not None:
+                        fx(work=work, **arguments)
+                        logger.debug("Successfully executed transforms with arguments, transform=%s", fx_name)
+                    else:
+                        fx(work=work)
+                        logger.debug("Successfully executed transforms without arguments, transform=%s", fx_name)
+                        
+                else:
+                    logger.warn("Transform function could not be found, transform=%s", fx_name)
