@@ -20,32 +20,32 @@ require.config({
         ],
         
         store: [
-             "libs/store"
+            "libs/store"
         ],
         
         bootbox: [
-             "libs/bootbox"
+            "libs/bootbox"
         ],
         
         underscore: [
-             "http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min",
-             "libs/underscore"
+            "http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min",
+            "libs/underscore"
         ],
         
         app: [
-             "app"
+            "app"
         ],
 
         blockui: [
-             "libs/jquery.blockUI"
+            "libs/jquery.blockUI"
         ],
         
         jasmine: [
-             "libs/jasmine"
+            "libs/jasmine"
         ],
         
-        jasmine-html: [
-             "libs/jasmine-html"
+        jasmine_html: [
+            "libs/jasmine-html"
         ]
     },
     shim: {
