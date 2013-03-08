@@ -221,7 +221,12 @@ body.dark .verse_container.highlighted {
   display: block;
   padding-bottom: 16px; }
 .verse .label {
-  display: block; }
+  /* display: block; */
+  margin-left: 8px;
+  margin-right: 4px; }
+.verse .note-tag {
+  margin-left: 4px;
+  margin-right: 2px; }
 .verse .lb {
   display: block; }
 .verse .div3 {
