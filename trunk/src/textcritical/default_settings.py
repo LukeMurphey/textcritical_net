@@ -45,6 +45,16 @@ if not TESTING:
 # This is the location where the indexes are located
 SEARCH_INDEXES = os.path.join("..", "var", "indexes")
 
+# This website supports page level caching. Uncomment the CACHES setting below and set the LOCATION to being using it
+"""
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/opt/webapps/TextCritical.com/var/cache', #Enter the full path to the cache directory here
+    }
+}
+"""
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.

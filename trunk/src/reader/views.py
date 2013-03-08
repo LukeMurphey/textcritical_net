@@ -3,6 +3,8 @@ from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
 from django.template.context import RequestContext
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 
 import json
 import logging
@@ -10,10 +12,10 @@ import math
 import difflib
 import re
 
-from reader.models import Work, Division, Verse, WordDescription, Author
+from reader.models import Work, Division, Verse, Author
 from reader.language_tools.greek import Greek
 from reader import language_tools
-from reader.shortcuts import uniquefy, string_limiter
+from reader.shortcuts import string_limiter
 from reader.utils import get_word_descriptions
 from reader.contentsearch import search_verses
 from reader.language_tools import normalize_unicode
@@ -23,8 +25,15 @@ JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/r
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+# These times are for making the caching decorators clearer
+minutes = 60
+hours   = 60 * minutes
+days    = 24 * hours
+months  = 30 * days
+years   = 365.25 * days
+
+@cache_page(15 * minutes)
 def home(request):
-    
     works_count = Work.objects.count()
     
     return render_to_response('home.html',
@@ -66,6 +75,7 @@ def search(request, query=None):
                                },
                               context_instance=RequestContext(request)) 
 
+@cache_page(8 * hours)
 def works_index(request):
     
     works = Work.objects.all().order_by("title").prefetch_related('authors').prefetch_related('editors')
@@ -215,7 +225,7 @@ def get_division( work, division_0=None, division_1=None, division_2=None, divis
     else:
         return None # We couldn't find a matching division, perhaps one doesn't exist with the given set of descriptors?
     
-        
+@cache_page(8 * hours)
 def read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
     
     # Some warnings that should be posted to the user
@@ -310,10 +320,12 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
                               'progress'             : progress},
                               context_instance=RequestContext(request))
 
+@cache_page(8 * hours)
 def robots_txt(request):
     return render_to_response('robots.txt',
                               context_instance=RequestContext(request))
     
+@cache_page(8 * hours)
 def humans_txt(request):
     return render_to_response('humans.txt',
                               context_instance=RequestContext(request))
@@ -375,6 +387,7 @@ def description_id_fun(x):
     
     return str(x)
 
+@cache_page(1 * hours)
 def api_works_typehead_hints(request ):
     
     hints = []
@@ -388,6 +401,7 @@ def api_works_typehead_hints(request ):
     # Return the results
     return render_api_response(request, hints)
 
+@cache_page(15 * minutes)
 def api_search(request, search_text=None ):
     
     # Get the text to search for
@@ -484,6 +498,7 @@ def api_search(request, search_text=None ):
     # Return the results
     return render_api_response(request, results_set)
 
+@cache_page(15 * minutes)
 def api_convert_query_beta_code(request, search_query):
     
     if search_query is None or len(search_query) == 0 and 'q' in request.GET:
@@ -535,6 +550,7 @@ def api_convert_query_beta_code(request, search_query):
             
     return render_api_response(request, " ".join(new_queries) )
 
+@cache_page(15 * minutes)
 def api_word_parse(request, word=None):
     
     if word is None or len(word) == 0 and 'word' in request.GET:
@@ -582,6 +598,7 @@ def api_word_parse(request, word=None):
     # Return the response
     return render_api_response(request, results)
 
+@cache_page(15 * minutes)
 def api_word_parse_beta_code(request, word=None):
     
     if word is None or len(word) == 0 and 'word' in request.GET:
@@ -589,6 +606,7 @@ def api_word_parse_beta_code(request, word=None):
     
     return api_word_parse(request, Greek.beta_code_to_unicode(word))
 
+@cache_page(15 * minutes)
 def api_unicode_to_betacode(request, word=None):
     if word is None or len(word) == 0 and 'word' in request.GET:
         word = request.GET['word']
@@ -600,6 +618,7 @@ def api_unicode_to_betacode(request, word=None):
     
     return render_api_response(request, d)
 
+@cache_page(15 * minutes)
 def api_beta_code_to_unicode(request, word=None):
     
     if word is None or len(word) == 0 and 'word' in request.GET:
@@ -612,6 +631,7 @@ def api_beta_code_to_unicode(request, word=None):
     
     return render_api_response(request, d)
 
+@cache_page(15 * minutes)
 def api_works_list_for_author(request, author):
     
     works = Work.objects.filter(authors__name=author)
@@ -627,6 +647,7 @@ def api_works_list_for_author(request, author):
     
     return render_api_response(request, results)
 
+@cache_page(15 * minutes)
 def api_works_list(request):
     
     response = HttpResponse(content_type=JSON_CONTENT_TYPE)
