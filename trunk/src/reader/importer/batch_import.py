@@ -190,6 +190,32 @@ class ImportTransforms():
             work.save()
             
     @staticmethod
+    def set_division_title( work=None, existing_division_title_slug=None, title=None, title_slug=None, descriptor=None, **kwargs):
+        
+        changes = 0
+        
+        # Get the division
+        division = Division.objects.get(title_slug=existing_division_title_slug, work=work)
+        
+        # Update the title
+        if title is not None:
+            division.title = title
+            changes = changes + 1
+            
+        # Update the title slug
+        if title_slug is not None:
+            division.title_slug = title_slug
+            changes = changes + 1
+            
+        # Update the descriptor
+        if descriptor is not None:
+            division.descriptor = descriptor
+            changes = changes + 1
+        
+        if changes > 0:
+            division.save()
+            
+    @staticmethod
     def delete_unnecessary_divisions( work=None, **kwargs):
         
         # Sift through the work and delete divisions that:

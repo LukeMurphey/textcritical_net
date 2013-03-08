@@ -8,7 +8,13 @@
                     "title_slug" : "lxx",
                     "title"      : "Septuagint (LXX)",
                     "language"   : "Greek"
-                }
+                },
+    			"set_division_title":{
+    				"existing_division_title_slug" : "ecclesiasticus-sira",
+    				"title_slug"                   : "ecclesiasticus",
+    				"title"                        : "Ecclesiasticus (Sirach)",
+    				"descriptor"                   : "Ecclesiasticus"
+    			}
             }
         }
     }
