@@ -233,17 +233,21 @@ require(["jquery", "store", "app", "underscore", "bootstrap"], function($) {
     $('#show-table-of-contents').click( TextCritical.toggleTOC );
     $('#search-work').click( TextCritical.search_this_work );
     
-    // Get the division IDs
-    division_ids = [];
+    // Get the division and verse IDs into an array so that the URL can be updated 
+    reference_ids = [];
     
     jQuery.each( $('[data-division-descriptor]'), function() {
-    	division_ids.push( $(this).attr("data-division-descriptor") );
+    	reference_ids.push( $(this).attr("data-division-descriptor") );
+    });
+    
+    jQuery.each( $('[data-verse]'), function() {
+    	reference_ids.push( $(this).attr("data-verse") );
     });
     
     function update_chapter_reference(e) {
         if (e.keyCode == 13) {
             var ref = $(this).val();
-            TextCritical.go_to_chapter(ref, division_ids);
+            TextCritical.go_to_chapter(ref, reference_ids);
             return true;
         }
     }
@@ -252,7 +256,7 @@ require(["jquery", "store", "app", "underscore", "bootstrap"], function($) {
     
     function go_to_selected_chapter(){
         var ref = $("#chapter").val();
-        TextCritical.go_to_chapter(ref, division_ids);
+        TextCritical.go_to_chapter(ref, reference_ids);
         return true;
     }
     

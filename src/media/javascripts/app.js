@@ -136,14 +136,14 @@ TextCritical.slugify = function (text) {
  * @param string the reference to go to (like "Romans 14:1")
  * @param array an array of the current division markers. Used to help the function not break on division descriptors that have spaces in the name (like "1 Thessalonians")
  **/
-TextCritical.resolve_path = function( reference, division_ids ){
+TextCritical.resolve_path = function( reference, reference_ids ){
 	
 	// Trim the reference in case it has extra spaces and change to lower case so that we handle reference in a case insensitive way
 	reference = TextCritical.trim( reference ).toLowerCase();
 	
 	// Change all of the division IDs to lower case
-	for( c = 0; c < division_ids.length; c++ ){
-		division_ids[c] = division_ids[c].toLowerCase();
+	for( c = 0; c < reference_ids.length; c++ ){
+		reference_ids[c] = reference_ids[c].toLowerCase();
 	}
 	
     // Break up the path
@@ -163,13 +163,13 @@ TextCritical.resolve_path = function( reference, division_ids ){
     // Make a map from division IDs so that we avoid breaking on division IDs with spaces in them
     divisions_map = {}
     
-    for( c = 0; c < division_ids.length; c++ ){
+    for( c = 0; c < reference_ids.length; c++ ){
     	
     	// Set the key to the be the slugified version of the division ID
-    	divisions_map[division_ids[c]] = TextCritical.slugify(division_ids[c]);
+    	divisions_map[reference_ids[c]] = TextCritical.slugify(reference_ids[c]);
     	
     	// Set the value to be the original
-    	reference = reference.replace(division_ids[c], TextCritical.slugify(division_ids[c]));
+    	reference = reference.replace(reference_ids[c], TextCritical.slugify(reference_ids[c]));
     }
     
     // Break up the reference entry
