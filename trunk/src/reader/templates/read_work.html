@@ -33,7 +33,7 @@
         {% with chapter_description=chapter.get_division_description %}
         <div class="control-group {% if verse_not_found %}error{% endif %}">
         	<div class="input-append">
-        		<input class="span2" placeholder="Jump to reference..." id="chapter" value="{{chapter.get_division_description}}{% if verse_to_highlight %}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse_to_highlight}}{% endif %}" type="text">
+        		<input class="span3" placeholder="Jump to reference..." id="chapter" value="{{chapter.get_division_description}}{% if verse_to_highlight %}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse_to_highlight}}{% endif %}" type="text">
 			    <button class="btn" type="submit" id="change-reference"><!-- <i class="icon-play"></i>  -->Go</button>
 			    <button class="btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show-table-of-contents"><!-- <i class="icon-book"></i> -->Table of Contents</button>
 			    <button class="btn" type="submit" id="search-work"><!-- <i class="icon-search"></i>  -->Search</button>
