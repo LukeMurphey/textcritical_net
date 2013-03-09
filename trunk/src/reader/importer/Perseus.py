@@ -541,6 +541,10 @@ class PerseusTextImporter(TextImporter):
         title = title.replace("(English). Machine readable text", "")
         title = title.replace("(English)", "")
         
+        # Strip trailing periods
+        if title.endswith("."):
+            title = title[0:-1]
+        
         title = title.strip()
         
         return title
