@@ -538,7 +538,9 @@ class PerseusTextImporter(TextImporter):
     def process_title(title):
         
         title = title.replace("(Greek). Machine readable text", "")
-        #title = title.replace("(English). Machine readable text", "")
+        title = title.replace("(English). Machine readable text", "")
+        title = title.replace("(English)", "")
+        
         title = title.strip()
         
         return title
