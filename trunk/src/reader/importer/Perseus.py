@@ -538,6 +538,7 @@ class PerseusTextImporter(TextImporter):
     def process_title(title):
         
         title = title.replace("(Greek). Machine readable text", "")
+        #title = title.replace("(English). Machine readable text", "")
         title = title.strip()
         
         return title
@@ -904,6 +905,9 @@ class PerseusTextImporter(TextImporter):
             # This indicates if we ought to recurse down this node
             recurse_down_node = recurse
             
+            if node.nodeType == minidom.Element.PROCESSING_INSTRUCTION_NODE:
+                pass
+            
             if node.nodeType == node.TEXT_NODE:
                 
                 # We need to see a milestone before we can set the text for a verse
@@ -1090,9 +1094,15 @@ class PerseusTextImporter(TextImporter):
             #    * everything else: add it to the current division XML content
             
             ###################################
+            # Ignore XML processing instructions
+            ###################################
+            if node.nodeType == minidom.ProcessingInstruction.nodeType:
+                pass
+            
+            ###################################
             # If the content is a text-node, then attach it the current division
             ###################################
-            if node.nodeType == node.TEXT_NODE:
+            elif node.nodeType == minidom.Node.TEXT_NODE:
                 
                 if import_context.division is None:
                     # No division exists yet, skipping this verse
