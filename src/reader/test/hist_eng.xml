@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+<TEI.2>
+<teiHeader type="text" status="new">
+<fileDesc>
+<titleStmt>
+<title>Histories</title>
+<author>Polybius</author>
+&responsibility;
+<funder>Robert B. Strassler</funder>
+</titleStmt>
+<extent></extent>
+&Perseus.publish;
+
+<sourceDesc>
+<biblStruct>
+<monogr>
+<title>Histories</title>
+<author>Polybius</author>
+<respStmt>
+<name>Evelyn S. Shuckburgh</name>
+<resp>translator</resp>
+</respStmt>
+<imprint>
+<pubPlace>London, New York</pubPlace>
+<publisher>Macmillan</publisher>
+<date>1889</date>
+</imprint>
+</monogr>
+<note anchored="yes">Reprint Bloomington 1962</note>
+</biblStruct>
+</sourceDesc>
+</fileDesc>
+
+<encodingDesc>
+<editorialDecl>
+<correction method="silent" status="high">&Perseus.DE;
+<p>Running heads in Walbank's reprint have been converted to chapter titles, and
+titles have been added, usually from the marginal notes, for chapters without them.
+Some pages have notes of the form "line X:  A should read B," which I believe are
+Walbank's;  they have "resp=fww".  Summaries of missing sections are encoded
+as inline notes with "resp=ess."  A very few unidentified quotations are marked
+in notes with "resp=aem" (the markup editor)  Citations are marked using
+Perseus abbreviations.</p></correction>
+</editorialDecl>
+<refsDecl doctype="TEI.2">
+<state unit="book"/>
+<state n="chunk" unit="chapter"/>
+<state unit="section"/>
+</refsDecl>
+</encodingDesc>
+
+<profileDesc>
+<langUsage>
+<language id="en">English</language>
+<language id="greek">Greek</language>
+<language id="xgreek">transliterated Greek</language>
+<language id="la">Latin</language>
+<language id="de">German</language>
+<language id="fr">French</language>
+<language id="it">Italian</language>
+</langUsage>
+</profileDesc>
+
+<revisionDesc>
+<change><date>30-Jun-03</date>
+<respStmt><name>AEM</name><resp>markup</resp></respStmt>
+<item>initial markup
+</item>
+</change>
+</revisionDesc>
+
+</teiHeader>
+<text lang="en">
+<body>
+<pb n="1"/>
+<div1 id="b1" type="book" n="1">
+<div2 id="b1c1" type="chapter" n="1">
+<?head?><head>Introduction</head>
+<note anchored="yes" place="marg">Introduction. The importance and magnitude of the subject.</note>
+<p>Had the praise of History been passed over by former
+Chroniclers it would perhaps have been incumbent upon me to urge the choice and
+special study of records of this sort, as the
+readiest means men can have of correcting their
+knowledge of the past. But my predecessors have not been
+sparing in this respect. They have all begun and ended, so to
+speak, by enlarging on this theme: asserting again and again
+that the study of History is in the truest sense an education,
+and a training for political life; and that the most instructive,
+or rather the only, method of learning to bear with dignity
+the vicissitudes of fortune is to recall the catastrophes of
+others. It is evident, therefore, that no one need think it his
+duty to repeat what has been said by many, and said well.
+Least of all myself: for the surprising nature of the events
+which I have undertaken to relate is in itself sufficient to challenge and stimulate the attention of every one, old or young, to
+the study of my work. Can any one be so indifferent or idle
+as not to care to know by what means, and under what kind
+of polity, almost the whole inhabited world was conquered and
+<note anchored="yes" place="marg">B. C. <dateRange from="-219" to="-167">219</dateRange>-167.</note>
+brought under the dominion of the single city of <placeName key="perseus,Rome">Rome</placeName>, and
+that too within a period of not quite fifty-three
+years? Or who again can be so completely
+absorbed in other subjects of contemplation or study, as to
+think any of them superior in importance to the accurate understanding of an event for which the past affords no precedent.
+<pb n="2"/></p></div2>
+</div1>
+</body>
+</text>
+</TEI.2>

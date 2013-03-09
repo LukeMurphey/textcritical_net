@@ -187,6 +187,9 @@ class TextImporter():
         if copy_attributes and copy_children:
             new_node = dst_doc.importNode(src_node, True)
         
+        elif src_node.nodeType == minidom.Element.PROCESSING_INSTRUCTION_NODE:
+            return
+        
         elif src_node.nodeType == minidom.Element.TEXT_NODE:
             new_node = dst_doc.createTextNode(src_node.data)
             
@@ -300,7 +303,7 @@ class TextImporter():
         # Set the slug to the next free one if the name is not unique
         i = 1
         slug_was_already_taken = False
-        
+                
         while Work.objects.filter(title_slug=work.title_slug).count() > 0:
             slug_was_already_taken = True
             work.title_slug = slugify(work.title) + "-" + str(i)

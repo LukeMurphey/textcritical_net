@@ -924,6 +924,15 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 0)
         self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 4)
         
+    def test_load_book_xml_processing_instruction(self):
+        # See bug #557, http://lukemurphey.net/issues/557
+        self.importer.state_set = 0
+        
+        book_xml = self.load_test_resource('hist_eng.xml')
+        book_doc = parseString(book_xml)
+        
+        work = self.importer.import_xml_document(book_doc)
+        
     def test_load_book_no_verses(self):
         # See bug #446, http://lukemurphey.net/issues/446
         self.importer.state_set = "*"
