@@ -160,24 +160,29 @@ def transform_perseus_text(text, parent_node, dst_doc, default_language):
     if parent_node.attributes.get('class', None) is not None and 'note' in parent_node.attributes.get('class', '').value.split(' '):#and parent_node.attributes.get('class', None).value == "note":
         return text.encode('utf-8')
     
-    # Split up the text and place the text segments in nodes
-    segments = re.findall("[\s]+|[\[\],.:.;]|[^\s\[\],.:.;]+", text)
-    #segments = text.split(" ")
-    
-    for s in segments:
-        
-        # Don't wrap punctuation in a word node
-        if s in [";", ",", ".", "[", "]", ":"] or len(s.strip()) == 0:
-            txt_node = dst_doc.createTextNode( s )
-            parent_node.appendChild( txt_node )
-        
-        else:
-            new_node = dst_doc.createElement( "span" )
-            new_node.setAttribute( "class", "word" )
-            
-            # Create the text node and append it
-            txt_node = dst_doc.createTextNode( transform_text(s, language).decode( "utf-8" ) )
-            new_node.appendChild(txt_node)
+    # Don't split up the words for English documents since we don't allow morphological lookups on English
+    if language.lower() == "english":
+        return text.encode('utf-8')
            
-            # Append the node
-            parent_node.appendChild(new_node)
+    else:
+       
+        # Split up the text and place the text segments in nodes
+        segments = re.findall("[\s]+|[\[\],.:.;]|[^\s\[\],.:.;]+", text)
+        
+        for s in segments:
+            
+            # Don't wrap punctuation in a word node
+            if s in [";", ",", ".", "[", "]", ":"] or len(s.strip()) == 0:
+                txt_node = dst_doc.createTextNode( s )
+                parent_node.appendChild( txt_node )
+            
+            else:
+                new_node = dst_doc.createElement( "span" )
+                new_node.setAttribute( "class", "word" )
+                
+                # Create the text node and append it
+                txt_node = dst_doc.createTextNode( transform_text(s, language).decode( "utf-8" ) )
+                new_node.appendChild(txt_node)
+               
+                # Append the node
+                parent_node.appendChild(new_node)
