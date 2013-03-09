@@ -126,6 +126,24 @@ body.dark .verse_container.highlighted{
     	padding-top: 16px;
     	display: block;
     }
+    
+    .quote > .title{
+    	font-weight: bold;
+    	display: block;
+    }
+    
+    .castlist:before{
+    	content: "Cast list: ";
+    }
+    
+    .castlist > .castitem:after{
+    	content: ", ";
+    }
+    
+    .castlist > .castitem:last-child:after{
+    	content: "";
+    }
+    
 }
 
 #morphology-dialog-content{
