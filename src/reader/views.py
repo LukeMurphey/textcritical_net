@@ -15,7 +15,7 @@ import re
 from reader.models import Work, Division, Verse, Author
 from reader.language_tools.greek import Greek
 from reader import language_tools
-from reader.shortcuts import string_limiter
+from reader.shortcuts import string_limiter, uniquefy
 from reader.utils import get_word_descriptions
 from reader.contentsearch import search_verses
 from reader.language_tools import normalize_unicode
@@ -397,6 +397,9 @@ def api_works_typehead_hints(request ):
     
     # Get the author names
     hints.extend( Author.objects.all().values_list('name', flat=True) )
+    
+    # Uniquefy the list
+    hints = uniquefy(hints)
     
     # Return the results
     return render_api_response(request, hints)
