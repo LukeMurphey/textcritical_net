@@ -116,6 +116,20 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
    		});
     });
     
+    
+    function is_unique(arr) {
+        var hash = {}, result = [];
+        for ( var i = 0, l = arr.length; i < l; ++i ) {
+            if ( hash.hasOwnProperty(arr[i]) ) { //it works with objects! in FF, at least
+                return false;
+            }
+            
+            hash[ arr[i] ] = true;
+            
+        }
+        return true;
+    }
+    
     describe("Typeahead hints", function() {
     	
 		it("should be at least 400", function() {
@@ -126,7 +140,9 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
 			expect( TextCritical.get_works_search_typeahead_hints().length ).toBeGreaterThan( 400 );
    		});
 		
-		
+		it("should be unique", function() {
+			expect( is_unique(TextCritical.get_works_search_typeahead_hints()) ).toBe( true );
+   		});
   		
     });
     
