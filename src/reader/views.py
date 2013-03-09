@@ -34,10 +34,12 @@ years   = 365.25 * days
 
 @cache_page(15 * minutes)
 def home(request):
-    works_count = Work.objects.count()
+    greek_works_count = Work.objects.filter(language="Greek").count()
+    english_works_count = Work.objects.filter(language="English").count()
     
     return render_to_response('home.html',
-                              {'works_count' : works_count},
+                              {'greek_works_count'   : greek_works_count,
+                               'english_works_count' : english_works_count},
                               context_instance=RequestContext(request))
 
 def about(request):
