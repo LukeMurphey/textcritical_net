@@ -565,12 +565,30 @@ def api_word_parse(request, word=None):
     
     # Do a search for the parse
     ignoring_diacritics = False
+    ignoring_numerals = False
     descriptions = get_word_descriptions( word, False )
     
     # If we couldn't find the word, then try again ignoring diacritical marks
     if len(descriptions) == 0:
         ignoring_diacritics = True
         descriptions = get_word_descriptions( word, True )
+        
+    # If we couldn't find the word and it has numbers (indicating a particular parse, then remove the numbers and try again)
+    if len(descriptions) == 0 and re.search("[0-9]", word) is not None:
+        
+        # Strip the numbers
+        stripped_word = normalize_unicode(re.sub("[0-9]", "", word))
+        print stripped_word
+        ignoring_numerals = True
+        
+        # Try without ignoring diacritics
+        ignoring_diacritics = False
+        descriptions = get_word_descriptions( stripped_word, False )
+        
+        # Try with ignoring diacritics
+        if len(descriptions) == 0:
+            ignoring_diacritics = True
+            descriptions = get_word_descriptions( stripped_word, True )
     
     # Make the final result to be returned
     results = []
@@ -581,6 +599,7 @@ def api_word_parse(request, word=None):
         
         entry["meaning"] = d.meaning
         entry["description"] = str(d)
+        entry["ignoring_numerals"] = ignoring_numerals
         entry["ignoring_diacritics"] = ignoring_diacritics
         entry["form"] = d.word_form.form
         
