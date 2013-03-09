@@ -232,6 +232,15 @@ body.dark .verse_container.highlighted {
 .verse .div3 {
   padding-top: 16px;
   display: block; }
+.verse .quote > .title {
+  font-weight: bold;
+  display: block; }
+.verse .castlist:before {
+  content: "Cast list: "; }
+.verse .castlist > .castitem:after {
+  content: ", "; }
+.verse .castlist > .castitem:last-child:after {
+  content: ""; }
 
 #morphology-dialog-content {
   height: 240px; }
