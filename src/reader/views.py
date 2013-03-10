@@ -578,7 +578,7 @@ def api_word_parse(request, word=None):
         
         # Strip the numbers
         stripped_word = normalize_unicode(re.sub("[0-9]", "", word))
-        print stripped_word
+        
         ignoring_numerals = True
         
         # Try without ignoring diacritics
