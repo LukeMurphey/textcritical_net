@@ -648,5 +648,222 @@
         "import_parameters" : {
             "state_set" : 0
         }
+    },
+    {
+        "author" : "Aeschines",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Aeschylus",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Andocides",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Apollodorus",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Appian",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Aretaeus",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Aristophanes",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Aristotle",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Bacchylides",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Demosthenes",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Dinarchus",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Diodorus Siculus",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Diogenes Laertius",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Euclid",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Euripides",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Galen",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Herodotus",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Hesiod",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Hippocrates",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Homer",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Hyperides",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Flavius Josephus",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Pausanias",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Pindar",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Plato",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Plutarch",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Polybius",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Sophocles",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Strabo",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "author" : "Xenophon",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    },
+    {
+        "title" : ["Elegy and Iambus, Volume I", "Elegy and Iambus, Volume II"],
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0
+        }
     }
 ]
