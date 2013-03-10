@@ -1,4 +1,4 @@
-from reader.models import Division, Verse
+from reader.models import Division, Verse, Work
 import logging
 import re
 import os
@@ -188,6 +188,28 @@ class ImportTransforms():
             
         if changes > 0:
             work.save()
+            
+    @staticmethod
+    def update_title_slug(work=None, additional_fields=None):
+        
+        if not isinstance(additional_fields, (list, tuple)) or isinstance(additional_fields, basestring):
+            additional_fields = [additional_fields]
+            
+        for f in additional_fields:
+            
+            if not f.startswith("-"):
+                f = "-" + f
+            
+            new_title_slug = work.title_slug + f
+            
+            if Work.objects.filter(title_slug=new_title_slug).count() == 0:
+                work.title_slug = new_title_slug
+                work.save()
+                
+                return
+            
+        logger.warning("Unable to allocate a new title slug based on the fields provided")
+            
             
     @staticmethod
     def set_division_title( work=None, existing_division_title_slug=None, title=None, title_slug=None, descriptor=None, **kwargs):
