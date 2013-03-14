@@ -708,8 +708,31 @@
     {
         "author" : "Appian",
         "language" : "English",
+        "title"    : "The Foreign Wars",
         "import_parameters" : {
-            "state_set" : 0
+            "state_set" : 0,
+            "transforms" : {
+            	"update_title_slug" : {
+            		"additional_fields" : "english"
+            	},
+                "set_division_title" : {
+                	"existing_division_title_slug" : "chapter-iii",
+                	"existing_division_sequence_number" : "20",
+                	"descriptor" : "3"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Appian",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+            	"update_title_slug" : {
+            		"additional_fields" : "english"
+            	}
+            }
         }
     },
     {
