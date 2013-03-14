@@ -129,7 +129,7 @@
 	            <a href="{% url read_work work.title_slug %}/{{ previous_chapter.get_division_indicators|join:"/" }}">&larr; Previous</a>
 	            </li>
         {% endif %}
-        {% if chapters|length > 0 %}
+        {% if chapters|length > 1 %}
         
         {% for c in chapters %}
         		{% if c == chapter %}
