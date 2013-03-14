@@ -213,12 +213,27 @@ class ImportTransforms():
             
             
     @staticmethod
-    def set_division_title( work=None, existing_division_title_slug=None, title=None, title_slug=None, descriptor=None, **kwargs):
+    def set_division_title( work=None, existing_division_title_slug=None, existing_division_parent_title_slug=None, existing_division_sequence_number=None, title=None, title_slug=None, descriptor=None, **kwargs):
         
         changes = 0
         
         # Get the division
-        division = Division.objects.get(title_slug=existing_division_title_slug, work=work)
+        division = Division.objects.filter(work=work)
+        
+        if existing_division_parent_title_slug:
+            division = division.filter(parent_division__title_slug=existing_division_parent_title_slug)
+            print "existing_division_parent_title_slug", division.count()
+        
+        if existing_division_title_slug:
+            division = division.filter(title_slug=existing_division_title_slug)
+            print "existing_division_title_slug", division.count()
+            
+        if existing_division_sequence_number:
+            division = division.filter(sequence_number=existing_division_sequence_number)
+            print "existing_division_sequence_number", division.count()
+            
+        # Get the division
+        division = division.get()
         
         # Update the title
         if title is not None:
@@ -234,6 +249,7 @@ class ImportTransforms():
         if descriptor is not None:
             division.descriptor = descriptor
             changes = changes + 1
+        
         
         if changes > 0:
             division.save()
