@@ -241,6 +241,8 @@ body.dark .verse_container.highlighted {
   content: ", "; }
 .verse .castlist > .castitem:last-child:after {
   content: ""; }
+.verse .argument {
+  font-style: italic; }
 
 #morphology-dialog-content {
   height: 240px; }
