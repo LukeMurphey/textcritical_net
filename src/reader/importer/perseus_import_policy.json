@@ -1,4 +1,12 @@
 [
+ 
+ {
+     "language"  : "Greek",
+     "should_import" : false
+ },
+ 
+ 
+ 
     {
         "author" : "Flavius Josephus",
         "title" : ["De bello Judaico libri vii", "Antiquitates Judaicae" ],
@@ -43,11 +51,38 @@
         }
     },
     {
+        "author" : "Aeschines",
+        "title" : "Speeches",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "speeches-aeschines-english"
+                }
+            }
+        }
+    },
+    {
         "author" : "Aeschylus",
         "language" : "Greek",
         "import_parameters" : {
             "state_set" : 1,
             "ignore_division_markers" : true
+        }
+    },
+    {
+        "author" : "Aeschylus",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : "*",
+            "use_line_count_for_divisions" : true,
+            "ignore_division_markers" : true,
+            "transforms" : {
+            	"update_title_slug" : {
+            		"additional_fields" : "english"
+            	}
+            }
         }
     },
     {
@@ -645,13 +680,6 @@
     },
     {
         "language" : "Greek",
-        "import_parameters" : {
-            "state_set" : 0
-        }
-    },
-    {
-        "author" : "Aeschines",
-        "language" : "English",
         "import_parameters" : {
             "state_set" : 0
         }
