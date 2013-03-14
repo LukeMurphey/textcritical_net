@@ -146,7 +146,17 @@ class TestImportContext(TestCase):
         
         context.increment_division_level(2)
         self.assertEquals( context.get_division_level_count(2), 1 )
+
+class TestBatchImport(TestCase):
+    
+    def test_update_title_slug(self):
         
+        work = Work(title="Some Doc")
+        work.save()
+        
+        ImportTransforms.update_title_slug(work, "english")
+        
+        self.assertEquals(work.title_slug, "some-doc-english")
         
 class TestImport(TestCase):
      
@@ -472,6 +482,19 @@ class TestPerseusImport(TestReader):
     def setUp(self):
         self.importer = PerseusTextImporter()
     
+    def test_get_title_slug(self):
+        
+        # Pre-make the author in order to see if the importer is smart enough to not create a duplicate
+        author = Author()
+        author.name = "Flavius Josephus"
+        author.save()
+        
+        book_xml = self.load_test_resource('j.vit_gk_portion.xml')
+        book_doc = parseString(book_xml)
+        self.importer.import_xml_document(book_doc)
+        
+        self.assertEquals( self.importer.get_title_slug("josephi-vita"), ("josephi-vita-1" , True) )
+    
     def test_bibl_struct_import(self):
         
         bibl_struct_xml = """<biblStruct>
@@ -707,6 +730,102 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
     def test_load_book_with_basic_div(self):
         file_name = self.get_test_resource_file_name('52_gk.xml')
         self.importer.import_file(file_name)
+        
+    def test_load_book_with_milestone_line_numbers(self):
+        file_name = self.get_test_resource_file_name('aesch.ag_eng.xml')
+        self.importer.state_set = "*"
+        self.importer.ignore_division_markers = True
+        self.importer.use_line_count_for_divisions = True
+        
+        self.importer.import_file(file_name)
+        
+        work = self.importer.work
+        
+        divisions = Division.objects.filter(work=work)
+        
+        self.assertEqual( divisions[0].title, "lines 1-39")
+        self.assertEqual( divisions[1].title, "lines 40-82")
+        self.assertEqual( divisions[2].title, "lines 83-103")
+        self.assertEquals( divisions[3].title, "lines 104-1616")
+        self.assertEquals( divisions[4].title, "lines 1617-1648")
+        self.assertEquals( divisions[5].title, "lines 1649-1672")
+        
+    def test_get_line_count(self):
+        
+        verse_xml = r"""
+        <verse>
+                <milestone ed="p" n="1" unit="line"/>Release from this weary task of mine has been my plea to the gods throughout this long year's watch, in which, lying upon the palace roof of the Atreidae,
+                 upon my bent arm, like a dog, I have learned to know well the gathering of the night's stars, those radiant potentates conspicuous in the firmament,
+                <milestone ed="p" n="5" unit="line"/>bringers of winter and summer to mankind the constellations, when they rise and set.
+                <p>So now I am still watching for the signal-flame, the gleaming fire that is to bring news from <placeName key="perseus,Troy">Troy</placeName> and
+                    <milestone ed="p" n="10" unit="line"/>tidings of its capture.  For thus commands my queen, woman in passionate heart and man in strength of purpose.
+                      And whenever I make here my bed, restless and dank with dew and unvisited by dreams-for instead of sleep fear stands ever by my side,
+                    <milestone ed="p" n="15" unit="line"/>so that I cannot close my eyelids fast in sleep-and whenever I care to sing or hum "and thus apply an antidote of song to ward off drowsiness",
+                     then my tears start forth, as I bewail the fortunes of this house of ours, not ordered for the best as in days gone by.
+                    <milestone ed="p" n="20" unit="line"/>But tonight may there come a happy release from my weary task!  May the fire with its glad tidings flash through the gloom!
+                </p>
+                <p>
+                    <stage>The signal fire suddenly flashes out</stage>
+                    Oh welcome, you blaze in the night, a light as if of day, you harbinger of many a choral dance in <placeName key="tgn,7010720">Argos</placeName> in thanksgiving for this glad event!
+                </p>
+                <p>
+                    <milestone ed="p" n="25" unit="line"/>Hallo! Hallo!
+                    To Agamemnon's queen I thus cry aloud the signal to rise from her bed, and as quickly as she can to lift up in her palace halls a shout of joy in welcome of this fire, if the city of <placeName key="tgn,7002329">Ilium</placeName>
+                    <milestone ed="p" n="30" unit="line"/>truly is taken, as this beacon unmistakably announces.
+                      And I will make an overture with a dance upon my own account; for my lord's lucky roll I shall count to my own score, now that this beacon has thrown me triple six.
+                </p>
+                <p>Ah well, may the master of the house come home and may
+                    <milestone ed="p" n="35" unit="line"/>I clasp his welcome hand in mine!  For the rest I stay silent; a great ox stands upon my tongue
+                    <note anchored="yes" n="36" resp="Smyth">A proverbial expression (of uncertain origin) for enforced silence; cf. fr. 176, 'A key stands guard upon my tongue.'</note>-
+                    yet the house itself, could it but speak, might tell a plain enough tale; since, for my part, by my own choice I have words for those who know, and to those who do not know, I've lost my memory.
+                </p>
+        </verse>
+        """
+        
+        verse_doc = parseString(verse_xml)
+        
+        line_number = self.importer.get_line_count(verse_doc)
+        
+        self.assertEquals( str(line_number), "35")
+        
+    def test_get_line_count_trailing_line(self):
+        
+        verse_xml = r"""
+        <verse>
+                <milestone ed="p" n="1" unit="line"/>Release from this weary task of mine has been my plea to the gods throughout this long year's watch, in which, lying upon the palace roof of the Atreidae,
+                 upon my bent arm, like a dog, I have learned to know well the gathering of the night's stars, those radiant potentates conspicuous in the firmament,
+                <milestone ed="p" n="5" unit="line"/>bringers of winter and summer to mankind the constellations, when they rise and set.
+                <p>So now I am still watching for the signal-flame, the gleaming fire that is to bring news from <placeName key="perseus,Troy">Troy</placeName> and
+                    <milestone ed="p" n="10" unit="line"/>tidings of its capture.  For thus commands my queen, woman in passionate heart and man in strength of purpose.
+                      And whenever I make here my bed, restless and dank with dew and unvisited by dreams-for instead of sleep fear stands ever by my side,
+                    <milestone ed="p" n="15" unit="line"/>so that I cannot close my eyelids fast in sleep-and whenever I care to sing or hum "and thus apply an antidote of song to ward off drowsiness",
+                     then my tears start forth, as I bewail the fortunes of this house of ours, not ordered for the best as in days gone by.
+                    <milestone ed="p" n="20" unit="line"/>But tonight may there come a happy release from my weary task!  May the fire with its glad tidings flash through the gloom!
+                </p>
+                <p>
+                    <stage>The signal fire suddenly flashes out</stage>
+                    Oh welcome, you blaze in the night, a light as if of day, you harbinger of many a choral dance in <placeName key="tgn,7010720">Argos</placeName> in thanksgiving for this glad event!
+                </p>
+                <p>
+                    <milestone ed="p" n="25" unit="line"/>Hallo! Hallo!
+                    To Agamemnon's queen I thus cry aloud the signal to rise from her bed, and as quickly as she can to lift up in her palace halls a shout of joy in welcome of this fire, if the city of <placeName key="tgn,7002329">Ilium</placeName>
+                    <milestone ed="p" n="30" unit="line"/>truly is taken, as this beacon unmistakably announces.
+                      And I will make an overture with a dance upon my own account; for my lord's lucky roll I shall count to my own score, now that this beacon has thrown me triple six.
+                </p>
+                <p>Ah well, may the master of the house come home and may
+                    <milestone ed="p" n="35" unit="line"/>I clasp his welcome hand in mine!  For the rest I stay silent; a great ox stands upon my tongue
+                    <note anchored="yes" n="36" resp="Smyth">A proverbial expression (of uncertain origin) for enforced silence; cf. fr. 176, 'A key stands guard upon my tongue.'</note>-
+                    yet the house itself, could it but speak, might tell a plain enough tale; since, for my part, by my own choice I have words for those who know, and to those who do not know, I've lost my memory.
+                </p>
+                <p>An extra line...</p>
+        </verse>
+        """
+        
+        verse_doc = parseString(verse_xml)
+        
+        line_number = self.importer.get_line_count(verse_doc)
+        
+        self.assertEquals( str(line_number), "36")
     
     def test_load_book_with_empty_first_milestone(self):
         file_name = self.get_test_resource_file_name('52_gk.xml')
@@ -858,25 +977,20 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        #print chapters[0].original_content
-        
         self.assertEquals( divisions.count(), 2)
         self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 1)
         self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
         
     def test_load_book_division_descriptors(self):
         self.importer.state_set = 1
-        self.importer.use_line_count_for_divisions = True
         book_xml = self.load_test_resource('j.bj_gk.xml')
         book_doc = parseString(book_xml)
         work = self.importer.import_xml_document(book_doc)
         
         divisions = Division.objects.filter(work=work)
         
-        #self.assertEquals( divisions.count(), 3)
-        #self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 1)
+        self.assertEquals( divisions.count(), 2)
         self.assertEquals( divisions[0].descriptor, "1")
-        #self.assertEquals( divisions[0].descriptor, "1")
         
     def test_load_book_line_count_division_titles(self):
         self.importer.state_set = 1

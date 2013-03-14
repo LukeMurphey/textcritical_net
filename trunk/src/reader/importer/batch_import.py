@@ -1,4 +1,5 @@
 from reader.models import Division, Verse, Work
+from django.template.defaultfilters import slugify
 import logging
 import re
 import os
@@ -200,7 +201,7 @@ class ImportTransforms():
             if not f.startswith("-"):
                 f = "-" + f
             
-            new_title_slug = work.title_slug + f
+            new_title_slug = slugify(work.title) + f
             
             if Work.objects.filter(title_slug=new_title_slug).count() == 0:
                 work.title_slug = new_title_slug

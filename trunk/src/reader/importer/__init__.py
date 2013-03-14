@@ -42,10 +42,16 @@ class LineNumber():
     
     def set(self, value):
         """
-        Setteh value of the line number based on the provided string.
+        Set the value of the line number based on the provided string.
         """
         
+        value = str(value)
+        
         r = LineNumber.NUMBER_RE.search(value)
+        
+        if r is None:
+            raise Exception("Line number could not be parsed: %s" % value)
+        
         d = r.groupdict()
         
         self.pre    = d["pre"]
@@ -75,6 +81,13 @@ class LineNumber():
         """
         
         self.number = self.number + 1
+        
+    def decrement(self):
+        """
+        Decrement the line number
+        """
+        
+        self.number = self.number - 1
 
 class TextImporter():
     
@@ -284,7 +297,33 @@ class TextImporter():
             
         return author
     
-    def make_work(self, title, try_to_get_existing_work=False):
+    def get_title_slug(self, title):
+        """
+        Get a slug for the work.
+        """
+        
+        title_slug = slugify(title)
+        
+        # Set the slug to the next free one if the name is not unique
+        i = 1
+        slug_was_already_taken = False     
+        
+        while Work.objects.filter(title_slug=title_slug).count() > 0:
+            slug_was_already_taken = True
+            title_slug = slugify(title) + "-" + str(i)
+            i = i + 1
+            
+        # Return the title slug
+        return title_slug, slug_was_already_taken
+    
+    def make_work(self, title, try_to_get_existing_work=False, language=None):
+        """
+        
+        Arguments:
+        title -- The title of the work
+        try_to_get_existing_work -- Try to find an existing work and return it
+        language -- 
+        """
         
         # Try to get the existing work if it exists
         if try_to_get_existing_work:
@@ -298,16 +337,7 @@ class TextImporter():
         # Create a new work
         work = Work()
         work.title = title
-        work.title_slug = slugify(title)
-        
-        # Set the slug to the next free one if the name is not unique
-        i = 1
-        slug_was_already_taken = False
-                
-        while Work.objects.filter(title_slug=work.title_slug).count() > 0:
-            slug_was_already_taken = True
-            work.title_slug = slugify(work.title) + "-" + str(i)
-            i = i + 1  
+        work.title_slug, slug_was_already_taken = self.get_title_slug(title)  
             
         # Make a log message noting that the slug title was already taken
         if slug_was_already_taken:
