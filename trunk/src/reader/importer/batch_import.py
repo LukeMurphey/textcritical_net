@@ -250,7 +250,33 @@ class ImportTransforms():
         
         if changes > 0:
             division.save()
+    
+    @staticmethod
+    def set_division_readable( work=None, sequence_number=None, title_slug=None, type=None, descriptor=None, level=None, readable=True):
+        
+        division = Division.objects.filter(work=work)
+        
+        if sequence_number is not None:
+            division = division.filter(sequence_number=sequence_number)
             
+        if title_slug is not None:
+            division = division.filter(title_slug=title_slug)
+            
+        if type is not None:
+            division = division.filter(type=type)
+            
+        if descriptor is not None:
+            division = division.filter(descriptor=descriptor)
+            
+        if level is not None:
+            division = division.filter(level=level)
+            
+        division = division.get()
+        
+        logger.info("Setting division readability, division=%s", division.title_slug)
+        division.readable_unit = readable
+        division.save()
+    
     @staticmethod
     def delete_unnecessary_divisions( work=None, **kwargs):
         
