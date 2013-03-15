@@ -189,6 +189,24 @@ class TestBatchImport(TestCase):
         
         self.assertEquals(Division.objects.get(work=work, sequence_number=118).descriptor, "NewDesc")
         
+        
+    def test_set_division_readable(self):
+        
+        work = Work(title="Some Doc")
+        work.save()
+        
+        for i in range(1,20):
+            
+            parent_division = Division(title=str(i), original_title=str(i), sequence_number=i, work=work, level=1, type="Book", descriptor=str(i), readable_unit=False)
+            parent_division.save()
+            
+            division = Division(title=str(i), original_title=str(i), sequence_number=i+100, work=work, level=2, parent_division=parent_division, type="Chapter", descriptor="1", readable_unit=False)
+            division.save()
+        
+        ImportTransforms.set_division_readable( work, sequence_number=110, title_slug="10", type="Chapter", descriptor="1", level=2)
+        
+        self.assertEquals(Division.objects.get(work=work, sequence_number=110).readable_unit, True)
+        
 class TestImport(TestCase):
      
     def setUp(self):
