@@ -652,6 +652,17 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         self.assertEquals( title, "Conjugalia Praecepta")
         
+    def test_get_title_sub_nodes(self):
+        
+        book_xml = self.load_test_resource('xen.socratalia_eng.xml')
+        book_doc = parseString(book_xml)
+        
+        tei_header_node = book_doc.getElementsByTagName("teiHeader")[0]
+        
+        title = PerseusTextImporter.get_title_from_tei_header(tei_header_node)
+        
+        self.assertEquals( title, "Works on Socrates")
+        
     def test_get_title_for_processing(self):
         
         book_xml = self.load_test_resource('xen.anab_gk_header.xml')
