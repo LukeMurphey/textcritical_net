@@ -603,6 +603,20 @@
         }
     },
     {
+        "author" : "Sophocles",
+        "language" : "English",
+        "import_parameters" : {
+            "ignore_division_markers" : true,
+            "use_line_count_for_divisions" : true,
+            "state_set" : 0,
+            "transforms" : {
+            	"update_title_slug" : {
+            		"additional_fields" : "english"
+            	}
+            }
+        }
+    },
+    {
         "author" : "Anonymous",
         "title"  : "Homeric Hymns",
         "language" : "Greek",
@@ -891,13 +905,6 @@
     },
     {
         "author" : "Polybius",
-        "language" : "English",
-        "import_parameters" : {
-            "state_set" : 0
-        }
-    },
-    {
-        "author" : "Sophocles",
         "language" : "English",
         "import_parameters" : {
             "state_set" : 0
