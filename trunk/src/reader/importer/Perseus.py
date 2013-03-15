@@ -576,11 +576,11 @@ class PerseusTextImporter(TextImporter):
         
         for node in tei_header_node.getElementsByTagName("title"):
             if "type" in node.attributes.keys() and node.attributes["type"].value != "sub":
-                return PerseusTextImporter.process_title( PerseusTextImporter.getText(node.childNodes) )
+                return PerseusTextImporter.process_title( PerseusTextImporter.getText(node.childNodes, recurse=True) )
             elif "type" in node.attributes.keys() and node.attributes["type"].value == "sub":
                 pass # Don't include sub-titles
             else:
-                return PerseusTextImporter.process_title( PerseusTextImporter.getText(node.childNodes) )
+                return PerseusTextImporter.process_title( PerseusTextImporter.getText(node.childNodes, recurse=True) )
         
     
     def import_info_from_bibl_struct(self, bibl_struct_node):

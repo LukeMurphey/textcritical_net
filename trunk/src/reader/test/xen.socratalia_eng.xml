@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersProse PUBLIC "-//Perseus P4//DTD Perseus Prose//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersProse.dtd" >
+%PersProse;
+]>
+
+<TEI.2>
+<teiHeader status="new" type="text">
+<fileDesc>
+<titleStmt>
+<title>Works on <persName><surname>Socrates</surname></persName> (English). Machine readable text</title> 
+<author>Xenophon</author>
+&responsibility;
+&fund.AnnCPB;
+</titleStmt>
+<extent>about 20Kb</extent> 
+&Perseus.publish;
+<notesStmt><note anchored="yes">Text entered in Philipines 1990.</note></notesStmt>
+<sourceDesc>
+<biblStruct>
+	<monogr>
+		<author>Xenophon</author><title>Xenophon in Seven Volumes, 4</title>
+	
+		<imprint><publisher>Harvard University Press, Cambridge, MA; William Heinemann, Ltd., London.</publisher><date>1979</date></imprint>
+	</monogr>
+</biblStruct>
+</sourceDesc>
+
+</fileDesc>
+<encodingDesc>
+<refsDecl doctype="TEI.2">
+<state unit="text"/>
+<state unit="chapter"/>
+<state unit="section"/>
+</refsDecl>
+
+<refsDecl doctype="TEI.2" n="text=Apol.">
+<state unit="text"/>
+<state unit="section"/>
+</refsDecl>
+</encodingDesc>
+<profileDesc>
+<langUsage>
+<language id="en">English</language>
+<language id="greek">Greek</language>
+</langUsage>
+</profileDesc>
+<revisionDesc>
+<change>
+<date>June, 1992</date><respStmt><name>wpm and das</name><resp>(n/a)</resp></respStmt><item>tagged text to conform with prose.e dtd. Entered sections. Scanned and inserted text that had dropped out; sections 22-32.</item>
+</change>
+<change>
+<date>8/11/92</date><respStmt><name>das</name><resp>(n/a)</resp></respStmt><item>changed chapters to div2's</item>
+</change>
+<change>
+<date>10/29/92</date><respStmt><name>das</name><resp>(n/a)</resp></respStmt><item>added HEAD's and REFDECL's; glued minor works together</item>
+</change>
+</revisionDesc>
+</teiHeader>
+<text><group>
+<text n="Apol.">
+    <body><head>Apology of Socrates</head>
+        <p>
+<milestone n="1" unit="section"/><milestone ed="P" unit="para"/>It seems to me fitting to hand down to memory, furthermore, how <persName><surname>Socrates</surname></persName>, on being indicted, deliberated on his defence and on his end. It is true that others have written about this, and that all of them have reproduced the loftiness of his words,&mdash;a fact which proves that his utterance really was of the character intimated;&mdash;but they have not shown clearly that he had now come to the conclusion that for him death was more to be desired than life; and hence his lofty utterance appears rather ill-considered.
+<milestone n="2" unit="section"/>Hermogenes, the son of Hipponicus, however, was a companion of his and has given us reports of such a nature as to show that the sublimity of his speech was appropriate to the resolve he had made. For he stated that on seeing <persName><surname>Socrates</surname></persName> discussing any and every subject rather than the trial, he had said:
+</p>
+</body>
+</text>
+</group>
+</text>
+</TEI.2>
