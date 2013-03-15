@@ -222,15 +222,12 @@ class ImportTransforms():
         
         if existing_division_parent_title_slug:
             division = division.filter(parent_division__title_slug=existing_division_parent_title_slug)
-            print "existing_division_parent_title_slug", division.count()
         
         if existing_division_title_slug:
             division = division.filter(title_slug=existing_division_title_slug)
-            print "existing_division_title_slug", division.count()
             
         if existing_division_sequence_number:
             division = division.filter(sequence_number=existing_division_sequence_number)
-            print "existing_division_sequence_number", division.count()
             
         # Get the division
         division = division.get()
