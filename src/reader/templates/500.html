@@ -1,0 +1,16 @@
+{% extends "base_with_nav.html" %}
+{% block content %}
+
+<div class="container">
+	<h1>Uh oh, something broke</h1>
+	An HTTP 500 error code was returned.
+	<p>
+	...
+	</p>
+	<p>
+	In other words, something broke on this page.
+	We monitor the logs for errors using <a target="_blank" href="http://splunk.com">Splunk</a> (which is awesome by the way) and we will take a look at the error as soon as we can.
+	We appreciate bug reports so please <a href="/contact">contact us</a> if you have any information that may help fix this bug.
+	</p>
+</div>
+{% endblock %}
