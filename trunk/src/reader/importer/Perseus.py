@@ -388,13 +388,14 @@ class PerseusTextImporter(TextImporter):
             return state_sets
     
     @staticmethod
-    def getText(nodelist, recurse=False):
+    def getText(nodelist, recurse=False, separator=''):
         """
         Get the text node from the provided nodelist.
         
         Arguments:
         nodelist -- A list of nodes that contain at least one text-node.
         recurse -- Indicates if this function ought to get the text from the sub-nodes
+        separator -- The separator to use when putting the text of the element together
         """
         
         rc = []
@@ -405,7 +406,7 @@ class PerseusTextImporter(TextImporter):
             elif recurse:
                 rc.append( PerseusTextImporter.getText(node.childNodes, True) )
         
-        return ''.join(rc)
+        return separator.join(rc)
     
     @staticmethod
     def get_language(doc):
@@ -1080,7 +1081,7 @@ class PerseusTextImporter(TextImporter):
         head = self.findTagInDivision(div_node, "head")
         
         if head is not None:
-            return self.getText(head.childNodes, True)
+            return self.getText(head.childNodes, True, separator=" ")
         
     def findTagInDivision(self, node, tag_name, depth_limit=5, current_depth=0):
         

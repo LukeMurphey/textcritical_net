@@ -158,6 +158,43 @@ class TestBatchImport(TestCase):
         
         self.assertEquals(work.title_slug, "some-doc-english")
         
+    def test_update_title_slug_default(self):
+        
+        work = Work(title="Some Doc", language="Greek")
+        work.save()
+        
+        ImportTransforms.update_title_slug(work)
+        
+        self.assertEquals(work.title_slug, "some-doc-greek")
+     
+    def test_update_title_slug_by_editor(self):
+        
+        editor = Author(name="William Whiston")
+        editor.save()
+        
+        work = Work(title="Some Doc", language="English")
+        work.save()
+        
+        work.editors.add(editor)
+        
+        ImportTransforms.update_title_slug(work)
+        
+        self.assertEquals(work.title_slug, "some-doc-whiston")
+
+     
+    def test_update_title_slug_by_editor_with_extra(self):
+        
+        editor = Author(name="William Whiston, Ph. D.")
+        editor.save()
+        
+        work = Work(title="Some Doc", language="English")
+        work.save()
+        
+        work.editors.add(editor)
+        
+        ImportTransforms.update_title_slug(work)
+        
+        self.assertEquals(work.title_slug, "some-doc-whiston")   
         
     def test_set_division_title(self):
         
@@ -168,7 +205,7 @@ class TestBatchImport(TestCase):
             division = Division(title="Test" + str(i), sequence_number=i, work=work, level=1)
             division.save()
         
-        ImportTransforms.set_division_title(work, existing_division_sequence_number=18,descriptor="NewDesc")
+        ImportTransforms.set_division_title(work, existing_division_sequence_number=18, descriptor="NewDesc")
         
         self.assertEquals(Division.objects.get(work=work, sequence_number=18).descriptor, "NewDesc")
         
@@ -189,7 +226,24 @@ class TestBatchImport(TestCase):
         
         self.assertEquals(Division.objects.get(work=work, sequence_number=118).descriptor, "NewDesc")
         
+    """
+    def test_set_verse_title(self):
         
+        work = Work(title="Some Doc")
+        work.save()
+        
+        division = Division(title="test_set_verse_title", original_title="test_set_verse_title", sequence_number=1, work=work, level=1)
+        division.save()
+        
+        for i in range(1,5):
+            verse = Verse( title=str(i), sequence_number=i, division=division)
+            verse.save()
+        
+        ImportTransforms.set_verse_title( work, existing_verse_sequence_number=3, existing_verse_title_slug="3", descriptor="Intro")
+        
+        self.assertEquals(Verse.objects.get(work=work, sequence_number=3).descriptor, "Intro")
+    """
+    
     def test_set_division_readable(self):
         
         work = Work(title="Some Doc")
