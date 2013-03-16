@@ -215,7 +215,7 @@ body.dark .verse_container.highlighted {
   display: block; }
 .verse .gap {
   content: "..."; }
-.verse .quote {
+.verse .quote, .verse .q {
   font-style: italic; }
 .verse .docauthor {
   display: block;
