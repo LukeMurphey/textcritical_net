@@ -1,10 +1,17 @@
 from django.conf.urls.defaults import patterns, url, include
+from reader.sitemaps import WorksSitemap, StaticSitemap
+
+sitemaps = dict(
+                static = StaticSitemap,
+                works = WorksSitemap
+                )
 
 urlpatterns = patterns('',
     url(r'^admin/reader/', include('reader.admin_urls')),
     
     url(r'^robots.txt/?$', 'reader.views.robots_txt', name='robots_txt' ),
     url(r'^humans.txt/?$', 'reader.views.humans_txt', name='humans_txt' ),
+    url(r'^sitemap.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
     
     url(r'^/?$', 'reader.views.home', name='home' ),
     url(r'^works/?$', 'reader.views.works_index', name='works_index' ),
