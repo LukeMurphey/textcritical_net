@@ -253,11 +253,11 @@ class TextImporter():
         
         return division
     
-    def make_verse(self, current_verse=None, division=None, save=True):
+    def make_verse(self, current_verse=None, division=None, save=True, default_sequence_number=1):
         
         # Determine the sequence number (used for verse ordering)
         if current_verse is None:
-            num = 1
+            num = default_sequence_number
         else:
             num = current_verse.sequence_number + 1
                 

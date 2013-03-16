@@ -193,7 +193,27 @@ class ImportTransforms():
     @staticmethod
     def update_title_slug(work=None, additional_fields=None):
         
-        if not isinstance(additional_fields, (list, tuple)) or isinstance(additional_fields, basestring):
+        # If fields were not provided then attempt to use the editor field and/or language
+        if additional_fields is None:
+            
+            # Use the editor's name
+            if work.editors.count() > 0:
+                
+                editor = work.editors.all()[0].name
+                
+                editor = editor.replace("Ph. D.", "").replace("M.A.", "").replace("LL.D.", "").replace("A.M.", "").replace("Esq.", "").replace(",", "").strip().lower()
+                
+                # Get the last name of the editor
+                if " " in editor:
+                    editor = editor.split(" ")[-1]
+                
+                additional_fields = [ slugify(editor) ]
+            
+            # Otherwise, use the language
+            else:
+                additional_fields = [ slugify( work.language ) ]
+            
+        elif not isinstance(additional_fields, (list, tuple)) or isinstance(additional_fields, basestring):
             additional_fields = [additional_fields]
             
         for f in additional_fields:
@@ -210,8 +230,8 @@ class ImportTransforms():
                 return
             
         logger.warning("Unable to allocate a new title slug based on the fields provided")
-            
-            
+    
+    
     @staticmethod
     def set_division_title( work=None, existing_division_title_slug=None, existing_division_parent_title_slug=None, existing_division_sequence_number=None, title=None, title_slug=None, descriptor=None, **kwargs):
         
