@@ -280,7 +280,12 @@ class PerseusBatchImporter(PerseusFileProcessor):
             perseus_importer.import_file(file_path)
         else:
             logger.info( 'Importing a Perseus XML file, file_path="%s"', file_path)
-            perseus_importer = PerseusTextImporter(overwrite_existing=self.overwrite_existing, **import_parameters)
+            
+            if import_parameters is False:
+                perseus_importer = PerseusTextImporter(overwrite_existing=self.overwrite_existing)
+            else:
+                perseus_importer = PerseusTextImporter(overwrite_existing=self.overwrite_existing, **import_parameters)
+            
             perseus_importer.import_file(file_path)
             
         if perseus_importer is not None and perseus_importer.work is not None:
