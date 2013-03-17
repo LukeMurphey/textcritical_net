@@ -166,6 +166,34 @@
         }
     },
     {
+        "author" : "Euripides",
+        "language" : "English",
+        "title" : "Electra",
+        "import_parameters" : {
+            "use_line_count_for_divisions" : true,
+            "ignore_division_markers" : true,
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "electra-euripides-english"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Euripides",
+        "language" : "English",
+        "import_parameters" : {
+            "use_line_count_for_divisions" : true,
+            "ignore_division_markers" : true,
+            "state_set" : 0,
+            "transforms" : {
+            	"update_title_slug" : { }
+            }
+        }
+    },
+    
+    {
         "author" : "Hesiod",
         "language" : "Greek",
         "import_parameters" : {
@@ -814,7 +842,7 @@
         }
     },
     {
-        "author" : [ "Aristotle", "Bacchylides", "Demosthenes", "Dinarchus", "Diodorus Siculus", "Diogenes Laertius", "Euclid", "Euripides", "Galen",
+        "author" : [ "Aristotle", "Bacchylides", "Demosthenes", "Dinarchus", "Diodorus Siculus", "Diogenes Laertius", "Euclid", "Galen",
                      "Herodotus", "Hesiod", "Hippocrates", "Homer", "Hyperides", "Flavius Josephus", "Pausanias", "Pindar", "Plato", "Plutarch",
                      "Strabo", "Aretaeus", "Xenophon", "Aeschylus", "Andocides", "Apollodorus"],
         "language" : "English",
