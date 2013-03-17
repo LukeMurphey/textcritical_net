@@ -166,28 +166,17 @@ class PerseusTextImporter(TextImporter):
     def close_division(self, import_context, new_division=None):
         
         if import_context.division is not None and self.use_line_count_for_divisions == True:
-        
-            # If the readable units ought to be assigned a title including the line counts based on l (line) elements
-            if len(import_context.document.getElementsByTagName("l")) > 0:
-                
-                self.update_line_count_info(import_context, reset_start_line_count=False)
-                
-                # Set the division title if we have a division to update
-                import_context.division.title = import_context.get_line_count_title()
-                
-            # If the readable units ought to be assigned a title including the line counts based on card elements containing line numbers
+            
+            if new_division and new_division.descriptor is not None:
+                next_line_number = LineNumber(new_division.descriptor)
+                next_line_number.decrement()
+                    
+                import_context.line_number_end = next_line_number
             else:
-                
-                if new_division and new_division.descriptor is not None:
-                    next_line_number = LineNumber(new_division.descriptor)
-                    next_line_number.decrement()
+                self.update_line_count_info(import_context, reset_start_line_count=False)
                     
-                    import_context.line_number_end = next_line_number
-                else:
-                    self.update_line_count_info(import_context, reset_start_line_count=False)
-                    
-                # Set the division title if we have a division to update
-                import_context.division.title = import_context.get_line_count_title()
+            # Set the division title if we have a division to update
+            import_context.division.title = import_context.get_line_count_title()
                 
             # Restart the line count for the next division
             import_context.reset_start_line_count()
@@ -891,7 +880,7 @@ class PerseusTextImporter(TextImporter):
                 line_number.increment()
                 
                 # If the line indicates which number it is, then load this value
-                if line_node.hasAttribute("n"):
+                if line_node.hasAttribute("n") and line_node.attributes["n"].value not in ["tr"]:
                     
                     # Get the specified value
                     new_line_count = line_node.attributes["n"].value
