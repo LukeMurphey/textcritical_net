@@ -1,0 +1,469 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersVerse PUBLIC "-//Perseus P4//DTD Perseus Verse//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersVerse.dtd" >
+%PersVerse;
+]>
+<TEI.2>
+  <teiHeader type="text" status="new">
+    <fileDesc>
+      <titleStmt>
+	<title>The Odyssey</title>
+	<title type="sub">Machine readable text</title>
+	<author>Homer</author>
+	<editor role="translator">Samuel Butler</editor>
+	<respStmt>
+	  <resp>revised by</resp>
+	  <name>Timothy Power</name>
+	  <name>Gregory Nagy</name>
+	</respStmt>
+      </titleStmt>
+      
+	&Perseus.publish;
+	
+      <notesStmt><note anchored="yes">Based on public domain editon of Samuel Butler, revised by Timothy Power and Gregory Nagy.</note></notesStmt>
+      <sourceDesc>
+        <biblStruct>
+          <monogr>
+            <author>Homer</author>
+            <title>The Odyssey. Rendered into English prose for the use of those who cannot read the original.</title>
+            <editor role="translator">Samuel Butler</editor>
+            <imprint><publisher>A. C. Fifield, London</publisher><date>1900 (?)</date></imprint>
+          </monogr>
+        </biblStruct>
+        <bibl><idno type="isbn">076071679X</idno></bibl>
+      </sourceDesc>
+    </fileDesc>
+
+    <encodingDesc>
+      <refsDecl doctype="TEI.2">
+	<step delim="." refunit="book" from="DESCENDANT (1 DIV1 N %1)"/>
+	<step refunit="line" from="FOLLOWING (1 MILESTONE UNIT line N %2)" to="FOLLOWING (1 MILESTONE UNIT line)"/>
+      </refsDecl>
+    </encodingDesc>
+
+    <profileDesc>
+      <langUsage>
+	<language id="en">English
+	</language><language id="xgreek">Transliterated Greek
+      </language></langUsage>
+    </profileDesc>
+  </teiHeader>
+
+<text lang="en">
+<body>
+<div1 type="Book" n="1">
+<head>Scroll 1</head>
+
+<p><milestone n="1" unit="line"/>Tell
+me, O Muse, of that many-sided hero who traveled far and wide after
+he had sacked the famous town of <placeName key="tgn,7002329">Troy</placeName>. Many cities did he visit, and
+many were the people with whose customs and thinking
+[<term lang="xgreek">noos</term>] he was acquainted; many things he suffered at
+sea while seeking to save his own life [<term lang="xgreek">psukh&ecirc;</term>]
+and to achieve the safe homecoming [<term lang="xgreek">nostos</term>] of his
+companions; but do what he might he could not save his men, for they
+perished through their own sheer recklessness in eating the cattle of
+the Sun-god Helios; so the god prevented them from ever reaching
+home. Tell me, as you have told those who came before me, about all
+these things, O daughter of Zeus, starting from whatsoever point you
+choose.</p>
+
+<p><milestone n="11" unit="line"/>So now all who escaped death in
+battle or by shipwreck had got safely home except Odysseus, and he,
+though he was longing for his return [<term lang="xgreek">nostos</term>] to his
+wife and country, was detained by the goddess Calypso, who had got
+him into a large cave and wanted to marry him. But as years went by,
+there came a time when the gods settled that he should go back to
+<placeName key="tgn,1007519">Ithaca</placeName>; even then, however, when he was among his own people, his
+trials [<term lang="xgreek">athloi</term>] were not yet over; nevertheless all
+the gods had now begun to pity him except Poseidon, who still
+persecuted him without ceasing and would not let him get
+home.</p>
+
+<p><milestone n="22" unit="line"/>Now Poseidon had gone off to the
+Ethiopians, who are at the world's end, and lie in two halves,
+the one looking West and the other East. He had gone there to accept
+a hecatomb of sheep and oxen, and was enjoying himself at his
+festival; but the other gods met in the house of Olympian Zeus, and
+the sire of gods and men spoke first. At that moment he was thinking
+of Aigisthos, who had been killed by Agamemnon's son Orestes; so
+he said to the other gods:</p>
+
+<p><milestone n="32" unit="line"/>"See now, how men consider us gods
+responsible [<term lang="xgreek">aitioi</term>] for what is after all nothing but
+their own folly. Look at Aigisthos; he must needs make love to
+Agamemnon's wife unrighteously and then kill Agamemnon, though
+he knew it would be the death of him; for I sent Hermes to warn him
+not to do either of these things, inasmuch as Orestes would be sure
+to take his revenge when he grew up and wanted to return home. Hermes
+told him this in all good will but he would not listen, and now he
+has paid for everything in full."</p>
+
+<milestone ed="p" unit="card"/>
+<p><milestone n="44" unit="line"/>Then Athena said, "Father, son of
+Kronos, King of kings, it served Aigisthos right, and so it would any
+one else who does as he did; but Aigisthos is neither here nor there;
+it is for Odysseus that my heart bleeds, when I think of his
+sufferings in that lonely sea-girt island, far away, poor man, from
+all his friends. It is an island covered with forest, in the very
+middle of the sea, and a goddess lives there, daughter of the
+magician Atlas, who looks after the bottom of the ocean, and carries
+the great columns that keep heaven and earth asunder. This daughter
+of Atlas has got hold of poor unhappy Odysseus, and keeps trying by
+every kind of blandishment to make him forget his home, so that he is
+tired of life, and thinks of nothing but how he may once more see the
+smoke of his own chimneys. You, sir, take no heed of this, and yet
+when Odysseus was before <placeName key="perseus,Troy">Troy</placeName> did he not propitiate you with many a
+burnt sacrifice? Why then should you keep on being so angry with
+him?"</p>
+
+<p><milestone n="63" unit="line"/>And Zeus said, "My child, what are
+you talking about? How can I forget Odysseus than whom there is no
+more capable man on earth [in regard to <term lang="xgreek">noos</term>], nor
+more liberal in his offerings to the immortal gods that live in
+heaven? Bear in mind, however, that Poseidon is still furious with
+Odysseus for having blinded an eye of Polyphemus king of the
+Cyclopes. Polyphemus is son to Poseidon by the nymph Thoosa, daughter
+to the sea-king Phorkys; therefore though he will not kill Odysseus
+outright, he torments him by preventing him from his homecoming
+[<term lang="xgreek">nostos</term>]. Still, let us lay our heads together and see
+how we can help him to return; Poseidon will then be pacified, for if
+we are all of a mind he can hardly stand out against us."</p>
+
+<p><milestone n="80" unit="line"/>And Athena said, "Father, son of
+Kronos, King of kings, if, then, the gods now mean that Odysseus
+should get home, we should first send Hermes to the Ogygian island to
+tell Calypso that we have made up our minds and that he is to have
+his homecoming [<term lang="xgreek">nostos</term>]. In the meantime I will go to
+<placeName key="tgn,1007519">Ithaca</placeName>, to put heart into Odysseus' son Telemakhos; I will
+embolden him to call the Achaeans in assembly, and speak out to the
+suitors of his mother Penelope, who persist in eating up any number
+of his sheep and oxen; I will also conduct him to <placeName key="perseus,Sparta">Sparta</placeName> and to
+<placeName key="perseus,Pylos">Pylos</placeName>, to see if he can hear anything about the return
+[<term lang="xgreek">nostos</term>] of his dear father - for this will give him
+genuine fame [<term lang="xgreek">kleos</term>] throughout humankind."</p>
+
+<p><milestone n="96" unit="line"/>So saying she bound on her
+glittering golden sandals, imperishable, with which she can fly like
+the wind over land or sea; she grasped the redoubtable bronze-shod
+spear, so stout and sturdy and strong, wherewith she quells the ranks
+of heroes who have displeased her, and down she darted from the
+topmost summits of <placeName key="tgn,7011019">Olympus</placeName>, whereon forthwith she was in the
+<term lang="xgreek">d&ecirc;mos</term> of <placeName key="tgn,1007519">Ithaca</placeName>, at the gateway of Odysseus' house,
+disguised as a visitor, Mentes, chief of the Taphians, and she held a
+bronze spear in her hand. There she found the lordly suitors seated
+on hides of the oxen which they had killed and eaten, and playing
+draughts in front of the house. Men-servants and pages were bustling
+about to wait upon them, some mixing wine with water in the
+mixing-bowls, some cleaning down the tables with wet sponges and
+laying them out again, and some cutting up great quantities of
+meat.</p>
+
+<milestone ed="p" unit="card"/>
+<p><milestone n="113" unit="line"/>Telemakhos saw her long before
+any one else did. He was sitting moodily among the suitors thinking
+about his brave father, and how he would send them fleeing out of the
+house, if he were to come to his own again and be honored as in days
+gone by. Thus brooding as he sat among them, he caught sight of
+Athena and went straight to the gate, for he was vexed that a
+stranger should be kept waiting for admittance. He took her right
+hand in his own, and bade her give him her spear. "Welcome," said he,
+"to our house, and when you have partaken of food you shall tell us
+what you have come for."</p>
+
+<p><milestone n="125" unit="line"/>He led the way as he spoke, and
+Athena followed him. When they were within he took her spear and set
+it in the spear - stand against a strong bearing-post along with the
+many other spears of his unhappy father, and he conducted her to a
+richly decorated seat under which he threw a cloth of damask. There
+was a footstool also for her feet, and he set another seat near her
+for himself, away from the suitors, that she might not be annoyed
+while eating by their noise and insolence, and that he might ask her
+more freely about his father.</p>
+
+<p><milestone n="136" unit="line"/>A maid servant then brought them
+water in a beautiful golden ewer and poured it into a silver basin
+for them to wash their hands, and she drew a clean table beside them.
+An upper servant brought them bread, and offered them many good
+things of what there was in the house, the carver fetched them plates
+of all manner of meats and set cups of gold by their side, and a
+man-servant brought them wine and poured it out for them.</p>
+
+<p><milestone n="144" unit="line"/>Then the suitors came in and took
+their places on the benches and seats. Forthwith men servants poured
+water over their hands, maids went round with the bread-baskets,
+pages filled the mixing-bowls with wine and water, and they laid
+their hands upon the good things that were before them. As soon as
+they had had enough to eat and drink they wanted music and dancing,
+which are the crowning embellishments of a banquet, so a servant
+brought a lyre to Phemios, whom they compelled perforce to sing to
+them. As soon as he touched his lyre and began to sing Telemakhos
+spoke low to Athena, with his head close to hers that no man might
+hear.</p>
+
+<milestone ed="p" unit="card"/>
+<p><milestone n="158" unit="line"/>"I hope, sir," said he, "that you
+will not be offended with what I am going to say. Singing comes cheap
+to those who do not pay for it, and all this is done at the cost of
+one whose bones lie rotting in some wilderness or grinding to powder
+in the surf. If these men were to see my father come back to <placeName key="tgn,1007519">Ithaca</placeName>
+they would pray for longer legs rather than a longer purse, for
+wealth would not serve them; but he, alas, has fallen on an ill fate,
+and even when people do sometimes say that he is coming, we no longer
+heed them; we shall never see him again. And now, sir, tell me and
+tell me true, who you are and where you come from. Tell me of your
+town and parents, what manner of ship you came in, how your crew
+brought you to <placeName key="tgn,1007519">Ithaca</placeName>, and of what nation they declared themselves to
+be - for you cannot have come by land. Tell me also truly, for I want
+to know, are you a stranger to this house, or have you been here in
+my father's time? In the old days we had many visitors for my
+father went about much himself."</p>
+
+<p><milestone n="178" unit="line"/>And Athena answered, "I will tell
+you truly and particularly all about it. I am Mentes, son of
+Anchialos, and I am King of the Taphians. I have come here with my
+ship and crew, on a voyage to men of a foreign tongue being bound for
+Temesa with a cargo of iron, and I shall bring back copper. As for my
+ship, it lies over yonder off the open country away from the town, in
+the harbor Rheithron under the wooded mountain Neritum. Our fathers
+were friends before us, as old <placeName key="perseus,Laertes">Laertes</placeName> will tell you, if you will go
+and ask him. They say, however, that he never comes to town now, and
+lives by himself in the country, faring hardly, with an old woman to
+look after him and get his dinner for him, when he comes in tired
+from pottering about his vineyard. They told me your father was at
+home again, and that was why I came, but it seems the gods are still
+keeping him back, for he is not dead yet not on the mainland. It is
+more likely he is on some sea-girt island in mid ocean, or a prisoner
+among savages who are detaining him against his will. I am no seer
+[<term lang="xgreek">mantis</term>], and know very little about omens, but I
+speak as it is borne in upon me from heaven, and assure you that he
+will not be away much longer; for he is a man of such resource that
+even though he were in chains of iron he would find some means of
+getting home again. But tell me, and tell me true, can Odysseus
+really have such a fine looking young man for a son? You are indeed
+wonderfully like him about the head and eyes, for we were close
+friends before he set sail for <placeName key="perseus,Troy">Troy</placeName> where the flower of all the
+Argives went also. Since that time we have never either of us seen
+the other."</p>
+
+<p><milestone n="214" unit="line"/>"My mother," answered Telemakhos,
+"tells me I am son to Odysseus, but it is a wise child that knows his
+own father. Would that I were son to one who had grown old upon his
+own estates, for, since you ask me, there is no more ill-starred man
+under heaven than he who they tell me is my father."</p>
+
+<p><milestone n="223" unit="line"/>And Athena said, "There is no
+fear of your race dying out yet, while Penelope has such a fine son
+as you are. But tell me, and tell me true, what is the meaning of all
+this feasting, and who are these people? What is it all about? Have
+you some banquet, or is there a wedding in the family - for no one
+seems to be bringing any provisions of his own? And the guests - how
+atrociously they are behaving; what riot they make over the whole
+house; it is enough to disgust any respectable person who comes near
+them."</p>
+
+<milestone ed="p" unit="card"/>
+<p><milestone n="230" unit="line"/>"Sir," said Telemakhos, "as
+regards your question, so long as my father was here it was well with
+us and with the house, but the gods in their displeasure have willed
+it otherwise, and have hidden him away more closely than mortal man
+was ever yet hidden. I could have borne it better even though he were
+dead, if he had fallen with his men in the <term lang="xgreek">d&ecirc;mos</term> of
+<placeName key="perseus,Troy">Troy</placeName>, or had died with friends around him when the days of his
+fighting were done; for then the Achaeans would have built a mound
+over his ashes, and I should myself have been heir to his renown
+[<term lang="xgreek">kleos</term>]; but now the storm-winds have spirited him
+away we know not wither; he is gone without leaving so much as a
+trace behind him, and I inherit nothing but dismay. Nor does the
+matter end simply with grief for the loss of my father; heaven has
+laid sorrows upon me of yet another kind; for the chiefs from all our
+islands, Dulichium, Same, and the woodland island of <placeName key="tgn,7011374">Zacynthus</placeName>, as
+also all the principal men of <placeName key="tgn,1007519">Ithaca</placeName> itself, are eating up my house
+under the pretext of paying their court to my mother, who will
+neither point blank say that she will not marry, nor yet bring
+matters to an end; so they are making havoc of my estate, and before
+long will do so also with myself."</p>
+
+<p><milestone n="252" unit="line"/>"Is that so?" exclaimed Athena,
+"then you do indeed want Odysseus home again. Give him his helmet,
+shield, and a couple lances, and if he is the man he was when I first
+knew him in our house, drinking and making merry, he would soon lay
+his hands about these rascally suitors, were he to stand once more
+upon his own threshold. He was then coming from <placeName key="perseus,Ephyra">Ephyra</placeName>, where he had
+been to beg poison for his arrows from Ilos, son of Mermerus. Ilos
+feared the ever-living gods and would not give him any, but my father
+let him have some, for he was very fond of him. If Odysseus is the
+man he then was these suitors will have a swift doom and a sorry
+wedding.</p>
+
+<p><milestone n="267" unit="line"/>"But there! It rests with heaven
+to determine whether he is to return, and take his revenge in his own
+house or no; I would, however, urge you to set about trying to get
+rid of these suitors at once. Take my advice, call the Achaean heroes
+in assembly tomorrow -lay your case before them, and call heaven to
+bear you witness. Bid the suitors take themselves off, each to his
+own place, and if your mother's mind is set on marrying again,
+let her go back to her father, who will find her a husband and
+provide her with all the marriage gifts that so dear a daughter may
+expect. As for yourself, let me prevail upon you to take the best
+ship you can get, with a crew of twenty men, and go in quest of your
+father who has so long been missing. Some one may tell you something,
+or (and people often hear things in this way) some heaven-sent
+message [<term lang="xgreek">kleos</term>] may direct you. First go to <placeName key="perseus,Pylos">Pylos</placeName> and
+ask Nestor; thence go on to <placeName key="perseus,Sparta">Sparta</placeName> and visit Menelaos, for he got
+home last of all the Achaeans; if you hear that your father is alive
+and about to achieve his homecoming [<term lang="xgreek">nostos</term>], you can
+put up with the waste these suitors will make for yet another twelve
+months. If on the other hand you hear of his death, come home at
+once, celebrate his funeral rites with all due pomp, build a grave
+marker [<term lang="xgreek">s&ecirc;ma</term>] to his memory, and make your
+mother marry again. Then, having done all this, think it well over in
+your mind how, by fair means or foul, you may kill these suitors in
+your own house. You are too old to plead infancy any longer; have you
+not heard how people are singing Orestes' praises
+[<term lang="xgreek">kleos</term>] for having killed his father's murderer
+Aigisthos? You are a fine, smart looking young man; show your mettle,
+then, and make yourself a name in story. Now, however, I must go back
+to my ship and to my crew, who will be impatient if I keep them
+waiting longer; think the matter over for yourself, and remember what
+I have said to you."</p>
+
+<p><milestone n="306" unit="line"/>"Sir," answered Telemakhos, "it
+has been very kind of you to talk to me in this way, as though I were
+your own son, and I will do all you tell me; I know you want to be
+getting on with your voyage, but stay a little longer till you have
+taken a bath and refreshed yourself. I will then give you a present,
+and you shall go on your way rejoicing; I will give you one of great
+beauty and value - a keepsake such as only dear friends give to one
+another."</p>
+
+<milestone ed="p" unit="card"/>
+<p><milestone n="314" unit="line"/>Athena answered, "Do not try to
+keep me, for I would be on my way at once. As for any present you may
+be disposed to make me, keep it till I come again, and I will take it
+home with me. You shall give me a very good one, and I will give you
+one of no less value in return."</p>
+
+<p><milestone n="319" unit="line"/>With these words she flew away
+like a bird into the air, but she had given Telemakhos courage, and
+had made him think more than ever about his father. He felt the
+change, wondered at it, and knew that the stranger had been a god, so
+he went straight to where the suitors were sitting.</p>
+
+<p><milestone n="325" unit="line"/>Phemios was still singing, and
+his hearers sat rapt in silence as he told the baneful tale of the
+homecoming [<term lang="xgreek">nostos</term>] from <placeName key="perseus,Troy">Troy</placeName>, and the ills Athena had
+laid upon the Achaeans. Penelope, daughter of Ikarios, heard his song
+from her room upstairs, and came down by the great staircase, not
+alone, but attended by two of her handmaids. When she reached the
+suitors she stood by one of the bearing posts that supported the roof
+of the cloisters with a staid maiden on either side of her. She held
+a veil, moreover, before her face, and was weeping
+bitterly.</p>
+
+<p><milestone n="337" unit="line"/>"Phemios," she cried, "you know
+many another feat of gods and heroes, such as poets love to
+celebrate. Sing the suitors some one of these, and let them drink
+their wine in silence, but cease this sad tale, for it breaks my
+sorrowful heart, and reminds me of my lost husband for whom I have
+grief [<term lang="xgreek">penthos</term>] ever without ceasing, and whose name
+[<term lang="xgreek">kleos</term>] was great over all <placeName key="tgn,1000074">Hellas</placeName> and middle
+<placeName key="perseus,Argos">Argos</placeName>."</p>
+
+<milestone ed="p" unit="card"/>
+<p><milestone n="345" unit="line"/>"Mother," answered Telemakhos,
+"let the bard sing what he has a mind [<term lang="xgreek">noos</term>] to; bards
+are not responsible [<term lang="xgreek">aitios</term>] for the ills they sing
+of; it is Zeus, not they, who is responsible [<term lang="xgreek">aitios</term>],
+and who sends weal or woe upon humankind according to his own good
+pleasure. There should be no feeling of <term lang="xgreek">nemesis</term> against this
+one for singing the ill-fated return of the Danaans, for people
+always favor most warmly the <term lang="xgreek">kleos</term> of the latest songs. Make
+up your mind to it and bear it; Odysseus is not the only man who
+never came back from <placeName key="perseus,Troy">Troy</placeName>, but many another went down as well as he.
+Go, then, within the house and busy yourself with your daily duties,
+your loom, your distaff, and the ordering of your servants; for
+speech is man's matter, and mine above all others - for it is I
+who am master here."</p>
+
+<p><milestone n="360" unit="line"/>She went wondering back into the
+house, and laid her son's saying in her heart. Then, going
+upstairs with her handmaids into her room, she mourned her dear
+husband till Athena shed sweet sleep over her eyes. But the suitors
+were clamorous throughout the covered cloisters, and prayed each one
+that he might be her bed fellow.</p>
+
+<p><milestone n="368" unit="line"/>Then Telemakhos spoke, "You
+suitors of my mother," he cried, "you with your overweening
+<term lang="xgreek">hubris</term>, let us feast at our pleasure now, and let there be no
+brawling, for it is a rare thing to hear a man with such a divine
+voice as Phemios has; but in the morning meet me in full assembly
+that I may give you formal notice to depart, and feast at one
+another's houses, turn and turn about, at your own cost. If on
+the other hand you choose to persist in sponging upon one man, heaven
+help me, but Zeus shall reckon with you in full, and when you fall in
+my father's house there shall be no man to avenge
+you."</p>
+
+<p><milestone n="381" unit="line"/>The suitors bit their lips as
+they heard him, and marveled at the boldness of his speech. Then,
+Antinoos, son of Eupeithes, said, "The gods seem to have given you
+lessons in bluster and tall talking; may Zeus never grant you to be
+chief in <placeName key="tgn,1007519">Ithaca</placeName> as your father was before you."</p>
+
+<milestone ed="p" unit="card"/>
+<p><milestone n="388" unit="line"/>Telemakhos answered, "Antinoos,
+do not chide with me, but, god willing, I will be chief too if I can.
+Is this the worst fate you can think of for me? It is no bad thing to
+be a chief, for it brings both riches and honor. Still, now that
+Odysseus is dead there are many great men in <placeName key="tgn,1007519">Ithaca</placeName> both old and
+young, and some other may take the lead among them; nevertheless I
+will be chief in my own house, and will rule those whom Odysseus has
+won for me."</p>
+
+<p><milestone n="399" unit="line"/>Then Eurymakhos, son of Polybos,
+answered, "It rests with heaven to decide who shall be chief among
+us, but you shall be master in your own house and over your own
+possessions; no one while there is a man in <placeName key="tgn,1007519">Ithaca</placeName> shall do you
+violence [<term lang="xgreek">bi&ecirc;</term>] nor rob you. And now, my good
+man, I want to know about this stranger. What country does he come
+from? Of what family is he, and where is his estate? Has he brought
+you news about the return of your father, or was he on business of
+his own? He seemed a well-to-do man, but he hurried off so suddenly
+that he was gone in a moment before we could get to know
+him."</p>
+
+<p><milestone n="412" unit="line"/>"The <term lang="xgreek">nostos</term> of my father
+is dead and gone," answered Telemakhos, "and even if some rumor
+reaches me I put no more faith in it now. My mother does indeed
+sometimes send for a soothsayer and question him, but I give his
+prophesying no heed. As for the stranger, he was Mentes, son of
+Anchialos, chief of the Taphians, an old friend of my father's."
+But in his heart he knew that it had been the goddess.</p>
+
+<p><milestone n="421" unit="line"/>The suitors then returned to
+their singing and dancing until the evening; but when night fell upon
+their pleasuring they went home to bed each in his own abode.
+Telemakhos' room was high up in a tower that looked on to the
+outer court; there, then, he went, brooding and full of thought. A
+good old woman, Eurykleia, daughter of Ops, the son of Pisenor, went
+before him with a couple of blazing torches. <placeName key="perseus,Laertes">Laertes</placeName> had bought her
+with his own wealth when she was quite young; he gave the worth of
+twenty oxen for her, and showed as much respect to her in his
+household as he did to his own wedded wife, but he did not take her
+to his bed for he feared his wife's resentment. She it was who
+now lighted Telemakhos to his room, and she loved him better than any
+of the other women in the house did, for she had nursed him when he
+was a baby. He opened the door of his bed room and sat down upon the
+bed; as he took off his shirt he gave it to the good old woman, who
+folded it tidily up, and hung it for him over a peg by his bed side,
+after which she went out, pulled the door to by a silver catch, and
+drew the bolt home by means of the strap. But Telemakhos as he lay
+covered with a woolen fleece kept thinking all night through of his
+intended voyage and of the counsel that Athena had given him
+<milestone n="444" unit="line"/>.</p></div1>
+
+</body>
+</text>
+</TEI.2>
