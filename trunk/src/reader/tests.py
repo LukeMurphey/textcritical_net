@@ -972,6 +972,16 @@ ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/
         file_name = self.get_test_resource_file_name('aristot.vir_gk.xml')
         self.importer.import_file(file_name)
     
+    def test_load_book_with_line_numbers(self):
+        
+        book_xml = self.load_test_resource('hom.od.butler_eng.xml')
+        book_doc = parseString(book_xml)
+        
+        self.importer.state_set = 0
+        self.importer.use_line_count_for_divisions = True
+        
+        self.importer.import_xml_document(book_doc)
+    
     def test_load_book(self):
         
         # Pre-make the author in order to see if the importer is smart enough to not create a duplicate
