@@ -167,7 +167,7 @@ class PerseusTextImporter(TextImporter):
         
         if import_context.division is not None and self.use_line_count_for_divisions == True:
             
-            if new_division and new_division.descriptor is not None:
+            if new_division and new_division.descriptor is not None and LineNumber.NUMBER_RE.match(new_division.descriptor):
                 next_line_number = LineNumber(new_division.descriptor)
                 next_line_number.decrement()
                     
