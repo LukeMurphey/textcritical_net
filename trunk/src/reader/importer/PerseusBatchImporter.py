@@ -202,7 +202,7 @@ class PerseusDataGatherer(PerseusFileProcessor):
         processing_parameters = self.get_processing_parameters(document_xml, file_path, title, author, language, editor)
         
         # Get the transforms to be executed
-        if processing_parameters is not None:
+        if processing_parameters is not None and processing_parameters is not False:
             
             if self.csv_writer is not None:
                 self.csv_writer.writerow( [ title, author, language, file_path, editor ] )
@@ -269,7 +269,7 @@ class PerseusBatchImporter(PerseusFileProcessor):
         if not self.import_even_if_already_existing and self.overwrite_existing == False and self.does_work_exist(title, author, language):
             logger.info( 'Work already exists, skipping it, title="%s"', title)
             
-        elif import_parameters is None:
+        elif import_parameters in [None, False]:
             # We are not going to import this work
             pass
         
