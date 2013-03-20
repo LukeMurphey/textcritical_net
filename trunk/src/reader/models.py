@@ -1,7 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 import re
-import unicodedata
 from reader import language_tools
 
 class Author(models.Model):
