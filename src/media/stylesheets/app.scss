@@ -41,6 +41,16 @@ body.dark footer a{
     text-decoration: underline;	
 }
 
+a.external{
+	background: url(/media/images/link_external.png) center right no-repeat;
+	padding-right: 13px;
+}
+
+a.new-window{
+	background: url(/media/images/link_new_window.png) center right no-repeat;
+	padding-right: 13px;
+}
+
 footer ul{
 	margin-top: 0px;
 	margin-left: 0px;
