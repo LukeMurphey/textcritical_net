@@ -113,12 +113,15 @@ class Division(models.Model):
         else:
             return slugify( self.sequence_number )
         
+    def update_title_slug(self):
+        self.title_slug = self.get_slug_title()
+        
     def save(self, *args, **kwargs):
         
         if not self.id and not self.title_slug:
             
             # Newly created object, so set slug
-            self.title_slug = self.get_slug_title()
+            self.update_title_slug()
 
         super(Division, self).save(*args, **kwargs)
         

@@ -192,7 +192,6 @@
             }
         }
     },
-    
     {
         "author" : "Hesiod",
         "language" : "Greek",
@@ -208,6 +207,32 @@
         "import_parameters" : {
             "use_line_count_for_divisions" : true,
             "state_set" : 0
+        }
+    },
+    {
+        "author" : "Homer",
+        "title"  : "The Odyssey",
+        "language" : "English",
+        "import_parameters" : {
+            "use_line_count_for_divisions" : true,
+            "state_set" : 0,
+            "only_leaf_divisions_readable" : true,
+            "transforms" : {
+	            "set_meta_data" : {
+	                "title_slug" : "odyssey-butler"
+	            }
+            }
+        }
+    },
+    {
+        "author" : "Homer",
+        "language" : "English",
+        "import_parameters" : {
+            "use_line_count_for_divisions" : true,
+            "state_set" : 0,
+            "transforms" : {
+            	"update_title_slug" : {}
+            }
         }
     },
     {

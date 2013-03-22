@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersVerse PUBLIC "-//Perseus P4//DTD Perseus Verse//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersVerse.dtd" >
+%PersVerse;
+]>
+<TEI.2>
+  <teiHeader type="text" status="new">
+    <fileDesc>
+      <titleStmt>
+	<title>The Iliad</title>
+	<title type="sub">Machine readable text</title>
+	<author>Homer</author>
+	<editor role="translator">Samuel Butler</editor>
+	<respStmt>
+	  <resp>revised by</resp>
+	  <name>Timothy Power</name>
+	  <name>Gregory Nagy</name>
+	</respStmt>
+      </titleStmt>
+	
+	&Perseus.publish;
+	
+	
+      <notesStmt><note anchored="yes">Based on public domain editon of Samuel Butler, revised by Timothy Power and Gregory Nagy.</note></notesStmt>
+      <sourceDesc>
+        <biblStruct>
+          <monogr>
+            <author>Homer</author>
+            <title>The Iliad of Homer. Rendered into English prose for the use of those who cannot read the original.</title>
+            <editor role="translator">Samuel Butler</editor>
+            <imprint><publisher>Longmans, Green and Co. 39 Paternoster Row, London. New York and Bombay.</publisher><date>1898 (?)</date></imprint>
+          </monogr>
+        </biblStruct>
+        <bibl><idno type="isbn">0486408833</idno></bibl>
+      </sourceDesc>
+      
+ 
+    </fileDesc>
+
+    <encodingDesc>
+      <refsDecl doctype="TEI.2">
+	<step delim="." refunit="book" from="DESCENDANT (1 DIV1 N %1)"/>
+	<step refunit="line" from="FOLLOWING (1 MILESTONE UNIT line N %2)" to="FOLLOWING (1 MILESTONE UNIT line)"/>
+      </refsDecl>
+    </encodingDesc>
+
+    <profileDesc>
+      <langUsage>
+	<language id="en">English
+	</language><language id="xgreek">Transliterated Greek
+      </language></langUsage>
+    </profileDesc>
+  </teiHeader>
+
+<text lang="en">
+<body>
+<div1 type="Book" n="1">
+<head>Scroll 1</head>
+<milestone n="1" unit="card"/>
+<p><milestone n="1" unit="line"/>Sing, O goddess, the anger [<term lang="xgreek">m&ecirc;nis</term>] of Achilles son of Peleus, that brought countless ills upon the Achaeans. Many a brave soul [<term lang="xgreek">psukh&ecirc;</term>] did it send hurrying down to Hades, and many a hero did it yield a prey to dogs </p>
+
+<p><milestone n="5" unit="line"/>and vultures, for so was the will of Zeus fulfilled from the day on which the son of Atreus, king of men, and great Achilles, first fell out with one another. And which of the gods was it that set them on to quarrel? It was the son of Zeus and Leto; for he was angry with the king </p>
+
+<p><milestone n="10" unit="line"/>and sent a pestilence upon the host to plague the people, because the son of Atreus had dishonored Chryses his priest. Now Chryses had come to the ships of the Achaeans to free his daughter, and had brought with him a great ransom: moreover he bore in his hand the scepter of Apollo wreathed with a suppliant's wreath </p>
+
+<p><milestone n="15" unit="line"/>and he besought the Achaeans, but most of all the two sons of Atreus, who were their chiefs. "Sons of Atreus," he cried, "and all other Achaeans, may the gods who dwell in <placeName key="tgn,7011019">Olympus</placeName> grant you to sack the city of Priam, and to reach your homes in safety; </p>
+
+<p><milestone n="20" unit="line"/>but free my daughter, and accept a ransom for her, in reverence to Apollo, son of Zeus." On this the rest of the Achaeans with one voice were for respecting the priest and taking the ransom that he offered; but not so Agamemnon, </p>
+
+<p><milestone n="25" unit="line"/>who spoke fiercely to him and sent him roughly away. "Old man," said he, "let me not find you tarrying about our ships, nor yet coming hereafter. Your scepter of the god and your wreath shall profit you nothing. I will not free her. She shall grow old </p>
+
+<p><milestone n="30" unit="line"/>in my house at <placeName key="perseus,Argos">Argos</placeName> far from her own home, busying herself with her loom and visiting my couch; so go, and do not provoke me or it shall be the worse for you." The old man feared him and obeyed. Not a word he spoke, but went by the shore of the sounding sea </p>
+
+<p><milestone n="35" unit="line"/>and prayed apart to King Apollo whom lovely Leto had borne. "Hear me," he cried, "O god of the silver bow, you who protect <placeName key="perseus,Chryse">Chryse</placeName> and holy Cilla and rule <placeName key="perseus,Tenedos">Tenedos</placeName> with your might, hear me O god of Sminthe.  If I have ever decked your temple with garlands, </p>
+
+<milestone ed="p" n="40" unit="card"/>
+<p><milestone n="40" unit="line"/>or burned for you thigh-bones in fat of bulls or goats, grant my prayer, and let your arrows avenge these my tears upon the Danaans." Thus did he pray, and Apollo heard his prayer. He came down furious from the summits of <placeName key="tgn,7011019">Olympus</placeName>, </p>
+
+<p><milestone n="45" unit="line"/>with his bow and his quiver upon his shoulder, and the arrows rattled on his back with the rage that trembled within him. He sat himself down away from the ships with a face as dark as night, and his silver bow rang death as he shot his arrow in the midst of them. </p>
+
+</div1>
+
+
+
+<div1 type="Book" n="2">
+<head>Scroll 2</head>
+	<milestone ed="p" unit="card" n="1"/>
+<p><milestone n="1" unit="line"/>Now the other gods and the armed warriors on the plain slept soundly, but Zeus was wakeful, for he was thinking how to do honor to Achilles, and destroyed many people at the ships of the Achaeans. </p>
+
+<p><milestone n="5" unit="line"/>In the end he deemed it would be best to send a lying dream to King Agamemnon; so he called one to him and said to it, "Lying Dream, go to the ships of the Achaeans, </p>
+
+<p><milestone n="10" unit="line"/>into the tent of Agamemnon, and say to him word to word as I now bid you. Tell him to get the Achaeans instantly under arms, for he shall take <placeName key="perseus,Troy">Troy</placeName>. There are no longer divided counsels among the gods; </p>
+
+<p><milestone n="15" unit="line"/>Hera has brought them to her own mind, and woe betides the Trojans." The dream went when it had heard its message, and soon reached the ships of the Achaeans. It sought Agamemnon son of Atreus and found him in his tent, wrapped in a profound slumber. </p>
+</div1>
+
+
+</body>
+</text>
+</TEI.2>
