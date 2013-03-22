@@ -17,7 +17,7 @@ from xml.dom.minidom import parse, parseString
 import logging
 import re
 
-from reader.importer import TextImporter, LineNumber
+from reader.importer import TextImporter, LineNumber, LineNumberRange
 from reader.models import Division, Work
 from reader.shortcuts import transform_text
 
@@ -164,10 +164,18 @@ class PerseusTextImporter(TextImporter):
             del(doc)
     
     def close_division(self, import_context, new_division=None):
+        """
+        This function is called when a new division is found and the importer is about to move on to a new division.
         
-        if import_context.division is not None and self.use_line_count_for_divisions == True:
+        Arguments:
+        import_context -- The import context being used during importation
+        new_division -- The new division to be created
+        """
+        
+        """
+        if import_context.division is not None and self.use_line_count_for_divisions == True :
             
-            if new_division and new_division.descriptor is not None and LineNumber.NUMBER_RE.match(new_division.descriptor):
+            if new_division and new_division.descriptor is not None and LineNumber.is_line_number(new_division.descriptor):
                 next_line_number = LineNumber(new_division.descriptor)
                 next_line_number.decrement()
                     
@@ -175,11 +183,13 @@ class PerseusTextImporter(TextImporter):
             else:
                 self.update_line_count_info(import_context, reset_start_line_count=False)
                     
-            # Set the division title if we have a division to update
-            import_context.division.title = import_context.get_line_count_title()
-                
-            # Restart the line count for the next division
-            import_context.reset_start_line_count()
+            if import_context.line_number_end.number > 0:
+                # Set the division title if we have a division to update
+                import_context.division.title = import_context.get_line_count_title()
+                    
+                # Restart the line count for the next division
+                import_context.reset_start_line_count()
+        """
         
         # Save the XML content for the previous chapter
         self.save_original_content(import_context)
@@ -189,9 +199,10 @@ class PerseusTextImporter(TextImporter):
         # Get the level from the state info object unless the level was already provided
         if state_info is not None:
             level = state_info.level
+        
         elif level is None:
             level = 1
-        
+            
         # Create the new division
         new_division = Division()
         new_division.level = level
@@ -542,6 +553,12 @@ class PerseusTextImporter(TextImporter):
         
     @staticmethod
     def process_title(title):
+        """
+        Prepare the title by removing content that is not necessary.
+        
+        Arguments:
+        title -- The title to be processed.
+        """
         
         title = title.replace("(Greek). Machine readable text", "")
         title = title.replace("(English). Machine readable text", "")
@@ -767,9 +784,80 @@ class PerseusTextImporter(TextImporter):
         """
         
         verses_created = 0
+        line_number_range = LineNumberRange()
+        previous_line_number_division = None
+        previous_line_number_range = None
         
         for division in divisions:
+            
+            # Make the verse
             verses_created = verses_created + self.make_verses_for_division(division, state_set)
+            
+            # The following is for setting the titles of divisions which ought to indicate the line numbers
+            
+            # Set the line count if necessary (but only if the division is a leaf node)
+            if self.use_line_count_for_divisions == True and Division.objects.filter(parent_division=division).count() == 0:# and verses_created > 0:
+                
+                # Parse the content
+                original_content = division.original_content.encode('utf-8')
+                division_doc = parseString(original_content)
+                
+                # Update the line count by looking through the verse nodes and counting the relevant tags or looking for verse nodes that include a count
+                line_number_range = self.update_line_count_info(division_doc, line_number_range, reset_start_line_count=False)
+                
+                # If the line number is starting fresh, then don't treat the previous range as part of this range (since we are starting fresh)
+                if line_number_range.line_number_start.number <= 1:
+                    previous_line_number_division = None
+                    previous_line_number_range = None
+                
+                # If this is for a division title containing a line number, then set the start number for the current division and set the previous division accordingly
+                if division.type in ["card"] and division.descriptor is not None and LineNumber.is_line_number( str(division.descriptor) ):
+                    
+                    # Set the previous division to the new start line minus one
+                    if previous_line_number_division is not None:
+                        next_line_number = LineNumber(division.descriptor)
+                        next_line_number.decrement()
+                        previous_line_number_range.line_number_end = next_line_number
+                        
+                        if previous_line_number_range.makes_sense():
+                            
+                            previous_line_number_division.title = previous_line_number_range.get_line_count_title()
+                            previous_line_number_division.title_slug = slugify(previous_line_number_division.title)
+                            previous_line_number_division.descriptor = str(previous_line_number_range.line_number_start.number)
+                            previous_line_number_division.save()
+                            
+                    # Set the start of the current line number
+                    # We want this value to override whatever we already determined
+                    line_number_range.line_number_start = LineNumber(str(division.descriptor))
+                
+                # Ok, lets update the previous division
+                elif previous_line_number_division is not None and line_number_range.line_number_start is not None and line_number_range.line_number_start.number > 0 and line_number_range.line_number_end.number > 0:
+                    
+                    # Set the division title if we have a division to update
+                    previous_line_number_range.line_number_end = line_number_range.line_number_start.copy()
+                    previous_line_number_range.line_number_end.decrement()
+                    
+                    if previous_line_number_range.makes_sense():
+                        previous_line_number_division.title = previous_line_number_range.get_line_count_title()
+                        previous_line_number_division.title_slug = slugify(previous_line_number_division.title)
+                        previous_line_number_division.descriptor = str(previous_line_number_range.line_number_start.number)
+                        
+                        # Save the division
+                        previous_line_number_division.save()
+                
+                # Now, set the current division
+                if line_number_range.makes_sense():
+                    division.title = line_number_range.get_line_count_title()
+                    division.title_slug = slugify(division.title)
+                    division.descriptor = str(line_number_range.line_number_start.number)
+                    division.save()
+                
+                # Record the previous line count range set
+                previous_line_number_range = line_number_range.copy()
+                previous_line_number_division = division
+                    
+                # Restart the line count for the next division
+                line_number_range.reset_start_line_count()
         
         return verses_created
 
@@ -786,7 +874,6 @@ class PerseusTextImporter(TextImporter):
         if division.original_content:
             
             original_content = division.original_content.encode('utf-8')
-            
             division_doc = parseString(original_content)
             
             root_node = division_doc.getElementsByTagName(PerseusTextImporter.CHAPTER_TAG_NAME)[0]
@@ -896,25 +983,28 @@ class PerseusTextImporter(TextImporter):
         
         # Try to use the milestones otherwise
         else:
-            line_number = PerseusTextImporter.get_line_count_recursive(verse_doc.documentElement, line_number)   
+            line_number = PerseusTextImporter.get_line_count_recursive(verse_doc.documentElement, line_number)
             
         # Return the line number
         return line_number
     
-    def update_line_count_info(self, import_context, reset_start_line_count=False):
+    def update_line_count_info(self, document, line_number_range, reset_start_line_count=False):
         """
         Update the line count in case the readable units are to be named after the lines included.
         """
         
         # Get the updated line count
-        new_line_number = PerseusTextImporter.get_line_count(import_context.document, import_context.line_number_end)
+        new_line_number = PerseusTextImporter.get_line_count(document, line_number_range.line_number_end)
         
-        # Set the updated line count
-        import_context.line_number_end = new_line_number
+        if new_line_number is not None and new_line_number.number > 0:
+            # Set the updated line count
+            line_number_range.line_number_end = new_line_number
         
         # Reset the line count if requested
         if reset_start_line_count:
-            import_context.reset_start_line_count()
+            line_number_range.reset_start_line_count()
+            
+        return line_number_range
         
     def import_verse_content(self, division, content_node, state_set, import_context = None, parent_node = None, recurse = True):
         
@@ -1206,8 +1296,14 @@ class PerseusTextImporter(TextImporter):
                 else:
                     descriptor = ""
                 
+                # Get the division type
+                if 'unit' in node.attributes.keys():
+                    division_type = node.attributes["unit"].value
+                else:
+                    division_type = None
+                
                 # Make the division
-                self.make_division(import_context=import_context, descriptor=descriptor, state_info=self.get_state_for_milestone(state_set, node))
+                self.make_division(import_context=import_context, descriptor=descriptor, state_info=self.get_state_for_milestone(state_set, node), division_type=division_type, level=10)
                 logger.debug("Making division %s (since it is a chunk) of %s" % ( str(import_context.division.sequence_number), self.work.title))
                 
                 # Start adding the content to the new division
@@ -1231,7 +1327,7 @@ class PerseusTextImporter(TextImporter):
                 
                 # If we have a verse without a division, then go ahead and make one
                 if import_context.division is None:
-                    self.make_division(import_context=import_context, descriptor=descriptor, state_info=self.get_state_for_milestone(state_set, node))
+                    self.make_division(import_context=import_context, descriptor=descriptor, state_info=self.get_state_for_milestone(state_set, node), level=10)
                     logger.debug("Making a division for %s since once does not exist yet (so that we can add a verse)" % (self.work.title))
                     
                     # Start adding the content to the new division

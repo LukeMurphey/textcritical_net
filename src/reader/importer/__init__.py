@@ -27,6 +27,14 @@ class LineNumber():
         if value is not None:
             self.set(value)
     
+    @staticmethod
+    def is_line_number( line_number_str ):
+        
+        if line_number_str is None:
+            return False
+        else:
+            return LineNumber.NUMBER_RE.match(line_number_str) is not None
+    
     def copy(self):
         """
         Create a copy.
@@ -88,6 +96,51 @@ class LineNumber():
         """
         
         self.number = self.number - 1
+
+class LineNumberRange():
+    """
+    Represents a line number range in a document.
+    """
+    
+    def __init__(self, line_number_start=None, line_number_end=None):
+        
+        # Set the start
+        if line_number_start is None:
+            self.line_number_start = LineNumber()
+        else:
+            self.line_number_start = line_number_start
+            
+        # Set the end
+        if line_number_end is None:
+            self.line_number_end = LineNumber()
+        else:
+            self.line_number_end = line_number_end
+        
+    def copy(self):
+        return LineNumberRange( self.line_number_start.copy(), self.line_number_end.copy() )
+        
+    def increment_line_count(self):
+        self.line_number_end.increment()
+    
+    def reset_start_line_count(self):
+        self.line_number_start = self.line_number_end.copy()
+        self.line_number_start.increment()
+        
+    def get_line_count_title(self):
+        
+        if self.line_number_start.number == 0:
+            self.line_number_start.number = 1
+        
+        return "lines %s-%s" % ( str(self.line_number_start), str(self.line_number_end) )
+    
+    def makes_sense(self):
+        
+        if self.line_number_end.number <= 0:
+            return False
+        elif self.line_number_end.number < self.line_number_start.number:
+            return False
+        else:
+            return True
 
 class TextImporter():
     

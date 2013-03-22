@@ -199,8 +199,8 @@ class ImportTransforms():
             # Use the editor's name
             if work.editors.count() > 0:
                 
+                # Get the editor
                 editor = work.editors.all()[0].name
-                
                 editor = editor.replace("Ph. D.", "").replace("M.A.", "").replace("LL.D.", "").replace("A.M.", "").replace("Esq.", "").replace(",", "").strip().lower()
                 
                 # Get the last name of the editor

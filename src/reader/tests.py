@@ -540,7 +540,6 @@ class TestPerseusBatchImporter(TestReader):
         self.assertEqual( importer.do_import(), 1 )
         
         # Now run the imports and make sure the correct action occurs when dis-allowing importation
-        
         import_policy2 = ImportPolicy()
         import_policy2.descriptors.append( work_descriptor2 )
         
@@ -977,10 +976,83 @@ ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/
         book_xml = self.load_test_resource('hom.od.butler_eng.xml')
         book_doc = parseString(book_xml)
         
+        #self.importer.state_set = 0
+        self.importer.use_line_count_for_divisions = True
+        
+        self.importer.import_xml_document(book_doc)
+        
+        work = self.importer.work
+        
+        divisions = Division.objects.filter(work=work).order_by("sequence_number")
+        
+        self.assertEquals( divisions.count(), 8)
+        
+        #self.assertEquals( divisions[1].title, "lines 1-32")
+        self.assertEquals( divisions[0].title, "lines 1-32")
+        self.assertEquals( divisions[0].title_slug, "lines-1-32")
+        self.assertEquals( divisions[0].descriptor, "1")
+        
+    def test_load_book_with_line_numbers_per_division(self):
+        
+        book_xml = self.load_test_resource('hom.il.butler_eng.xml')
+        book_doc = parseString(book_xml)
+        
+        #self.importer.state_set = 0
+        self.importer.use_line_count_for_divisions = True
+        
+        self.importer.import_xml_document(book_doc)
+        
+        work = self.importer.work
+        
+        divisions = Division.objects.filter(work=work).order_by("sequence_number")
+        
+        self.assertEquals( divisions.count(), 5)
+        
+        # Make sure that the first division has the title declared in the head node
+        self.assertEquals( divisions[0].title, "Scroll 1")
+        self.assertEquals( divisions[0].descriptor, "1")
+        
+        # Check the second division
+        self.assertEquals( divisions[1].parent_division.id, divisions[0].id) # Make sure that the second is under the first node
+        self.assertEquals( divisions[1].title, "lines 1-39")
+        self.assertEquals( divisions[1].title_slug, "lines-1-39")
+        self.assertEquals( divisions[1].descriptor, "1")
+        
+        # Check the third division
+        self.assertEquals( divisions[2].parent_division.id, divisions[0].id)
+        self.assertEquals( divisions[2].title, "lines 40-45")
+        self.assertEquals( divisions[2].title_slug, "lines-40-45")
+        self.assertEquals( divisions[2].descriptor, "40")
+        
+        # Check the fourth division
+        self.assertEquals( divisions[3].parent_division, None)
+        self.assertEquals( divisions[3].title, "Scroll 2")
+        self.assertEquals( divisions[3].descriptor, "2")
+        
+        # Check the fifth division
+        self.assertEquals( divisions[4].parent_division.id, divisions[3].id)
+        self.assertEquals( divisions[4].title, "lines 1-15")
+        self.assertEquals( divisions[4].title_slug, "lines-1-15")
+        self.assertEquals( divisions[4].descriptor, "1")
+        
+        
+        
+    def test_load_book_with_line_numbers_and_parent_divisions(self):
+        
+        book_xml = self.load_test_resource('hom.il_eng.xml')
+        book_doc = parseString(book_xml)
+        
         self.importer.state_set = 0
         self.importer.use_line_count_for_divisions = True
         
         self.importer.import_xml_document(book_doc)
+        
+        work = self.importer.work
+        
+        divisions = Division.objects.filter(work=work).order_by("sequence_number")
+        
+        self.assertEquals( str(divisions[0]), "Book 1")
+        self.assertEquals( str(divisions[1]), "lines 1-32")
     
     def test_load_book(self):
         
