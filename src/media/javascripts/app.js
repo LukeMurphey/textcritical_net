@@ -7,7 +7,7 @@ var TextCritical = {};
 /**
  * Causes the verses to break onto separate lines. 
  **/
-TextCritical.setFormatBreakLine = function(){
+TextCritical.setFormatBreakLine = function () {
 	$('.verse_container').addClass("block");
 	$('#align_break').addClass('active');
 }
@@ -15,7 +15,7 @@ TextCritical.setFormatBreakLine = function(){
 /**
  * Causes the verses to not break onto separate lines. 
  **/
-TextCritical.unSetFormatBreakLine = function(){
+TextCritical.unSetFormatBreakLine = function () {
 	$('.verse_container').removeClass("block");
 	$('#align_break').removeClass('active');
 }
@@ -23,14 +23,14 @@ TextCritical.unSetFormatBreakLine = function(){
 /**
  * Toggles the table-of-contents.
  **/
-TextCritical.toggleTOC = function(){
+TextCritical.toggleTOC = function (){
 	$('.table_of_contents').toggle('fast', 'swing');
 }
 
 /**
  * Toggles the verse breaks.
  **/
-TextCritical.toggleVerseBreak = function(){
+TextCritical.toggleVerseBreak = function (){
 	break_verses = !break_verses;
 	
 	if( break_verses ){
@@ -46,14 +46,14 @@ TextCritical.toggleVerseBreak = function(){
 /**
  * Escape the identifier so that if it contains periods, it can still be used as a jQuery selector.
  **/
-TextCritical.escapeIdentifier = function(id){
+TextCritical.escapeIdentifier = function (id) {
 	return id.replace(".", "\\.");
 }
 
 /**
  * Scrolls to the given anchor.
  **/
-TextCritical.scrolltoAnchor = function(id){
+TextCritical.scrolltoAnchor = function (id) {
 	
 	scrollTo = $("#"+ id ).offset();
 	
@@ -68,7 +68,7 @@ TextCritical.scrolltoAnchor = function(id){
 /**
  * Highlight a selected verse without performing a request to the server.
  **/
-TextCritical.scrollToVerse = function(verse_number, base_chapter_url){
+TextCritical.scrollToVerse = function (verse_number, base_chapter_url) {
 
 	// Make sure a base chapter URL was provided
 	if ( base_chapter_url == null || base_chapter_url == undefined ){
@@ -103,7 +103,7 @@ TextCritical.scrollToVerse = function(verse_number, base_chapter_url){
 /**
  * Loads the client-saved settings.
  **/
-TextCritical.loadStoreSettings = function(){
+TextCritical.loadStoreSettings = function () {
 	
 	var defaults = {
 		"break_verses": false
@@ -136,7 +136,7 @@ TextCritical.slugify = function (text) {
  * @param string the reference to go to (like "Romans 14:1")
  * @param array an array of the current division markers. Used to help the function not break on division descriptors that have spaces in the name (like "1 Thessalonians")
  **/
-TextCritical.resolve_path = function( reference, reference_ids ){
+TextCritical.resolve_path = function ( reference, reference_ids ) {
 	
 	// Trim the reference in case it has extra spaces and change to lower case so that we handle reference in a case insensitive way
 	reference = TextCritical.trim( reference ).toLowerCase();
@@ -192,14 +192,14 @@ TextCritical.resolve_path = function( reference, reference_ids ){
  * @param string the reference to go to (like "Romans 14:1")
  * @param array an array of division IDs; these will be used to help parsing of the reference
  **/
-TextCritical.go_to_chapter = function( reference, division_ids ){
+TextCritical.go_to_chapter = function ( reference, division_ids ) {
 	document.location = TextCritical.resolve_path(reference, division_ids);
 }
 
 /**
  * Opens the morphology dialog on the word within the text clicked.
  **/
-TextCritical.word_lookup = function (){
+TextCritical.word_lookup = function () {
 	
 	work = $("h1[data-work-title-slug]").data("work-title-slug");
 	
@@ -210,7 +210,7 @@ TextCritical.word_lookup = function (){
 /**
  * Opens a dialog that obtains the morphology of a word.
  **/
-TextCritical.open_morphology_dialog = function( word, work ){
+TextCritical.open_morphology_dialog = function ( word, work ) {
 	
 	console.info( "Obtaining the morphology of " + word );
 	
@@ -256,22 +256,21 @@ TextCritical.open_morphology_dialog = function( word, work ){
  * Trims the string.
  * @param s the string to be stripped
  */
-TextCritical.trim = function(s) 
-{
+TextCritical.trim = function (s) {
     return String(s).replace(/^\s+|\s+$/g, '');
 }
 
 /**
  * Highlights the word that the user is focusing on or hovering over.
  **/
-TextCritical.highlight_selected_word = function(){
+TextCritical.highlight_selected_word = function () {
 	TextCritical.highlight_word( $(this).text() );
 }
 
 /**
  * Unhighlights all words.
  */
-TextCritical.unhighlight_all_words = function(){
+TextCritical.unhighlight_all_words = function () {
 	$('.word').removeClass('highlighted');
 }
 
@@ -279,7 +278,7 @@ TextCritical.unhighlight_all_words = function(){
  * Highlights all of the word nodes with the given text.
  * @param word the word to highlight
  */
-TextCritical.highlight_word = function( word ){
+TextCritical.highlight_word = function ( word ) {
 	
 	// Unhighlight all existing words to make sure we don't accumulate highlights
 	TextCritical.unhighlight_all_words();
@@ -298,7 +297,7 @@ TextCritical.highlight_word = function( word ){
  * Determine if the results has actual words to kick off a search to look for (other than just the parts of the search specifying
  * the work to search).
  **/
-TextCritical.contains_search_words = function( query ){
+TextCritical.contains_search_words = function ( query ) {
 	split_query = query.match(/([_0-9a-z]+[:][-_0-9a-z]+)|([\w_]+[:]["][-\w ]*["])|([^ :]+)/gi);
 	
 	for( c = 0; c < split_query.length; c++){
@@ -313,7 +312,7 @@ TextCritical.contains_search_words = function( query ){
 /**
  * Set the cursor to the end of an input.
  **/
-TextCritical.set_caret_at_end = function(elem) {
+TextCritical.set_caret_at_end = function (elem) {
     var elemLen = elem.value.length;
     // For IE Only
     if (document.selection) {
@@ -338,7 +337,7 @@ TextCritical.set_caret_at_end = function(elem) {
 /**
  * Update the URL according to the word and page specified.
  */
-TextCritical.set_search_url = function( query, page ){
+TextCritical.set_search_url = function ( query, page ) {
 	
 	// Get the appropriate URL
 	if( page <= 1 || parseInt(page) <= 1 ){
@@ -357,7 +356,7 @@ TextCritical.set_search_url = function( query, page ){
  * Perform a search and render the results.
  * Note: this users the blockUI jQuery plugin.
  **/
-TextCritical.do_search = function( page, update_url ){
+TextCritical.do_search = function ( page, update_url ) {
 	
 	// Get the word to search for
 	word = $("#search-term").val();
@@ -457,7 +456,7 @@ TextCritical.do_search = function( page, update_url ){
 /**
  * Show or hide the search help depending on the parameter (by default, it shows it).
  */
-TextCritical.show_search_help = function( show ){
+TextCritical.show_search_help = function ( show ) {
 
 	if( show == undefined ){
 		show = true;
@@ -476,7 +475,7 @@ TextCritical.show_search_help = function( show ){
 /**
  * Show the search help if it is not shown; hide it otherwise.
  */
-TextCritical.toggle_search_help  = function( ){
+TextCritical.toggle_search_help  = function ( ) {
 	
 	if( $("#search-help").is(":visible") ){
 		TextCritical.show_search_help( false );
@@ -492,7 +491,7 @@ TextCritical.toggle_search_help  = function( ){
 /**
  * Do a search, starting from page 1.
  **/
-TextCritical.do_fresh_search = function( ){
+TextCritical.do_fresh_search = function ( ) {
 	TextCritical.show_search_help( false );
 	return TextCritical.do_search( 1 );
 }
@@ -500,14 +499,14 @@ TextCritical.do_fresh_search = function( ){
 /**
  * Go to the next page in the search results.
  **/
-TextCritical.do_search_next = function( ){
+TextCritical.do_search_next = function ( ) {
 	return TextCritical.change_page( 1 );
 }
 
 /**
  * Change to the page in the search results based on the offset provided. An offset of -1 goes back one page, an offset of 1 goes forward one.
  */
-TextCritical.change_page = function( offset ){
+TextCritical.change_page = function ( offset ) {
 	
 	// Get the page number
 	page = parseInt( $('#search-results-content').attr("data-page-number") );
@@ -529,7 +528,7 @@ TextCritical.change_page = function( offset ){
 /**
  * Go to search page to execute a search on the current work.
  **/
-TextCritical.search_this_work = function( ){
+TextCritical.search_this_work = function ( ) {
 	
 	// Get the work that we are to search
 	work = $("h1[data-work-title-slug]").data("work-title-slug");
@@ -545,14 +544,14 @@ TextCritical.search_this_work = function( ){
 /**
  * Go to the previous page in the search results.
  **/
-TextCritical.do_search_previous = function( ){
+TextCritical.do_search_previous = function ( ) {
 	return TextCritical.change_page( -1 );
 }
 
 /**
  * Update the search results when the user presses the back button.
  **/
-TextCritical.search_page_popstate = function( event ){
+TextCritical.search_page_popstate = function ( event ) {
 	
 	// Ignore events made from replace states
 	if (event.state == null) {
@@ -569,7 +568,7 @@ TextCritical.search_page_popstate = function( event ){
 /**
  * Update the search results when the user presses the back button.
  **/
-TextCritical.convert_search_query_beta_code = function( ){
+TextCritical.convert_search_query_beta_code = function ( ) {
 	
 	query = $("#search-term").val();
 	
@@ -586,7 +585,7 @@ TextCritical.convert_search_query_beta_code = function( ){
  **/
 TextCritical.works_search_typeahead_hints = [];
 
-TextCritical.get_works_search_typeahead_hints = function( ){
+TextCritical.get_works_search_typeahead_hints = function ( ) {
 	
 	if( TextCritical.works_search_typeahead_hints.length > 0){
 		return TextCritical.works_search_typeahead_hints;
