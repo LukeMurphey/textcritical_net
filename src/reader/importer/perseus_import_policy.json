@@ -867,6 +867,17 @@
         }
     },
     {
+        "author" : "Hippocrates",
+        "language" : "English",
+        "title" : "The Genuine Works of Hippocrates",
+        "import_parameters" : {
+            "state_set" : 2,
+            "transforms" : {
+            	"update_title_slug" : {}
+            }
+        }
+    },
+    {
         "author" : [ "Aristotle", "Bacchylides", "Demosthenes", "Dinarchus", "Diodorus Siculus", "Diogenes Laertius", "Euclid", "Galen",
                      "Herodotus", "Hesiod", "Hippocrates", "Homer", "Hyperides", "Flavius Josephus", "Pausanias", "Pindar", "Plato", "Plutarch",
                      "Strabo", "Aretaeus", "Xenophon", "Aeschylus", "Andocides", "Apollodorus"],
