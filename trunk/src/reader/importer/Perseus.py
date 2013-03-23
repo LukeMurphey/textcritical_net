@@ -13,7 +13,7 @@ The importer performs the import in the three major steps:
 '''
 
 from xml.dom import minidom
-from xml.dom.minidom import parse, parseString
+from xml.dom.minidom import parseString
 import logging
 import re
 
@@ -813,9 +813,13 @@ class PerseusTextImporter(TextImporter):
                 # If this is for a division title containing a line number, then set the start number for the current division and set the previous division accordingly
                 if division.type in ["card"] and division.descriptor is not None and LineNumber.is_line_number( str(division.descriptor) ):
                     
+                    # Set the start of the current line number
+                    # We want this value to override whatever we already determined
+                    line_number_range.line_number_start = LineNumber(str(division.descriptor))
+                    
                     # Set the previous division to the new start line minus one
                     if previous_line_number_division is not None:
-                        next_line_number = LineNumber(division.descriptor)
+                        next_line_number = line_number_range.line_number_start.copy()
                         next_line_number.decrement()
                         previous_line_number_range.line_number_end = next_line_number
                         
@@ -825,10 +829,6 @@ class PerseusTextImporter(TextImporter):
                             previous_line_number_division.title_slug = slugify(previous_line_number_division.title)
                             previous_line_number_division.descriptor = str(previous_line_number_range.line_number_start.number)
                             previous_line_number_division.save()
-                            
-                    # Set the start of the current line number
-                    # We want this value to override whatever we already determined
-                    line_number_range.line_number_start = LineNumber(str(division.descriptor))
                 
                 # Ok, lets update the previous division
                 elif previous_line_number_division is not None and line_number_range.line_number_start is not None and line_number_range.line_number_start.number > 0 and line_number_range.line_number_end.number > 0:
@@ -851,6 +851,8 @@ class PerseusTextImporter(TextImporter):
                     division.title_slug = slugify(division.title)
                     division.descriptor = str(line_number_range.line_number_start.number)
                     division.save()
+                else:
+                    print "makes no sense:", line_number_range.get_line_count_title()
                 
                 # Record the previous line count range set
                 previous_line_number_range = line_number_range.copy()
@@ -916,6 +918,8 @@ class PerseusTextImporter(TextImporter):
     @staticmethod
     def get_line_count_recursive(node, line_number):
         
+        numbering_reset = False
+        
         # If the node it a paragraph or line, then increment the line number
         if node.nodeType == minidom.Element.ELEMENT_NODE and node.tagName in ["p", "l"]:
             line_number.increment()
@@ -927,6 +931,10 @@ class PerseusTextImporter(TextImporter):
             new_line_number = LineNumber(value=node.attributes["n"].value)
             
             # Log if the value is not was is expected. This may indicate that a line element was not found that should have been.
+            if new_line_number.number in [0, 1]:
+                logger.warning("A line element indicated that the line numbering is restarting, line_number=%s, expected_line_number=%r" % ( str(new_line_number), line_number) )
+                numbering_reset = True
+            
             if new_line_number is not None and str(new_line_number) != line_number:
                 logger.warning("A line element indicated the current line number and it did not match the expected value, line_number=%s, expected_line_number=%r" % ( str(new_line_number), str(line_number)) )
         
@@ -936,9 +944,12 @@ class PerseusTextImporter(TextImporter):
             
         # Recurse on the children
         for child_node in node.childNodes:
-            line_number = PerseusTextImporter.get_line_count_recursive(child_node, line_number)
+            line_number, numbering_reset_new = PerseusTextImporter.get_line_count_recursive(child_node, line_number)
+            
+            if numbering_reset_new:
+                numbering_reset = True
         
-        return line_number
+        return line_number, numbering_reset
     
     @staticmethod
     def get_line_count(verse_doc, count=None):
@@ -949,6 +960,8 @@ class PerseusTextImporter(TextImporter):
         verse_doc -- The verse element to count up the line elements
         count -- The current count
         """
+        
+        restart_numbering_at_one = False
         
         if count is not None:
             line_number = LineNumber(value=str(count))
@@ -975,7 +988,11 @@ class PerseusTextImporter(TextImporter):
                     # Log if the value is not was is expected. This may indicate that a line element was not found that should have been.
                     new_line_number = LineNumber(value=new_line_count)
                     
-                    if str(new_line_number) != line_number:
+                    if new_line_number.number in [0, 1]:
+                        logger.warning("A line element indicated that the line numbering is restarting, line_number=%s, expected_line_number=%r" % ( str(count), new_line_count) )
+                        restart_numbering_at_one = True
+                        
+                    elif str(new_line_number) != line_number:
                         logger.warning("A line element indicated the current line number and it did not match the expected value, line_number=%s, expected_line_number=%r" % ( str(count), new_line_count) )
                 
                     # Update the line number
@@ -983,10 +1000,13 @@ class PerseusTextImporter(TextImporter):
         
         # Try to use the milestones otherwise
         else:
-            line_number = PerseusTextImporter.get_line_count_recursive(verse_doc.documentElement, line_number)
+            line_number, restart_numbering_at_one_latest = PerseusTextImporter.get_line_count_recursive(verse_doc.documentElement, line_number)
+            
+            if restart_numbering_at_one_latest:
+                restart_numbering_at_one = True
             
         # Return the line number
-        return line_number
+        return line_number, restart_numbering_at_one
     
     def update_line_count_info(self, document, line_number_range, reset_start_line_count=False):
         """
@@ -994,11 +1014,15 @@ class PerseusTextImporter(TextImporter):
         """
         
         # Get the updated line count
-        new_line_number = PerseusTextImporter.get_line_count(document, line_number_range.line_number_end)
+        new_line_number, restart_numbering_at_one = PerseusTextImporter.get_line_count(document, line_number_range.line_number_end)
         
         if new_line_number is not None and new_line_number.number > 0:
             # Set the updated line count
             line_number_range.line_number_end = new_line_number
+        
+        # Restart the numbering
+        if restart_numbering_at_one:
+            line_number_range.line_number_start.number = 1
         
         # Reset the line count if requested
         if reset_start_line_count:
