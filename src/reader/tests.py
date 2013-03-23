@@ -985,12 +985,21 @@ ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/
         
         divisions = Division.objects.filter(work=work).order_by("sequence_number")
         
-        self.assertEquals( divisions.count(), 8)
+        self.assertEquals( divisions.count(), 10)
         
         #self.assertEquals( divisions[1].title, "lines 1-32")
-        self.assertEquals( divisions[0].title, "lines 1-32")
-        self.assertEquals( divisions[0].title_slug, "lines-1-32")
-        self.assertEquals( divisions[0].descriptor, "1")
+        
+        self.assertEquals( divisions[1].title, "lines 1-96")
+        self.assertEquals( divisions[1].title_slug, "lines-1-96")
+        self.assertEquals( divisions[1].descriptor, "1")
+        
+        
+        self.assertEquals( divisions[8].title, "Scroll 2")
+        self.assertEquals( divisions[8].descriptor, "2")
+        
+        self.assertEquals( divisions[9].title, "lines 1-15")
+        self.assertEquals( divisions[9].title_slug, "lines-1-15")
+        self.assertEquals( divisions[9].descriptor, "1")
         
     def test_load_book_with_line_numbers_per_division(self):
         
