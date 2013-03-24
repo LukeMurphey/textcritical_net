@@ -851,8 +851,6 @@ class PerseusTextImporter(TextImporter):
                     division.title_slug = slugify(division.title)
                     division.descriptor = str(line_number_range.line_number_start.number)
                     division.save()
-                else:
-                    print "makes no sense:", line_number_range.get_line_count_title()
                 
                 # Record the previous line count range set
                 previous_line_number_range = line_number_range.copy()
