@@ -181,7 +181,7 @@ def transform_perseus_text(text, parent_node, dst_doc, default_language):
                 new_node.setAttribute( "class", "word" )
                 
                 # Create the text node and append it
-                txt_node = dst_doc.createTextNode( transform_text(s, language).decode( "utf-8" ) )
+                txt_node = dst_doc.createTextNode( transform_text(s, language, True) )
                 new_node.appendChild(txt_node)
                
                 # Append the node
