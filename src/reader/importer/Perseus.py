@@ -560,6 +560,8 @@ class PerseusTextImporter(TextImporter):
         title -- The title to be processed.
         """
         
+        title = title.strip()
+        
         title = title.replace("(Greek). Machine readable text", "")
         title = title.replace("(English). Machine readable text", "")
         title = title.replace("(English)", "")
