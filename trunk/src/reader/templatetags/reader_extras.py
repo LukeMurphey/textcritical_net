@@ -124,6 +124,11 @@ def transform_perseus_node( tag, attrs, parent, dst_doc ):
             
             txt_node = dst_doc.createTextNode("Note")
             note_tag.appendChild(txt_node)
+            
+        # Add the attribute number so that it can be added to the title of the note
+        for attr in attrs:
+            if attr[0] == 'n':
+                note_tag.setAttribute( "data-note-number", attr[1] )
         
         parent.appendChild(note_tag)
         
