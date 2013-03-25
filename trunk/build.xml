@@ -12,6 +12,11 @@
 	    <fileset file="lib/jruby-complete-1.6.7.2.jar"/>
 	</path> 
 	
+	<!-- This patternset matches the custom application Javascript -->
+	<patternset id="application_js_files">
+	    <include name="src/media/javascripts/app.js" />
+	</patternset>
+	
     <!-- ================================= 
           target: compile
          ================================= -->
@@ -92,6 +97,28 @@
         <echo message="Done compiling scss files!" />
     </target>
 
+	
+    <!-- ================================= 
+          target: Check JavaScript
+         ================================= -->
+	<target name="check_js" description="Checks the Javascript for potential problems">
+		
+		<!-- Load the JSLint library -->
+		<taskdef name="jslint"
+		           classname="com.googlecode.jslint4java.ant.JSLintTask"
+		           classpath="lib/jslint4java-2.0.3.jar" />
+		
+		<!-- Check the Javascript files -->
+		<jslint>
+			<predef>jQuery,$$</predef>
+		    <formatter type="plain" />
+		    <fileset dir="." >
+		    	<patternset refid="application_js_files" />
+		    </fileset>
+		</jslint>
+		
+	</target>
+	
     <!-- ================================= 
           target: Minify JavaScript
          ================================= -->
@@ -99,15 +126,11 @@
 		
 		<!-- The mapper to add "min" to the file name -->
 		<mapper id="minified_js_mapper" type="glob" from="*.js" to="*.min.js" />
-		
-		<!-- Pattern set to match all of the application files -->
-		<patternset id="minify_js_files">
-		    <include name="src/media/javascripts/app.js" />
-		</patternset>
-		
+
+		<!-- Minify the files -->		
 	    <apply executable="java" parallel="false">
 	        <fileset dir="." includes="src/media/javascripts/app.js">
-	        	<patternset refid="minify_js_files" />
+	        	<patternset refid="application_js_files" />
 	        </fileset>
 	        <arg line="-jar" />
 	        <arg path="lib/yuicompressor-2.4.7.jar" />
