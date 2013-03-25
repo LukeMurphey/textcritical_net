@@ -517,6 +517,20 @@
         }
     },
     {
+        "author" : "Dio, Chrysostom",
+        "editor" : "J. de Arnim",
+        "title"  : "Orationes",
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "orationes-chrysostom-armin"
+                }
+            }
+        }
+    },
+    {
         "author" : "Plutarch",
         "editor" : "Frank Cole Babbitt",
         "title"  : "Parallela minora",
@@ -607,6 +621,19 @@
             "transforms" : {
                 "set_meta_data" : {
                     "title_slug" : "speeches-hyperides"
+                }
+            }
+        }
+    },
+    {
+        "author" : "Hyperides",
+        "title"  : "Speeches",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "speeches-hyperides-english"
                 }
             }
         }
@@ -773,14 +800,22 @@
         "import_parameters" : {
             "state_set" : 0,
             "transforms" : {
-            	"update_title_slug" : {
-            		"additional_fields" : "english"
-            	},
+            	"update_title_slug" : { }
                 "set_division_title" : {
                 	"existing_division_title_slug" : "chapter-iii",
                 	"existing_division_sequence_number" : "20",
                 	"descriptor" : "3"
                 }
+            }
+        }
+    },
+    {
+        "author" : "Appian",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+            	"update_title_slug" : { }
             }
         }
     },
@@ -792,9 +827,7 @@
             "ignore_division_markers" : true,
             "use_line_count_for_divisions" : true,
             "transforms" : {
-            	"update_title_slug" : {
-            		"additional_fields" : "english"
-            	}
+            	"update_title_slug" : { }
             }
         }
     },
@@ -823,7 +856,9 @@
         "import_parameters" : {
             "state_set" : 0,
             "transforms" : {
-            	"update_title_slug" : {},
+            	"update_title_slug" : {
+            		"additional_fields" : "babbitt-english"
+            	},
             	"set_division_title" : {
             		"existing_division_title_slug" : "how-to-tell-a-flatterer-from-a-friend-quomodo-adulator-ab-amico-internoscatur-introduction",
             		"existing_division_sequence_number" : 1,
@@ -840,7 +875,9 @@
         "import_parameters" : {
             "state_set" : 0,
             "transforms" : {
-            	"update_title_slug" : {},
+            	"update_title_slug" : {
+            		"additional_fields" : "babbitt-english"
+            	},
             	"set_division_title" : {
             		"existing_division_title_slug" : "how-a-man-may-become-aware-of-his-progress-in-virtue-quomodo-quis-suos-in-virtute-sentiat-profectus-introduction",
             		"existing_division_sequence_number" : 1,
@@ -857,11 +894,25 @@
         "import_parameters" : {
             "state_set" : 0,
             "transforms" : {
-            	"update_title_slug" : {},
+            	"update_title_slug" : {
+            		"additional_fields" : "babbitt-english"
+            	},
             	"set_division_title" : {
             		"existing_division_title_slug" : "virtue-and-vice-de-virtute-et-vitio-introduction",
             		"existing_division_sequence_number" : 1,
             		"descriptor" : "intro"
+            	}
+            }
+        }
+    },
+    {
+        "language" : "English",
+        "editor" : "Frank Cole Babbitt",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+            	"update_title_slug" : {
+            		"additional_fields" : "babbitt-english"
             	}
             }
         }
