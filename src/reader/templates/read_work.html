@@ -31,13 +31,21 @@
         ##############################
         {% endcomment %} 
         {% with chapter_description=chapter.get_division_description %}
+        
         <div class="control-group {% if verse_not_found %}error{% endif %}">
         	<div class="input-append">
         		<input class="span3" placeholder="Jump to reference..." id="chapter" value="{{chapter.get_division_description}}{% if verse_to_highlight %}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse_to_highlight}}{% endif %}" type="text">
 			    <button class="btn" type="submit" id="change-reference"><!-- <i class="icon-play"></i>  -->Go</button>
-			    <button class="btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show-table-of-contents"><!-- <i class="icon-book"></i> -->Table of Contents</button>
-			    <button class="btn" type="submit" id="search-work"><!-- <i class="icon-search"></i>  -->Search</button>
-			    <button id="align-break" class="btn"><i class="icon-align-left"></i></button>
+			    <button class="hidden-phone show-table-of-contents btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show-table-of-contents"><!-- <i class="icon-book"></i> -->Table of Contents</button>
+			    <button class="hidden-phone search-work btn" type="submit" id="search-work"><!-- <i class="icon-search"></i>  -->Search</button>
+			    <button id="align-break" class="hidden-phone btn align-break"><i class="icon-align-left"></i></button>
+			</div>
+        </div>
+        <div class="visible-phone control-group">
+        	<div class="btn-group">
+        		<button class="btn show-table-of-contents {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show-table-of-contents"><!-- <i class="icon-book"></i> -->Table of Contents</button>
+			    <button class="btn search-work" type="submit" id="search-work"><!-- <i class="icon-search"></i>  -->Search</button>
+			    <button id="align-break" class="btn align-break"><i class="icon-align-left"></i></button>
 			</div>
         </div>
         {% endwith %}
@@ -230,8 +238,8 @@ Search for other instances of <%= word %> <a href="/search?q=work:<%= work %>%20
 require(["jquery", "store", "app", "underscore", "bootstrap"], function($) {
 	TextCritical.loadStoreSettings();
     $('#align-break').click( TextCritical.toggleVerseBreak );
-    $('#show-table-of-contents').click( TextCritical.toggleTOC );
-    $('#search-work').click( TextCritical.search_this_work );
+    $('.show-table-of-contents').click( TextCritical.toggleTOC );
+    $('.search-work').click( TextCritical.search_this_work );
     
     // Get the division and verse IDs into an array so that the URL can be updated 
     reference_ids = [];
@@ -279,7 +287,7 @@ require(["jquery", "store", "app", "underscore", "bootstrap"], function($) {
         var $pElem= $(this);
         $pElem.popover(
             {
-              title: "Note",
+              title: getPopTitle($pElem.attr("id")),
               content: getPopContent($pElem.attr("id")),
               html: true,
               placement: "top",
@@ -290,6 +298,18 @@ require(["jquery", "store", "app", "underscore", "bootstrap"], function($) {
     		
     function getPopContent(target) {
         return $("#content_for_" + target).html();
+    };
+    
+    function getPopTitle(target) {
+    	
+    	note_number = $("#" + target).attr("data-note-number");
+    	
+    	if( note_number != null){
+        	return "Note " + note_number;
+    	}
+    	else{
+    		return "Note";
+    	}
     };
     
 });
