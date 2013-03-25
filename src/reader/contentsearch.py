@@ -8,6 +8,8 @@ from whoosh.util import rcompile
 import re
 
 from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from time import time
 import logging
@@ -185,9 +187,22 @@ class WorkIndexer:
         else:
             author_str = unicode()
         
+        # Prepare the content for saving
+        if verse.content is not None and len(verse.content) == 0:
+            content = normalize_unicode(verse.content)
+            
+        else:
+            content = normalize_unicode(verse.original_content)
+            
+        # Strip diacritical marks
+        if work is None or work.language is None or work.language != "english":
+            no_diacritics = strip_accents(verse.content)
+        else:
+            no_diacritics = None
+            
         # Add the content
-        writer.add_document(content       = normalize_unicode(verse.content),
-                            no_diacritics = strip_accents(verse.content),
+        writer.add_document(content       = content,
+                            no_diacritics = no_diacritics,
                             verse_id      = verse.id,
                             work_id       = work.title_slug,
                             section_id    = division.title_slug,
@@ -407,3 +422,11 @@ def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_fo
         search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen), page, pagelen)
             
     return search_results
+
+"""
+# Rebuild the search indexes when the work gets updated
+@receiver(post_save, sender=Work)
+def work_search_index_rebuild(work, **kwargs):
+    indexer = WorkIndexer()
+    indexer.index_work(work)
+"""
