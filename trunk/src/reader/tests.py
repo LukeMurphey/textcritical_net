@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 
 from django.test import TestCase
+from django.db import IntegrityError
 
 from xml.dom.minidom import parseString
 import unicodedata
@@ -16,7 +17,7 @@ from reader.importer import TextImporter, LineNumber
 from reader.importer.Diogenes import DiogenesLemmataImporter, DiogenesAnalysesImporter
 from reader.language_tools.greek import Greek
 from reader import language_tools
-from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Work
+from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Work, WorkAlias
 from reader.views import get_division
 from reader.contentsearch import WorkIndexer, search_verses
 from reader import utils
@@ -1973,3 +1974,51 @@ class TestUnboundBibleImport(TestReader):
         name = self.importer.get_name_from_comment("#name\tGreek OT: LXX [A] Accented")
         
         self.assertEquals( name, "Greek OT: LXX")
+        
+class TestWorkAlias(TestReader):
+    
+    def test_make_alias(self):
+        work = Work(title="Test make alias", title_slug="test-make-alias")
+        work.save()
+        
+        work_alias = WorkAlias.populate_alias_from_work( work )
+        
+        self.assertNotEqual(work_alias, None)
+        self.assertEqual(WorkAlias.objects.filter(work=work, title_slug=work.title_slug).count(), 1)
+    
+    def test_make_alias_detect_overlap(self):
+        
+        work = Work(title="Test make alias", title_slug="test_make_alias_detect_overlap")
+        work.save()
+        
+        work_alias = WorkAlias.populate_alias_from_work( work )
+        self.assertNotEqual(work_alias, None)
+        
+        work.title_slug = "test-make-alias-new"
+        work.save()
+        
+        work2 = Work(title="Test make alias", title_slug="test_make_alias_detect_overlap")
+        work2.save()
+        
+        def populate():
+            WorkAlias.populate_alias_from_work( work2 )
+        
+        self.assertRaises(Exception, populate)
+    
+    def test_make_alias_already_exists(self):
+        
+        work = Work(title="Test_make_alias_ignore_overlap", title_slug="test_make_alias_ignore_overlap")
+        work.save()
+        
+        self.assertNotEqual( WorkAlias.populate_alias_from_work( work ), None )
+        self.assertEqual( WorkAlias.populate_alias_from_work( work ), None )
+    
+    def test_populate_aliases(self):
+        work = Work(title="Test_make_alias_ignore_overlap", title_slug="test_make_alias_ignore_overlap")
+        work.save()
+        
+        work2 = Work(title="Test_make_alias_ignore_overlap", title_slug="test_make_alias_ignore_overlap2")
+        work2.save()
+        
+        self.assertEquals( WorkAlias.populate_from_existing(), 2)
+        
