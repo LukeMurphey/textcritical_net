@@ -305,6 +305,7 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     
     return render_to_response('read_work.html',
                              {'title'                : work.title,
+                              'work_alias'           : work_alias,
                               'warnings'             : warnings,
                               'work'                 : work,
                               'verses'               : verses,
