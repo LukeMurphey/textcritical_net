@@ -12,7 +12,7 @@ import math
 import difflib
 import re
 
-from reader.models import Work, Division, Verse, Author
+from reader.models import Work, WorkAlias, Division, Verse, Author
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy
@@ -227,14 +227,15 @@ def get_division( work, division_0=None, division_1=None, division_2=None, divis
     else:
         return None # We couldn't find a matching division, perhaps one doesn't exist with the given set of descriptors?
     
-@cache_page(8 * hours)
+@cache_page(12 * months)
 def read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
     
     # Some warnings that should be posted to the user
     warnings = []
     
     # Try to get the work
-    work = get_object_or_404(Work, title_slug=title)
+    work_alias = get_object_or_404(WorkAlias, title_slug=title)
+    work = work_alias.work
     
     # Get the chapter
     division, verse_to_highlight = get_division_and_verse(work, division_0, division_1, division_2, division_3, division_4)

@@ -1,5 +1,8 @@
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 import re
 from reader import language_tools
 
@@ -68,6 +71,44 @@ class Work(models.Model):
             self.title_slug = slugify(self.title)
 
         super(Work, self).save(*args, **kwargs)
+        
+class WorkAlias(models.Model):
+    """
+    Represents an alias to a work.
+    """
+    
+    title_slug = models.SlugField(unique=True)
+    work       = models.ForeignKey(Work, blank=False, null=False)
+    
+    @staticmethod
+    def populate_from_existing():
+        works = Work.objects.all()
+        
+        items_created = 0
+        
+        for work in works:
+            
+            if WorkAlias.populate_alias_from_work(work) is not None:
+                items_created = items_created + 1
+    
+        return items_created
+    
+    @staticmethod
+    def populate_alias_from_work( work ):
+        
+        # Determine if the entry already exists for this work
+        if WorkAlias.objects.filter(title_slug=work.title_slug, work=work).count() >= 1:
+            return None
+        
+        # Determine if the entry exists for another work
+        if WorkAlias.objects.filter(title_slug=work.title_slug).exclude(work=work).count() >= 1:
+            raise Exception("Alias already exists for another work")
+                
+        # Otherwise, make the new entry
+        work_alias = WorkAlias( title_slug=work.title_slug, work=work )
+        work_alias.save()
+        
+        return work_alias
     
 class Division(models.Model):
     """
@@ -541,3 +582,6 @@ class WordDescription(models.Model):
         
         return unicode(" ".join(a).strip().lower())
     
+@receiver(post_save, sender=Work)
+def work_alias_create(work, **kwargs):
+    WorkAlias.populate_alias_from_work(work)
