@@ -604,3 +604,19 @@ TextCritical.get_works_search_typeahead_hints = function ( ) {
     	return TextCritical.works_search_typeahead_hints;
 	}
 }
+
+/**
+ * Updates the URL to point to the canonical URL for the work (if necessary).
+ **/
+TextCritical.update_work_url = function ( work_url ) {
+	
+	if( location.pathname !== work_url ){
+		console.info("Updating the URL to reflect the canonical URL");
+		title = document.title;
+		history.replaceState( {}, title, work_url);
+		
+		var template = $("#alert-message").html();
+		$("#messages").append(_.template(template,{title:_.escape("Stale URL"), message: _.escape("The URL you were using was old so redirected to the new one. You may want to update your shortcuts."), level: "info"}));
+		
+	}
+}

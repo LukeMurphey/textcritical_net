@@ -9,13 +9,15 @@
 {% endblock %}
 {% block content %}
 		{% load string_utils %}
+		<div id="messages">
         {% for warning in warnings %}
-        <div class="alert alert-block">
-		    <button type="button" class="close" data-dismiss="alert">x</button>
+        <div class="alert">
+		    <button type="button" class="close" data-dismiss="alert">&times;</button>
 		    <strong>{{warning.0}}:</strong>
 		    {{warning.1}}
 		</div>
         {% endfor %}
+        </div>
     	
         <ul class="breadcrumb">
             <li><a href="{% url home %}">Home</a> <span class="divider">/</span></li>
@@ -104,9 +106,9 @@
         			{% endfor %}
         		</ul>
         	</span>
-        	<a id="chapter_base_url" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">Current chapter</a>
         </span>
-        	
+        <a class="hide" id="chapter-base-url" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">Current chapter</a>
+        
         {% with chapter_description=chapter.get_division_description %}
         
         {% for verse in verses.all %}
@@ -217,6 +219,14 @@ else { %>:
 Search for other instances of <%= word %> <a href="/search?q=work:<%= work %>%20<%= word %>">in this work</a> or in <a href="/search?q=<%= word %>">all works</a>.
 	</script>
 
+	<script type="text/html" id='alert-message'>
+        <div class="alert alert-<%= level %>">
+		    <button type="button" class="close" data-dismiss="alert">&times;</button>
+		    <strong><%= title %>:</strong>
+		    <%= message %>
+		</div>
+	</script>
+
 	<div id="morphology-dialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="morphology-dialog-label" aria-hidden="true">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -272,7 +282,7 @@ require(["jquery", "store", "app", "underscore", "bootstrap"], function($) {
     
     $(".verse_link").click(function() {
     	$("#chapter").val( $(this).attr("data-verse-descriptor") );
-    	return TextCritical.scrollToVerse( $(this).attr("data-verse"), $("#chapter_base_url").attr("href") );
+    	return TextCritical.scrollToVerse( $(this).attr("data-verse"), $("#chapter-base-url").attr("href") );
     	
     });
     
@@ -311,7 +321,9 @@ require(["jquery", "store", "app", "underscore", "bootstrap"], function($) {
     		return "Note";
     	}
     };
-    
+    {% if work_alias.title_slug != work.title_slug %}
+    TextCritical.update_work_url( $("#chapter-base-url").attr("href") );
+    {% endif %}
 });
 </script>
 {% endblock %}
