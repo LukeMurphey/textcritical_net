@@ -45,6 +45,8 @@ TextCritical.toggleVerseBreak = function (){
 
 /**
  * Escape the identifier so that if it contains periods, it can still be used as a jQuery selector.
+ * 
+ * @param id The identifier to escape
  **/
 TextCritical.escapeIdentifier = function (id) {
 	return id.replace(".", "\\.");
@@ -52,6 +54,7 @@ TextCritical.escapeIdentifier = function (id) {
 
 /**
  * Scrolls to the given anchor.
+ * @param id The id to scroll to
  **/
 TextCritical.scrolltoAnchor = function (id) {
 	
@@ -67,6 +70,9 @@ TextCritical.scrolltoAnchor = function (id) {
 
 /**
  * Highlight a selected verse without performing a request to the server.
+ * 
+ * @param verse_number The verse number that we are selecting
+ * @param base_chapter_url The URL of the current chapter
  **/
 TextCritical.scrollToVerse = function (verse_number, base_chapter_url) {
 
@@ -121,7 +127,7 @@ TextCritical.loadStoreSettings = function () {
 /**
  * Slugifies some text.
  * 
- * @param string The text to slugify.
+ * @param text The text to slugify.
  **/
 TextCritical.slugify = function (text) {
 	text = text.replace(/[^-a-zA-Z0-9,&\s]+/ig, '');
@@ -133,8 +139,8 @@ TextCritical.slugify = function (text) {
 /**
  * Determines the path that corresponds to the given reference.
  * 
- * @param string the reference to go to (like "Romans 14:1")
- * @param array an array of the current division markers. Used to help the function not break on division descriptors that have spaces in the name (like "1 Thessalonians")
+ * @param reference the reference to go to (like "Romans 14:1")
+ * @param reference_ids an array of the current division markers. Used to help the function not break on division descriptors that have spaces in the name (like "1 Thessalonians")
  **/
 TextCritical.resolve_path = function ( reference, reference_ids ) {
 	
@@ -209,6 +215,9 @@ TextCritical.word_lookup = function () {
 
 /**
  * Opens a dialog that obtains the morphology of a word.
+ * 
+ * @param word the word to look up
+ * @param work the work that contains the word we are looking up
  **/
 TextCritical.open_morphology_dialog = function ( word, work ) {
 	
@@ -254,6 +263,7 @@ TextCritical.open_morphology_dialog = function ( word, work ) {
 
 /**
  * Trims the string.
+ * 
  * @param s the string to be stripped
  */
 TextCritical.trim = function (s) {
@@ -276,6 +286,7 @@ TextCritical.unhighlight_all_words = function () {
 
 /**
  * Highlights all of the word nodes with the given text.
+ * 
  * @param word the word to highlight
  */
 TextCritical.highlight_word = function ( word ) {
@@ -296,6 +307,8 @@ TextCritical.highlight_word = function ( word ) {
 /**
  * Determine if the results has actual words to kick off a search to look for (other than just the parts of the search specifying
  * the work to search).
+ * 
+ * @param query The query to perform a search on
  **/
 TextCritical.contains_search_words = function ( query ) {
 	split_query = query.match(/([_0-9a-z]+[:][-_0-9a-z]+)|([\w_]+[:]["][-\w ]*["])|([^ :]+)/gi);
@@ -311,9 +324,13 @@ TextCritical.contains_search_words = function ( query ) {
 
 /**
  * Set the cursor to the end of an input.
+ * 
+ * @param elem Set the cursor at the end of the given element
  **/
 TextCritical.set_caret_at_end = function (elem) {
+	
     var elemLen = elem.value.length;
+    
     // For IE Only
     if (document.selection) {
         // Set focus
@@ -336,6 +353,9 @@ TextCritical.set_caret_at_end = function (elem) {
 
 /**
  * Update the URL according to the word and page specified.
+ * 
+ * @param query The search query
+ * @param page The page number
  */
 TextCritical.set_search_url = function ( query, page ) {
 	
@@ -355,6 +375,9 @@ TextCritical.set_search_url = function ( query, page ) {
 /**
  * Perform a search and render the results.
  * Note: this users the blockUI jQuery plugin.
+ * 
+ * @param page The page number of the search results
+ * @param update_url A boolean indicating if the URL ought to be updated 
  **/
 TextCritical.do_search = function ( page, update_url ) {
 	
@@ -455,6 +478,8 @@ TextCritical.do_search = function ( page, update_url ) {
 
 /**
  * Show or hide the search help depending on the parameter (by default, it shows it).
+ * 
+ * @param show A boolean indicating whether the search help should be shown
  */
 TextCritical.show_search_help = function ( show ) {
 
@@ -505,6 +530,8 @@ TextCritical.do_search_next = function ( ) {
 
 /**
  * Change to the page in the search results based on the offset provided. An offset of -1 goes back one page, an offset of 1 goes forward one.
+ * 
+ * @param offset The amount of change in the page number
  */
 TextCritical.change_page = function ( offset ) {
 	
@@ -550,6 +577,8 @@ TextCritical.do_search_previous = function ( ) {
 
 /**
  * Update the search results when the user presses the back button.
+ * 
+ * @param event The event from the popstate
  **/
 TextCritical.search_page_popstate = function ( event ) {
 	
@@ -607,6 +636,25 @@ TextCritical.get_works_search_typeahead_hints = function ( ) {
 
 /**
  * Updates the URL to point to the canonical URL for the work (if necessary).
+ * 
+ * @param title The title of the message
+ * @param message The message to show
+ * @param level The level of the message (needs to be either 'error', 'info', or 'success')
+ **/
+TextCritical.show_alert = function ( title, message, level ) {
+	
+	if( level == undefined || level == null ){
+		level = 'info';
+	}
+	
+	var template = $("#alert-message").html();
+	$("#messages").append(_.template(template,{title:_.escape(title), message: _.escape(message), level: level}));
+}
+
+/**
+ * Updates the URL to point to the canonical URL for the work (if necessary).
+ * 
+ * @param work_url The new URL to use
  **/
 TextCritical.update_work_url = function ( work_url ) {
 	
@@ -615,8 +663,6 @@ TextCritical.update_work_url = function ( work_url ) {
 		title = document.title;
 		history.replaceState( {}, title, work_url);
 		
-		var template = $("#alert-message").html();
-		$("#messages").append(_.template(template,{title:_.escape("Stale URL"), message: _.escape("The URL you were using was old so redirected to the new one. You may want to update your shortcuts."), level: "info"}));
-		
+		TextCritical.show_alert( "Stale URL", "The URL you were using was old so redirected to the new one. You may want to update your shortcuts.",  "info");
 	}
 }
