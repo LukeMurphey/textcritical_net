@@ -9,15 +9,6 @@
 {% endblock %}
 {% block content %}
 		{% load string_utils %}
-		<div id="messages">
-        {% for warning in warnings %}
-        <div class="alert">
-		    <button type="button" class="close" data-dismiss="alert">&times;</button>
-		    <strong>{{warning.0}}:</strong>
-		    {{warning.1}}
-		</div>
-        {% endfor %}
-        </div>
     	
         <ul class="breadcrumb">
             <li><a href="{% url home %}">Home</a> <span class="divider">/</span></li>
@@ -176,7 +167,6 @@
 			
 		<script type="text/html" id='morphology-info'>
 
-
 <% if ( parses.length == 0 ) { %>
 <h4>Parse not found</h4>
 No parses could be found for <%= word %>.
@@ -217,14 +207,6 @@ else { %>:
 </table>
 <% } %>
 Search for other instances of <%= word %> <a href="/search?q=work:<%= work %>%20<%= word %>">in this work</a> or in <a href="/search?q=<%= word %>">all works</a>.
-	</script>
-
-	<script type="text/html" id='alert-message'>
-        <div class="alert alert-<%= level %>">
-		    <button type="button" class="close" data-dismiss="alert">&times;</button>
-		    <strong><%= title %>:</strong>
-		    <%= message %>
-		</div>
 	</script>
 
 	<div id="morphology-dialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="morphology-dialog-label" aria-hidden="true">

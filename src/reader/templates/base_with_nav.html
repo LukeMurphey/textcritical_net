@@ -26,8 +26,25 @@
     </div>
     
     <div class="container">
+	  <div id="messages">
+	  	{% for warning in warnings %}
+	    <div class="alert">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+			<strong>{{warning.0}}:</strong>
+			{{warning.1}}
+		</div>
+	    {% endfor %}
+	  </div>
+    
     {% block content %}{% endblock %}
-
+  
+	  <script type="text/html" id='alert-message'>
+ 	 	<div class="alert alert-<%= level %>">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+			<strong><%= title %>:</strong>
+			<%= message %>
+		</div>
+  	</script>
     <footer>
         <hr>
         <div class="pull-left">
