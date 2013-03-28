@@ -193,6 +193,26 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
    		});
 		
     });
+    
+    describe("Shorten string", function() {
+    	
+		it("using the default shorten text", function() {
+			expect(TextCritical.shorten("This is a long string that ought to be truncated", 20) ).toEqual( "This is a long&hellip;" );
+   		});
+		
+		it("with non-default shorten text", function() {
+			expect(TextCritical.shorten("This is a long string", 20, true, "<br />click to read more...") ).toEqual( "This is a long<br />click to read more..." );
+   		});
+		
+		it("that is right at limit", function() {
+			expect(TextCritical.shorten("This is a long string", 21) ).toEqual( "This is a long string" );
+   		});
+		
+		it("that is just under the limit", function() {
+			expect(TextCritical.shorten("This is a long string", 20) ).toEqual( "This is a long&hellip;" );
+   		});
+		
+    });
 
 	// Setup jasmine for execution    
     (function() {

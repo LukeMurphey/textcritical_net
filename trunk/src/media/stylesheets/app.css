@@ -77,12 +77,11 @@ footer .addthis_toolbox {
 
 .verse_container {
   display: inline;
-  line-height: 25px;
-  padding: 5px; }
+  line-height: 25px; }
 
 .block {
   display: block;
-  margin-top: 16px; }
+  margin-top: 12px; }
 
 .table_of_contents {
   display: none;
@@ -215,53 +214,65 @@ body.dark .verse_container.highlighted {
 .division_5 {
   padding-left: 96px; }
 
-.verse .speaker {
+.verse .word {
+  cursor: pointer;
+  cursor: hand; }
+.verse .word:hover {
+  text-decoration: underline; }
+
+.view_read_work .speaker {
   font-weight: bold;
   display: block;
   margin-top: 12px; }
-.verse .l {
+.view_read_work .l {
   display: block; }
-.verse .gap {
+.view_read_work .gap {
   content: "..."; }
-.verse .quote, .verse .q {
+.view_read_work .quote, .view_read_work .q {
   font-style: italic; }
-.verse .docauthor {
+.view_read_work .docauthor {
   display: block;
   padding-bottom: 16px; }
-.verse .label {
-  /* display: block; */
+.view_read_work .label {
   margin-left: 8px;
   margin-right: 4px; }
-.verse .note-tag {
+.view_read_work .note-tag {
   margin-left: 4px;
-  margin-right: 2px; }
-.verse .lb {
+  margin-right: 2px;
+  cursor: hand;
+  cursor: pointer; }
+.view_read_work .read-more {
+  margin-top: 16px; }
+.view_read_work .lb {
   display: block; }
-.verse .div3 {
+.view_read_work .div3 {
   padding-top: 16px;
   display: block; }
-.verse .quote > .title {
+.view_read_work .quote > .title {
   font-weight: bold;
   display: block; }
-.verse .castlist:before {
+.view_read_work .castlist:before {
   content: "Cast list: "; }
-.verse .castlist > .castitem:after {
+.view_read_work .castlist > .castitem:after {
   content: ", "; }
-.verse .castlist > .castitem:last-child:after {
+.view_read_work .castlist > .castitem:last-child:after {
   content: ""; }
-.verse .argument {
+.view_read_work .argument {
   font-style: italic; }
 
-#morphology-dialog-content {
-  height: 240px; }
+#popup-dialog-content {
+  max-height: 240px; }
 
-.word {
-  cursor: pointer;
-  cursor: hand; }
+/*
+.word{
+	cursor:pointer;
+	cursor:hand;		
+}
 
-.word:hover {
-  text-decoration: underline; }
-
+.word:hover{
+	text-decoration: underline;
+}
+*/
 .dialog-extra-options {
   margin-top: 6px; }
 

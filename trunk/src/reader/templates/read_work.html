@@ -156,7 +156,7 @@
         </div>
         {% endif %}
 
-		<script type="text/html" id='morphology-loading'>
+		<script type="text/html" id='dialog-loading'>
 			<div class="loading" style="padding-top: 60px;">
 				<%= message %>
 				<div class="progress progress-striped active">
@@ -209,15 +209,15 @@ else { %>:
 Search for other instances of <%= word %> <a href="/search?q=work:<%= work %>%20<%= word %>">in this work</a> or in <a href="/search?q=<%= word %>">all works</a>.
 	</script>
 
-	<div id="morphology-dialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="morphology-dialog-label" aria-hidden="true">
+	<div id="popup-dialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="popup-dialog-label" aria-hidden="true">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3 id="morphology-dialog-label">Morphology</h3>
+			<h3 id="popup-dialog-label">Dialog</h3>
 		</div>
-		<div class="modal-body" id="morphology-dialog-content">
+		<div class="modal-body" id="popup-dialog-content">
 		</div>
 		<div class="modal-footer">
-			<span class="pull-left dialog-extra-options" id="morphology-dialog-extra-options"></span>
+			<span class="pull-left dialog-extra-options" id="popup-dialog-extra-options"></span>
 			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
 		</div>
 	</div>
@@ -273,36 +273,25 @@ require(["jquery", "store", "app", "underscore", "bootstrap"], function($) {
     {% endif %}
     
     $(".word").click( TextCritical.word_lookup );
-    $(".word").hover(TextCritical.highlight_selected_word, TextCritical.unhighlight_all_words);
+    $(".word").hover( TextCritical.highlight_selected_word, TextCritical.unhighlight_all_words );
     
     $(".note-tag").each(function() {
         var $pElem= $(this);
+                
         $pElem.popover(
-            {
-              title: getPopTitle($pElem.attr("id")),
-              content: getPopContent($pElem.attr("id")),
-              html: true,
-              placement: "top",
-              trigger: "hover"
-            }
-        );
+	            {
+	              title: TextCritical.get_note_title($pElem.attr("id")),
+	              content: TextCritical.get_note_content($pElem.attr("id"), 200, ' ...<div class="read-more">Click to read more</div>'),
+	              html: true,
+	              placement: "top",
+	              trigger: "hover"
+	            }
+	      );
+        
+        $pElem.click( TextCritical.open_note_dialog );
     });
     		
-    function getPopContent(target) {
-        return $("#content_for_" + target).html();
-    };
-    
-    function getPopTitle(target) {
-    	
-    	note_number = $("#" + target).attr("data-note-number");
-    	
-    	if( note_number != null){
-        	return "Note " + note_number;
-    	}
-    	else{
-    		return "Note";
-    	}
-    };
+
     {% if work_alias.title_slug != work.title_slug %}
     TextCritical.update_work_url( $("#chapter-base-url").attr("href") );
     {% endif %}
