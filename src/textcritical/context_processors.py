@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.urlresolvers import resolve
 
 def get_setting_or_default( setting, default=None ):
     try:
@@ -17,3 +18,8 @@ def global_settings(request):
     settings_dict['USE_MINIFIED'] = get_setting_or_default("USE_MINIFIED", False)
     
     return settings_dict
+
+def get_url_name(request):
+    return {
+       'url_name': resolve(request.path_info).url_name
+     }
