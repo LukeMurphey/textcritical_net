@@ -52,7 +52,7 @@
   {% block style %}{% endblock %}
   
 </head>
-<body {% if USE_DARK_THEME|default_if_none:0 %}class="dark"{% endif %}>
+<body {% if USE_DARK_THEME|default_if_none:0 %}class="dark view_{{url_name}}"{% endif %}>
   <!--[if lt IE 7]>
   	 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
   <![endif]-->
