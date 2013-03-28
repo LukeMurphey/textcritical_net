@@ -216,6 +216,36 @@ TextCritical.word_lookup = function () {
 /**
  * Opens a dialog that obtains the morphology of a word.
  * 
+ * @param title the title of the dialog
+ * @param content the content for the dialog
+ * @param extra_options the content for the extra options section
+ **/
+TextCritical.open_dialog = function ( title, content, extra_options ) {
+	
+	if ( extra_options == null || extra_options == undefined ){
+		extra_options = '';
+	}
+	
+	// Reset the content to the loading content
+	var loading_template = $("#dialog-loading").html();
+	$("#popup-dialog-content").html(content);
+	
+	// Set the link to Google
+	var extra_options_template = 'Look up at <a target="_blank" href="http://www.perseus.tufts.edu/hopper/morph?l=<%= word %>&la=greek">Perseus</a> or <a target="_blank" href="https://www.google.com/search?q=<%= word %>">Google</a>';
+	
+	$("#popup-dialog-extra-options").html(extra_options);
+	
+	// Set the title
+	$("#popup-dialog-label").text(title);
+	
+	// Open the form
+	$("#popup-dialog").modal();
+	
+}
+
+/**
+ * Opens a dialog that obtains the morphology of a word.
+ * 
  * @param word the word to look up
  * @param work the work that contains the word we are looking up
  **/
@@ -227,19 +257,19 @@ TextCritical.open_morphology_dialog = function ( word, work ) {
 	word = TextCritical.trim(word);
 	
 	// Reset the content to the loading content
-	var loading_template = $("#morphology-loading").html();
-	$("#morphology-dialog-content").html(_.template(loading_template,{ message: "Looking up morphology for " +  _.escape(word) + "..." }));
+	var loading_template = $("#dialog-loading").html();
+	$("#popup-dialog-content").html(_.template(loading_template,{ message: "Looking up morphology for " +  _.escape(word) + "..." }));
 	
 	// Set the link to Google
 	var extra_options_template = 'Look up at <a target="_blank" href="http://www.perseus.tufts.edu/hopper/morph?l=<%= word %>&la=greek">Perseus</a> or <a target="_blank" href="https://www.google.com/search?q=<%= word %>">Google</a>';
 	
-	$("#morphology-dialog-extra-options").html(_.template(extra_options_template,{ word : word }));
+	$("#popup-dialog-extra-options").html(_.template(extra_options_template,{ word : word }));
 	
 	// Set the title
-	$("#morphology-dialog-label").text("Morphology: " +  _.escape(word) );
+	$("#popup-dialog-label").text("Morphology: " +  _.escape(word) );
 	
 	// Open the form
-	$("#morphology-dialog").modal();
+	$("#popup-dialog").modal();
 	
 	// Submit the AJAX request to display the information
 	$.ajax({
@@ -248,7 +278,7 @@ TextCritical.open_morphology_dialog = function ( word, work ) {
 		
 		// Render the lemma information
 		var template = $("#morphology-info").html();
-		$("#morphology-dialog-content").html(_.template(template,{parses:data, word: _.escape(word), work: work}));
+		$("#popup-dialog-content").html(_.template(template,{parses:data, word: _.escape(word), work: work}));
 		
 		// Set the lemmas to be links
 		$("a.lemma").click(TextCritical.word_lookup);
@@ -256,7 +286,7 @@ TextCritical.open_morphology_dialog = function ( word, work ) {
 		console.info( "Successfully performed a request for the morphology of " + word );
 		
 	}).error( function(jqXHR, textStatus, errorThrown) {
-		$("#morphology-dialog-content").html( "<h4>Parse failed</h4> The request to parse could not be completed" );
+		$("#popup-dialog-content").html( "<h4>Parse failed</h4> The request to parse could not be completed" );
 		console.error( "The request for the morphology failed for " + word );
 	});
 }
@@ -268,6 +298,31 @@ TextCritical.open_morphology_dialog = function ( word, work ) {
  */
 TextCritical.trim = function (s) {
     return String(s).replace(/^\s+|\s+$/g, '');
+}
+
+/**
+ * Shorten a string.
+ * 
+ * @param s the string to be stripped
+ * @param a the desired length
+ * @param use_word_boundary if true, then the string will be shortened while attempting to avoid a break in a word
+ * @param shorten_text the text to add if the string is shortened
+ */
+TextCritical.shorten = function(s, n, use_word_boundary, shorten_text){
+	
+	if( shorten_text == undefined || shorten_text == null ){
+		shorten_text = '&hellip;';
+	}
+	
+	if( use_word_boundary == undefined || use_word_boundary == null ){
+		use_word_boundary = true;
+	}
+	
+    var toLong = s.length > n,
+    s_ = toLong ? s.substr(0,n-1) : s;
+    s_ = use_word_boundary && toLong ? s_.substr(0,s_.lastIndexOf(' ')) : s_;
+    return  toLong ? s_ + shorten_text : s_;
+	
 }
 
 /**
@@ -665,4 +720,50 @@ TextCritical.update_work_url = function ( work_url ) {
 		
 		TextCritical.show_alert( "Stale URL", "The URL you were using was old so redirected to the new one. You may want to update your shortcuts.",  "info");
 	}
+}
+
+/**
+ * Get the content associated with the note with the target id.
+ **/
+TextCritical.get_note_content = function (target, shorten_to, shorten_text) {
+	
+	if( shorten_to == undefined || shorten_to == null ){
+		shorten_to = false;
+	}
+	
+	if( shorten_to > 0 ){
+		content = TextCritical.shorten( $("#content_for_" + target).text(), shorten_to, true, shorten_text);
+	}
+	else{
+		content = $("#content_for_" + target).html();
+	}
+	
+	return content
+};
+
+/**
+ * Get the title associated with the note with the target id.
+ **/
+TextCritical.get_note_title = function (target) {
+	
+	note_number = $("#" + target).attr("data-note-number");
+	
+	if( note_number != null){
+    	return "Note " + note_number;
+	}
+	else{
+		return "Note";
+	}
+};
+
+/**
+ * Opens the a dialog to show the note that was clicked.
+ **/
+TextCritical.open_note_dialog = function ( note_element ) {
+	
+	title = TextCritical.get_note_title( $(this).attr("id") );
+	content = TextCritical.get_note_content( $(this).attr("id") );
+	
+	TextCritical.open_dialog( title, content );
+	return false;
 }

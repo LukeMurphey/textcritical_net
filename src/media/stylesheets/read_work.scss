@@ -11,12 +11,11 @@
 .verse_container{
     display: inline;
     line-height: 25px;
-    padding: 5px;
 }
 
 .block{
     display: block;
-    margin-top: 16px;
+    margin-top: 12px;
 }
 
 .table_of_contents{
@@ -80,6 +79,19 @@ body.dark .verse_container.highlighted{
 
 .verse{
     
+	.word{
+		cursor:pointer;
+		cursor:hand;		
+	}
+	
+	.word:hover{
+		text-decoration: underline;
+	}
+}
+
+
+.view_read_work{
+    
     .speaker {
         font-weight: bold;
         display: block;
@@ -108,7 +120,6 @@ body.dark .verse_container.highlighted{
     }
     
     .label{
-    	/* display: block; */
     	margin-left: 8px;
     	margin-right: 4px;
     }
@@ -116,7 +127,13 @@ body.dark .verse_container.highlighted{
     .note-tag{
     	margin-left: 4px;
     	margin-right: 2px;
+    	cursor: hand;
+    	cursor: pointer;
     }
+    
+	.read-more{
+		margin-top: 16px;
+	}
     
     .lb{
     	display: block;
@@ -147,13 +164,13 @@ body.dark .verse_container.highlighted{
     .argument{
     	font-style:italic;
     }
-    
 }
 
-#morphology-dialog-content{
-	height: 240px;
+#popup-dialog-content{
+	max-height: 240px;
 }
 
+/*
 .word{
 	cursor:pointer;
 	cursor:hand;		
@@ -162,6 +179,7 @@ body.dark .verse_container.highlighted{
 .word:hover{
 	text-decoration: underline;
 }
+*/
 
 .dialog-extra-options{
 	margin-top: 6px;
