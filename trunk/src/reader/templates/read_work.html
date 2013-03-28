@@ -87,7 +87,7 @@
         {% endcomment %}
         
         {% if chapter.parent_division and divisions and divisions|length > 1 %}
-        <h2>{{chapter.get_division_description_titles}}</h2>
+        <h2>{{chapter.get_division_description_titles.title}}</h2>
         {% endif %}
         <span class="hide">
         	<span id="divisions">
