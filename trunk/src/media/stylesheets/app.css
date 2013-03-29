@@ -233,7 +233,7 @@ body.dark .verse_container.highlighted {
 .view_read_work .docauthor {
   display: block;
   padding-bottom: 16px; }
-.view_read_work .label {
+.view_read_work .label:not(.block) .label {
   margin-left: 8px;
   margin-right: 4px; }
 .view_read_work .note-tag {
@@ -447,6 +447,10 @@ input[type='checkbox'] {
   position: relative;
   top: -3px;
   *overflow: hidden; }
+
+.license-image {
+  display: block;
+  margin-top: 8px; }
 
 .actions_404 {
   margin-top: 10px;
