@@ -107,7 +107,11 @@ body.dark .verse-container.highlighted{
     	color: #999999;
     }
     
-    .milestone:after {
+    [data-rend=italics]{
+    	font-style: italic;
+    }
+    
+    .milestone[data-n].milestone[data-unit]:after {
 		font-size: smaller;
 		margin: 3px;
 		content: "[" attr(data-unit) " " attr(data-n) "]";
