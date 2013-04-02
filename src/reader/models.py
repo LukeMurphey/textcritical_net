@@ -3,8 +3,12 @@ from django.template.defaultfilters import slugify
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+import logging
 import re
 from reader import language_tools
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 class Author(models.Model):
     """
@@ -71,6 +75,106 @@ class Work(models.Model):
             self.title_slug = slugify(self.title)
 
         super(Work, self).save(*args, **kwargs)
+        
+
+class RelatedWork(models.Model):
+    """
+    Represents a relationship between two works.
+    """
+    
+    work           = models.ForeignKey(Work, related_name="work")
+    related_work   = models.ForeignKey(Work, related_name="related_work")
+    related_levels = models.IntegerField(null=True)
+    
+    class Meta:
+        unique_together = ("work", "related_work")
+    
+    @staticmethod
+    def are_divisions_identical( first_work, second_work ):
+        """
+        Determine if the divisions in the given works appear to be identical.
+        """
+        
+        # Get a list of the divisions
+        divisions_first_work = Division.objects.filter( work = first_work ).order_by( "sequence_number" )
+        divisions_second_work = Division.objects.filter( work = second_work ).order_by( "sequence_number" )
+        
+        # Make sure the divisions are consistent
+        if divisions_first_work.count() != divisions_second_work.count():
+            logger.info("Division counts are different, these works are not identical, first_work=%s, second_work=%s",  first_work.title_slug, second_work.title_slug )
+            return False
+        
+        # Compare the divisions
+        for i in range(0, divisions_first_work.count() ):
+            
+            # Compare the divisions
+            if divisions_first_work[i].descriptor != divisions_second_work[i].descriptor:
+                logger.info("Division counts are different, these works are not identical, first_work=%s, division_first_work=%s, second_work=%s, division_second_work=%s", divisions_first_work[i].work.title_slug, divisions_first_work[i].title_slug, divisions_second_work[i].work.title_slug, divisions_second_work[i].title_slug )
+                return False
+            
+        return True
+    
+    @classmethod
+    def are_works_identical( cls, first_work, second_work ):
+        """
+        Determine if these works appear to be identical.
+        """
+        
+        if first_work.title != second_work.title:
+            return False
+        
+        # Compare the authors
+        first_work_authors = first_work.authors.all().order_by("name")
+        second_work_authors = second_work.authors.all().order_by("name")
+        
+        if first_work_authors.count() != second_work_authors.count():
+            return False
+        
+        for i in range(0, first_work_authors.count() ):
+            if first_work_authors[i].name != second_work_authors[i].name:
+                return False
+        
+        # Compare the editors
+        first_work_editors = first_work.editors.all().order_by("name")
+        second_work_editors = second_work.editors.all().order_by("name")
+        
+        if first_work_editors.count() != second_work_editors.count():
+            return False
+        
+        for i in range(0, first_work_editors.count() ):
+            if first_work_editors[i].name != second_work_editors[i].name:
+                return False
+            
+        return cls.are_divisions_identical( first_work, second_work )
+    
+    @classmethod
+    def autodiscover( cls ):
+        """
+        Automatically discover related works and make references to them.
+        """
+        
+        works = Work.objects.all()
+        
+        for first_work in Work.objects.all():
+            
+            for second_work in Work.objects.all():
+                
+                if second_work.id != first_work.id and cls.are_works_identical(first_work, second_work):
+                    
+                    print "Examining", first_work.title_slug, "to", second_work.title_slug
+                    
+                    # Make the reference for the first work
+                    if RelatedWork.objects.filter(work=first_work, related_work=second_work).count() == 0:
+                        related_work = RelatedWork(work=first_work, related_work=second_work)
+                        related_work.save()
+                    
+                    # Make the reference backwards
+                    if RelatedWork.objects.filter(work=second_work, related_work=first_work).count() == 0:
+                        related_work2 = RelatedWork(work=second_work, related_work=first_work)
+                        related_work2.save()
+                    
+                    logger.info("Made a reference between two works, first_work=%s, second_work=%s" % ( first_work.title_slug, second_work.title_slug) )
+            
         
 class WorkAlias(models.Model):
     """
