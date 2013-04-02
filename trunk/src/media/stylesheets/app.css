@@ -52,6 +52,19 @@ footer .addthis_toolbox {
   display: inline;
   padding: 0 0; }
 
+.control-group .input-append .btn-group .last-button {
+  -webkit-border-radius: 0 4px 4px 0;
+  -moz-border-radius: 0 4px 4px 0;
+  border-radius: 0 4px 4px 0; }
+
+.control-group .input-append .btn-group .middle-button {
+  -webkit-border-radius: 0 0 0 0;
+  -moz-border-radius: 0 0 0 0;
+  border-radius: 0 0 0 0; }
+
+.input-append > .btn-group + .btn-group, .no-left-margin {
+  margin-left: -1px; }
+
 /* -----------------------------------------
    Homepage
    ----------------------------------------- */
@@ -75,7 +88,7 @@ footer .addthis_toolbox {
 .verse.number {
   font-weight: bold; }
 
-.verse_container {
+.verse-container {
   display: inline;
   line-height: 25px; }
 
@@ -83,19 +96,22 @@ footer .addthis_toolbox {
   display: block;
   margin-top: 12px; }
 
-.table_of_contents {
+.table-of-contents {
   display: none;
   padding: 0px;
   margin: 0px;
   overflow: hidden; }
+  .table-of-contents .nav-list {
+    max-height: 350px;
+    overflow-y: auto; }
 
-.verse_link:visited {
+.verse-link:visited {
   color: #EEE; }
-.verse_link:active {
+.verse-link:active {
   color: #EEE; }
-.verse_link:link {
+.verse-link:link {
   color: #EEE; }
-.verse_link:hover {
+.verse-link:hover {
   color: #08C; }
 
 @-webkit-keyframes highlighted {
@@ -178,7 +194,7 @@ footer .addthis_toolbox {
   100% {
     background: #454545; } }
 
-.verse_container.highlighted {
+.verse-container.highlighted {
   background-color: #EEE;
   border-radius: 3px;
   -moz-border-radius: 3px;
@@ -188,7 +204,7 @@ footer .addthis_toolbox {
   -o-animation: highlighted 2.5s;
   animation: highlighted 2.5s; }
 
-body.dark .verse_container.highlighted {
+body.dark .verse-container.highlighted {
   background-color: #454545;
   -moz-animation: highlighted-dark 2.5s;
   -webkit-animation: highlighted-dark 2.5s;
@@ -202,16 +218,16 @@ body.dark .verse_container.highlighted {
   background-color: #49AFCD;
   color: white; }
 
-.division_2 {
+.division-2 {
   padding-left: 24px; }
 
-.division_3 {
+.division-3 {
   padding-left: 48px; }
 
-.division_4 {
+.division-4 {
   padding-left: 72px; }
 
-.division_5 {
+.division-5 {
   padding-left: 96px; }
 
 .verse .word {
@@ -224,6 +240,14 @@ body.dark .verse_container.highlighted {
   font-weight: bold;
   display: block;
   margin-top: 12px; }
+.view_read_work .milestone {
+  color: #999999; }
+.view_read_work [data-rend=italics] {
+  font-style: italic; }
+.view_read_work .milestone[data-n].milestone[data-unit]:after {
+  font-size: smaller;
+  margin: 3px;
+  content: "[" attr(data-unit) " " attr(data-n) "]"; }
 .view_read_work .l {
   display: block; }
 .view_read_work .gap {
@@ -242,7 +266,8 @@ body.dark .verse_container.highlighted {
   cursor: hand;
   cursor: pointer; }
 .view_read_work .read-more {
-  margin-top: 16px; }
+  margin-top: 16px;
+  display: block; }
 .view_read_work .lb {
   display: block; }
 .view_read_work .div3 {
@@ -260,19 +285,6 @@ body.dark .verse_container.highlighted {
 .view_read_work .argument {
   font-style: italic; }
 
-#popup-dialog-content {
-  max-height: 240px; }
-
-/*
-.word{
-	cursor:pointer;
-	cursor:hand;		
-}
-
-.word:hover{
-	text-decoration: underline;
-}
-*/
 .dialog-extra-options {
   margin-top: 6px; }
 

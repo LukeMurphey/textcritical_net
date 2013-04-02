@@ -12,7 +12,7 @@ import math
 import difflib
 import re
 
-from reader.models import Work, WorkAlias, Division, Verse, Author
+from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy
@@ -303,11 +303,19 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     else:
         next_chapter = None
     
+    # Get related works
+    related_works_tmp = RelatedWork.objects.filter(work=work)#.values_list('related_work__title_slug', flat=True)
+    related_works = []
+    
+    for r in related_works_tmp:
+        related_works.append(r.related_work)
+    print len(related_works)
     return render_to_response('read_work.html',
                              {'title'                : work.title,
                               'work_alias'           : work_alias,
                               'warnings'             : warnings,
                               'work'                 : work,
+                              'related_works'        : related_works,
                               'verses'               : verses,
                               'divisions'            : divisions,
                               'chapter'              : chapter,

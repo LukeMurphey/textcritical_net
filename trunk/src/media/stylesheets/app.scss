@@ -65,6 +65,22 @@ footer .addthis_toolbox {
     padding: 0 0;
 }
 
+.control-group .input-append .btn-group .last-button {
+	-webkit-border-radius: 0 4px 4px 0;
+	-moz-border-radius: 0 4px 4px 0;
+	border-radius: 0 4px 4px 0;
+}
+
+.control-group .input-append .btn-group .middle-button{
+	-webkit-border-radius: 0 0 0 0;
+	-moz-border-radius: 0 0 0 0;
+	border-radius: 0 0 0 0;
+}
+
+.input-append > .btn-group + .btn-group, .no-left-margin {
+	margin-left: -1px;
+}
+
 @import "home";
 @import "read_work";
 @import "data_tables";

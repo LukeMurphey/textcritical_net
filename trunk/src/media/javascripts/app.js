@@ -8,23 +8,31 @@ var TextCritical = {};
  * Causes the verses to break onto separate lines. 
  **/
 TextCritical.setFormatBreakLine = function () {
-	$('.verse_container').addClass("block");
-	$('#align_break').addClass('active');
+	$('.verse-container').addClass("block");
+	$('.align-break').addClass('active');
 }
 
 /**
  * Causes the verses to not break onto separate lines. 
  **/
 TextCritical.unSetFormatBreakLine = function () {
-	$('.verse_container').removeClass("block");
-	$('#align_break').removeClass('active');
+	$('.verse-container').removeClass("block");
+	$('.align-break').removeClass('active');
 }
 
 /**
  * Toggles the table-of-contents.
  **/
 TextCritical.toggleTOC = function (){
-	$('.table_of_contents').toggle('fast', 'swing');
+	
+	if( $('.table-of-contents').is(":visible") ){
+		$('#show-table-of-contents-phone').text("Show table of contents");
+	}
+	else{
+		$('#show-table-of-contents-phone').text("Hide table of contents");
+	}
+	
+	$('.table-of-contents').toggle('fast', 'swing');
 }
 
 /**
@@ -83,7 +91,7 @@ TextCritical.scrollToVerse = function (verse_number, base_chapter_url) {
 	}
 	
 	// The ID of the verse number element
-	var id = "verse_" + verse_number;
+	var id = "verse-" + verse_number;
 	var escapted_id = TextCritical.escapeIdentifier(id);
 	
 	// Update the URL
@@ -92,7 +100,7 @@ TextCritical.scrollToVerse = function (verse_number, base_chapter_url) {
 	console.info("Updating the URL to point to the selected verse");
 	
 	// Remove existing highlights
-	$('.verse_container').removeClass('highlighted');
+	$('.verse-container').removeClass('highlighted');
 	$('.verse.number').removeClass('label-info');
 	
 	// Highlight the new verse
