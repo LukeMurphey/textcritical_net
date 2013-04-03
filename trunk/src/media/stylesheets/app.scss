@@ -81,6 +81,30 @@ footer .addthis_toolbox {
 	margin-left: -1px;
 }
 
+/*
+ * Below are some fixes for Darkstrap
+ */
+@media (max-width: 979px){
+	body.dark .nav-collapse .nav > li > a, body.dark .nav-collapse .dropdown-menu a{
+		color: #c6c6c6;
+		font-weight: normal;
+	}
+	
+	body.dark .nav-collapse .nav > li > a:hover, body.dark .nav-collapse .dropdown-menu a:hover{
+		background-color: #222222;
+	}
+	
+	body.dark .nav-collapse .navbar-form, body.dark .nav-collapse .navbar-search {
+		border-top: 0;
+		border-bottom: 0;
+		
+		-webkit-box-shadow: 0 0 0;
+		-moz-box-shadow: 0 0 0;
+		box-shadow: 0 0 0;
+		
+	}
+}
+
 @import "home";
 @import "read_work";
 @import "data_tables";
