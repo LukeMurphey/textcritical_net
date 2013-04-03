@@ -167,7 +167,7 @@
         	<ul>
         {% if previous_chapter %}
 	            <li class="previous">
-	            <a href="{% url read_work work.title_slug %}/{{ previous_chapter.get_division_indicators|join:"/" }}">&larr; Previous</a>
+	            <a href="{% url read_work work.title_slug %}/{{ previous_chapter.get_division_indicators|join:"/" }}">&larr;<span class="hidden-phone"> Previous</span></a>
 	            </li>
         {% endif %}
         {% if chapters|length > 1 %}
@@ -189,7 +189,7 @@
         {% endif %}
         {% if next_chapter %}
 	            <li class="next">
-	            <a href="{% url read_work work.title_slug %}/{{ next_chapter.get_division_indicators|join:"/" }}">Next &rarr;</a>
+	            <a href="{% url read_work work.title_slug %}/{{ next_chapter.get_division_indicators|join:"/" }}"><span class="hidden-phone">Next </span>&rarr;</a>
 	            </li>
         {% endif %}
         	</ul>
