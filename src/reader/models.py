@@ -115,7 +115,7 @@ class RelatedWork(models.Model):
         return True
     
     @classmethod
-    def are_works_identical( cls, first_work, second_work ):
+    def are_works_identical( cls, first_work, second_work, ignore_editors=False ):
         """
         Determine if these works appear to be identical.
         """
@@ -135,45 +135,55 @@ class RelatedWork(models.Model):
                 return False
         
         # Compare the editors
-        first_work_editors = first_work.editors.all().order_by("name")
-        second_work_editors = second_work.editors.all().order_by("name")
-        
-        if first_work_editors.count() != second_work_editors.count():
-            return False
-        
-        for i in range(0, first_work_editors.count() ):
-            if first_work_editors[i].name != second_work_editors[i].name:
+        if not ignore_editors:
+            first_work_editors = first_work.editors.all().order_by("name")
+            second_work_editors = second_work.editors.all().order_by("name")
+            
+            if first_work_editors.count() != second_work_editors.count():
                 return False
+            
+            for i in range(0, first_work_editors.count() ):
+                if first_work_editors[i].name != second_work_editors[i].name:
+                    return False
             
         return cls.are_divisions_identical( first_work, second_work )
     
+    @staticmethod
+    def make_related_work(first_work, second_work):
+        
+        entries_made = 0
+        
+        # Make the reference for the first work
+        if RelatedWork.objects.filter(work=first_work, related_work=second_work).count() == 0:
+            related_work = RelatedWork(work=first_work, related_work=second_work)
+            related_work.save()
+            entries_made = entries_made + 1
+                    
+        # Make the reference backwards
+        if RelatedWork.objects.filter(work=second_work, related_work=first_work).count() == 0:
+            related_work2 = RelatedWork(work=second_work, related_work=first_work)
+            related_work2.save()
+            entries_made = entries_made + 1
+            
+        return entries_made
+    
     @classmethod
-    def autodiscover( cls ):
+    def autodiscover( cls, ignore_editors=False ):
         """
         Automatically discover related works and make references to them.
         """
-        
-        works = Work.objects.all()
         
         for first_work in Work.objects.all():
             
             for second_work in Work.objects.all():
                 
-                if second_work.id != first_work.id and cls.are_works_identical(first_work, second_work):
+                if second_work.id != first_work.id and cls.are_works_identical(first_work, second_work, ignore_editors):
                     
-                    print "Examining", first_work.title_slug, "to", second_work.title_slug
+                    # Make the related work instances
+                    entries_made = RelatedWork.make_related_work(first_work, second_work)
                     
-                    # Make the reference for the first work
-                    if RelatedWork.objects.filter(work=first_work, related_work=second_work).count() == 0:
-                        related_work = RelatedWork(work=first_work, related_work=second_work)
-                        related_work.save()
-                    
-                    # Make the reference backwards
-                    if RelatedWork.objects.filter(work=second_work, related_work=first_work).count() == 0:
-                        related_work2 = RelatedWork(work=second_work, related_work=first_work)
-                        related_work2.save()
-                    
-                    logger.info("Made a reference between two works, first_work=%s, second_work=%s" % ( first_work.title_slug, second_work.title_slug) )
+                    if entries_made > 0:
+                        logger.info("Made a reference between two works, first_work=%s, second_work=%s" % ( first_work.title_slug, second_work.title_slug) )
             
         
 class WorkAlias(models.Model):
@@ -685,7 +695,7 @@ class WordDescription(models.Model):
             pass
         
         return unicode(" ".join(a).strip().lower())
-    
+
 @receiver(post_save, sender=Work)
-def work_alias_create(work, **kwargs):
-    WorkAlias.populate_alias_from_work(work)
+def work_alias_create(sender, instance, signal, created, **kwargs):
+    WorkAlias.populate_alias_from_work(instance)
