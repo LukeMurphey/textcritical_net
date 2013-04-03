@@ -1,12 +1,11 @@
 [
  
- {
-     "language"  : "Greek",
-     "should_import" : false
- },
+	 {
+	     "language"  : "Greek",
+	     "should_import" : false
+	 },
  
- 
- 
+  
     {
         "author" : "Flavius Josephus",
         "title" : ["De bello Judaico libri vii", "Antiquitates Judaicae" ],
@@ -800,7 +799,7 @@
         "import_parameters" : {
             "state_set" : 0,
             "transforms" : {
-            	"update_title_slug" : { }
+            	"update_title_slug" : { },
                 "set_division_title" : {
                 	"existing_division_title_slug" : "chapter-iii",
                 	"existing_division_sequence_number" : "20",
@@ -929,9 +928,34 @@
         }
     },
     {
+        "author" : "Flavius Josephus",
+        "title" : "Antiquities of the Jews",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 1
+        }
+    },
+    {
+        "author" : "Flavius Josephus",
+        "title" : "The Wars of the Jews",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 1,
+            "only_leaf_divisions_readable" : true
+        }
+    },
+    {
+        "author" : "Flavius Josephus",
+        "title" : ["The Life of Flavius Josephus", "Against Apion" ],
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : "*"
+        }
+    },
+    {
         "author" : [ "Aristotle", "Bacchylides", "Demosthenes", "Dinarchus", "Diodorus Siculus", "Diogenes Laertius", "Euclid", "Galen",
-                     "Herodotus", "Hesiod", "Hippocrates", "Homer", "Hyperides", "Flavius Josephus", "Pausanias", "Pindar", "Plato", "Plutarch",
-                     "Strabo", "Aretaeus", "Xenophon", "Aeschylus", "Andocides", "Apollodorus"],
+                     "Herodotus", "Hesiod", "Hippocrates", "Homer", "Hyperides", "Pausanias", "Pindar", "Plato", "Plutarch", "Strabo", 
+                     "Aretaeus", "Xenophon", "Aeschylus", "Andocides", "Apollodorus"],
         "language" : "English",
         "import_parameters" : {
             "state_set" : 0,
