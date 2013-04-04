@@ -45,13 +45,13 @@ def home(request):
 def about(request):
     
     return render_to_response('about.html',
-                              {},
+                              { 'title' : 'About TextCritical.net'},
                               context_instance=RequestContext(request)) 
 
 def contact(request):
     
     return render_to_response('contact.html',
-                              {},
+                              { 'title' : 'Contact Us'},
                               context_instance=RequestContext(request))
 
 def search(request, query=None):
@@ -70,14 +70,15 @@ def search(request, query=None):
         page = None
     
     return render_to_response('search.html',
-                              {'authors' : authors,
+                              {'title'   : 'Search',
+                               'authors' : authors,
                                'works'   : works,
                                'query'   : query,
                                'page'    : page
                                },
                               context_instance=RequestContext(request)) 
 
-@cache_page(8 * hours)
+@cache_page(2 * hours)
 def works_index(request):
     
     works = Work.objects.all().order_by("title").prefetch_related('authors').prefetch_related('editors')
@@ -88,7 +89,8 @@ def works_index(request):
         search_filter = None
     
     return render_to_response('works_index.html',
-                             {'works' : works,
+                             {'title' : 'Works',
+                              'works' : works,
                               'filter': search_filter},
                               context_instance=RequestContext(request))
     
@@ -309,7 +311,7 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     
     for r in related_works_tmp:
         related_works.append(r.related_work)
-    print len(related_works)
+    
     return render_to_response('read_work.html',
                              {'title'                : work.title,
                               'work_alias'           : work_alias,
@@ -347,7 +349,8 @@ def not_found_404(request):
 
 def tests(request):
     return render_to_response('test.html',
-                              {'include_default_css' : 0},
+                              {'title'               : 'Tests',
+                               'include_default_css' : 0},
                               context_instance=RequestContext(request))
     
 # -----------------------------------
