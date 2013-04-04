@@ -65,6 +65,17 @@ footer .addthis_toolbox {
 .input-append > .btn-group + .btn-group, .no-left-margin {
   margin-left: -1px; }
 
+/* See http://forrst.com/posts/Bootstrap_right_positioned_dropdown-2KB */
+.dropdown-menu.right {
+  left: auto;
+  right: 0; }
+  .dropdown-menu.right::before {
+    left: auto !important;
+    right: 9px; }
+  .dropdown-menu.right::after {
+    left: auto !important;
+    right: 10px; }
+
 /*
  * Below are some fixes for Darkstrap
  */

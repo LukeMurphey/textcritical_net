@@ -22,9 +22,9 @@
         ##############################
         # Button toolbar
         ##############################
-        {% endcomment %} 
+        {% endcomment %}
+        {% load reader_extras %}
         {% with chapter_description=chapter.get_division_description %}
-        
         <div class="control-group {% if verse_not_found %}error{% endif %}">
         	<div class="input-append">
         		<input class="span3" placeholder="Jump to reference..." id="chapter" value="{{chapter.get_division_description}}{% if verse_to_highlight %}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse_to_highlight}}{% endif %}" type="text">
@@ -32,12 +32,12 @@
 			    <button class="hidden-phone show-table-of-contents btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show-table-of-contents">Table of Contents</button>
 			    <button class="hidden-phone search-work btn" type="submit" id="search-work">Search</button>
 				
-			    <button id="align-break" class="hidden-phone btn align-break"><i class="icon-align-left"></i></button>
+			    <button id="align-break" class="btn align-break"><i class="icon-align-left"></i></button>
 			    
 			    <span style="display:inline-block">
 				<span class="visible-phone btn-group">
 			        <button class="btn dropdown-toggle last-button" data-toggle="dropdown"> <span class="caret"></span></button>
-			        <ul class="dropdown-menu" role="menu">
+			        <ul class="dropdown-menu right" role="menu">
 			        	{% if divisions and divisions|length > 1 %}
 			        	<li><a href="#" class="show-table-of-contents" data-toggle="button" id="show-table-of-contents-phone">Show table of contents</a></li>
 			            {% endif %}
@@ -47,11 +47,10 @@
 			            <li class="nav-header">Other Versions</li>
 							{% for related_work in related_works %}
 			                	<li><a href="{% url read_work related_work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">
-			                    {{related_work.title}} ({{related_work.language}})
-			                        
+			                    {{related_work.language}}
 			                        {% for editor in related_work.editors.all %}
 			                        {% if not forloop.first %}, {% endif %}
-			                        {{editor.name}}
+			                        {% if forloop.first %}({% endif %}{{editor.name|simplify_person_name}}{% if forloop.last %}){% endif %}
 			                        {% endfor %}
 			                    </a></li>
 			                {% endfor %}
@@ -63,7 +62,7 @@
 			  	
 				<span class="hidden-phone btn-group no-left-margin">
 			        <button class="btn dropdown-toggle last-button" {% if not related_works or related_works|length == 0 %}disabled{% endif %} data-toggle="dropdown">Other versions <span class="caret"></span></button>
-			        <ul class="dropdown-menu" role="menu">
+			        <ul class="dropdown-menu right" role="menu">
 	                    {% for related_work in related_works %}
 	                        <li><a href="{% url read_work related_work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">
 	                        	{{related_work.title}} ({{related_work.language}})
@@ -88,7 +87,6 @@
         # Table of contents
         ##############################
         {% endcomment %}
-        {% load reader_extras %}
         {% if divisions and divisions|length > 1 %}
         <div class="table-of-contents ">
 	        <ul class="nav nav-list">
