@@ -329,8 +329,7 @@ require(["jquery", "store", "app", "underscore", "bootstrap"], function($) {
         
         $pElem.click( TextCritical.open_note_dialog );
     });
-    		
-
+	
     {% if work_alias.title_slug != work.title_slug %}
     TextCritical.update_work_url( $("#chapter-base-url").attr("href") );
     {% endif %}
