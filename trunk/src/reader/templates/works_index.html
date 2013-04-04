@@ -21,11 +21,11 @@
 		    <tbody>
 		    {% for work in works %}
 			    <tr>
-			        <td><i class="icon-book {% if USE_DARK_THEME|default_if_none:0 %}icon-white{% endif %}"></i> <a href="{% url read_work work.title_slug %}">{{work.title}}</a></td>
+			        <td><i class="hidden-phone icon-book {% if USE_DARK_THEME|default_if_none:0 %}icon-white{% endif %}"></i> <a href="{% url read_work work.title_slug %}">{{work.title}}</a></td>
 			        <td>{{work.language}}</td>
 			        <td>{{work.authors.all|join:", "}}</td>
 			        <td class="hidden-phone">{{work.editors.all|join:", "}}</td>
-			        <td><a href="{% url search %}?q=work:{{work.title_slug}}">Search this work</a></td>
+			        <td class="hidden-phone"><a href="{% url search %}?q=work:{{work.title_slug}}">Search this work</a></td>
 			    </tr>
 		    {% endfor %}
 		    </tbody>
