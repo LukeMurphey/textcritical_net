@@ -191,3 +191,20 @@ def transform_perseus_text(text, parent_node, dst_doc, default_language):
                
                 # Append the node
                 parent_node.appendChild(new_node)
+              
+@register.filter(name='simplify_person_name')
+def simplify_person_name( name ):
+    """
+    Simpify a name to a last name only. Titles such as Ph. D. will be removed first.
+    
+    Arguments:
+    name -- The name to shorten
+    """
+    
+    if name is not None:
+        new_name = name.replace("Ph. D.", "").replace("M.A.", "").replace("LL.D.", "").replace("A.M.", "").replace("Esq.", "").replace(",", "").strip()
+        
+        return new_name.split(" ")[-1]
+        
+    else:
+        return name
