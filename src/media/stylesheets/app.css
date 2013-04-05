@@ -405,6 +405,10 @@ body.dark .dataTables_filter > label > input {
 #works_list {
   display: none; }
 
+.dataTables_filter input {
+  margin-top: 9px;
+  margin-left: 5px; }
+
 /* -----------------------------------------
    Search
    ----------------------------------------- */
