@@ -1,0 +1,40 @@
+<% if ( parses.length == 0 ) { %>
+<h4>Parse not found</h4>
+No parses could be found for <%= word %>.
+<p>
+Try looking the word up on <a target="_blank" class="external" href="http://www.perseus.tufts.edu/hopper/morph?l=<%= word %>&la=greek">Perseus.tufts.edu</a>
+or on <a target="_blank" href="https://www.google.com/search?q=<%= word %>">Google</a>.
+</p>
+<% }
+else { %>
+<div class="morphology-results">
+<% if ( parses.length == 1 ) { %>
+Found 1 parse for <%= word %><% }
+else { %>Found <%= parses.length %> parses for <%= word %><% } %><% if ( parses[0].ignoring_diacritics ) { %>. An exact match could not be found, so similar words with different diacritical marks are being returned.
+<% }
+else { %>:
+<% } %>
+
+</div>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<% if ( parses[0].ignoring_diacritics ) { %><th>Form</th><% } %>
+			<th>Lemma</th>
+			<th>Parse</th>
+			<th>Meaning</th>
+		</tr>
+	</thead>
+    <tbody>
+<% _.each(parses,function(parse){ %>
+		<tr>
+			<% if ( parses[0].ignoring_diacritics ) { %><td><%= parse.form %></td><% } %>
+			<td><a href="#" class="lemma"><%= parse.lemma %></td>
+			<td><%= parse.description %></td>
+			<td><%= parse.meaning %></td>
+        </tr>
+<% }); %>
+    </tbody>
+</table>
+<% } %>
+Search for other instances of <%= word %> <a href="/search?q=work:<%= work %>%20<%= word %>">in this work</a> or in <a href="/search?q=<%= word %>">all works</a>.
