@@ -7,57 +7,6 @@
             <li class="active">Search</li>
         </ul>
 
-<script type="text/html" id='search-results'>
-
-	<% if( search_results.results.length == 0){ %>
-<div class="alert alert-block">
-  No results were found matching the provided search
-</div>
-	<% } %>
-	<% for (var i = 0; i < search_results.results.length; i++) { %>
-		<% var search_result = search_results.results[i]; %>
-		<div class="work-description">
-			<a href="<%= search_result["url"] %>"><%= search_result["work"] %>, <%= search_result["description"] %></a>
-		</div>
-		<div class="highlights">
-			<% if( search_result["highlights"].length > 0 ){ %>
-			<%= search_result["highlights"] %>
-			<% } else { %>
-			<%= search_result["content_snippet"] %>
-			<% } %>
-		</div>
-	<% } %>
-
-<% 
-if( search_results.result_count > ( search_results.page * search_results.page_len ) ) {
-	has_next = true;
-}
-else{
-	has_next = false;
-}
-
-if( search_results.page <= 1 ){
-	has_previous = false;
-}
-else{
-	has_previous = true;
-}
-%>
-
-<% if( search_results.result_count > 0 ){ %>
-<div class="search-results-page-info">Page <%= search_results.page %> of <%= Math.ceil(search_results.result_count / search_results.page_len) %> (<%= search_results.result_count %> matches)</div>
-<% } %>
-
-<ul class="pager">
-	<li class="previous <% if( has_previous == false ) { %>disabled<% } %>">
-		<a class="previous-page-link">&larr; Previous</a>
-	</li>
-	<li class="next <% if( has_next == false ) { %>disabled<% } %>">
-		<a class="next-page-link">Next &rarr;</a>
-	</li>
-</ul>
-</script>
-
 <form id="search-form">
 	<legend>Search</legend>
 	<div id="search-help-link"><i class="icon-question-sign icon-white"> </i> <a href="#">Search help</a></div>

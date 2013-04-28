@@ -49,8 +49,11 @@ require.config({
         ]
     },
     shim: {
-        'jqueryui': ['jquery'],
-        'datatables': ['jquery'],
-        'bootstrap': ['jquery']
+        jqueryui: ['jquery'],
+        datatables: ['jquery'],
+        bootstrap: ['jquery'],
+	    underscore: {
+	        exports: '_'
+	    }
     }
 });
