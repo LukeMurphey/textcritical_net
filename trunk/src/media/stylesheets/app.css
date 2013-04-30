@@ -276,6 +276,9 @@ body.dark .verse-container.highlighted {
   font-size: smaller;
   margin: 3px;
   content: "[" attr(data-unit) " " attr(data-n) "]"; }
+.view_read_work .milestone[data-unit=para] {
+  display: block;
+  padding-top: 12px; }
 .view_read_work .l {
   display: block; }
 .view_read_work .gap {

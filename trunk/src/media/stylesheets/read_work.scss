@@ -116,6 +116,11 @@ body.dark .verse-container.highlighted{
 		margin: 3px;
 		content: "[" attr(data-unit) " " attr(data-n) "]";
 	}
+	
+	.milestone[data-unit=para]{
+	     display: block;
+	     padding-top: 12px;
+	}
     
     .l {
         display: block;
