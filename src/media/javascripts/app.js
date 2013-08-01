@@ -704,7 +704,7 @@ define([
 		}
 		
 		/**
-		 * Updates the URL to point to the canonical URL for the work (if necessary).
+		 * Creates an alert message.
 		 * 
 		 * @param title The title of the message
 		 * @param message The message to show
@@ -737,6 +737,10 @@ define([
 		
 		/**
 		 * Get the content associated with the note with the target id.
+		 * 
+		 * @param target The name of the target ID from which the content of the note is to be extracted from
+		 * @param shorten_to The length of the text to target to
+		 * @param shorten_text The text of the note (for shortening)
 		 **/
 		TextCritical.get_note_content = function (target, shorten_to, shorten_text) {
 			
@@ -756,6 +760,8 @@ define([
 		
 		/**
 		 * Get the title associated with the note with the target id.
+		 * 
+		 * @param target The name of the target ID from which the title of the note is to be extracted from
 		 **/
 		TextCritical.get_note_title = function (target) {
 			
@@ -771,6 +777,8 @@ define([
 		
 		/**
 		 * Opens the a dialog to show the note that was clicked.
+		 * 
+		 * @param note_element The ID of the associated note element
 		 **/
 		TextCritical.open_note_dialog = function ( note_element ) {
 			
@@ -779,7 +787,36 @@ define([
 			
 			TextCritical.open_dialog( title, content );
 			return false;
-		}
-
+		};
+		
+		/**
+		 * Loads the content from the given URL and loads it into the location where content goes.
+		 * 
+		 * @param url The URL to grab the content with
+		 **/
+		TextCritical.load_ajah = function ( url ) {
+			
+			if( url.indexOf("?") > 0 ){
+				url = url + "&async";
+			}
+			else{
+				url = url + "?async";
+			}
+			
+			$.ajax({
+				    url: url,
+				    success: function(data){
+				    	console.debug("Loading page content with asynchronous request");
+				        $('#main-content').html(data).fadeIn('slow');//('slow');
+				        $("#async-loading-message").hide();
+				        console.info("Sucessfully loaded page content with asynchronous request");
+				    },
+				    error:  function(jqXHR, textStatus, errorThrown){
+				    	console.error("Failed to load the page content with asynchronous request");
+				        $('#main-content').html("<h3>Yikes! That didn't work</h3>I'm sorry, but the content couldn't be loaded");
+				    },
+				    headers: {"HTTP_X_REQUESTED_WITH" : "XMLHttpRequest" }
+			});
+		};
 }
 );

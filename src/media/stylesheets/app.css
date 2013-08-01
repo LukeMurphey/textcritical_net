@@ -65,6 +65,14 @@ footer .addthis_toolbox {
 .input-append > .btn-group + .btn-group, .no-left-margin {
   margin-left: -1px; }
 
+.ajah-loading {
+  width: 350px;
+  padding-top: 60px;
+  margin: 0 auto; }
+
+.main-content-holder {
+  min-height: 250px; }
+
 /* See http://forrst.com/posts/Bootstrap_right_positioned_dropdown-2KB */
 .dropdown-menu.right {
   left: auto;
