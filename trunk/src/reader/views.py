@@ -15,7 +15,7 @@ import re
 from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork
 from reader.language_tools.greek import Greek
 from reader import language_tools
-from reader.shortcuts import string_limiter, uniquefy
+from reader.shortcuts import string_limiter, uniquefy, ajaxify, cache_page_if_ajax
 from reader.utils import get_word_descriptions
 from reader.contentsearch import search_verses
 from reader.language_tools import normalize_unicode
@@ -229,7 +229,8 @@ def get_division( work, division_0=None, division_1=None, division_2=None, divis
     else:
         return None # We couldn't find a matching division, perhaps one doesn't exist with the given set of descriptors?
     
-@cache_page(12 * months)
+@cache_page_if_ajax(12 * months)
+@ajaxify
 def read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
     
     # Some warnings that should be posted to the user
@@ -312,7 +313,7 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     for r in related_works_tmp:
         related_works.append(r.related_work)
     
-    return render_to_response('read_work.html',
+    response = render_to_response('read_work.html',
                              {'title'                : work.title,
                               'work_alias'           : work_alias,
                               'warnings'             : warnings,
@@ -333,6 +334,12 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
                               'verse_not_found'      : verse_not_found,
                               'progress'             : progress},
                               context_instance=RequestContext(request))
+    
+    # If the verse could not be found, set a response code to note that we couldn't get the content that the user wanted so that caching doesn't take place
+    if verse_not_found:
+        response.status_code = 210
+        
+    return response
 
 @cache_page(8 * hours)
 def robots_txt(request):
@@ -403,7 +410,7 @@ def description_id_fun(x):
     return str(x)
 
 @cache_page(1 * hours)
-def api_works_typehead_hints(request ):
+def api_works_typehead_hints(request):
     
     hints = []
     

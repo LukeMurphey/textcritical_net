@@ -118,7 +118,7 @@ WEB_SERVER_ADDRESS = '0.0.0.0'  # Use '127.0.0.1' to serve content to localhost 
 WEB_SERVER_PORT    = 8080
 
 # Set up the template context processors
-TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + ('textcritical.context_processors.global_settings', 'textcritical.context_processors.get_url_name')
+TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + ('textcritical.context_processors.global_settings', 'textcritical.context_processors.get_url_name', 'django.core.context_processors.request')
 
 # Indicates whether the dark bootstrap theme ought to be used
 USE_DARK_THEME = True

@@ -7,6 +7,10 @@ from xml.dom.minidom import parseString
 from htmlentitydefs import name2codepoint
 from time import time
 
+from django.shortcuts import render_to_response
+from django.template.context import RequestContext
+from django.views.decorators.cache import cache_page
+
 import logging
 
 class HTML5Converter(HTMLParser):
@@ -319,3 +323,56 @@ def string_limiter(text, limit):
             break
     
     return text[:i]
+
+def ajaxify(fn):
+    """
+    Loads a page that inserts an AJAX request to load the content in another request so that the page can be loaded quickly.
+    """
+    
+    def ajax_switch(*args, **kwargs):
+        
+        # Get the request (which ought to be the first argument)
+        request = args[0]
+        
+        # If the call is not a GET, then just pass it through
+        if request.method != "GET":
+            return fn(*args, **kwargs)
+        
+        # If the call is an AJAX call, then pass it through
+        if request.is_ajax():
+            return fn(*args, **kwargs)
+        
+        # If the call is a plain GET call, then get it
+        return render_to_response('ajah_redirect.html',
+                                  {'content_url' : request.get_full_path() },
+                                  context_instance=RequestContext(request))
+    
+    return ajax_switch
+
+class cache_page_if_ajax(object):
+    """
+    Provides a decorator that facilitates caching only if the response is an AJAX response. This is useful when the content of the page is different based
+    on whether it is an AJAX request (includes the "HTTP_X_REQUESTED_WITH" set to "XMLHttpRequest"). This is necessary for pages that call themselves to after
+    loading in order to get the page content but setup the call to be a AJAX request by setting the appropriate header. In this case, only the AJAX response
+    ought to be cached, not the outermost call.
+    """
+    
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+    
+    def __call__(self, fn):
+        
+        def return_cached_page_if_ajax(*args, **kwargs):
+            
+            request = args[0]
+            
+            if request.is_ajax():
+                # See https://github.com/django/django/blob/master/django/views/decorators/cache.py
+                return cache_page(fn, *self.args, **self.kwargs)(*args, **kwargs)
+                
+            else:
+                return fn(*args, **kwargs)
+            
+        return return_cached_page_if_ajax
+        

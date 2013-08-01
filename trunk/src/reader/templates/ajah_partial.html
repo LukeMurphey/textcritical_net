@@ -1,0 +1,9 @@
+{% block content %}{% endblock %}
+{% block javascript %}{% endblock %}
+<script language="javascript">
+require(["jquery", "app", "bootstrap"], function($) {
+{% for warning in warnings %}
+	TextCritical.show_alert("{{warning.0|escapejs}}", "{{warning.1|escapejs}}", "warn");
+{% endfor %}
+});
+</script>
