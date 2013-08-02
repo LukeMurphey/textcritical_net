@@ -338,6 +338,10 @@ def ajaxify(fn):
         if request.method != "GET":
             return fn(*args, **kwargs)
         
+        # If we are told to treat the request as synchronous, then just pass it through
+        if 'async' in request.GET and request.GET['async'] == "0":
+            return fn(*args, **kwargs)
+        
         # If the call is an AJAX call, then pass it through
         if request.is_ajax():
             return fn(*args, **kwargs)

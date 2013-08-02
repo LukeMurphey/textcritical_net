@@ -10,6 +10,11 @@ def get_setting_or_default( setting, default=None ):
 def add_to_dict( d, name, value ):
     d[name] = value
 
+def is_async(request):
+    return {
+           'is_async': ('async' in request.GET and request.GET['async'] != "0") or request.is_ajax()
+    }
+
 def global_settings(request):
     
     settings_dict = {}
