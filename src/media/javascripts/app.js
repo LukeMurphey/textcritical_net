@@ -357,15 +357,16 @@ define([
 		/**
 		 * Highlights all of the word nodes with the given text.
 		 * 
-		 * @param word the word to highlight
+		 * @param word The word to highlight
 		 */
 		TextCritical.highlight_word = function ( word ) {
 			
 			// Unhighlight all existing words to make sure we don't accumulate highlights
 			TextCritical.unhighlight_all_words();
 			
-			// Make the regular expression for finding the words.
-			var pattern = new RegExp("^" + word + "$");
+			// Make the regular expression for finding the words
+			escaped_word = TextCritical.escape_regex(word);
+			var pattern = new RegExp("^" + escaped_word + "$");
 			console.info( "Highlighting " + word );
 			
 			// Add the CSS to make these words highlighted
@@ -756,7 +757,7 @@ define([
 			}
 			
 			return content
-		};
+		}
 		
 		/**
 		 * Get the title associated with the note with the target id.
@@ -773,7 +774,7 @@ define([
 			else{
 				return "Note";
 			}
-		};
+		}
 		
 		/**
 		 * Opens the a dialog to show the note that was clicked.
@@ -787,7 +788,16 @@ define([
 			
 			TextCritical.open_dialog( title, content );
 			return false;
-		};
+		}
+		
+		/**
+		 * Escape a string such that it can be inserted into a regular expression.
+		 * 
+		 * @param str A string that needs to be escaped since it may include regular expression characters 
+		 */
+		TextCritical.escape_regex = function ( str ) {
+			  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+		}
 		
 		/**
 		 * Get the parameter from the query string.
@@ -815,7 +825,7 @@ define([
 		    else{
 		    	return "";
 		    }
-		};
+		}
 		
 		/**
 		 * Loads the content from the given URL and loads it into the location where content goes.
@@ -850,6 +860,6 @@ define([
 				    },
 				    headers: {"HTTP_X_REQUESTED_WITH" : "XMLHttpRequest" }
 			});
-		};
+		}
 }
 );
