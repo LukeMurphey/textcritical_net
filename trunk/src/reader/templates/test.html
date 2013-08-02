@@ -213,6 +213,33 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
    		});
 		
     });
+    
+    {% comment %}
+    ##############################
+    # Utility Tests
+    ##############################
+    {% endcomment %}
+    
+    describe("Getting a parameter value", function() {
+    	
+		it("that exists with a value", function() {
+			expect(TextCritical.get_parameter_by_name("?number=20", "number") ).toEqual( "20" );
+   		});
+		
+		it("that does not exist", function() {
+			expect(TextCritical.get_parameter_by_name("?number=20", "letter") ).toEqual( undefined );
+   		});
+		
+		it("that exists with an empty value", function() {
+			expect(TextCritical.get_parameter_by_name("?number", "") ).toEqual( "" );
+   		});
+		
+		it("that exists within a complete URL", function() {
+			expect(TextCritical.get_parameter_by_name("http://TextCritical.net/quix?number=20", "number") ).toEqual( "20" );
+   		});
+		
+    });
+    
 
 	// Setup jasmine for execution    
     (function() {

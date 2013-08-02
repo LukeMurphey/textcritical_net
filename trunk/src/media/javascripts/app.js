@@ -790,19 +790,52 @@ define([
 		};
 		
 		/**
+		 * Get the parameter from the query string.
+		 * 
+		 * @param url 
+		 * @param name The name of the parameter to obtain
+		 */
+		TextCritical.get_parameter_by_name = function ( url, name ) {
+		    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+		    
+		    var regex = new RegExp("[\\?&]" + name + "(=([^&#]*))?"),
+		        results = regex.exec(url);
+		    
+		    // Parameter was not found
+		    if (results == null){
+		    	return undefined;
+		    }
+		    
+		    // Parameter was found and has a value
+		    else if(results[2] !== undefined){
+		    	return results[2].replace(/\+/g, " ");
+		    }
+		    
+		    // Parameter was found and has no value
+		    else{
+		    	return "";
+		    }
+		};
+		
+		/**
 		 * Loads the content from the given URL and loads it into the location where content goes.
 		 * 
 		 * @param url The URL to grab the content with
 		 **/
 		TextCritical.load_ajah = function ( url ) {
 			
-			if( url.indexOf("?") > 0 ){
+			// Add the async parameter (if it doesn't already exist)
+			if( TextCritical.get_parameter_by_name(url, "async") !== undefined ){
+				// Don't bother adding the async parameter, it already exists
+			}
+			else if( url.indexOf("?") > 0 ){
 				url = url + "&async";
 			}
 			else{
 				url = url + "?async";
 			}
 			
+			// Perform the AJAX request
 			$.ajax({
 				    url: url,
 				    success: function(data){
