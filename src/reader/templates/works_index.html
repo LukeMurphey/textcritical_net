@@ -8,34 +8,20 @@
 
         <h1>Library</h1>
         
-        <div id="loading" class="loading_animation">Loading ...</div>
+		<div id="async-loading-message" class="ajah-loading">
+			Loading...
+			<div class="progress progress-striped active">
+				<div class="bar" style="width: 0%;"></div>
+			</div>
+		</div>
         
-        <table class="table table-striped table-hover" id="works_list" >
-		    <thead>
-		        <th>Title</th>
-		        <th>Language</th>
-		        <th>Author</th>
-		        <th class="hidden-phone">Editor</th>
-		        <th></th>
-		    </thead>
-		    <tbody>
-		    {% for work in works %}
-			    <tr>
-			        <td><i class="hidden-phone icon-book {% if USE_DARK_THEME|default_if_none:0 %}icon-white{% endif %}"></i> <a href="{% url read_work work.title_slug %}">{{work.title}}</a></td>
-			        <td>{{work.language}}</td>
-			        <td>{{work.authors.all|join:", "}}</td>
-			        <td class="hidden-phone">{{work.editors.all|join:", "}}</td>
-			        <td class="hidden-phone"><a href="{% url search %}?q=work:{{work.title_slug}}">Search this work</a></td>
-			    </tr>
-		    {% endfor %}
-		    </tbody>
-		</table>
+        <span id="works_list_container"></span>
 		
 {% endblock %}
 
 {% block javascript %}
 <script language="javascript">
-require(["jquery", "datatables"], function($) {
+require(["jquery", "libs/text!/media/templates/works_list.html", "datatables"], function($, works_list_template) {
 	
 	function updateFilter(){
 		textcritical.datatable.fnFilter( $('input.search-query').val() );
@@ -45,26 +31,50 @@ require(["jquery", "datatables"], function($) {
 		$('input.search-query').val( $('input[aria-controls="works_list"]').val() );
 	}
 	
-    $(document).ready(function() {
+	function setupWorksTable(works){
+		
+		$("#works_list_container").html(_.template(works_list_template,{ works:works,
+																		 USE_DARK_THEME:{{USE_DARK_THEME|default_if_none:0|lower}},
+																		 search_url:"{% url search %}",
+																		 read_work_url: "/work"}));
+		
     	textcritical.datatable = $('#works_list').dataTable( {
-						            "bPaginate": true,
-						            "bLengthChange": false,
-						            "bJQueryUI": false,
-						            "bFilter": true,
-						            "bSort": true,
-						            "bInfo": true,
-						            "bAutoWidth": false
-        } );
-        
-        {% if filter %}textcritical.datatable.fnFilter( "{{filter|escapejs}}" );{% endif %}
-        $('input.search-query').keyup(updateFilter);
-        $('input.search-query').change(updateFilter);
-        $('#search').submit( function() { return false; });
-        
-        $('input[aria-controls="works_list"]').keyup(updateMainFilter);
-        
-        $('#loading').hide();
-        $('#works_list').show();
+            "bPaginate": true,
+            "bLengthChange": false,
+            "bJQueryUI": false,
+            "bFilter": true,
+            "bSort": true,
+            "bInfo": true,
+            "bAutoWidth": false
+		} );
+		
+		{% if filter %}textcritical.datatable.fnFilter( "{{filter|escapejs}}" );{% endif %}
+		$('input.search-query').keyup(updateFilter);
+		$('input.search-query').change(updateFilter);
+		$('#search').submit( function() { return false; });
+		
+		$('input[aria-controls="works_list"]').keyup(updateMainFilter);
+		
+		$('#loading').hide();
+		$('#works_list').show();
+		$('#async-loading-message').hide();
+	}
+	
+    $(document).ready(function() {
+    	
+    	$('.bar'). css('width', '50%');
+    	
+    	$.ajax({
+    		url: "/api/works"
+    	}).done(function(works) {
+    		
+    		$('.bar'). css('width', '100%');
+    		
+    		setTimeout( function() { setupWorksTable(works); }, 500);
+
+    	});
+    	
+
     } );
 });
 </script>

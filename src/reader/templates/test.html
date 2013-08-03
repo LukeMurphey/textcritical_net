@@ -97,6 +97,19 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
   		
     });
     
+    
+    describe("Works list", function() {
+    	
+		// Test getting all works
+		it("containing all works", function() {
+			works = getAsync("/api/works");
+			
+	        expect( works.length ).toBeGreaterThan( 400 );
+	       
+   		});
+  		
+    });
+    
     describe("Determination if search contains search words", function() {
     	
 		it("when work is specified", function() {
@@ -238,8 +251,7 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
 			expect(TextCritical.get_parameter_by_name("http://TextCritical.net/quix?number=20", "number") ).toEqual( "20" );
    		});
 		
-    });
-    
+    });    
 
 	// Setup jasmine for execution    
     (function() {
