@@ -116,6 +116,8 @@ body.dark .verse-container.highlighted{
 	background-image: url("/media/images/back.png");
 	background-repeat: no-repeat;
 	background-position-y: 50%;
+	border-top-right-radius: 1em;
+	border-bottom-right-radius: 1em;
 }
 
 .next-page-shortcut{
@@ -123,6 +125,8 @@ body.dark .verse-container.highlighted{
 	background-image: url("/media/images/forward.png");
 	background-repeat: no-repeat;
 	background-position-y: 50%;
+	border-top-left-radius: 1em;
+	border-bottom-left-radius: 1em;
 }
 
 .view_read_work{

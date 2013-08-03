@@ -11,6 +11,7 @@ import logging
 import math
 import difflib
 import re
+import time
 
 from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork
 from reader.language_tools.greek import Greek
@@ -81,7 +82,7 @@ def search(request, query=None):
 @cache_page(2 * hours)
 def works_index(request):
     
-    works = Work.objects.all().order_by("title").prefetch_related('authors').prefetch_related('editors')
+    #works = Work.objects.all().order_by("title").prefetch_related('authors').prefetch_related('editors')
     
     if 'search' in request.GET:
         search_filter = request.GET['search']
@@ -90,7 +91,6 @@ def works_index(request):
     
     return render_to_response('works_index.html',
                              {'title' : 'Works',
-                              'works' : works,
                               'filter': search_filter},
                               context_instance=RequestContext(request))
     
@@ -677,25 +677,28 @@ def api_beta_code_to_unicode(request, word=None):
 
 @cache_page(15 * minutes)
 def api_works_list_for_author(request, author):
-    
-    works = Work.objects.filter(authors__name=author)
-    
-    results = []
-    
-    for work in works:
-        result = {}
-        result['title'] = work.title
-        result['title_slug'] = work.title_slug
-        
-        results.append(result)
-    
-    return render_api_response(request, results)
+    return api_works_list(request, author)
 
 @cache_page(15 * minutes)
-def api_works_list(request):
+def api_works_list(request, author=None):
     
-    response = HttpResponse(content_type=JSON_CONTENT_TYPE)
-    json_serializer = serializers.get_serializer("json")()
-    json_serializer.serialize(Work.objects.all(), stream=response)
+    # Get the relevant works
+    if author is not None:
+        works = Work.objects.filter(authors__name=author)
+    else:
+        works = Work.objects.all()
     
-    return response
+    # Make the resulting JSON
+    works_json = []
+    
+    for work in works:
+        
+        works_json.append( { 
+                            'title' : work.title,
+                            'title_slug' : work.title_slug,
+                            'language' : work.language,
+                            'author' : ", ".join(work.authors.values_list('name', flat=True)),
+                            'editor' : ", ".join(work.editors.values_list('name', flat=True)),
+                            } )
+    
+    return render_api_response(request, works_json)
