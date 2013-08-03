@@ -161,6 +161,13 @@
         #############################
         {% endcomment %}
         
+		{% if previous_chapter or next_chapter %}
+        <div class="page-shortcuts">
+        	{% if previous_chapter %}<a href="{% url read_work work.title_slug %}/{{ previous_chapter.get_division_indicators|join:"/" }}" class="prior-page-shortcut page-shortcut"></a>{% endif %}
+        	{% if next_chapter %}<a href="{% url read_work work.title_slug %}/{{ next_chapter.get_division_indicators|join:"/" }}" class="next-page-shortcut page-shortcut"></a>{% endif %}
+        </div>
+        {% endif %}
+        
         {% if chapters|length > 0 or previous_chapter or next_chapter %}
         <div class="pagination">
         	<ul>
