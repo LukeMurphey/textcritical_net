@@ -272,6 +272,32 @@ body.dark .verse-container.highlighted {
 .verse .word:hover {
   text-decoration: underline; }
 
+.page-shortcuts {
+  position: absolute;
+  top: 25%; }
+
+.page-shortcut {
+  height: 50%;
+  width: 32px;
+  display: block;
+  position: fixed;
+  opacity: 0.4; }
+
+.page-shortcut:hover {
+  background-color: white; }
+
+.prior-page-shortcut {
+  left: 0px;
+  background-image: url("/media/images/back.png");
+  background-repeat: no-repeat;
+  background-position-y: 50%; }
+
+.next-page-shortcut {
+  right: 0px;
+  background-image: url("/media/images/forward.png");
+  background-repeat: no-repeat;
+  background-position-y: 50%; }
+
 .view_read_work .speaker {
   font-weight: bold;
   display: block;
