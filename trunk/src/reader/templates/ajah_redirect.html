@@ -6,7 +6,7 @@
 	<div id="async-loading-message" class="ajah-loading">
 		Loading...
 		<div class="progress progress-striped active">
-			<div class="bar" style="width: 100%;"></div>
+			<div class="bar" style="width: 0%;"></div>
 		</div>
 	</div>
 	<span id="main-content" style="display:none"></span>
@@ -17,6 +17,7 @@
 {% block javascript %}
 <script language="javascript">
 require(["jquery", "app"], function($) {
+	$('.bar'). css('width', '100%');
 	TextCritical.load_ajah('{{content_url}}');
 });
 </script>
