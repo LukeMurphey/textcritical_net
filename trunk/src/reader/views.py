@@ -679,7 +679,7 @@ def api_beta_code_to_unicode(request, word=None):
 def api_works_list_for_author(request, author):
     return api_works_list(request, author)
 
-@cache_page(15 * minutes)
+@cache_page(4 * hours)
 def api_works_list(request, author=None):
     
     # Get the relevant works

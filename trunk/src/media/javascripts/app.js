@@ -853,12 +853,46 @@ define([
 				        $('#main-content').html(data).fadeIn('slow');
 				        $("#async-loading-message").hide();
 				        console.info("Sucessfully loaded page content with asynchronous request");
+				        
 				    },
 				    error:  function(jqXHR, textStatus, errorThrown){
 				    	console.error("Failed to load the page content with asynchronous request");
 				        $('#main-content').html("<h3>Yikes! That didn't work</h3>I'm sorry, but the content couldn't be loaded");
 				    }
 			});
+		}
+		
+		/**
+		 * This function sets up links such that apps saved locally don't open Safari for links. 
+		 * 
+		 * For more informtaion see: http://stackoverflow.com/questions/2898740/iphone-safari-web-app-opens-links-in-new-window
+		 */
+		TextCritical.setup_link_handlers_for_ios_web_apps = function ( ) {
+			
+			if (("standalone" in window.navigator) && window.navigator.standalone) {
+			     
+				// Use a delegated event handler so that new content added via AJAX is handled properly
+				$(document).on('click', 'a', function(e){
+			        
+					var href = $(this).attr("href");
+					
+					// Don't override links that:
+					// 1) Have a target of _blank (and should open in a new window)
+					// 2) Are for external domains
+					
+					if( e.target.target != "_blank" && (href.indexOf(location.hostname) > -1 || href.indexOf("http") != 0 ) ){
+						
+						e.preventDefault();
+				        
+				        var new_location = href;
+				        
+				        // Stop on undefined links, local handlers (#) and Bootstrap links
+				        if (new_location != undefined && new_location.substr(0, 1) != '#' && $(this).attr('data-method') == undefined){
+				        	window.location = new_location;
+				        }
+					}
+			    });
+			 }
 		}
 }
 );
