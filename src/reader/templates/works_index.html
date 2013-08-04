@@ -55,9 +55,8 @@ require(["jquery", "libs/text!/media/templates/works_list.html", "datatables"], 
 		
 		$('input[aria-controls="works_list"]').keyup(updateMainFilter);
 		
-		$('#loading').hide();
-		$('#works_list').show();
 		$('#async-loading-message').hide();
+		$('#works_list').fadeIn('slow');
 	}
 	
     $(document).ready(function() {
