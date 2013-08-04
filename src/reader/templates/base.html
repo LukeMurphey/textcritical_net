@@ -9,6 +9,7 @@
   <title>{{title|default:"TextCritical.net"}}</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
 
   <!-- Icons -->
   <link rel="icon" type="image/png" href="{{ MEDIA_URL }}/images/favicon.ico" />
@@ -23,6 +24,7 @@
   <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/normalize.css">
   <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/main.css">
   <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/app.css">
+  <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/add2home.css">
   
   {% if USE_MINIFIED|default_if_none:1 %}
   <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap.min.css">
@@ -48,7 +50,8 @@
   {% endif %}
   {% endif %}
   
-  <script src="{{ MEDIA_URL }}/javascripts/libs/modernizr-2.6.1.min.js"></script>
+  <script type="application/javascript" src="{{ MEDIA_URL }}/javascripts/libs/modernizr-2.6.1.min.js"></script>
+  <script type="application/javascript" src="{{ MEDIA_URL }}/javascripts/libs/add2home.js"></script>
   {% block style %}{% endblock %}
   
 </head>
@@ -67,7 +70,16 @@
   
   <script language="javascript">
   	  var textcritical = textcritical || {}; 
-      require(["jquery", "bootstrap"]);
+  	  
+  	  var addToHomeConfig = {
+  			returningVisitor:true
+  	  };
+  	
+      require(["jquery", "bootstrap", "add2home"]);
+      
+      require(["app"], function() {
+      	TextCritical.setup_link_handlers_for_ios_web_apps();
+      });
   </script>
   {% block javascript_base %}{% endblock %}
   {% block javascript %}{% endblock %}
