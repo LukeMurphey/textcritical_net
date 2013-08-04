@@ -507,7 +507,7 @@ define([
 			
 			// Submit the AJAX request to display the information
 			$.ajax({
-				url: "/api/search/?q=" + word + "&page=" + page + "&related_forms=" + related_forms
+				url: "/api/search/?q=" + encodeURIComponent(word) + "&page=" + page + "&related_forms=" + related_forms
 			}).done(function(search_results) {
 				
 				$("#search-results-content").html(_.template(search_results_template,{ word:_.escape(word), search_results:search_results }));
@@ -828,7 +828,7 @@ define([
 		}
 		
 		/**
-		 * Loads the content from the given URL and loads it into the location where content goes.
+		 * Loads the content from the given URL and loads it into the location where content goes (#main-content).
 		 * 
 		 * @param url The URL to grab the content with
 		 **/
@@ -849,16 +849,15 @@ define([
 			$.ajax({
 				    url: url,
 				    success: function(data){
-				    	console.debug("Loading page content with asynchronous request");
-				        $('#main-content').html(data).fadeIn('slow');//('slow');
+				    	console.info("Loading page content with asynchronous request");
+				        $('#main-content').html(data).fadeIn('slow');
 				        $("#async-loading-message").hide();
 				        console.info("Sucessfully loaded page content with asynchronous request");
 				    },
 				    error:  function(jqXHR, textStatus, errorThrown){
 				    	console.error("Failed to load the page content with asynchronous request");
 				        $('#main-content').html("<h3>Yikes! That didn't work</h3>I'm sorry, but the content couldn't be loaded");
-				    },
-				    headers: {"HTTP_X_REQUESTED_WITH" : "XMLHttpRequest" }
+				    }
 			});
 		}
 }
