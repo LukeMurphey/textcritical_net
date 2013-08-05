@@ -82,8 +82,6 @@ def search(request, query=None):
 @cache_page(2 * hours)
 def works_index(request):
     
-    #works = Work.objects.all().order_by("title").prefetch_related('authors').prefetch_related('editors')
-    
     if 'search' in request.GET:
         search_filter = request.GET['search']
     else:
@@ -687,6 +685,9 @@ def api_works_list(request, author=None):
         works = Work.objects.filter(authors__name=author)
     else:
         works = Work.objects.all()
+    
+    # Prefetch the authors and editors, sort the results so that the response is consistent
+    works = works.order_by("title").prefetch_related('authors').prefetch_related('editors')
     
     # Make the resulting JSON
     works_json = []
