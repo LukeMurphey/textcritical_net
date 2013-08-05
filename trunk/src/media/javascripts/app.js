@@ -827,12 +827,7 @@ define([
 		    }
 		}
 		
-		/**
-		 * Loads the content from the given URL and loads it into the location where content goes (#main-content).
-		 * 
-		 * @param url The URL to grab the content with
-		 **/
-		TextCritical.load_ajah = function ( url ) {
+		TextCritical.add_async_parameter = function ( url ){
 			
 			// Add the async parameter (if it doesn't already exist)
 			if( TextCritical.get_parameter_by_name(url, "async") !== undefined ){
@@ -844,6 +839,20 @@ define([
 			else{
 				url = url + "?async";
 			}
+			
+			return url;
+			
+		}
+		
+		/**
+		 * Loads the content from the given URL and loads it into the location where content goes (#main-content).
+		 * 
+		 * @param url The URL to grab the content with
+		 **/
+		TextCritical.load_ajah = function ( url ) {
+			
+			// Add the async parameter (if it doesn't already exist)
+			url = TextCritical.add_async_parameter(url);
 			
 			// Perform the AJAX request
 			$.ajax({
@@ -893,6 +902,38 @@ define([
 					}
 			    });
 			 }
+		}
+		
+		/**
+		 * Load the link reference in next link tag so that it gets cached and loads quickly if user continues to the next chapter.
+		 */
+		TextCritical.pre_load_next_link = function ( ) {
+			
+			// Get the link to the next page
+			next_href = $("link[rel=next]").attr("href");
+			
+			// If the page has a link to the next page, cache it
+			if( next_href !== undefined ){
+				
+				// Add the async parameter since this content is presumably AJAX content
+				next_href = TextCritical.add_async_parameter(next_href);
+				
+				// Do an AJAX request so that the next chapter is cached
+				console.info("Beginning request to cache content of the next chapter (" + next_href + ")");
+				
+				// Perform the request
+				$.ajax({
+					url: next_href
+				}).done(function(data) {
+					// Successfully loaded the content
+					console.info( "Successfully cached the contents of the next chapter at " + next_href );
+				}).error( function(jqXHR, textStatus, errorThrown) {
+					// The content could not be loaded
+					console.error( "Request for next chapter's content failed (url attempted was " + next_href + ")");
+				});
+				
+			}
+			
 		}
 }
 );
