@@ -188,18 +188,17 @@ class WorkIndexer:
             author_str = unicode()
         
         # Prepare the content for saving
-        if verse.content is not None and len(verse.content) == 0:
+        if verse.content is not None and len(verse.content) > 0:
             content = normalize_unicode(verse.content)
-            
         else:
             content = normalize_unicode(verse.original_content)
-            
+        
         # Strip diacritical marks
         if work is None or work.language is None or work.language != "english":
             no_diacritics = strip_accents(verse.content)
         else:
             no_diacritics = None
-            
+        
         # Add the content
         writer.add_document(content       = content,
                             no_diacritics = no_diacritics,
