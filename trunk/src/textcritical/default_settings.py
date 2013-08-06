@@ -51,6 +51,9 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': '/opt/webapps/TextCritical.com/var/cache', #Enter the full path to the cache directory here
+        'OPTIONS': {
+            'MAX_ENTRIES': '3000'
+        }
     }
 }
 """
