@@ -145,6 +145,8 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    # Uncomment the next line if the hosting web-server doesn't GZIP the responses
+    #'django.middleware.gzip.GZipMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
