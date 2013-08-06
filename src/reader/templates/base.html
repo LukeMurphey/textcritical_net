@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title>{{title|default:"TextCritical.net"}}</title>
-  <meta name="description" content="">
+  <meta name="description" content="TextCritical.net is a website that provides a library of ancient Greek works">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
 
@@ -37,11 +37,7 @@
   {% endif %}
   {% endif %}
   {% block links %}{% endblock %}
-  <style>
-      body {
-        /*padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
-  </style>
+  
   {% if include_default_css|default_if_none:1 %}
   {% if USE_MINIFIED|default_if_none:1 %}
   <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap-responsive.min.css">
