@@ -45,29 +45,44 @@
 	        </div>
 	        
 	        <div class="pull-right hidden-phone">
-	        <ul class="footer-links">
-	          <li><a href="http://lukemurphey.net/projects/ancient-text-reader/wiki/Source_Code">Source code</a></li>
-	          <li class="muted">&middot;</li>
-	          <li><a href="http://lukemurphey.net/projects/ancient-text-reader/issues?utf8=%E2%9C%93&set_filter=1&f%5B%5D=status_id&op%5Bstatus_id%5D=o&f%5B%5D=&c%5B%5D=tracker&c%5B%5D=status&c%5B%5D=priority&c%5B%5D=subject&c%5B%5D=updated_on&c%5B%5D=due_date&c%5B%5D=done_ratio&group_by=fixed_version">Issues</a></li>
-	          <li class="muted">&middot;</li>
-	          <li><a href="http://lukemurphey.net/projects/ancient-text-reader/issues/new">Report issue</a></li>
-	        </ul>
+		        <ul class="footer-links">
+		          <li><a href="http://lukemurphey.net/projects/ancient-text-reader/wiki/Source_Code">Source code</a></li>
+		          <li class="muted">&middot;</li>
+		          <li><a href="http://lukemurphey.net/projects/ancient-text-reader/issues?utf8=%E2%9C%93&set_filter=1&f%5B%5D=status_id&op%5Bstatus_id%5D=o&f%5B%5D=&c%5B%5D=tracker&c%5B%5D=status&c%5B%5D=priority&c%5B%5D=subject&c%5B%5D=updated_on&c%5B%5D=due_date&c%5B%5D=done_ratio&group_by=fixed_version">Issues</a></li>
+		          <li class="muted">&middot;</li>
+		          <li><a href="http://lukemurphey.net/projects/ancient-text-reader/issues/new">Report issue</a></li>
+		        </ul>
 	        </div>
-	
+			
+	        <div id="share-this" class="center sharing-buttons hidden-phone">
+	        	<img src="{{ MEDIA_URL }}/images/share.png"/>
+	        	<span class="share-text">Share...</span>
+	        </div>
 	        
 	    </footer>
     </div>
 {% endblock %}
 {% block javascript_base %}
+
     <script language="javascript">
-    require(["jquery", "bootstrap", "app"], function($) {
+    require(["jquery", "bootstrap", "app", "social_share"], function($) {
     	$(document).ready( function() {
+    		
+    		// Configure the typeahead
 			$(".search-query").typeahead({
 				  source: function (query, process) {
 					  process( TextCritical.get_works_search_typeahead_hints() );
 				  }
 			});
+			
+    		// Wire up the sharing button
+			$('#share-this').socialShare({
+	  		    social: 'blogger,delicious,digg,facebook,google,linkedin,reddit,myspace,pinterest,stumbleupon,tumblr,twitter,windows,yahoo',
+	  		  	blur: true
+	  		});
+    		
     	});
     });
     </script>
+
 {% endblock %}

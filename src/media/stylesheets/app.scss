@@ -36,6 +36,12 @@ footer p{
     padding-top: 0px;
 }
 
+.center {
+	float: none;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 body.dark footer a{
 	color: #c6c6c6;
     text-decoration: underline;	
@@ -121,6 +127,23 @@ footer .addthis_toolbox {
 		box-shadow: 0 0 0;
 		
 	}
+}
+
+.sharing-buttons{
+	width: 100px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.share-text{
+	text-decoration: underline;
+}
+
+/*
+ * Fix the Social jQuery plugin which has a conflict with Bootstrap:
+ */
+.launchpad > .icon-container{
+	width: auto;
 }
 
 @import "home";
