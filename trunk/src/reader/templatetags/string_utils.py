@@ -60,3 +60,15 @@ def addspaceifnotempty(obj):
         return obj + " "
     else:
         return obj
+    
+@register.filter()
+def remove(value, arg):
+    """
+    Usage:
+    {{text|remove:"remove this"}}
+    """
+    
+    if value is not None:
+        return value.replace(arg, "")
+    else:
+        return value
