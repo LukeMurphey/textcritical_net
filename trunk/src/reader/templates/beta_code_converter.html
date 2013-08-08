@@ -10,14 +10,15 @@
 		<legend>Beta-code converter</legend>
 	    Enter beta-code below and it will be converted to Greek Unicode automatically
 	    
-	    <div style="margin-top: 4px;">
+	    <div class="beta-code-entry">
 	    	<textarea class="span12" id="text" placeholder="Enter beta-code" type="text"></textarea>
 	    </div>
 	</form>
 	
 	Unicode (click the word to do a morphological lookup):
-	<div id="converted-content" class="verse">
-	</div>
+	<div id="converted-content" class="verse text-output well"></div>
+	
+	<button id="search-button" class="btn btn-primary" type="button">Search for this text</button>
 {% endblock %}
 
 {% block javascript %}
@@ -25,16 +26,19 @@
 
 require(["jquery", "app"], function($) {
 	
+	var converted_content = null;
+	
 	function update_output(){
 		
 		str = TextCritical.convert_search_query_beta_code( $('#text').val() );
+		converted_content = str;
 		
 		var words = str.split(' ');
 
 		// clear the existing content
 		$('#converted-content').text('');
 
-		// insert each word wrapped with a div
+		// insert each word wrapped with a span class to facilitate lookups
 		for (var i = 0; i < words.length; i++)
 		{
 			$('#converted-content').append('<span class="word">' + words[i] + ' </span>');
@@ -45,10 +49,14 @@ require(["jquery", "app"], function($) {
 	$(document).ready(function() {
 		
 		$('#text').keyup( function(){
-			//$('#converted-content').html(TextCritical.convert_search_query_beta_code( $('#text').val() ) );
+			
 			update_output();
 			$(".word").click( TextCritical.word_lookup );
 		})
+		
+		$('#search-button').click( function(){
+			document.location = "/search?q=" + converted_content;
+		});
 		
 	});
 
