@@ -935,5 +935,23 @@ define([
 			}
 			
 		}
+		
+		/**
+		 * Convert the beta-code to Unicode.
+		 **/
+		TextCritical.convert_search_query_beta_code = function ( beta_code) {
+			
+			converted_beta_code = null;
+			
+			// Submit the AJAX request to convert the beta-code
+			$.ajax({
+				async: false,
+				url: "/api/beta_code_to_unicode/?text=" + beta_code
+			}).done(function(response) {
+				converted_beta_code = response.unicode;
+			});
+			
+			return converted_beta_code;
+		}
 }
 );

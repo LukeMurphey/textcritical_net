@@ -1,0 +1,57 @@
+{% extends "base_with_nav.html" %}
+{% block content %}
+      
+        <ul class="breadcrumb">
+            <li><a href="{% url home %}">Home</a> <span class="divider">/</span></li>
+            <li class="active">Beta-code converter</li>
+        </ul>
+
+	<form id="beta-code-form">
+		<legend>Beta-code converter</legend>
+	    Enter beta-code below and it will be converted to Greek Unicode automatically
+	    
+	    <div style="margin-top: 4px;">
+	    	<textarea class="span12" id="text" placeholder="Enter beta-code" type="text"></textarea>
+	    </div>
+	</form>
+	
+	Unicode (click the word to do a morphological lookup):
+	<div id="converted-content" class="verse">
+	</div>
+{% endblock %}
+
+{% block javascript %}
+<script language="javascript">
+
+require(["jquery", "app"], function($) {
+	
+	function update_output(){
+		
+		str = TextCritical.convert_search_query_beta_code( $('#text').val() );
+		
+		var words = str.split(' ');
+
+		// clear the existing content
+		$('#converted-content').text('');
+
+		// insert each word wrapped with a div
+		for (var i = 0; i < words.length; i++)
+		{
+			$('#converted-content').append('<span class="word">' + words[i] + ' </span>');
+		}
+		
+	}
+	
+	$(document).ready(function() {
+		
+		$('#text').keyup( function(){
+			//$('#converted-content').html(TextCritical.convert_search_query_beta_code( $('#text').val() ) );
+			update_output();
+			$(".word").click( TextCritical.word_lookup );
+		})
+		
+	});
+
+});
+</script>
+{% endblock %}

@@ -375,6 +375,11 @@ def tests(request):
                                'include_default_css' : 0},
                               context_instance=RequestContext(request))
     
+def beta_code_converter(request):
+    return render_to_response('beta_code_converter.html',
+                              {'title'               : 'Beta-code Converter'},
+                              context_instance=RequestContext(request))
+    
 # -----------------------------------
 # API views are defined below
 # -----------------------------------
@@ -666,27 +671,28 @@ def api_word_parse_beta_code(request, word=None):
     return api_word_parse(request, Greek.beta_code_to_unicode(word))
 
 @cache_page(15 * minutes)
-def api_unicode_to_betacode(request, word=None):
-    if word is None or len(word) == 0 and 'word' in request.GET:
-        word = request.GET['word']
+def api_unicode_to_betacode(request, text=None):
+    
+    if text is None or len(text) == 0 and 'text' in request.GET:
+        text = request.GET['text']
     
     d = {}
     
-    d['unicode'] = word
-    d['beta-code'] = Greek.unicode_to_beta_code(word)
+    d['unicode'] = text
+    d['beta-code'] = Greek.unicode_to_beta_code(text)
     
     return render_api_response(request, d)
 
 @cache_page(15 * minutes)
-def api_beta_code_to_unicode(request, word=None):
+def api_beta_code_to_unicode(request, text=None):
     
-    if word is None or len(word) == 0 and 'word' in request.GET:
-        word = request.GET['word']
+    if text is None or len(text) == 0 and 'text' in request.GET:
+        text = request.GET['text']
     
     d = {}
     
-    d['unicode'] = Greek.beta_code_to_unicode(word)
-    d['beta-code'] = word
+    d['unicode'] = Greek.beta_code_to_unicode(text)
+    d['beta-code'] = text
     
     return render_api_response(request, d)
 
