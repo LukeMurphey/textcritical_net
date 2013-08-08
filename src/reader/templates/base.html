@@ -28,9 +28,9 @@
   <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/arthref.css">
   
   {% if USE_MINIFIED|default_if_none:1 %}
-  <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap.min.css">
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.min.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap.min.css">{% endif %}
   {% else %}
-  <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap.css">
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap.css">{% endif %}
   {% endif %}
   
   {% if USE_DARK_THEME|default_if_none:0 %}
@@ -41,9 +41,9 @@
   
   {% if include_default_css|default_if_none:1 %}
   {% if USE_MINIFIED|default_if_none:1 %}
-  <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap-responsive.min.css">
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap-responsive.min.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap-responsive.min.css">{% endif %}
   {% else %}
-  <link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap-responsive.css">
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap-responsive.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL }}/stylesheets/bootstrap-responsive.css">{% endif %}
   {% endif %}
   {% endif %}
   
@@ -58,7 +58,11 @@
   <![endif]-->
   {% block base_content %}{% endblock %}
   
-  <script src="{{ MEDIA_URL }}/javascripts/libs/require.js"></script>
+  {% if USE_MINIFIED|default_if_none:1 %}
+  {% if USE_CDN|default_if_none:1 %}<script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.0.6/require.min.js"></script>{% else %}<script src="{{ MEDIA_URL }}/javascripts/libs/require.js"></script>{% endif %}
+  {% else %}
+  {% if USE_CDN|default_if_none:1 %}<script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.0.6/require.js"></script>{% else %}<script src="{{ MEDIA_URL }}/javascripts/libs/require.js"></script>{% endif %}
+  {% endif %}
   {% if USE_MINIFIED|default_if_none:1 %}
   <script src="{{ MEDIA_URL }}/javascripts/main.min.js"></script>
   {% else %}

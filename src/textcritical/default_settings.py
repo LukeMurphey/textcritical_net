@@ -73,6 +73,10 @@ LANGUAGE_CODE = 'en-us'
 
 SITE_ID = 1
 
+# Load CSS and images from a CDN as opposed to using local content
+# Note that the content loaded in require 
+USE_CDN = True
+
 # Set the name in the admin interface
 GRAPPELLI_ADMIN_TITLE = "TextCritical.net"
 
@@ -183,7 +187,6 @@ INSTALLED_APPS = (
      'django.contrib.admindocs',
      'django.contrib.humanize',
      'reader'
-
 )
 
 # A sample logging configuration. The only tangible logging
