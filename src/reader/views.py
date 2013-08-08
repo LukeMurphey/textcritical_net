@@ -311,27 +311,44 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     for r in related_works_tmp:
         related_works.append(r.related_work)
     
+    # Make the chapter title
+    title = work.title
+    
+    # Add the chapter
+    chapter_description = chapter.get_division_description()
+    title = title + " " + chapter_description
+    
+    # Add the verse
+    if verse_to_highlight:
+        
+        if chapter_description.find(".") >= 0:
+            title = title + "."
+        else:
+            title = title + ":"
+            
+        title = title + verse_to_highlight
+    
     response = render_to_response('read_work.html',
-                             {'title'                : work.title,
-                              'work_alias'           : work_alias,
-                              'warnings'             : warnings,
-                              'work'                 : work,
-                              'related_works'        : related_works,
-                              'verses'               : verses,
-                              'divisions'            : divisions,
-                              'chapter'              : chapter,
-                              'chapters'             : chapters,
-                              'authors'              : work.authors.filter(meta_author=False),
-                              'next_chapter'         : next_chapter,
-                              'previous_chapter'     : previous_chapter,
-                              'verse_to_highlight'   : verse_to_highlight,
-                              'total_chapters'       : total_chapters,
-                              'completed_chapters'   : completed_chapters,
-                              'remaining_chapters'   : remaining_chapters,
-                              'chapter_not_found'    : chapter_not_found,
-                              'verse_not_found'      : verse_not_found,
-                              'progress'             : progress},
-                              context_instance=RequestContext(request))
+                                 {'title'                : title,
+                                  'work_alias'           : work_alias,
+                                  'warnings'             : warnings,
+                                  'work'                 : work,
+                                  'related_works'        : related_works,
+                                  'verses'               : verses,
+                                  'divisions'            : divisions,
+                                  'chapter'              : chapter,
+                                  'chapters'             : chapters,
+                                  'authors'              : work.authors.filter(meta_author=False),
+                                  'next_chapter'         : next_chapter,
+                                  'previous_chapter'     : previous_chapter,
+                                  'verse_to_highlight'   : verse_to_highlight,
+                                  'total_chapters'       : total_chapters,
+                                  'completed_chapters'   : completed_chapters,
+                                  'remaining_chapters'   : remaining_chapters,
+                                  'chapter_not_found'    : chapter_not_found,
+                                  'verse_not_found'      : verse_not_found,
+                                  'progress'             : progress},
+                                  context_instance=RequestContext(request))
     
     # If the verse could not be found, set a response code to note that we couldn't get the content that the user wanted so that caching doesn't take place
     if verse_not_found:
