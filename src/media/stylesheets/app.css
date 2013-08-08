@@ -556,6 +556,9 @@ input[type='checkbox'] {
   display: block;
   margin-top: 8px; }
 
+.beta-code-entry {
+  margin-top: 4px; }
+
 .actions_404 {
   margin-top: 10px;
   margin-bottom: 20px; }
