@@ -866,7 +866,8 @@ define([
 				    },
 				    error:  function(jqXHR, textStatus, errorThrown){
 				    	console.error("Failed to load the page content with asynchronous request");
-				        $('#main-content').html("<h3>Yikes! That didn't work</h3>I'm sorry, but the content couldn't be loaded");
+				        $('#main-content').html("<h3>Yikes! That didn't work</h3>I'm sorry, but the content couldn't be loaded").fadeIn('slow');
+				        $("#async-loading-message").hide();
 				    }
 			});
 		}
