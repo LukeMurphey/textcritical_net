@@ -330,6 +330,13 @@ def ajaxify(fn):
     """
     
     def ajax_switch(*args, **kwargs):
+        """
+        The actual content of the page will be shown if:
+        
+         1) the request is not a GET
+         2) the async parameter is provided with a value of 0
+         3) the request is an AJAX call
+        """
         
         # Get the request (which ought to be the first argument)
         request = args[0]
@@ -339,11 +346,11 @@ def ajaxify(fn):
             return fn(*args, **kwargs)
         
         # If we are told to treat the request as synchronous, then just pass it through
-        if 'async' in request.GET and request.GET['async'] == "0":
+        if 'async' in request.GET and request.GET['async'] != "0":
             return fn(*args, **kwargs)
         
         # If the call is an AJAX call, then pass it through
-        if request.is_ajax():
+        if request.is_ajax() and ('async' not in request.GET or request.GET['async'] == "0"):
             return fn(*args, **kwargs)
         
         # If the call is a plain GET call, then get it
