@@ -89,7 +89,8 @@
         ##############################
         {% endcomment %}
         {% if divisions and divisions|length > 1 %}
-        <div class="table-of-contents ">
+        <div class="table-of-contents">
+            <input type="text" placeholder="Filter table of contents..." class="division-filter" />
 	        <ul class="nav nav-list">
 	            {% for division_part in divisions.all %}
 	               {% if chapter.parent_division.id == division_part.id %}
@@ -278,6 +279,10 @@ require(["jquery", "store", "app", "underscore", "bootstrap"], function($) {
     {% endif %}
     
     TextCritical.pre_load_next_link();
+    
+    TextCritical.list_filter($(".division-filter"), $(".table-of-contents .nav-list"), true);
+    
+    
 });
 </script>
 {% endblock %}

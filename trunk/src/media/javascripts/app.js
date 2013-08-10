@@ -42,7 +42,14 @@ define([
 				$('#show-table-of-contents-phone').text("Hide table of contents");
 			}
 			
-			$('.table-of-contents').toggle('fast', 'swing');
+			$('.table-of-contents').toggle('fast', function() {
+				// Clear the division filter
+				$(".division-filter").val("");
+				$(".division-filter").change();
+			});
+			
+			
+			
 		}
 		
 		/**
@@ -954,5 +961,94 @@ define([
 			
 			return converted_beta_code;
 		}
+		
+		TextCritical.freeze_height = function(selector){
+			
+			$(selector).css("height", $(selector).height());
+		}
+		
+		TextCritical.unfreeze_height = function(selector){
+			
+			$(selector).css("height", "auto");
+		}
+		
+		/**
+		 * Return true if any of the HTML5 data attributes contain the given text.
+		 * 
+		 * @param attributes The attributes to analyze (a NamedNodeMap)
+		 * @param text The text to search for
+		 */
+		TextCritical.data_attribute_contains = function(attributes, text) {
+			
+			for(var i=0; i<attributes.length; i++){
+				
+				attribute = attributes[i];
+				
+				// Make sure that attribute is an HTML 5 data attribute
+				if( attribute.name.indexOf("data-") == 0 ){
+					if( attribute.value.toLowerCase().indexOf(text) >= 0 ){
+						return true;
+					}
+				}
+			}
+			
+			return false;
+		}
+		
+		/**
+		 * Setup a filter a list based on the contents of an input box
+		 * 
+		 * @param input The input box to get the filter text from
+		 * @param list The list to filter
+		 **/
+		TextCritical.list_filter = function(input, list, freeze_height) {
+			
+			// Do not freeze the height of the div by default
+			if( freeze_height == undefined ){
+				freeze_height = false;
+			}
+
+			$(input).change( function () {
+			    	  
+				// Get the text to filter on; convert it to lower case so that we can do case insensitive matching
+			    var filter = $(this).val().toLowerCase();
+			        
+			    // Filter the list
+			    if(filter) {
+			        	
+			    	// Freeze the height of the list
+			    	if( freeze_height ){
+			          TextCritical.freeze_height(list);
+			    	}
+			          
+			    	// Find the items to hide:
+			    	$(list).find('a').each(function(i) {
+			        	
+			    		// If the text of the link matches, show it
+			    		if( $(this).text().toLowerCase().indexOf(filter) >= 0){
+			    			$(this).parent().show();
+			        	}
+			    		else if( TextCritical.data_attribute_contains( this.attributes, filter) ){
+			        		$(this).parent().show();
+			        	}
+			    		else{
+			    			$(this).parent().hide();
+			    		}
+			        });
+			          
+			    } else {
+			    	$(list).find("li").show();
+			          
+			         if( freeze_height ){
+			        	 TextCritical.unfreeze_height(list);
+			         }
+			    }
+			        return false;
+			}).keyup( function () {
+			        // fire the above change event after every letter
+			        $(this).change();
+			});
+		}
+
 }
 );
