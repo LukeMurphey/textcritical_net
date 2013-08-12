@@ -43,6 +43,7 @@ urlpatterns = patterns('',
     url(r'^api/convert_query_beta_code/(?P<search_query>[^/]*)/?$', 'reader.views.api_convert_query_beta_code', name='api_convert_query_beta_code' ),
     #url(r'^api/beta_code_to_unicode/(?P<beta_code>[^/]*)/?$', 'reader.views.api_beta_code_to_unicode', name='api_beta_code_to_unicode' ),
     url(r'^api/beta_code_to_unicode/?$', 'reader.views.api_beta_code_to_unicode', name='api_beta_code_to_unicode' ),
+    url(r'^api/resolve_reference/?$', 'reader.views.api_resolve_reference', name='api_resolve_reference' ),
     
     url(r'^api/works_typehead_hints/?$', 'reader.views.api_works_typehead_hints', name='api_works_typehead_hints' ),
     

@@ -162,69 +162,13 @@ define([
 		}
 		
 		/**
-		 * Determines the path that corresponds to the given reference.
-		 * 
-		 * @param reference the reference to go to (like "Romans 14:1")
-		 * @param reference_ids an array of the current division markers. Used to help the function not break on division descriptors that have spaces in the name (like "1 Thessalonians")
-		 **/
-		TextCritical.resolve_path = function ( reference, reference_ids ) {
-			
-			// Trim the reference in case it has extra spaces and change to lower case so that we handle reference in a case insensitive way
-			reference = TextCritical.trim( reference ).toLowerCase();
-			
-			// Change all of the division IDs to lower case
-			for( c = 0; c < reference_ids.length; c++ ){
-				reference_ids[c] = reference_ids[c].toLowerCase();
-			}
-			
-		    // Break up the path
-		    var path_array = window.location.pathname.split( '/' );
-		    var path = [];
-		    
-		    for( i = 0; i < path_array.length; i++){
-		    	if( path_array[i].length > 0 ){
-		    		path.push(path_array[i]);
-		    	}
-		    	
-		    	if( path.length >= 2 ){
-		    	   break;
-		    	}
-		    }
-		        
-		    // Make a map from division IDs so that we avoid breaking on division IDs with spaces in them
-		    divisions_map = {}
-		    
-		    for( c = 0; c < reference_ids.length; c++ ){
-		    	
-		    	// Set the key to the be the slugified version of the division ID
-		    	divisions_map[reference_ids[c]] = TextCritical.slugify(reference_ids[c]);
-		    	
-		    	// Set the value to be the original
-		    	reference = reference.replace(reference_ids[c], TextCritical.slugify(reference_ids[c]));
-		    }
-		    
-		    // Break up the reference entry
-		    refs = reference.split(/[ :._]+/);
-		    
-		    // Swap the slugs back with the originals
-		    for(var original_name in divisions_map){
-		    	for( c = 0; c < refs.length; c++){
-		    		refs[c] = refs[c].replace(divisions_map[original_name], original_name)
-		    	}
-		    }
-		    
-		    // Make the path
-		    return "/" + path.concat(refs).join("/");
-		}
-		
-		/**
 		 * Opens the view to the given chapter reference.
 		 * 
-		 * @param string the reference to go to (like "Romans 14:1")
-		 * @param array an array of division IDs; these will be used to help parsing of the reference
+		 * @param reference the reference to go to (like "Romans 14:1")
+		 * @param work_title_slug the title slug of the work containing the referenced item
 		 **/
-		TextCritical.go_to_chapter = function ( reference, division_ids ) {
-			document.location = TextCritical.resolve_path(reference, division_ids);
+		TextCritical.go_to_chapter = function ( reference, work_title_slug ) {
+			document.location = TextCritical.resolve_path(work_title_slug, reference);
 		}
 		
 		/**
@@ -1048,6 +992,29 @@ define([
 			        // fire the above change event after every letter
 			        $(this).change();
 			});
+		}
+		
+		/**
+		 * Get the URL to the referenced item
+		 * 
+		 * @param work_title_slug the title slug for the document containing the reference
+		 * @param reference the reference to find the URL for
+		 **/
+		TextCritical.resolve_path = function(work_title_slug, reference) {
+			
+			var reference_url = null;
+			
+			var request = $.ajax({
+		  		  url: "/api/resolve_reference/?work=" + work_title_slug + "&ref=" + reference,
+		  		  async : false,
+		  		  success: function(reference) {
+		  			reference_url = reference.url;
+		  		  },
+		  		  type: "GET"
+		  	});
+			
+			return reference_url;
+			
 		}
 
 }
