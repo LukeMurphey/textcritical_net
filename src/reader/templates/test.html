@@ -66,6 +66,27 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
   		
     });
     
+    describe("Getting resolved reference", function() {
+    	
+		it("for normal reference", function() {
+			expect( TextCritical.resolve_path("lxx", "Genesis 2") ).toBe( "/work/lxx/Genesis/2" );
+   		});
+    	
+		// Test reference with dotted verse (See http://lukemurphey.net/issues/550)
+		it("for reference containing verse with dotted verse", function() {
+			expect( TextCritical.resolve_path("lxx", "Ecclesiasticus 1:1.33") ).toBe( "/work/lxx/Ecclesiasticus/1/1.33" );
+   		});
+		
+		it("for reference containing verse with too many spaces", function() {
+			expect( TextCritical.resolve_path("lxx", "Genesis  1:3") ).toBe( "/work/lxx/Genesis/1/3" );
+   		});
+		
+		it("for reference containing books with spaces in the name", function() {
+			expect( TextCritical.resolve_path("new-testament", "I Corinthians 1:3") ).toBe( "/work/new-testament/I%20Corinthians/1/3" );
+   		});
+  		
+    });
+    
     describe("Content search", function() {
     	
 		// Test search for unicode
@@ -166,26 +187,6 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
     # Reading View Tests
     ##############################
     {% endcomment %}
-    
-    describe("Resolution of path from reference", function() {
-    	
-		it("when division includes a number", function() {
-			
-			reference = "1 Thessalonians 1:4";
-	    	division_ids = ["1 Thessalonians", "1", "3"];
-			
-			expect( TextCritical.resolve_path(reference, division_ids) ).toEqual( "/tests/1 thessalonians/1/4" );
-   		});
-		
-		it("when division does not include a number", function() {
-			
-			reference = "1 Thessalonians 1:4";
-	    	division_ids = ["1 Thessalonians", "1", "3"];
-			
-			expect( TextCritical.resolve_path(reference, division_ids) ).toEqual( "/tests/1 thessalonians/1/4" );
-   		});
-    	
-    });
     
     describe("Slugify path", function() {
     	

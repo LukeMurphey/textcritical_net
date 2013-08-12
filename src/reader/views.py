@@ -5,6 +5,7 @@ from django.http import HttpResponse, Http404
 from django.template.context import RequestContext
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
+from django.template.defaultfilters import slugify
 
 import json
 import logging
@@ -726,3 +727,83 @@ def api_works_list(request, author=None):
                             } )
     
     return render_api_response(request, works_json)
+
+def assign_divisions(ref_components):
+
+    division_0, division_1, division_2, division_3, division_4 = None, None, None, None, None
+    
+    if len(ref_components) >= 5:
+        division_0, division_1, division_2, division_3, division_4 = ref_components[:5]
+    elif len(ref_components) == 4:
+        division_0, division_1, division_2, division_3 = ref_components
+    elif len(ref_components) == 3:
+        division_0, division_1, division_2 = ref_components
+    elif len(ref_components) == 2:
+        division_0, division_1 = ref_components
+    elif len(ref_components) == 1:
+        division_0 = ref_components[0]
+        
+    return division_0, division_1, division_2, division_3, division_4
+
+def swap_slugs(divisions_with_spaces, *args):
+    
+    results = []
+    
+    for arg in args:
+        if arg is not None:
+            for d in divisions_with_spaces:
+                arg = arg.replace( slugify(d['descriptor']), d['descriptor'])
+                
+        results.append(arg)
+        
+    return results
+
+def parse_reference_and_get_division_and_verse(regex, escaped_ref, work, divisions_with_spaces):
+    
+    # Try parsing the reference normally
+    division_0, division_1, division_2, division_3, division_4 = assign_divisions(re.split(regex, escaped_ref))
+    
+    # Swap back the slugs
+    division_0, division_1, division_2, division_3, division_4 = swap_slugs(divisions_with_spaces, division_0, division_1, division_2, division_3, division_4)
+    
+    # Try to resolve the division
+    division, verse_to_highlight = get_division_and_verse(work, division_0, division_1, division_2, division_3, division_4)
+    
+    return division, verse_to_highlight, division_0, division_1, division_2, division_3, division_4
+
+def api_resolve_reference(request, work=None, ref=None):
+    
+    # Get the work and reference from the arguments
+    if work is None and 'work' in request.REQUEST:
+        work = request.REQUEST['work']
+        
+    if ref is None and 'ref' in request.REQUEST:
+        ref = request.REQUEST['ref']
+    
+    # Get the work that is being referred to
+    work_alias = get_object_or_404(WorkAlias, title_slug=work)
+    
+    # Get the division names that have spaces in them
+    divisions_with_spaces = Division.objects.filter(work=work_alias.work, descriptor__contains=' ').values('descriptor')
+    
+    # Start making the arguments the we need for making the URL
+    args = [work_alias.work.title_slug]
+    
+    # Swap out the titles of the divisions with spaces in the name with the title slug (we will swap them back when we are done)
+    escaped_ref = ref + ''
+    
+    for d in divisions_with_spaces:
+        escaped_ref = escaped_ref.replace(d['descriptor'], slugify(d['descriptor']))
+    
+    # Try to resolve the division
+    division, verse_to_highlight, division_0, division_1, division_2, division_3, division_4 = parse_reference_and_get_division_and_verse('[ .:]+', escaped_ref, work_alias.work, divisions_with_spaces)
+    
+    # If parsing it normally didn't parse right, then try without using the period as a separator
+    if division is None and division_0 is not None:
+        division, verse_to_highlight, division_0, division_1, division_2, division_3, division_4 = parse_reference_and_get_division_and_verse('[ :]+', escaped_ref, work_alias.work, divisions_with_spaces)
+        
+    l = [division_0, division_1, division_2, division_3, division_4]
+        
+    args.extend( [x for x in l if x is not None] )
+    
+    return render_api_response(request, { 'url' : reverse('read_work', args=args), 'verse_to_highlight' : verse_to_highlight } )
