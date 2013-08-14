@@ -753,7 +753,7 @@ define([
 		/**
 		 * Get the parameter from the query string.
 		 * 
-		 * @param url 
+		 * @param url The URL containing the GET parameter
 		 * @param name The name of the parameter to obtain
 		 */
 		TextCritical.get_parameter_by_name = function ( url, name ) {
@@ -778,6 +778,11 @@ define([
 		    }
 		}
 		
+		/**
+		 * Add the parameter 'async' to the URL to note that it is the results of an asynchronous request for content to be placed in another part of the page.
+		 * 
+		 * @param url The url to add the parameter to
+		 */
 		TextCritical.add_async_parameter = function ( url ){
 			
 			// Add the async parameter (if it doesn't already exist)
@@ -906,11 +911,17 @@ define([
 			return converted_beta_code;
 		}
 		
+		/**
+		 * Freeze the height of the given object.
+		 **/
 		TextCritical.freeze_height = function(selector){
 			
 			$(selector).css("height", $(selector).height());
 		}
 		
+		/**
+		 * Unfreeze the height of the given object.
+		 **/
 		TextCritical.unfreeze_height = function(selector){
 			
 			$(selector).css("height", "auto");
