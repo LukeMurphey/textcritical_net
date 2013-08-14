@@ -1,5 +1,6 @@
 from django import template
 register = template.Library()
+from django.utils.encoding import smart_unicode
  
 @register.filter()
 def contains(value, arg):
@@ -70,5 +71,22 @@ def remove(value, arg):
     
     if value is not None:
         return value.replace(arg, "")
+    else:
+        return value
+    
+@register.filter()
+def replace(value, arg):
+    """
+    Usage:
+    {{text|replace:"replace_this,with_this"}}
+    """
+    
+    split_s = smart_unicode(arg).split(',', 1 )
+    
+    if len(split_s) >= 2:
+        
+        replace_this = split_s[0]
+        put_in_this = split_s[1]
+        return smart_unicode(value).replace(replace_this, put_in_this)
     else:
         return value
