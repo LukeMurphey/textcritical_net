@@ -634,12 +634,26 @@ define([
 		 * Retrieves a list of the typeahead hints used for the works list.
 		 **/
 		TextCritical.works_search_typeahead_hints = [];
+		TextCritical.works_search_typeahead_hints_flattened = [];
 		
-		TextCritical.get_works_search_typeahead_hints = function ( ) {
+		TextCritical.get_works_search_typeahead_hints = function ( flattened ) {
 			
-			if( TextCritical.works_search_typeahead_hints.length > 0){
-				return TextCritical.works_search_typeahead_hints;
+			if( flattened == undefined ){
+				flattened = true;
 			}
+			
+			// Get the list if it is already cached
+			if( TextCritical.works_search_typeahead_hints_flattened.length > 0){
+				
+				if( flattened ){
+					return TextCritical.works_search_typeahead_hints_flattened;
+				}
+				else{
+					return TextCritical.works_search_typeahead_hints;
+				}
+			}
+			
+			// Download the list otherwise
 			else{
 				console.info("Retrieving list of typeahead hints from the server");
 		    	var request = $.ajax({
@@ -651,7 +665,50 @@ define([
 		  		  type: "GET"
 		  		});
 		    	
-		    	return TextCritical.works_search_typeahead_hints;
+		    	//Flatten the list so that Bootstrap typeahead can accept the list
+		    	hints_flattened = [];
+		    	
+		    	for( var i = 0; i < TextCritical.works_search_typeahead_hints.length; i++){
+					if( _.indexOf(hints_flattened, TextCritical.works_search_typeahead_hints[i].desc) < 0 ){
+						hints_flattened.push( TextCritical.works_search_typeahead_hints[i].desc );
+					}
+				}
+		    	
+		    	// Save the flattened list
+		    	TextCritical.works_search_typeahead_hints_flattened = hints_flattened;
+		    	
+		    	return TextCritical.works_search_typeahead_hints_flattened;
+			}
+		}
+		
+		/**
+		 * Changes the url to go the work referenced by the given text provided that it only matches one item and the itme has a URL. Returns true if it has redirected.
+		 * 
+		 * @param text The text to search for
+		 */
+		TextCritical.jump_to_searched_text = function ( text ) {
+			list = TextCritical.get_works_search_typeahead_hints(false);
+			
+			found = 0;
+			url = null;
+			
+			// Try to find the item and also determine if the item is ambiguous (points to more than one item)
+			for(var c = 0; c < list.length; c++ ){
+				if( list[c].desc == text ){
+					found = found + 1;
+					url = list[c].url;
+				}
+			}
+			
+			// If we didn't find a URL or the information was ambiguous (referred to multiple items) then don't bother redirecting
+			if( found > 1 || found == 0 || url == null ){
+				return false;
+			}
+			
+			// Otherwise, redirect
+			else{
+				location = url;
+				return true;
 			}
 		}
 		
