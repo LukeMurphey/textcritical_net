@@ -436,13 +436,24 @@ def api_works_typehead_hints(request):
     hints = []
     
     # Get the names of works
-    hints.extend( Work.objects.all().values_list('title', flat=True) )
+    for work in Work.objects.all().values('title', 'title_slug'):
+        hints.append( {
+                       'desc': work['title'],
+                       'url': reverse('read_work', args=[work['title_slug']])
+                       } )
+        
+    #hints.extend( Work.objects.all().values_list('title', flat=True) )
     
     # Get the author names
-    hints.extend( Author.objects.all().values_list('name', flat=True) )
+    for author in uniquefy(Author.objects.all().values_list('name', flat=True)):
+        hints.append( {
+                       'desc': author,
+                       'url': ''
+                       } )
+    #hints.extend( Author.objects.all().values_list('name', flat=True) )
     
     # Uniquefy the list
-    hints = uniquefy(hints)
+    #hints = uniquefy(hints)
     
     # Return the results
     return render_api_response(request, hints)
