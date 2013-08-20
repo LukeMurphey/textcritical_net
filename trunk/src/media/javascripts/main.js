@@ -63,10 +63,6 @@ require.config({
         jquery_tools: [
             "http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min",
             "libs/jquery.tools.min"
-        ],
-        
-        facebook: [
-            "http://connect.facebook.net/en_US/all"
         ]
 
     },
