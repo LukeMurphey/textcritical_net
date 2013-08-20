@@ -2,7 +2,7 @@
 
 {% block content %}
         <ul class="breadcrumb">
-            <li><a href="{% url home %}">Home</a> <span class="divider">/</span></li>
+            <li><a href="{% url "home" %}">Home</a> <span class="divider">/</span></li>
             <li class="active">Library</li>
         </ul>
 
@@ -35,7 +35,7 @@ require(["jquery", "libs/text!/media/templates/works_list.html", "datatables"], 
 		
 		$("#works_list_container").html(_.template(works_list_template,{ works:works,
 																		 USE_DARK_THEME:{{USE_DARK_THEME|default_if_none:0|lower}},
-																		 search_url:"{% url search %}",
+																		 search_url:"{% url "search" %}",
 																		 read_work_url: "/work"}));
 		
     	textcritical.datatable = $('#works_list').dataTable( {

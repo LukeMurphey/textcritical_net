@@ -2,7 +2,7 @@
 
 {% block content %}
         <ul class="breadcrumb">
-            <li><a href="{% url home %}">Home</a> <span class="divider">/</span></li>
+            <li><a href="{% url "home" %}">Home</a> <span class="divider">/</span></li>
             <li class="active">About</li>
         </ul>
         
@@ -19,12 +19,12 @@
         It is surprisingly difficult to find freely accessible ancient Greek works in the original languages online.
         Finding morphologically parsed works is particularly difficult.
         Some works are available for a fee but they are often rather expensive.
-        For example, the works of <a href="{% url works_index %}?search=josephus">Flavius Josephus</a> are available from Logos, but they are <a target="_blank" class="external" href="http://www.logos.com/product/5776/josephus-in-greek-niese-critical-edition-with-apparatus">nearly $200</a>!
-        TextCritical.net aims to <a href="{% url works_index %}">offer these works</a> for free.
+        For example, the works of <a href="{% url "works_index" %}?search=josephus">Flavius Josephus</a> are available from Logos, but they are <a target="_blank" class="external" href="http://www.logos.com/product/5776/josephus-in-greek-niese-critical-edition-with-apparatus">nearly $200</a>!
+        TextCritical.net aims to <a href="{% url "works_index" %}">offer these works</a> for free.
         
         <h2>Source Code</h2>
         This site is open source. See <a target="_blank" class="external" href="http://lukemurphey.net/projects/ancient-text-reader/">LukeMurphey.net</a> for information regarding how to get access to the source code and how to set up your own instance of the site for development purposes.
-        <a href="{% url contact %}">Contact us</a> if you like to give us some suggestions or help.
+        <a href="{% url "contact" %}">Contact us</a> if you like to give us some suggestions or help.
         This work is licensed under a <a rel="license" class="external" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.
         <br />
         <a class="license-image" rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US">

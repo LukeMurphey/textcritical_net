@@ -118,7 +118,7 @@
 .grp-module {
 	@include grp-module;
 }
-.grp-change-form .grp-module {
+.grp-change-form .grp-module:not(.grp-submit-row) {
 	min-width: 960px;
 }
 .grp-empty-form {
@@ -185,6 +185,10 @@
 		> .grp-collapse-handler, > .grp-collapse-handler *, 
 		.grp-tools, .grp-tools * {
 			display: block !important;
+		}
+		// Hide elements with "display:none" in collapse-closed
+		.grp-tools li *[style^="display: none"] {
+			display: none !important;
 		}
 	}
 	.grp-collapse-handler {
