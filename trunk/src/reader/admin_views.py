@@ -1,5 +1,4 @@
 from django.contrib.admin.views.decorators import staff_member_required
-from django.views.generic.list_detail import object_detail
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.db.models import Q

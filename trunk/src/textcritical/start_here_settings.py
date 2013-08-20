@@ -70,3 +70,9 @@ LOGGING = {
         },
     }
 }
+
+# Set the domain name to the list of allowed host names
+ALLOWED_HOSTS = [
+    '.textcritical.com',
+    '.example.net',
+]

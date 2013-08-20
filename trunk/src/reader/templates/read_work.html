@@ -2,21 +2,21 @@
 
 {% block links %}
 {% if previous_chapter %}
-<link rel="previous" href="{% url read_work work.title_slug %}/{{ previous_chapter.get_division_indicators|join:"/" }}" />
+<link rel="previous" href="{% url "read_work" work.title_slug %}/{{ previous_chapter.get_division_indicators|join:"/" }}" />
 {% endif %}
 {% if next_chapter %}
-<link rel="next" href="{% url read_work work.title_slug %}/{{ next_chapter.get_division_indicators|join:"/" }}" />
+<link rel="next" href="{% url "read_work" work.title_slug %}/{{ next_chapter.get_division_indicators|join:"/" }}" />
 {% endif %}
 {% endblock %}
 {% block content %}
 
 		{% load string_utils %}
         <ul class="breadcrumb">
-            <li><a href="{% url home %}">Home</a> <span class="divider">/</span></li>
-            <li><a href="{% url works_index %}">Library</a> <span class="divider">/</span></li>
+            <li><a href="{% url "home" %}">Home</a> <span class="divider">/</span></li>
+            <li><a href="{% url "works_index" %}">Library</a> <span class="divider">/</span></li>
             <li class="active">{{work.title}}{% if chapter %}: {{chapter.get_division_description}}{% endif %}</li>
         </ul>
-        
+        <div id="fb-root"></div>
         <h1 data-work-title-slug="{{work.title_slug}}">{{work.title}}{% if authors|length > 0 %} <small>By {{authors|join:", "}}</small>{% endif %}</h1>
         
         {% comment %}
@@ -47,7 +47,7 @@
 			            {% if related_works and related_works|length > 0 %}
 			            <li class="nav-header">Other Versions</li>
 							{% for related_work in related_works %}
-			                	<li><a href="{% url read_work related_work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">
+			                	<li><a href="{% url "read_work" related_work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">
 			                    {{related_work.language}}
 			                        {% for editor in related_work.editors.all %}
 			                        {% if not forloop.first %}, {% endif %}
@@ -65,7 +65,7 @@
 			        <button class="btn dropdown-toggle last-button" {% if not related_works or related_works|length == 0 %}disabled{% endif %} data-toggle="dropdown">Other versions <span class="caret"></span></button>
 			        <ul class="dropdown-menu right" role="menu">
 	                    {% for related_work in related_works %}
-	                        <li><a href="{% url read_work related_work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">
+	                        <li><a href="{% url "read_work" related_work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">
 	                        	{{related_work.title}} ({{related_work.language}})
 	                        	
 	                        	{% for editor in related_work.editors.all %}
@@ -95,11 +95,11 @@
 	            {% for division_part in divisions.all %}
 	               {% if chapter.parent_division.id == division_part.id %}
 	            <li class="division-{{division_part.level}} active">
-	                <a data-division-descriptor="{{division_part.descriptor}}" href="{% url read_work work.title_slug %}/{{ division_part.get_division_indicators|join:"/" }}"><i class="icon-book icon-white"></i>{{division_part|capfirst}}</a>
+	                <a data-division-descriptor="{{division_part.descriptor}}" href="{% url "read_work" work.title_slug %}/{{ division_part.get_division_indicators|join:"/" }}"><i class="icon-book icon-white"></i>{{division_part|capfirst}}</a>
 	            </li>
 	               {% else %}
                 <li class="division-{{division_part.level}}">
-                    <a data-division-descriptor="{{division_part.descriptor}}" href="{% url read_work work.title_slug%}/{{ division_part.get_division_indicators|join:"/" }}"><i class="icon-book {% if USE_DARK_THEME|default_if_none:0 %}icon-white{% endif %}"></i>{{division_part|capfirst}}</a>
+                    <a data-division-descriptor="{{division_part.descriptor}}" href="{% url "read_work" work.title_slug%}/{{ division_part.get_division_indicators|join:"/" }}"><i class="icon-book {% if USE_DARK_THEME|default_if_none:0 %}icon-white{% endif %}"></i>{{division_part|capfirst}}</a>
                 </li>
 	               {% endif %}
 	            {% endfor %}
@@ -138,14 +138,14 @@
         		</ul>
         	</span>
         </span>
-        <a class="hide" id="chapter-base-url" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">Current chapter</a>
+        <a class="hide" id="chapter-base-url" href="{% url "read_work" work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">Current chapter</a>
         
         {% with chapter_description=chapter.get_division_description %}
         
         {% for verse in verses.all %}
         <span id="verse-{{verse.indicator}}" class="verse-container {% if not chapter_not_found and verse.indicator == verse_to_highlight %}highlighted{% endif %}">
             {% if verse.indicator|length > 0 %}
-            <a class="verse-link" data-verse="{{verse.indicator}}" data-verse-descriptor="{{chapter_description}}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse}}" id="verse-link_{{verse.indicator}}" href="{% url read_work work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}/{{verse.indicator}}"><span class="label {% if not chapter_not_found and verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
+            <a class="verse-link" data-verse="{{verse.indicator}}" data-verse-descriptor="{{chapter_description}}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse}}" id="verse-link_{{verse.indicator}}" href="{% url "read_work" work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}/{{verse.indicator}}"><span class="label {% if not chapter_not_found and verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
 	        {% endif %}
 	        {% if verse.original_content|length == 0 %}
 	        {{verse.content|unbound_text_to_html5|safe}}
@@ -164,8 +164,8 @@
         
 		{% if previous_chapter or next_chapter %}
         <div class="page-shortcuts">
-        	{% if previous_chapter %}<a href="{% url read_work work.title_slug %}/{{ previous_chapter.get_division_indicators|join:"/" }}" class="prior-page-shortcut page-shortcut"></a>{% endif %}
-        	{% if next_chapter %}<a href="{% url read_work work.title_slug %}/{{ next_chapter.get_division_indicators|join:"/" }}" class="next-page-shortcut page-shortcut"></a>{% endif %}
+        	{% if previous_chapter %}<a href="{% url "read_work" work.title_slug %}/{{ previous_chapter.get_division_indicators|join:"/" }}" class="prior-page-shortcut page-shortcut"></a>{% endif %}
+        	{% if next_chapter %}<a href="{% url "read_work" work.title_slug %}/{{ next_chapter.get_division_indicators|join:"/" }}" class="next-page-shortcut page-shortcut"></a>{% endif %}
         </div>
         {% endif %}
         
@@ -174,7 +174,7 @@
         	<ul>
         {% if previous_chapter %}
 	            <li class="previous">
-	            <a href="{% url read_work work.title_slug %}/{{ previous_chapter.get_division_indicators|join:"/" }}">&larr;<span class="hidden-phone"> Previous</span></a>
+	            <a href="{% url "read_work" work.title_slug %}/{{ previous_chapter.get_division_indicators|join:"/" }}">&larr;<span class="hidden-phone"> Previous</span></a>
 	            </li>
         {% endif %}
         {% if chapters|length > 1 %}
@@ -185,7 +185,7 @@
         		{% else %}
         		<li>
         		{% endif %}
-        		  <a style="display: inline" href="{% url read_work work.title_slug %}/{{ c.get_division_indicators|join:"/" }}">
+        		  <a style="display: inline" href="{% url "read_work" work.title_slug %}/{{ c.get_division_indicators|join:"/" }}">
         		  {% if c.title|contains:"lines" %}
         		  <span class="hidden-desktop">{{c.title.strip|remove:"lines "}}</span>
         		  <span class="visible-desktop">{{c.title}}</span>
@@ -197,7 +197,7 @@
         {% endif %}
         {% if next_chapter %}
 	            <li class="next">
-	            <a href="{% url read_work work.title_slug %}/{{ next_chapter.get_division_indicators|join:"/" }}"><span class="hidden-phone">Next </span>&rarr;</a>
+	            <a href="{% url "read_work" work.title_slug %}/{{ next_chapter.get_division_indicators|join:"/" }}"><span class="hidden-phone">Next </span>&rarr;</a>
 	            </li>
         {% endif %}
         	</ul>
@@ -209,7 +209,7 @@
 {% block javascript %}
 <script language="javascript">
 
-require(["jquery", "store", "app", "underscore", "bootstrap"], function($) {
+require(["jquery", "store", "app", "underscore", "bootstrap", "facebook"], function($) {
 	
 	TextCritical.loadStoreSettings();
     $('.align-break').click( TextCritical.toggleVerseBreak );
@@ -270,7 +270,6 @@ require(["jquery", "store", "app", "underscore", "bootstrap"], function($) {
     TextCritical.pre_load_next_link();
     
     TextCritical.list_filter($(".division-filter"), $(".table-of-contents .nav-list"), true);
-    
     
 });
 </script>
