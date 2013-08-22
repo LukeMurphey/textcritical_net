@@ -32,6 +32,7 @@ def global_settings(request):
     
     settings_dict['USE_DARK_THEME'] = get_setting_or_default("USE_DARK_THEME", False)
     settings_dict['USE_MINIFIED'] = get_setting_or_default("USE_MINIFIED", False)
+    settings_dict['GOOGLE_ANALYTICS_ID'] = get_setting_or_default("GOOGLE_ANALYTICS_ID", False)
     
     return settings_dict
 
