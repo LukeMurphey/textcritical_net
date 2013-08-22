@@ -133,6 +133,9 @@ USE_DARK_THEME = True
 # Indicates whether minified versions of the resources ought to be used if they are available
 USE_MINIFIED = True
 
+# Contains the Google analytics ID (optional)
+GOOGLE_ANALYTICS_ID = None
+
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
