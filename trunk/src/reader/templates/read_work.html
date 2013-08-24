@@ -17,7 +17,7 @@
             <li class="active">{{work.title}}{% if chapter %}: {{chapter.get_division_description}}{% endif %}</li>
         </ul>
         <div id="fb-root"></div>
-        <h1 data-work-title-slug="{{work.title_slug}}">{{work.title}}{% if authors|length > 0 %} <small>By {{authors|join:", "}}</small>{% endif %}</h1>
+        <h1 data-work-title-slug="{{work.title_slug}}" data-work-title="{{work.title}}">{{work.title}}{% if authors|length > 0 %} <small>By {{authors|join:", "}}</small>{% endif %}</h1>
         
         {% comment %}
         ##############################
@@ -32,6 +32,14 @@
 			    <button class="btn" type="submit" id="change-reference">Go</button>
 			    <button class="hidden-phone show-table-of-contents btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show-table-of-contents">Table of Contents</button>
 			    <button class="hidden-phone search-work btn" type="submit" id="search-work">Search</button>
+			    
+				<span class="hidden-phone btn-group no-left-margin">
+			        <button class="btn dropdown-toggle middle-button" data-toggle="dropdown">Share <span class="caret"></span></button>
+			        <ul class="dropdown-menu right" role="menu">
+						<li><a class="share-link share-facebook" href="#">Post on Facebook</a></li>
+						<li><a class="share-link share-twitter" href="#">Tweet this</a></li>
+			        </ul>
+			    </span>
 				
 			    <button id="align-break" class="btn align-break"><i class="icon-align-left"></i></button>
 			    
@@ -57,6 +65,10 @@
 			                {% endfor %}
 			            </li>
 			            {% endif %}
+			            
+			            <li class="nav-header">Share</li>
+						<li><a class="share-link share-facebook" href="#">Post on Facebook</a></li>
+						<li><a class="share-link share-twitter" href="#">Tweet this</a></li>
 			        </ul>
 			    </span>
 			    </span>
@@ -75,7 +87,7 @@
 	                        	</a></li>
 	                    {% endfor %}
 			            
-			        </ul>             
+			        </ul>
 			    </span>
 			</div>
         </div>
@@ -236,6 +248,7 @@ require(["jquery", "store", "app", "underscore", "bootstrap", "facebook"], funct
     
     $(".verse-link").click(function() {
     	$("#chapter").val( $(this).attr("data-verse-descriptor") );
+    	document.title = $("h1[data-work-title]").attr("data-work-title") + " " + $(this).attr("data-verse-descriptor");
     	return TextCritical.scrollToVerse( $(this).attr("data-verse"), $("#chapter-base-url").attr("href") );
     	
     });
@@ -270,6 +283,16 @@ require(["jquery", "store", "app", "underscore", "bootstrap", "facebook"], funct
     TextCritical.pre_load_next_link();
     
     TextCritical.list_filter($(".division-filter"), $(".table-of-contents .nav-list"), true);
+    
+    window.fbAsyncInit = TextCritical.facebookInit();
+    
+    $(".share-facebook").click(function() {
+    	TextCritical.postToFacebook($('h2').text(), $('.verse-container.highlighted .verse:not(.label)').text(), true);
+    });
+    
+    $(".share-twitter").click(function() {
+    	TextCritical.postToTwitter( $('.verse-container.highlighted .verse:not(.label)').text(), true);
+    });
     
 });
 </script>

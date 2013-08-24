@@ -270,7 +270,7 @@ define([
 		 * Shorten a string.
 		 * 
 		 * @param s the string to be stripped
-		 * @param a the desired length
+		 * @param n the desired length
 		 * @param use_word_boundary if true, then the string will be shortened while attempting to avoid a break in a word
 		 * @param shorten_text the text to add if the string is shortened
 		 */
@@ -1083,6 +1083,138 @@ define([
 			
 			return reference_url;
 			
+		}
+		
+		/**
+		 * Initialize the Facebook API
+		 */
+		TextCritical.facebookInit = function() {
+	        // init the FB JS SDK
+	        FB.init({
+	          appId      : '226685657481279', // App ID from the app dashboard
+	          xfbml      : true               // Look for social plugins on the page
+	        });
+		}
+		
+		/**
+		 * If the provided text is not appropriate for sharing, then autodiscover the content to share. This will also do some cleanup on the text, like:
+		 * 
+		 *  1) Trimming whitespace
+		 *  2) Removing wierd endlines
+		 * 
+		 * @param text Some text that may be shared
+		 * @param give_selection_precedence If true, highlighted text will be used instead of the provided content (if highlighted text is available)
+		 */
+		TextCritical.getTextToShare = function(text, give_selection_precedence){
+
+			if( text === undefined || text == null){
+				text = "";
+			}
+			
+			// If the text was not defined, then find a way to discover it automatically
+			if( TextCritical.trim(text).length == 0 || give_selection_precedence === true){
+				
+				// Try to get the selected text
+				if( window.getSelection().toString().length > 0){
+					text = window.getSelection().toString();
+				}
+			}
+			
+			// Trim the text
+			text = TextCritical.trim(text);
+				
+			// Remove endlines
+			text = text.replace(/[ ]*\n[ ]*/g, ' ');
+			
+			return text
+		}
+		
+		/**
+		 * If the given string (presumably representing a url) ends with a #, then remove it.
+		 * 
+		 * @param str A string that may have a trailing #
+		 */
+		TextCritical.trimTrailingPound = function( str ){
+			if( str.slice(-1) == "#" ){
+				return str.slice(0, str.length-2)
+			}
+			else{
+				return str;
+			}
+		}
+		
+		/**
+		 * Make a Facebook post.
+		 * 
+		 * @param caption The caption of the link (appears beneath the link name)
+		 * @param description The description of the link (appears beneath the link caption)
+		 * @param give_selection_precedence If true, highlighted text will be used instead of the provided content (if highlighted text is available)
+		 * @param link The link attached to this post
+		 * @param name The name of the link attachment
+		 */
+		TextCritical.postToFacebook = function(caption, description, give_selection_precedence, link, name){
+			
+			// If the link was not defined, then use the current URL
+			if( link === undefined || link == null ){
+				link = location.href;
+			}
+			
+			// If the name was not defined, then use the document title
+			if( name === undefined || name == null ){
+				name = document.title;
+			}
+			
+			// If the text was not defined, then find a way to discover it automatically
+			description = TextCritical.getTextToShare(description, give_selection_precedence);
+			
+			FB.ui({
+		    	  method: 'feed',
+		    	  link: TextCritical.trimTrailingPound(link),
+		    	  name: name,
+		    	  caption: caption,
+		    	  description: TextCritical.shorten(description, 400, true, "...")
+			}, function(response){});
+		}
+		
+		/**
+		 * Make a URL for sending a Tweet.
+		 * 
+		 * @param link The link to tweet
+		 * @param text The text to share
+		 * @param give_selection_precedence If true, highlighted text will be used instead of the provided content (if highlighted text is available)
+		 */
+		TextCritical.makeTweetURL = function( link, text, give_selection_precedence ){
+			
+			// If the link was not defined, then use the current URL
+			if( link === undefined || link == null ){
+				link = location.href;
+			}
+			
+			// If the text was not defined, then find a way to discover it automatically
+			text = TextCritical.getTextToShare(text, give_selection_precedence);
+			
+			// This is the base part of the URL
+			twitterLink = 'https://twitter.com/share';
+			
+			// Make up the arguments and assemble the URL
+			data = {
+					url : TextCritical.trimTrailingPound(link),
+					text: TextCritical.shorten(text, 140 - link.length, true, "...")
+			}
+			
+			return twitterLink + '?' + $.param(data);
+		}
+		
+		/**
+		 * Make a Twitter tweet.
+		 * 
+		 * @param text The text to share
+		 * @param give_selection_precedence If true, highlighted text will be used instead of the provided content (if highlighted text is available)
+		 * @param link The link to tweet
+		 */
+		TextCritical.postToTwitter = function(text, give_selection_precedence, link){
+			twitterLink = TextCritical.makeTweetURL(link, text, give_selection_precedence);
+			window.open(twitterLink,'_blank');
 		}
 
 }

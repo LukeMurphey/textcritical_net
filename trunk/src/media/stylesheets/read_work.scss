@@ -239,3 +239,18 @@ body.dark .verse-container.highlighted{
 	border-radius: 6px;
 	margin-bottom: 12px;
 }
+
+.share-link{
+	margin-left: 10px;
+	background-position-x: 0px;
+	background-position-y: 4px;
+	background-repeat: no-repeat;
+}
+
+.share-facebook{
+	background-image: url('/media/images/facebook-16.png');
+}
+
+.share-twitter{
+	background-image: url('/media/images/twitter-16.png');
+}
