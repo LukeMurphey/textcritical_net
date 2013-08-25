@@ -701,7 +701,7 @@ define([
 			}
 			
 			// If we didn't find a URL or the information was ambiguous (referred to multiple items) then don't bother redirecting
-			if( found > 1 || found == 0 || url == null ){
+			if( found > 1 || found == 0 || url == null || url == "" ){
 				return false;
 			}
 			
