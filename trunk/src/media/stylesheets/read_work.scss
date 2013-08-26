@@ -102,7 +102,7 @@ body.dark .verse-container.highlighted{
 .page-shortcut{
 	height: 50%;
 	width: 32px;
-	display: block;
+	display: none;
 	position: fixed;
 	opacity: 0.4;
 }
@@ -127,6 +127,13 @@ body.dark .verse-container.highlighted{
 	background-position-y: 50%;
 	border-top-left-radius: 1em;
 	border-bottom-left-radius: 1em;
+}
+
+@media screen and (min-width: 321px){
+    /* Hide the page shortcuts on small device screens since the buttons tend to overlap with the dropdown menus*/
+	.page-shortcut{
+    	display: block;
+    }
 }
 
 .view_read_work{
