@@ -130,20 +130,20 @@ footer .addthis_toolbox {
 }
 
 .sharing-buttons{
-	width: 100px;
+	width: 225px;
 	text-align: center;
 	cursor: pointer;
+	height: 32px;
 }
 
-.share-text{
-	text-decoration: underline;
+.facebook-block{
+	float:left;
+	width: 50%;
 }
 
-/*
- * Fix the Social jQuery plugin which has a conflict with Bootstrap:
- */
-.launchpad > .icon-container{
-	width: auto;
+.twitter-block{
+	float:right;
+	width: 50%;
 }
 
 @import "home";

@@ -56,10 +56,6 @@ require.config({
             "libs/jasmine-html"
         ],
         
-        social_share: [
-            "libs/socialShare"       
-        ],
-        
         jquery_tools: [
             "http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min",
             "libs/jquery.tools.min"
@@ -74,8 +70,6 @@ require.config({
         jqueryui: ['jquery'],
         datatables: ['jquery'],
         bootstrap: ['jquery'],
-        social_share: ['jquery'],
-        jquery_tools: ['jquery'],
 	    underscore: {
 	        exports: '_'
 	    },
