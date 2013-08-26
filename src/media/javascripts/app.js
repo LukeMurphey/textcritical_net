@@ -1262,6 +1262,20 @@ define([
 			// Open the email link
 			document.location.href = "mailto:" + '?' + TextCritical.serialize(data);
 		}
+		
+		/**
+		 * The Twitter and Facebook APIs take a second or two to make the share buttons. Thus, they are hidden by default and are only shown once the content is available.
+		 */
+		TextCritical.pollForShareButtons = function(){
+			
+			if( $('iframe', '.sharing-buttons').length < 2 ){
+				setTimeout( TextCritical.pollForShareButtons , 200);
+			}
+			else{
+				// Now that iframes exist, give it another second or so to render before showing them
+				setTimeout(function(){ $('.sharing-buttons').fadeIn(); } , 1500);
+			}
+		}
 
 }
 );
