@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block base_content %}
+    <div id="fb-root"></div>
     <div class="navbar navbar-static-top">
       <div class="navbar-inner">
         <div class="container">
@@ -54,9 +55,14 @@
 		        </ul>
 	        </div>
 			
-	        <div id="share-this" class="center sharing-buttons hidden-phone">
-	        	<img src="{{ MEDIA_URL }}images/share.png"/>
-	        	<span class="share-text">Share...</span>
+	        <div class="center sharing-buttons hidden-phone">
+	        	<div class="facebook-block">
+	        		<div class="fb-like" data-href="http://textcritical.net" data-width="225" data-colorscheme="dark" data-layout="button_count" data-show-faces="true" data-send="false"></div>
+	        	</div>
+	        	<div class="twitter-block">
+	        		<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://textcritical.net" data-via="LukeMurphey">Tweet</a>
+					<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+	        	</div>
 	        </div>
 	        
 	    </footer>
@@ -65,7 +71,7 @@
 {% block javascript_base %}
 
     <script language="javascript">
-    require(["jquery", "bootstrap", "app", "social_share"], function($) {
+    require(["jquery", "bootstrap", "app", "facebook"], function($) {
     	$(document).ready( function() {
     		
     		// Configure the typeahead
@@ -78,12 +84,8 @@
 			$('#search').submit(function() {
 				return !TextCritical.jump_to_searched_text( $('#search > .search-query').val() );
 			});
-			
-    		// Wire up the sharing button
-			$('#share-this').socialShare({
-	  		    social: 'blogger,delicious,digg,facebook,google,linkedin,reddit,myspace,pinterest,stumbleupon,tumblr,twitter,windows,yahoo',
-	  		  	blur: true
-	  		});
+    		
+			window.fbAsyncInit = TextCritical.facebookInit();
     		
     	});
     });

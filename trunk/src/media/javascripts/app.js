@@ -1216,6 +1216,52 @@ define([
 			twitterLink = TextCritical.makeTweetURL(link, text, give_selection_precedence);
 			window.open(twitterLink,'_blank');
 		}
+		
+		/**
+		 * Serialize the provided object to a URL.
+		 * 
+		 * @param obj The object to serialize to a URL.
+		 */
+		TextCritical.serialize = function(obj) {
+			  var str = [];
+			  for(var p in obj)
+			     str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+			  return str.join("&");
+		}
+		
+		/**
+		 * Send an email.
+		 * 
+		 * @param subject The subject of the email
+		 * @param body The body of the email
+		 * @param give_selection_precedence If true, highlighted text will be used instead of the provided content (if highlighted text is available)
+		 * @param link The link to the content
+		 */
+		TextCritical.sendAnEmail = function(subject, body, give_selection_precedence, link){
+			
+			// If the link was not defined, then use the current URL
+			if( link === undefined || link == null ){
+				link = location.href;
+			}
+			
+			// If the subject was not defined, then use the current document title
+			if( subject === undefined || link == null ){
+				subject = document.title;
+			}
+			
+			// If the text was not defined, then find a way to discover it automatically
+			body = TextCritical.getTextToShare(body, give_selection_precedence);
+			
+			// Make up the arguments and assemble the URL
+			data = {
+					subject : subject,
+					body    : TextCritical.shorten(body, 1000, true, "...") + "\n\n[Source: " + TextCritical.trimTrailingPound(link) + "]",
+					
+			}
+			
+			// Open the email link
+			document.location.href = "mailto:" + '?' + TextCritical.serialize(data);
+		}
 
 }
 );

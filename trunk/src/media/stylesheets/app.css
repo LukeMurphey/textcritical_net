@@ -107,18 +107,18 @@ footer .addthis_toolbox {
     -moz-box-shadow: 0 0 0;
     box-shadow: 0 0 0; } }
 .sharing-buttons {
-  width: 100px;
+  width: 225px;
   text-align: center;
-  cursor: pointer; }
+  cursor: pointer;
+  height: 32px; }
 
-.share-text {
-  text-decoration: underline; }
+.facebook-block {
+  float: left;
+  width: 50%; }
 
-/*
- * Fix the Social jQuery plugin which has a conflict with Bootstrap:
- */
-.launchpad > .icon-container {
-  width: auto; }
+.twitter-block {
+  float: right;
+  width: 50%; }
 
 /* -----------------------------------------
    Homepage
@@ -396,6 +396,26 @@ body.dark .verse-container.highlighted {
 
 .share-twitter {
   background-image: url("/media/images/twitter-16.png"); }
+
+/*
+.share-email{
+	margin-left: 0px;
+	padding-left: 11px;
+}
+
+.share-email > i {
+	padding-right: 5px;
+}
+*/
+.share-email:before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 16px;
+  height: 16px;
+  background-image: url("/media/images/glyphicons-halflings.png");
+  margin-left: -19px;
+  background-position: -72px 2px; }
 
 /* -----------------------------------------
    jQuery data tables
