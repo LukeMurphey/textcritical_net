@@ -27,7 +27,7 @@
         {% with chapter_description=chapter.get_division_description %}
         <div class="control-group {% if verse_not_found %}error{% endif %}">
         	<div class="input-append">
-        		<input class="span3" placeholder="Jump to reference..." id="chapter" value="{{chapter_description}}{% if verse_to_highlight %}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse_to_highlight}}{% endif %}" type="text">
+        		<input autocorrect="off" autocapitalize="off" class="span3" placeholder="Jump to reference..." id="chapter" value="{{chapter_description}}{% if verse_to_highlight %}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse_to_highlight}}{% endif %}" type="text">
 			    <button class="btn" type="submit" id="change-reference">Go</button>
 			    <button class="hidden-phone show-table-of-contents btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show-table-of-contents">Table of Contents</button>
 			    <button class="hidden-phone search-work btn" type="submit" id="search-work">Search</button>
@@ -104,7 +104,7 @@
         {% endcomment %}
         {% if divisions and divisions|length > 1 %}
         <div class="table-of-contents">
-            <input type="text" placeholder="Filter table of contents..." class="division-filter" />
+            <input autocorrect="off" autocapitalize="off" type="text" placeholder="Filter table of contents..." class="division-filter" />
 	        <ul class="nav nav-list">
 	            {% for division_part in divisions.all %}
 	               {% if chapter.parent_division.id == division_part.id %}
