@@ -48,8 +48,6 @@ define([
 				$(".division-filter").change();
 			});
 			
-			
-			
 		}
 		
 		/**
