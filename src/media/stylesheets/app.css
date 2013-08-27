@@ -558,14 +558,7 @@ b.match {
 
 #search-help-link {
   position: relative;
-  top: -45px;
-  float: right;
-  margin-right: 100px; }
-
-#search-help-hide-link {
-  margin-right: 63px; }
-
-#search-help-hide {
+  top: -49px;
   float: right; }
 
 #search-help {
