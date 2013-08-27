@@ -9,29 +9,26 @@
 
 <form id="search-form">
 	<legend>Search</legend>
-	<div id="search-help-link"><i class="icon-question-sign icon-white"> </i> <a href="#">Search help</a></div>
+	<div id="search-help-link"><i class="icon-question-sign icon-white"> </i> <a href="#">Help</a></div>
 	
 	<div class="input-append ">
 
-	 	<input class="span10" id="search-term" placeholder="Enter the text to search for (e.g. νόμου or no/mou)" type="text" value="{{query|addspaceifnotempty|default_if_none:""}}"/>
+	 	<input class="span10" id="search-term" autocorrect="off" autocapitalize="off" placeholder="Enter the text to search for (e.g. νόμου or no/mou)" type="text" value="{{query|addspaceifnotempty|default_if_none:""}}"/>
 	 	<input type="hidden" id="page-number" name="page" value="{{page|default_if_none:""}}" />
 	 	
-	 	<button id="search-button" class="btn btn-primary" type="button" >Submit Search</button>
+	 	<button id="search-button" class="btn btn-primary" type="button" ><span class="hidden-phone">Submit </span>Search</button>
 	</div>
 	<label class="checkbox-label" for="related_forms">
-		<input class="checkbox" type="checkbox" id="related_forms" name="related_forms">Search related Greek forms (slower but more thorough)</input>
-	</label>
-
-	
+		<input class="checkbox" type="checkbox" id="related_forms" name="related_forms">Search related Greek forms<span class="hidden-phone"> (slower but more thorough)</span></input>
+	</label>	
 </form>
 
-<div id="searching" class="searching-animation">Searching ...</div>
+<div id="searching" class="hide hidden-phone searching-animation">Searching ...</div>
+
+
 <div class="search-results" id="search-results-content"></div>
 		
 <div id="search-help">
-	<div id="search-help-hide">
-		<i class="icon-remove-sign icon-white" ></i> <a id="search-help-hide-link" href="">Close search help</a>
-	</div>
 	
 	<h3>Search Operations</h3>
 	
@@ -118,6 +115,8 @@
 		</table>
 	</p>
 
+	<button id="close-search-help" class="btn pull-right">Close</button>
+
 </div>
 		
 {% endblock %}
@@ -145,7 +144,7 @@ require(["jquery", "store", "app", "underscore", "blockui"], function($) {
 		window.addEventListener('popstate', TextCritical.search_page_popstate );
 		
 		$('#search-help-link').click( function() { TextCritical.toggle_search_help(); return false; } );
-		$('#search-help-hide-link').click( function() { TextCritical.show_search_help(false); return false; } );
+		$('#close-search-help').click( function() { TextCritical.show_search_help(false); return false; } );
 	});
 
 });
