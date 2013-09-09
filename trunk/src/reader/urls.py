@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     
     url(r'^/?$', 'reader.views.home', name='home' ),
     url(r'^works/?$', 'reader.views.works_index', name='works_index' ),
+    url(r'^download/work/(?P<title>.*)/?$', 'reader.views.download_work_epub', name='download_work_epub' ),
     url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>.+)/?$', 'reader.views.read_work', name='read_work' ),
     url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/?$', 'reader.views.read_work', name='read_work' ),
     url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/?$', 'reader.views.read_work', name='read_work' ),

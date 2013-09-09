@@ -96,7 +96,7 @@ SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
+MEDIA_ROOT = os.path.join( os.path.dirname(SITE_ROOT), 'media' ) + '/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -119,6 +119,9 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
+
+# The location to store generated static files
+GENERATED_FILES_DIR = os.path.join( MEDIA_ROOT, "files")
 
 # The address and port to use when using the built-in web-server
 WEB_SERVER_ADDRESS = '0.0.0.0'  # Use '127.0.0.1' to serve content to localhost only

@@ -1,0 +1,20 @@
+{% extends "epub/base.html" %}
+{% load reader_extras %}
+{% load string_utils %}
+{% block base_content %}
+
+<h2>Table of Contents</h2>
+
+        {% if divisions and divisions|length > 1 %}
+        <div class="table-of-contents">
+	        <ul class="nav nav-list">
+	            {% for division in divisions.all %}
+                <li class="division-{{division.level}}">
+                    <a href="{{division.descriptor}}.html"><i class="icon-book"></i>{{division|capfirst}}</a>
+                </li>
+	            {% endfor %}
+	        </ul>
+        </div>
+        {% endif %}
+
+{% endblock %}

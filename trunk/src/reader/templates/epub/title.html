@@ -1,0 +1,29 @@
+{% extends "epub/base.html" %}
+{% load reader_extras %}
+{% load string_utils %}
+{% block base_content %}
+        <h1>{{work.title}}</h1>
+		
+		<div class="add-space">
+			<h4>
+	        {% for author in work.authors.all %}
+{% if not forloop.first %},{% endif %} {{author}}
+	        {% endfor %}
+	        </h4>
+        </div>
+        
+        
+        {% if work.editors.all.count > 0 %}
+        <div class="add-space">
+	        <h4>
+	        {% for editor in work.editors.all %}
+{% if not forloop.first %},{% endif %} {{editor}} 
+	        {% endfor %}
+	        </h4>
+        {% endif %}
+        </div>
+		
+        <div class="add-space">
+        	<a href="http://TextCritical.net">TextCritical.net</a> <br />
+        </div>
+{% endblock %}
