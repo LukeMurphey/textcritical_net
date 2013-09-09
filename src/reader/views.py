@@ -2,10 +2,12 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
+from django.core.servers.basehttp import FileWrapper
 from django.template.context import RequestContext
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from django.template.defaultfilters import slugify
+from django.conf import settings
 
 import json
 import logging
@@ -13,6 +15,7 @@ import math
 import difflib
 import re
 import time
+import os
 
 from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork
 from reader.language_tools.greek import Greek
@@ -21,6 +24,7 @@ from reader.shortcuts import string_limiter, uniquefy, ajaxify, cache_page_if_aj
 from reader.utils import get_word_descriptions
 from reader.contentsearch import search_verses
 from reader.language_tools import normalize_unicode
+from reader.ebook import ePubExport
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
 
@@ -227,6 +231,31 @@ def get_division( work, division_0=None, division_1=None, division_2=None, divis
         return divisions[0]
     else:
         return None # We couldn't find a matching division, perhaps one doesn't exist with the given set of descriptors?
+    
+def download_work_epub(request, title=None, use_cached=False):
+    
+    # Try to get the work
+    work_alias = get_object_or_404(WorkAlias, title_slug=title)
+    work = work_alias.work
+    
+    # Get the filename of the eBook
+    epub_file = work.title_slug + ".epub"
+    
+    epub_file_full_path = os.path.join( settings.GENERATED_FILES_DIR, epub_file)
+    print epub_file_full_path
+    if not use_cached or not os.path.exists(epub_file_full_path):
+        
+        # Generate the ebook
+        fname = ePubExport.exportWork(work, epub_file_full_path)
+        
+        logger.info("Created epub in, filename=", fname)
+    
+    # Stream the file from the disk
+    wrapper = FileWrapper(file(epub_file_full_path))
+    
+    response = HttpResponse(wrapper, content_type='application/epub+zip')
+    response['Content-Length'] = os.path.getsize(epub_file_full_path)
+    return response
     
 @cache_page_if_ajax(12 * months)
 @ajaxify

@@ -1,0 +1,18 @@
+{% extends "epub/base.html" %}
+{% load reader_extras %}
+{% load string_utils %}
+{% block base_content %}
+<h2>About</h2>
+<p>
+This work was created by <a href="http://TextCritical.net/">TextCritical.net</a>, an open source project which seeks to provide free access to works in ancient Greek. 
+</p>
+<p>
+View this work online in order to gain access to other tools such a morphological parser, search engine and more.
+</p>
+<p>
+<ul>
+	<li><a href="http://TextCritical.net{% url "read_work" work.title_slug %}">Read this work online</a></li>
+	<li><a href="http://TextCritical.net{% url "search" %}?q=work:{{work.title_slug}}">Search this work online</a></li>
+</ul>
+</p>
+{% endblock %}

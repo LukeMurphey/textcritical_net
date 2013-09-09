@@ -1,0 +1,5 @@
+{% extends "epub/base.html" %}
+{% load string_utils %}
+{% block base_content %}
+        <h1>{{division.get_division_description_titles.title|replace:"βοοκ,Book"}}</h1>
+{% endblock %}

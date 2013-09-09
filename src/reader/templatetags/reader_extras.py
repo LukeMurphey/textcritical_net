@@ -87,7 +87,7 @@ def perseus_xml_to_html5(value, language=None):
     converted_doc = convert_xml_to_html5( value, language=language, text_transformation_fx=text_transformation_fx, node_transformation_fx=transform_perseus_node )
     
     try:
-        return converted_doc.toxml( encoding="utf-8" )
+        return converted_doc.toxml( encoding="utf-8" ).replace('<?xml version="1.0" encoding="utf-8"?>', "")
     finally:
         converted_doc.unlink()
         del(converted_doc)
