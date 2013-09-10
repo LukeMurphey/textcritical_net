@@ -1,5 +1,5 @@
-from reader.epub.epub import EpubBook
-from reader.models import Work, Division, Verse
+from epub import EpubBook
+from reader.models import Work, Division, Verse, RelatedWork
 
 from django.template import Context, Template
 from django.template import loader 
@@ -27,6 +27,41 @@ class ePubExport(object):
         html = template.render(c).encode("utf-8")
         
         book.addTitlePage(html)
+        
+    @classmethod
+    def addRelatedWorksPage(cls, work, book):
+        
+        # Gets works listed as related
+        related_works_tmp = RelatedWork.objects.filter(work=work)
+        related_works = []
+        
+        for r in related_works_tmp:
+            related_works.append(r.related_work)
+            
+        # Gets works by the same author
+        if work.authors.filter(meta_author=False).count() > 0:
+            authors_works = Work.objects.filter(authors=work.authors.filter(meta_author=False)[:1])
+        else:
+            authors_works = None
+            
+        # If we didn't find any related works, then just move on
+        if len(related_works) == 0 and authors_works is None:
+            return
+            
+        c = Context({"title": "Related Works",
+                     "work" : work,
+                     "related_works" : related_works,
+                     "authors_works" : authors_works
+                    })
+        
+        template = loader.get_template('epub/related_works.html')
+        html = template.render(c).encode("utf-8")
+        
+        dest_path = 'related_works.html'
+        info_page = book.addHtml('', dest_path, html)
+        book.addSpineItem(info_page)
+        book.addGuideItem(dest_path, 'Related Works', 'related-works-page')
+        book.addTocMapNode(dest_path, 'Related Works') 
         
     @classmethod
     def addAboutPage(cls, work, book):
@@ -90,7 +125,6 @@ class ePubExport(object):
             
             # If this division is less deep than the prior, then iterate up and pop the parents off
             while len(division_parents) > 0 and division.level < division_parents[-1].division.level:
-                print "Popping division"
                 division_parents.pop()
             
             # Export the division with the appropriate parent
@@ -101,6 +135,8 @@ class ePubExport(object):
             
             # Save the prior division
             prior_division = new_division
+        
+        cls.addRelatedWorksPage(work, book)
         
         # Generate the file
         tmpdir = tempfile.mkdtemp()
