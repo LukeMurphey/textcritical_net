@@ -1,0 +1,47 @@
+{% extends "epub/base.html" %}
+{% load reader_extras %}
+{% load string_utils %}
+{% block base_content %}
+
+<h2>Related Works</h2>
+
+{% if related_works and related_works|length > 0 %}
+<p class="add-space">
+Below are other versions of this work that may interest you:
+</p>
+<ul>
+{% for related_work in related_works %}
+	<li><a href="http://TextCritical.net{% url "read_work" related_work.title_slug %}">
+		{{related_work.language}}
+		{% for editor in related_work.editors.all %}
+			{% if not forloop.first %}, {% endif %}
+			{% if forloop.first %}({% endif %}{{editor.name|simplify_person_name}}{% if forloop.last %}){% endif %}
+		{% endfor %}
+		</a>
+	</li>
+{% endfor %}
+</ul>
+
+{% endif %}
+
+{% if authors_works and authors_works|length > 0 %}
+<p class="add-space">
+If you liked this work, then you may like other works from this author:
+</p>
+<ul>
+{% for related_work in authors_works %}
+	<li><a href="http://TextCritical.net{% url "read_work" related_work.title_slug %}">
+		{{related_work.title}}, {{related_work.language}}
+		{% for editor in related_work.editors.all %}
+			{% if not forloop.first %}, {% endif %}
+			{% if forloop.first %}({% endif %}{{editor.name|simplify_person_name}}{% if forloop.last %}){% endif %}
+		{% endfor %}
+		</a>
+	</li>
+{% endfor %}
+</ul>
+
+{% endif %}
+
+
+{% endblock %}
