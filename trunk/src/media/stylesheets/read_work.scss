@@ -1,4 +1,5 @@
 @import "shortcuts";
+@import "perseus";
 
 /* -----------------------------------------
    Read work
@@ -136,101 +137,7 @@ body.dark .verse-container.highlighted{
     }
 }
 
-.view_read_work{
-    
-    .speaker {
-        font-weight: bold;
-        display: block;
-        margin-top: 12px;
-    }
-    
-    .milestone {
-    	color: #999999;
-    }
-    
-    [data-rend=italics]{
-    	font-style: italic;
-    }
-    
-    .milestone[data-n].milestone[data-unit]:after {
-		font-size: smaller;
-		margin: 3px;
-		content: "[" attr(data-unit) " " attr(data-n) "]";
-	}
-	
-	.milestone[data-unit=para]{
-	     display: block;
-	     padding-top: 12px;
-	}
-    
-    .l {
-        display: block;
-    }
-    
-    .gap{
-        content: "...";
-    }
-    
-    .quote, .q{
-        font-style: italic;
-    }
-    
-    .bibl{
-        
-    }
-    
-    .docauthor{
-    	display: block;
-    	padding-bottom: 16px;
-    }
-    
-    .label:not(.block) .label{
-    	margin-left: 8px;
-    	margin-right: 4px;
-    }
-    
-    .note-tag{
-    	margin-left: 4px;
-    	margin-right: 2px;
-    	cursor: hand;
-    	cursor: pointer;
-    }
-    
-	.read-more{
-		margin-top: 16px;
-		display: block;
-	}
-    
-    .lb{
-    	display: block;
-    }
-    
-    .div3{
-    	padding-top: 16px;
-    	display: block;
-    }
-    
-    .quote > .title{
-    	font-weight: bold;
-    	display: block;
-    }
-    
-    .castlist:before{
-    	content: "Cast list: ";
-    }
-    
-    .castlist > .castitem:after{
-    	content: ", ";
-    }
-    
-    .castlist > .castitem:last-child:after{
-    	content: "";
-    }
-    
-    .argument{
-    	font-style:italic;
-    }
-}
+
 
 .dialog-extra-options{
 	margin-top: 6px;
