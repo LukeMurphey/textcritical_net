@@ -80,6 +80,27 @@ class ePubExport(object):
         book.addTocMapNode(dest_path, 'About')
         
     @classmethod
+    def addAcknowledgementsPage(cls, work, book):
+        
+        if work.title_slug == "lxx":
+            source = "UnboundBible"
+        else:
+            source = "Perseus"
+        
+        c = Context({"title": "Acknowledgements",
+                     "source" : source
+                    })
+        
+        template = loader.get_template('epub/acknowledgements.html')
+        html = template.render(c).encode("utf-8")
+        
+        dest_path = 'acknowledgements.html'
+        ack_page = book.addHtml('', dest_path, html)
+        book.addSpineItem(ack_page)
+        book.addGuideItem(dest_path, 'Acknowledgements', 'other.acknowledgements-page')
+        book.addTocMapNode(dest_path, 'Acknowledgements')
+        
+    @classmethod
     def addTOCPage(cls, divisions, book):
         
         c = Context({"title": "Table of Contents",
@@ -119,12 +140,11 @@ class ePubExport(object):
         cls.addAboutPage(work, book)
         
         #book.addCover(r'D:\epub\blank.png')
-        #local_path = os.path.dirname(os.path.abspath(__file__))
         book.addCss(r'media/stylesheets/epub.css', 'epub.css')
         book.addCss(r'media/stylesheets/bootstrap.css', 'bootstrap.css')
         book.addImage(r'media/images/glyphicons-halflings.png', 'images/glyphicons-halflings.png')
         book.addImage(r'media/images/glyphicons-halflings-white.png', 'images/glyphicons-halflings-white.png')
-        book.addImage(r'media/images/epub/Book_Cover.png', 'images/Book_Cover.png')
+        #book.addImage(r'media/images/epub/Book_Cover.png', 'images/Book_Cover.png')
         
         divisions = Division.objects.filter(work=work).order_by("sequence_number")
         
@@ -154,6 +174,7 @@ class ePubExport(object):
             prior_division = new_division
         
         cls.addRelatedWorksPage(work, book)
+        cls.addAcknowledgementsPage(work, book)
         
         # Generate the file
         tmpdir = tempfile.mkdtemp()
@@ -197,10 +218,10 @@ class ePubExport(object):
         book.addSpineItem(epub_division)
         
         if parent_division is not None:
-            print "Parent of ", str(division), " is ", str(parent_division.division)
-            toc_node = book.addTocMapNode(epub_division.destPath, division.descriptor, division.level) #, parent = parent_division.toc_node)
+            #print "Parent of ", str(division), " is ", str(parent_division.division)
+            #toc_node = book.addTocMapNode(epub_division.destPath, division.descriptor, division.level) #, parent = parent_division.toc_node)
+            toc_node = book.addTocMapNode(epub_division.destPath, division.descriptor, parent = parent_division.toc_node)
         else:
             toc_node = book.addTocMapNode(epub_division.destPath, division.descriptor)
         
-        #print "Successfully exported division:", division.descriptor
         return cls.__Division(division, toc_node)
