@@ -60,7 +60,7 @@ class ePubExport(object):
         dest_path = 'related_works.html'
         info_page = book.addHtml('', dest_path, html)
         book.addSpineItem(info_page)
-        book.addGuideItem(dest_path, 'Related Works', 'related-works-page')
+        book.addGuideItem(dest_path, 'Related Works', 'other.related-works-page')
         book.addTocMapNode(dest_path, 'Related Works') 
         
     @classmethod
@@ -76,7 +76,7 @@ class ePubExport(object):
         dest_path = 'about.html'
         info_page = book.addHtml('', dest_path, html)
         book.addSpineItem(info_page, True, -100)
-        book.addGuideItem(dest_path, 'About', 'about-page')
+        book.addGuideItem(dest_path, 'About', 'other.about-page')
         book.addTocMapNode(dest_path, 'About')
         
     @classmethod
@@ -93,6 +93,19 @@ class ePubExport(object):
         book.addGuideItem('table_of_contents.html', 'Table of Contents', 'toc-page')
     
     @classmethod
+    def addCoverPage(cls, work, book):
+        
+        c = Context({"title": "Cover",
+                     "work" : work
+                    })        
+        
+        template = loader.get_template('epub/cover.html')
+        html = template.render(c).encode("utf-8")
+        cover_page = book.addHtml('', 'cover.html', html)
+        
+        book.addGuideItem('cover.html', 'Cover', 'cover')
+    
+    @classmethod
     def exportWork(cls, work, filename):
         
         book = EpubBook()
@@ -101,15 +114,19 @@ class ePubExport(object):
         
         for author in work.authors.all():
             book.addCreator(author.name)
-         
+        
         cls.addTitlePage(work, book)
         cls.addAboutPage(work, book)
         
         #book.addCover(r'D:\epub\blank.png')
+        #local_path = os.path.dirname(os.path.abspath(__file__))
         book.addCss(r'media/stylesheets/epub.css', 'epub.css')
         book.addCss(r'media/stylesheets/bootstrap.css', 'bootstrap.css')
+        book.addImage(r'media/images/glyphicons-halflings.png', 'images/glyphicons-halflings.png')
+        book.addImage(r'media/images/glyphicons-halflings-white.png', 'images/glyphicons-halflings-white.png')
+        book.addImage(r'media/images/epub/Book_Cover.png', 'images/Book_Cover.png')
         
-        divisions = Division.objects.filter(work=work).order_by("sequence_number")[:32]
+        divisions = Division.objects.filter(work=work).order_by("sequence_number")
         
         cls.divisions_total = divisions.count()
         
@@ -141,6 +158,11 @@ class ePubExport(object):
         # Generate the file
         tmpdir = tempfile.mkdtemp()
         tmpfilename = os.path.join( tmpdir, work.title_slug + ".epub" )
+        
+        try:
+            os.makedirs(os.path.join(tmpdir, 'OEBPS', 'images'))
+        except OSError:
+            pass
         
         book.createBook(tmpdir)
         EpubBook.createArchive(tmpdir, tmpfilename)
