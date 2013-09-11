@@ -137,8 +137,6 @@ body.dark .verse-container.highlighted{
     }
 }
 
-
-
 .dialog-extra-options{
 	margin-top: 6px;
 }
@@ -154,39 +152,6 @@ body.dark .verse-container.highlighted{
 	margin-bottom: 12px;
 }
 
-.share-link{
-	margin-left: 10px;
-	background-position-x: 0px;
-	background-position-y: 4px;
-	background-repeat: no-repeat;
-}
-
-.share-facebook{
-	background-image: url('/media/images/facebook-16.png');
-}
-
-.share-twitter{
-	background-image: url('/media/images/twitter-16.png');
-}
-
-/*
-.share-email{
-	margin-left: 0px;
-	padding-left: 11px;
-}
-
-.share-email > i {
-	padding-right: 5px;
-}
-*/
-
-.share-email:before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  width: 16px;
-  height: 16px;
-  background-image: url("/media/images/glyphicons-halflings.png");
-  margin-left: -19px;
-  background-position: -72px 2px;
+.share-link > .icon{
+	margin-right: 8px;
 }
