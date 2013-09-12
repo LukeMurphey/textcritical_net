@@ -122,11 +122,14 @@ class HTML5Converter(HTMLParser):
     
     def handle_entityref(self, name):
         
-        # Make a text node to handle the content
-        txt_node = self.dst_doc.createTextNode( unichr(name2codepoint[name]) )
-
-        # Append the txt node
-        self.current_node.appendChild(txt_node)
+        try:
+            # Make a text node to handle the content
+            txt_node = self.dst_doc.createTextNode( unichr(name2codepoint[name]) )
+    
+            # Append the txt node
+            self.current_node.appendChild(txt_node)
+        except KeyError:
+            logger.warn("Unable to handle unexpected entity, entityref=%s", name)
         
     def handle_charref(self, name):
         if name.startswith('x'):
