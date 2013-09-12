@@ -232,7 +232,12 @@ def get_division( work, division_0=None, division_1=None, division_2=None, divis
     else:
         return None # We couldn't find a matching division, perhaps one doesn't exist with the given set of descriptors?
     
-def download_work_epub(request, title=None, use_cached=False):
+def download_work_epub(request, title=None):
+    
+    if 'refresh' in request.GET and request.GET['refresh'].strip().lower() in ["1", "true", "t", "", None]:
+        use_cached = False
+    else:
+        use_cached = True
     
     # Try to get the work
     work_alias = get_object_or_404(WorkAlias, title_slug=title)
@@ -242,13 +247,13 @@ def download_work_epub(request, title=None, use_cached=False):
     epub_file = work.title_slug + ".epub"
     
     epub_file_full_path = os.path.join( settings.GENERATED_FILES_DIR, epub_file)
-    print epub_file_full_path
+    
     if not use_cached or not os.path.exists(epub_file_full_path):
         
         # Generate the ebook
         fname = ePubExport.exportWork(work, epub_file_full_path)
         
-        logger.info("Created epub in, filename=", fname)
+        logger.info("Created epub in, filename=%s", fname)
     
     # Stream the file from the disk
     wrapper = FileWrapper(file(epub_file_full_path))

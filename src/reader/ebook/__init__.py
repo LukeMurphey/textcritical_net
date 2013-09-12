@@ -1,5 +1,7 @@
 from epub import EpubBook
 from reader.models import Work, Division, Verse, RelatedWork
+from reader.templatetags.reader_extras import transform_perseus_text, transform_perseus_node
+from reader.shortcuts import convert_xml_to_html5
 
 from django.template import Context, Template
 from django.template import loader 
@@ -7,10 +9,18 @@ from django.template import loader
 import os
 import tempfile
 import shutil
+import xml.dom.minidom
 
 class ePubExport(object):
     
-    class __Division(object):
+    class Note(object):
+        
+        def __init__(self, text, division):
+            
+            self.text = text
+            self.division = division
+    
+    class DivisionMap(object):
         
         def __init__(self, division, toc_node):
             self.toc_node = toc_node
@@ -32,10 +42,9 @@ class ePubExport(object):
     def addRelatedWorksPage(cls, work, book):
         
         # Gets works listed as related
-        related_works_tmp = RelatedWork.objects.filter(work=work)
         related_works = []
         
-        for r in related_works_tmp:
+        for r in RelatedWork.objects.filter(work=work):
             related_works.append(r.related_work)
             
         # Gets works by the same author
@@ -144,6 +153,7 @@ class ePubExport(object):
         book.addCss(r'media/stylesheets/bootstrap.css', 'bootstrap.css')
         book.addImage(r'media/images/glyphicons-halflings.png', 'images/glyphicons-halflings.png')
         book.addImage(r'media/images/glyphicons-halflings-white.png', 'images/glyphicons-halflings-white.png')
+        
         #book.addImage(r'media/images/epub/Book_Cover.png', 'images/Book_Cover.png')
         
         divisions = Division.objects.filter(work=work).order_by("sequence_number")
@@ -196,12 +206,57 @@ class ePubExport(object):
         return tmpfilename
         
     @classmethod
+    def getText(cls, node):
+        
+        if node.nodeType == xml.dom.minidom.Element.TEXT_NODE:
+            text = node.data
+        else:
+            text = ""
+        
+        for n in node.childNodes:
+            text = text + cls.getText(n)
+                
+        return text
+        
+    @classmethod
+    def getPerseusNotes( cls, division ):
+        
+        language = division.work.language
+        
+        # Make the function to perform the transformation
+        text_transformation_fx = lambda text, parent_node, dst_doc: transform_perseus_text(text, parent_node, dst_doc, language)
+        
+        transform_perseus_node_epub = lambda  tag, attrs, parent, dst_doc: transform_perseus_node(tag, attrs, parent, dst_doc, True, True)
+    
+        converted_doc = convert_xml_to_html5(division.original_content, language=language, text_transformation_fx=text_transformation_fx, node_transformation_fx=transform_perseus_node_epub )
+        nodes = converted_doc.getElementsByTagName("span")
+        notes = []
+        
+        for node in nodes:
+            
+            if node.attributes.get('class', None) != None:
+                classes = node.attributes.get('class', None).value.split(" ")
+            
+                if "note" in classes:
+                    
+                    text = cls.getText(node)
+                    
+                    note = ePubExport.Note(text, division)
+                    notes.append(note)
+        
+        return notes
+        
+    @classmethod
     def exportDivision(cls, book, division, parent_division=None):
         
-        if division.readable_unit:
+        # Get the embedded notes so that we can link to them
+        notes = cls.getPerseusNotes(division)
         
+        if division.readable_unit:
+            
             c = Context({"chapter": division,
-                         "verses" : Verse.objects.filter(division=division).order_by("sequence_number")
+                         "verses" : Verse.objects.filter(division=division).order_by("sequence_number"),
+                         "notes" : notes
                          })
             
             template = loader.get_template('epub/chapter.html')
@@ -217,11 +272,20 @@ class ePubExport(object):
         epub_division = book.addHtml('', str(division.sequence_number) + '.html', html)
         book.addSpineItem(epub_division)
         
-        if parent_division is not None:
-            #print "Parent of ", str(division), " is ", str(parent_division.division)
-            #toc_node = book.addTocMapNode(epub_division.destPath, division.descriptor, division.level) #, parent = parent_division.toc_node)
-            toc_node = book.addTocMapNode(epub_division.destPath, division.descriptor, parent = parent_division.toc_node)
-        else:
-            toc_node = book.addTocMapNode(epub_division.destPath, division.descriptor)
+        # Get the title
+        if division.title is not None and "lines" in division.title:
+            title = division.title
+        elif division.descriptor is not None and division.type is not None:
+            title = str(division.type) + " " + str(division.descriptor)
+        elif division.descriptor is not None:
+            title = str(division.descriptor)
+        elif division.sequence_number is not None:
+            title = str(division.sequence_number)
         
-        return cls.__Division(division, toc_node)
+        # Add the item to the table of contents
+        if parent_division is not None:
+            toc_node = book.addTocMapNode(epub_division.destPath, title, parent = parent_division.toc_node)
+        else:
+            toc_node = book.addTocMapNode(epub_division.destPath, title)
+        
+        return cls.DivisionMap(division, toc_node)
