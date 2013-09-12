@@ -3,6 +3,7 @@
 {% load string_utils %}
 {% block base_content %}
 <h2>About</h2>
+
 <p>
 This work was created by <a href="http://TextCritical.net/">TextCritical.net</a>, an open source project which seeks to provide free access to works in ancient Greek. 
 </p>
@@ -14,5 +15,16 @@ View this work online in order to gain access to other tools such a morphologica
 	<li><a href="http://TextCritical.net{% url "read_work" work.title_slug %}">Read this work online</a></li>
 	<li><a href="http://TextCritical.net{% url "search" %}?q=work:{{work.title_slug}}">Search this work online</a></li>
 </ul>
+</p>
+<p>
+<h3>Bug Reports and Feature Requests</h3>
+If you find a problem with this work, please file an issue at <a class="external" href="http://lukemurphey.net/projects/ancient-text-reader/issues/new">LukeMurphey.net</a>.
+You don't need an account to make a bug report.
+        
+You might want to <a class="external" href="http://lukemurphey.net/projects/ancient-text-reader/issues?query_id=7">search the currently open issues</a> to make sure it wasn't already reported.
+        
+For feature requests, <a class="external" href="http://lukemurphey.net/projects/ancient-text-reader/issues/new">make a request</a> and let us know what you would want to see.
+
+You can also send an email message to: <a href="mailto:Luke@TextCritical.net">Luke@TextCritical.net</a>.
 </p>
 {% endblock %}
