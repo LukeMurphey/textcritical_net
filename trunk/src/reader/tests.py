@@ -21,6 +21,7 @@ from reader.models import Author, Division, Verse, WordDescription, WordForm, Le
 from reader.views import get_division
 from reader.contentsearch import WorkIndexer, search_verses
 from reader import utils
+from reader.ebook import ePubExport
 
 from textcritical.context_processors import is_async
 
@@ -2049,3 +2050,30 @@ class TestContextProcessors(TestCase):
         self.assertEqual( is_async(TestContextProcessors.Request(False, {'async' : '1'}))['is_async'], True, "Failed to correctly identify async request based on parameter")
         self.assertEqual( is_async(TestContextProcessors.Request(False, {'async' : '0'}))['is_async'], False, "Failed to correctly identify non-async request based on parameter")
         self.assertEqual( is_async(TestContextProcessors.Request(True, {'async' : '1'}))['is_async'], True, "Failed to correctly identify AJAX request (along with parameter)")
+        
+        
+class TestEpubExport(TestReader):
+    
+    def test_get_perseus_notes(self):
+        
+        #book_xml = self.load_test_resource('aesch.ag_eng.xml')
+        s = """<div1 type="episode">For the rest I stay silent;
+        a great ox stands upon my tongue<note anchored="yes" n="36" resp="Smyth">A proverbial expression &lpar;of uncertain origin&rpar; for enforced silence; cf. fr. 176, &ldquo;A key stands guard upon my tongue.&rdquo;</note>
+        </div1>"""
+  
+        #book_doc = parseString(book_xml)
+        
+        work = Work()
+        work.language = "english"
+        
+        division = Division()
+        division.work = work
+        division.original_content = s
+        
+        #division_map = ePubExport.DivisionMap(division, None)
+        
+        notes = ePubExport.getPerseusNotes(division)
+        
+        self.assertEqual( len(notes), 1 )
+        self.assertEqual( notes[0].text, u'A proverbial expression of uncertain origin for enforced silence; cf. fr. 176, \u201cA key stands guard upon my tongue.\u201d' )
+        

@@ -81,18 +81,71 @@ def perseus_xml_to_html5(value, language=None):
     {{text|perseus_xml_to_html5:"Greek"}}
     """
     
+    return transform_perseus_xml_to_html5(value, language, True).replace('<?xml version="1.0" encoding="utf-8"?>', "")
+        
+def transform_perseus_xml_to_html5(xml_text, language=None, return_as_str=False):
+    """
+    Converts the provided XML to HTML5 custom data attributes. Performs some changes specific to Perseus TEI documents.
+    """
+    
     # Make the function to perform the transformation
     text_transformation_fx = lambda text, parent_node, dst_doc: transform_perseus_text(text, parent_node, dst_doc, language)
     
-    converted_doc = convert_xml_to_html5( value, language=language, text_transformation_fx=text_transformation_fx, node_transformation_fx=transform_perseus_node )
+    converted_doc = convert_xml_to_html5( xml_text, language=language, text_transformation_fx=text_transformation_fx, node_transformation_fx=transform_perseus_node )
     
     try:
-        return converted_doc.toxml( encoding="utf-8" ).replace('<?xml version="1.0" encoding="utf-8"?>', "")
+        if return_as_str:
+            return converted_doc.toxml( encoding="utf-8" )
+        else:
+            return converted_doc
+    finally:
+        converted_doc.unlink()
+        del(converted_doc)
+        
+@register.filter(name='perseus_xml_to_epub_html5')
+def perseus_xml_to_epub_html5(value, language=None):
+    """
+    Converts the provided XML to HTML5 custom data attributes. Performs some changes specific to Perseus TEI documents.
+    
+    Usage:
+    {{text|perseus_xml_to_epub_html5:"Greek"}}
+    """
+    
+    return transform_perseus_xml_to_epub_html5(value, language, True).replace('<?xml version="1.0" encoding="utf-8"?>', "")
+        
+def transform_perseus_xml_to_epub_html5(xml_text, language=None, return_as_str=False):
+    """
+    Converts the provided XML to HTML5 custom data attributes. Performs some changes specific to Perseus TEI documents.
+    """
+    
+    # Make the function to perform the transformation
+    text_transformation_fx = lambda text, parent_node, dst_doc: transform_perseus_text(text, parent_node, dst_doc, language)
+    next_note_number = NoteNumber()
+    transform_node = lambda tag, attrs, parent, dst_doc: transform_perseus_node(tag, attrs, parent, dst_doc, False, False, next_note_number)
+    
+    converted_doc = convert_xml_to_html5( xml_text, language=language, text_transformation_fx=text_transformation_fx, node_transformation_fx=transform_node )
+    
+    try:
+        if return_as_str:
+            return converted_doc.toxml( encoding="utf-8" )
+        else:
+            return converted_doc
     finally:
         converted_doc.unlink()
         del(converted_doc)
     
-def transform_perseus_node( tag, attrs, parent, dst_doc ):
+class NoteNumber(object):
+    
+    def __init__(self, n = 1):
+        self.number = n
+        
+    def __str__(self):
+        return str(self.number)
+        
+    def increment(self):
+        self.number = self.number + 1
+    
+def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_icon=True, next_note_number=None ):
     """
     Transform nodes to improve rendering. Specifically, this function will make note nodes able to be rendered with popovers.
     
@@ -102,9 +155,6 @@ def transform_perseus_node( tag, attrs, parent, dst_doc ):
     parent -- The parent node that this node is going to be placed under
     dst_doc -- The document of the converted document (to add new nodes to)
     """
-    
-    use_popovers = True
-    use_icon = True
     
     if use_popovers and tag == "note":
         
@@ -139,8 +189,32 @@ def transform_perseus_node( tag, attrs, parent, dst_doc ):
         return new_node
     
     if tag == "note":
-        new_node = dst_doc.createElement( "span" )
-        new_node.setAttribute( "class", "label note" )
+        
+        href_node = dst_doc.createElement( "a" )
+        href_node.setAttribute( "href", "#note_content_" +  str(next_note_number))
+        href_node.setAttribute( "name", "note_anchor_" +  str(next_note_number))
+        
+        parent.appendChild(href_node)
+        
+        new_node = dst_doc.createElement( "sup" )
+        new_node.setAttribute( "class", "note" )
+        href_node.appendChild(new_node)
+        
+        if next_note_number is not None:            
+            
+            # Create the text node with the note number
+            txt_node = dst_doc.createTextNode( str(next_note_number) )
+            new_node.appendChild(txt_node)
+            #parent.appendChild(new_node)
+            
+            next_note_number.increment()
+            
+            # Make a node to hide the underlying content
+            note_content_node = dst_doc.createElement( "span" )
+            note_content_node.setAttribute( "class", "hide" )
+            new_node.appendChild(note_content_node)
+            
+            return note_content_node
         
         return new_node
     
@@ -162,7 +236,7 @@ def transform_perseus_text(text, parent_node, dst_doc, default_language):
         language = default_language
     
     # Notes are typically in English and thus do not need transformed.
-    if parent_node.attributes.get('class', None) is not None and 'note' in parent_node.attributes.get('class', '').value.split(' '):#and parent_node.attributes.get('class', None).value == "note":
+    if parent_node is not None and parent_node.attributes.get('class', None) is not None and 'note' in parent_node.attributes.get('class', '').value.split(' '):#and parent_node.attributes.get('class', None).value == "note":
         return text.encode('utf-8')
     
     # Don't split up the words for English documents since we don't allow morphological lookups on English

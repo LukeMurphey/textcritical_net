@@ -14,9 +14,19 @@
 	        {% if verse.original_content|length == 0 %}
 	        {{verse.content|unbound_text_to_html5|safe}}
 	        {% else %}
-	        {{verse.original_content|perseus_xml_to_html5:chapter.work.language|safe}}
+	        {{verse.original_content|perseus_xml_to_epub_html5:chapter.work.language|safe}}
 	        {% endif %}
 	        </span>
         </span>
         {% endfor %}
+        
+        {% if notes %}
+        <h3>Notes</h3>
+		<ul>
+			{% for note in notes %}
+			<li><a name="note_content_{{forloop.counter}}" href="#note_anchor_{{forloop.counter}}"><strong>{{forloop.counter}}</strong></a>: {{note.text}}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+        
 {% endblock %}
