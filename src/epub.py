@@ -50,6 +50,7 @@ class EpubBook:
 
         self.rootDir = ''
         self.UUID = uuid.uuid1()
+        self.url = None
 
         self.lang = 'en-US'
         self.title = ''

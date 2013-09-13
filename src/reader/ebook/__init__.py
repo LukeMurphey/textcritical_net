@@ -3,6 +3,7 @@ from reader.models import Work, Division, Verse, RelatedWork
 from reader.templatetags.reader_extras import transform_perseus_text, transform_perseus_node
 from reader.shortcuts import convert_xml_to_html5
 
+from django.core.urlresolvers import reverse
 from django.template import Context, Template
 from django.template import loader 
 
@@ -12,6 +13,12 @@ import shutil
 import xml.dom.minidom
 
 class ePubExport(object):
+    
+    # From http://tools.ietf.org/html/rfc5646
+    language_map = {
+                    "greek" : "grc",
+                    "english" : "en"
+                    }
     
     class Note(object):
         
@@ -141,9 +148,15 @@ class ePubExport(object):
         book = EpubBook()
         
         book.setTitle(work.title)
+        book.url = "http://TextCritical.net" + reverse('read_work', kwargs={'title': work.title_slug})
         
         for author in work.authors.all():
             book.addCreator(author.name)
+            
+        for editor in work.editors.all():
+            book.addMeta('contributor', editor.name, role = 'edt')
+        
+        book.setLang( cls.language_map[work.language.lower()] )
         
         cls.addTitlePage(work, book)
         cls.addAboutPage(work, book)
