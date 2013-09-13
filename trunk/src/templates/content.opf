@@ -8,7 +8,14 @@ This file is distributed under the BSD Licence. See python-epub-builder-license.
     xmlns:py="http://genshi.edgewall.org/"
     unique-identifier="bookid" version="2.0">
   <opf:metadata >
+    <py:choose>
+    	<py:when test="book.url">
+    <dc:identifier id="bookid" opf:scheme="URI">${book.url}</dc:identifier>
+    	</py:when>
+    	<py:otherwise>
     <dc:identifier id="bookid">urn:uuid:${book.UUID}</dc:identifier>
+    	</py:otherwise>
+    </py:choose>
     <dc:language>${book.lang}</dc:language>
     <dc:title>${book.title}</dc:title>
     <py:for each="name, role in book.creators">
