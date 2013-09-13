@@ -119,7 +119,7 @@ def transform_perseus_xml_to_epub_html5(xml_text, language=None, return_as_str=F
     """
     
     # Make the function to perform the transformation
-    text_transformation_fx = lambda text, parent_node, dst_doc: transform_perseus_text(text, parent_node, dst_doc, language)
+    text_transformation_fx = lambda text, parent_node, dst_doc: transform_perseus_text(text, parent_node, dst_doc, language, disable_wrapping=True)
     next_note_number = NoteNumber()
     transform_node = lambda tag, attrs, parent, dst_doc: transform_perseus_node(tag, attrs, parent, dst_doc, False, False, next_note_number)
     
@@ -218,7 +218,7 @@ def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_
         
         return new_node
     
-def transform_perseus_text(text, parent_node, dst_doc, default_language):
+def transform_perseus_text(text, parent_node, dst_doc, default_language, disable_wrapping=False):
     """
     Transform the Perseus XML to HTML that can be easily displayed in a web app.
     
@@ -242,6 +242,9 @@ def transform_perseus_text(text, parent_node, dst_doc, default_language):
     # Don't split up the words for English documents since we don't allow morphological lookups on English
     if language.lower() == "english":
         return text.encode('utf-8')
+    
+    elif disable_wrapping:
+        return transform_text(text, language, True).encode('utf-8')
            
     else:
        
