@@ -2077,3 +2077,16 @@ class TestEpubExport(TestReader):
         self.assertEqual( len(notes), 1 )
         self.assertEqual( notes[0].text, u'A proverbial expression of uncertain origin for enforced silence; cf. fr. 176, \u201cA key stands guard upon my tongue.\u201d' )
         
+    def test_split_text_into_lines(self):
+        
+        lines = ePubExport.splitTextIntoMultipleLines("Antiquities of the Jews", 12)
+        self.assertEqual(lines, "Antiquities\nof the Jews")
+        
+        lines = ePubExport.splitTextIntoMultipleLines("The Extant Works of Aretaeus, The Cappadocian", 24)
+        self.assertEqual(lines, "The Extant Works of\nAretaeus, The Cappadocian")
+        
+        lines = ePubExport.splitTextIntoMultipleLines("Alcibiades 1, Alcibiades 2, Hipparchus, Lovers, Theages, Charmides, Laches, Lysis", 24)
+        self.assertEqual(lines, "Alcibiades 1, Alcibiades\n2, Hipparchus, Lovers,\nTheages, Charmides,\nLaches, Lysis")
+        
+        
+        
