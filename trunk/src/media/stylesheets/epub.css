@@ -4,6 +4,11 @@
 .add-space-small {
   margin-top: 16px; }
 
+sup.note {
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 0px 3px 0px 1px; }
+
 .view_read_work .speaker {
   font-weight: bold;
   display: block;
