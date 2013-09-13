@@ -1,0 +1,44 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+ 
+ <title></title>
+ </head>
+ 
+ <body>
+
+
+ <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="100%" height="100%" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid meet">
+ <image width="600" height="800" xlink:href="images/Book_Cover.png" />
+    <!-- 
+ 	<text text-anchor="middle" x="50%" y="300"
+        font-family="Times New Roman" font-size="55"
+        style="fill:rgb(255,255,255);">
+        Antiquities of the Jews
+	</text>
+
+
+ 	<text text-anchor="middle" x="50%" y="500"
+        font-family="Times New Roman" font-size="36"
+        style="fill:#ffb800;">
+        Flavius Josephus
+	</text>
+	-->
+   <foreignObject x="60" y="200" width="480" height="300" transform="translate(0,0)">
+     	<div style="width: 480px; margin-left: auto; margin-right: auto; text-align: center; font-size: 55pt; color: #fff">
+   			{{work.title}}
+   		</div>
+   </foreignObject>
+
+    <foreignObject  x="60" y="500" width="480" height="200">
+   		<div style="width: 480px; margin-left: auto; margin-right: auto; font-size: 22pt; text-align: center; color: #ffb800; letter-spacing:6px; font-weight: bold">
+	        {% for author in work.authors.all %}
+{% if not forloop.first %},{% endif %} {{author}}
+	        {% endfor %}
+   		</div>
+    </foreignObject>
+
+ </svg>
+
+ </body>
+ </html>
