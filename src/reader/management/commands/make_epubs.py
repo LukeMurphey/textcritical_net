@@ -38,8 +38,8 @@ class Command(BaseCommand):
                 # Make the epub unless it already exist or if we are forcing it
                 if force or not os.path.exists(epub_file_full_path):
                     fname = ePubExport.exportWork(work, epub_file_full_path)
-                    logger.info("Created epub in, filename=%s", fname)
-                    print "Created epub in, filename=", fname
+                    logger.info("Created epub, filename=%s", fname)
+                    print "Created epub, filename=", fname
             
         except Exception as e:
             traceback.print_exc()
