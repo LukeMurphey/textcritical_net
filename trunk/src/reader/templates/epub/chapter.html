@@ -14,7 +14,16 @@
 	        {% if verse.original_content|length == 0 %}
 	        {{verse.content}}
 	        {% else %}
-	        {{verse.original_content|perseus_xml_to_epub_html5:chapter.work.language|safe}}
+	        
+	        {% with chapter.work.language|add:","|add:note_number.value as args %}
+	        	{{verse.original_content|perseus_xml_to_epub_html5:args|safe}}
+	        {% endwith %}
+	        
+	        {% with verse.original_content|count_note_nodes as increment %}
+	        	{% with note_number|increment_note_count:increment as n %}
+	        	{% endwith %}
+	        {% endwith %}
+	        
 	        {% endif %}
 	        </span>
         </span>

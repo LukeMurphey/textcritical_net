@@ -238,7 +238,7 @@ def download_work_epub(request, title=None):
         use_cached = False
     else:
         use_cached = True
-    
+    use_cached = False
     # Try to get the work
     work_alias = get_object_or_404(WorkAlias, title_slug=title)
     work = work_alias.work
