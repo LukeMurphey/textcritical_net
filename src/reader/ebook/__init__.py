@@ -70,12 +70,15 @@ class ePubExport(object):
             filename = os.path.join( tmpdir, "Book_Cover.png" )
         
         # Make a decision regarding what size the make the title
-        if len(work.title) > 24:
+        if len(work.title) > 30:
             title_font_size = 35
             max_title_length = 24
+        elif len(work.title) > 24:
+            title_font_size = 50
+            max_title_length = 18
         else:
             title_font_size = 75
-            max_title_length = 12
+            max_title_length = 10
         
         # Determine which background image to use
         if work.language == "Greek":
@@ -104,14 +107,17 @@ class ePubExport(object):
         
                 with Color('#ffb800') as yellow:
                     
-                    #   Draw the author
-                    draw.font = 'media/font/epub/Heuristica-Bold.otf'
-                    draw.font_size = 36
-                    draw.fill_color = yellow
-                    draw.text_alignment = 'center'
-                    draw.text(image.width / 2, 500, '\n'.join(work.authors.filter(meta_author=False).values_list('name', flat=True)))
-                    draw.text_kerning = 140.0
-                    draw(image)
+                    authors = '\n'.join(work.authors.filter(meta_author=False).values_list('name', flat=True))
+                    
+                    if authors and len(authors) > 0:
+                        #   Draw the author
+                        draw.font = 'media/font/epub/Heuristica-Bold.otf'
+                        draw.font_size = 36
+                        draw.fill_color = yellow
+                        draw.text_alignment = 'center'
+                        draw.text(image.width / 2, 500, authors)
+                        draw.text_kerning = 140.0
+                        draw(image)
         
                 image.save(filename=filename)
                 
