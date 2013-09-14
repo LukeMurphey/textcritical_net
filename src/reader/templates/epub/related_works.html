@@ -11,7 +11,7 @@ Below are other versions of this work that may interest you:
 <ul>
 {% for related_work in related_works %}
 	<li><a href="http://TextCritical.net{% url "read_work" related_work.title_slug %}">
-		{{related_work.language}}
+		{{related_work.title}}, {{related_work.language}}
 		{% for editor in related_work.editors.all %}
 			{% if not forloop.first %}, {% endif %}
 			{% if forloop.first %}({% endif %}{{editor.name|simplify_person_name}}{% if forloop.last %}){% endif %}
