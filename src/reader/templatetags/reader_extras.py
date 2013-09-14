@@ -103,24 +103,34 @@ def transform_perseus_xml_to_html5(xml_text, language=None, return_as_str=False)
         del(converted_doc)
         
 @register.filter(name='perseus_xml_to_epub_html5')
-def perseus_xml_to_epub_html5(value, language=None):
+def perseus_xml_to_epub_html5(value, arg=None):
     """
     Converts the provided XML to HTML5 custom data attributes. Performs some changes specific to Perseus TEI documents.
     
     Usage:
     {{text|perseus_xml_to_epub_html5:"Greek"}}
+    
+    This example provides the initial note number
+    {{text|perseus_xml_to_epub_html5:"Greek,5"}}
     """
     
-    return transform_perseus_xml_to_epub_html5(value, language, True).replace('<?xml version="1.0" encoding="utf-8"?>', "")
+    if "," in arg:
+        language, note_number = arg.split(",")
+        note_number = int(note_number)
+    else:
+        note_number = 1
+        language = arg
+    
+    return transform_perseus_xml_to_epub_html5(value, language, True, note_number_start=note_number).replace('<?xml version="1.0" encoding="utf-8"?>', "")
         
-def transform_perseus_xml_to_epub_html5(xml_text, language=None, return_as_str=False):
+def transform_perseus_xml_to_epub_html5(xml_text, language=None, return_as_str=False, note_number_start=1):
     """
     Converts the provided XML to HTML5 custom data attributes. Performs some changes specific to Perseus TEI documents.
     """
     
     # Make the function to perform the transformation
     text_transformation_fx = lambda text, parent_node, dst_doc: transform_perseus_text(text, parent_node, dst_doc, language, disable_wrapping=True)
-    next_note_number = NoteNumber()
+    next_note_number = NoteNumber(note_number_start)
     transform_node = lambda tag, attrs, parent, dst_doc: transform_perseus_node(tag, attrs, parent, dst_doc, False, False, next_note_number)
     
     converted_doc = convert_xml_to_html5( xml_text, language=language, text_transformation_fx=text_transformation_fx, node_transformation_fx=transform_node )
@@ -134,16 +144,41 @@ def transform_perseus_xml_to_epub_html5(xml_text, language=None, return_as_str=F
         converted_doc.unlink()
         del(converted_doc)
     
+@register.filter(name='count_note_nodes')
+def count_note_nodes( value, previous_count=None ):
+    
+    if previous_count is not None:
+        previous_count = int(previous_count)
+    else:
+        previous_count = 0
+        
+    return previous_count + len(re.findall('[<]note', value))
+    
+@register.filter(name='increment_note_count')
+def increment_note_count( value, amount ):
+    
+    amount = int(amount)
+    
+    return value.increment(amount)
+    
 class NoteNumber(object):
     
     def __init__(self, n = 1):
         self.number = n
-        
+    
     def __str__(self):
         return str(self.number)
         
-    def increment(self):
-        self.number = self.number + 1
+    def value(self):
+        return str(self.number)
+        
+    def increment(self, amount=1):
+        
+        if amount != 1:
+            amount = int(amount)
+        
+        self.number = self.number + amount
+        return self.number
     
 def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_icon=True, next_note_number=None ):
     """
@@ -156,6 +191,27 @@ def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_
     dst_doc -- The document of the converted document (to add new nodes to)
     """
     
+    """
+    # Determine if this node is within a note node
+    has_parent_note = False
+    
+    n = parent
+    
+    while n:
+        n = n.parentNode
+        
+        if n.nodeName == "sup" or n.nodeName == "span":
+            
+            if n.attributes.get('class', None) != None:
+                
+                classes = n.attributes.get('class', None).value.split(" ")
+            
+                if "note" in classes:
+                    has_parent_note = True
+                    break
+    """
+    
+    # If the notes should be rendered with popvers
     if use_popovers and tag == "note":
         
         identifier = '%08x' % random.randrange(256**4)
@@ -197,6 +253,7 @@ def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_
         parent.appendChild(href_node)
         
         new_node = dst_doc.createElement( "sup" )
+        
         new_node.setAttribute( "class", "note" )
         href_node.appendChild(new_node)
         
@@ -205,7 +262,6 @@ def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_
             # Create the text node with the note number
             txt_node = dst_doc.createTextNode( str(next_note_number) )
             new_node.appendChild(txt_node)
-            #parent.appendChild(new_node)
             
             next_note_number.increment()
             

@@ -1,6 +1,6 @@
 from epub import EpubBook
 from reader.models import Work, Division, Verse, RelatedWork
-from reader.templatetags.reader_extras import transform_perseus_text, transform_perseus_node
+from reader.templatetags.reader_extras import transform_perseus_text, transform_perseus_node, NoteNumber
 from reader.shortcuts import convert_xml_to_html5
 
 from django.core.urlresolvers import reverse
@@ -354,6 +354,7 @@ class ePubExport(object):
             
             c = Context({"chapter": division,
                          "verses" : Verse.objects.filter(division=division).order_by("sequence_number"),
+                         "note_number" : NoteNumber(),
                          "notes" : notes
                          })
             
