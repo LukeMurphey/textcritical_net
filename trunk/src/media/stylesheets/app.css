@@ -24,7 +24,7 @@ body > .container {
   background-image: linear-gradient(to top, #ededed 0%, #fefefe 100%); }
 
 footer {
-  padding-top: 50px; }
+  padding-top: 10px; }
 
 footer p {
   margin-bottom: 0px;
@@ -663,6 +663,9 @@ body.dark .dataTables_filter > label > input {
 .dataTables_filter input {
   margin-top: 9px;
   margin-left: 5px; }
+
+#works_list_paginate {
+  height: 22px; }
 
 /* -----------------------------------------
    Search
