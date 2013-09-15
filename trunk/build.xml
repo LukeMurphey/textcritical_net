@@ -52,7 +52,7 @@
         <mkdir dir="${value.build.packageoutput.directory}" />
         <zip destfile="${value.build.packageoutput.directory}/textcritical_${svn.revision.max}.zip"
             basedir="src"
-            excludes="reader/test/**, reader/tests.py, **/*.pyc, textcritical/settings.py"
+            excludes="reader/test/**, reader/tests.py, **/*.pyc, textcritical/settings.py, media/files/**"
             whenempty="create"
         />
     </target>
