@@ -104,7 +104,6 @@ class ePubExport(object):
                     draw.text_interword_spacing = 10
                     draw(image)
         
-        
                 with Color('#ffb800') as yellow:
                     
                     authors = '\n'.join(work.authors.filter(meta_author=False).values_list('name', flat=True))
