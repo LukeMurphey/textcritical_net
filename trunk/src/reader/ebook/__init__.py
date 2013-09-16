@@ -87,7 +87,7 @@ class ePubExport(object):
             bg_image = 'media/images/epub/Book_Cover_Grey.png'
         
         # Process the title to fit onto multiple lines if necessary
-        title = cls.splitTextIntoMultipleLines(work.title, max_title_length)
+        title = cls.splitTextIntoMultipleLines(work.title, max_title_length).strip()
         
         # Make the cover image
         with Drawing() as draw:
