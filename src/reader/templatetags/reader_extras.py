@@ -191,27 +191,7 @@ def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_
     dst_doc -- The document of the converted document (to add new nodes to)
     """
     
-    """
-    # Determine if this node is within a note node
-    has_parent_note = False
-    
-    n = parent
-    
-    while n:
-        n = n.parentNode
-        
-        if n.nodeName == "sup" or n.nodeName == "span":
-            
-            if n.attributes.get('class', None) != None:
-                
-                classes = n.attributes.get('class', None).value.split(" ")
-            
-                if "note" in classes:
-                    has_parent_note = True
-                    break
-    """
-    
-    # If the notes should be rendered with popvers
+    # If the notes should be rendered with popovers
     if use_popovers and tag == "note":
         
         identifier = '%08x' % random.randrange(256**4)
@@ -244,25 +224,27 @@ def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_
         
         return new_node
     
-    if tag == "note":
+    elif tag == "note":
         
+        # Make the link tag to the footnote
         href_node = dst_doc.createElement( "a" )
         href_node.setAttribute( "href", "#note_content_" +  str(next_note_number))
         href_node.setAttribute( "name", "note_anchor_" +  str(next_note_number))
-        
         parent.appendChild(href_node)
         
+        # Create the note indicator
         new_node = dst_doc.createElement( "sup" )
-        
         new_node.setAttribute( "class", "note" )
         href_node.appendChild(new_node)
         
+        # If a note number object is included, then just assign the note
         if next_note_number is not None:            
             
             # Create the text node with the note number
             txt_node = dst_doc.createTextNode( str(next_note_number) )
             new_node.appendChild(txt_node)
             
+            # Increment the note number so that the next note has the next number
             next_note_number.increment()
             
             # Make a node to hide the underlying content
@@ -283,8 +265,9 @@ def transform_perseus_text(text, parent_node, dst_doc, default_language, disable
     parent_node -- The parent node within the converted document
     dst_doc -- The document of the converted document (to add new nodes to)
     default_language -- The language of the document (unless otherwise specified)
+    disable_wrapping -- If true, then words will not be wrapped in <span> XML nodes
     """
-    
+
     # Get the language specific to this node if is defined
     if parent_node is not None and parent_node.attributes.get('data-lang', None) is not None:
         language = parent_node.attributes['data-lang'].value
@@ -324,6 +307,53 @@ def transform_perseus_text(text, parent_node, dst_doc, default_language, disable
                
                 # Append the node
                 parent_node.appendChild(new_node)
+              
+def is_hidden(node):
+
+    if node.nodeName == "sup" or node.nodeName == "span":
+        
+        if node.attributes.get('class', None) != None:
+            
+            classes = node.attributes.get('class', None).value.split(" ")
+        
+            if "hide" in classes:
+                return True
+            
+    else:
+        return False
+              
+@register.filter(name='prune_hidden')
+def prune_hidden(xml_str):
+    
+    # Parse the XML
+    doc = minidom.parseString(xml_str)
+    
+    # Make the prune function
+    fx_should_prune = is_hidden
+        
+    # Prune the nodes
+    prune_nodes( doc, None, fx_should_prune)
+    
+    # Convert the content back to xml
+    xml_str_after = doc.toxml()
+    
+    # Remove the XML info
+    return xml_str_after.replace('<?xml version="1.0" ?>', "")
+    
+def prune_nodes(node, parent, fx_should_prune):
+    
+    if fx_should_prune(node) and parent is not None:
+        parent.removeChild(node)
+        
+        # Indicate that the node was pruned
+        return True
+    
+    elif node.hasChildNodes():
+        for n in node.childNodes:
+            prune_nodes(n, node, fx_should_prune)
+            
+        return False
+            
               
 @register.filter(name='simplify_person_name')
 def simplify_person_name( name ):
