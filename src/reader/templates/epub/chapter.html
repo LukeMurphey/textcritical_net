@@ -7,7 +7,7 @@
         {% for verse in verses.all %}
         <span id="verse-{{verse.indicator}}" class="verse-container view_read_work">
             {% if verse.indicator|length > 0 %}
-            <span class="label verse number">{{verse.indicator}}</span>
+            <span class="label verse number"><strong>{{verse.indicator}}</strong></span>
 	        {% endif %}
 	        
 	        {% if verse.original_content|length == 0 %}
