@@ -5,18 +5,17 @@
         <h2>{{chapter|replace:"βοοκ,Book"|capfirst}}</h2>
 		
         {% for verse in verses.all %}
-        <span id="verse-{{verse.indicator}}" class="verse-container">
+        <span id="verse-{{verse.indicator}}" class="verse-container view_read_work">
             {% if verse.indicator|length > 0 %}
             <span class="label verse number">{{verse.indicator}}</span>
 	        {% endif %}
 	        
-	        <span class="verse view_read_work ">
 	        {% if verse.original_content|length == 0 %}
 	        {{verse.content}}
 	        {% else %}
 	        
 	        {% with chapter.work.language|add:","|add:note_number.value as args %}
-	        	{{verse.original_content|perseus_xml_to_epub_html5:args|safe}}
+	        	{{verse.original_content|perseus_xml_to_epub_html5:args|prune_hidden|safe}}
 	        {% endwith %}
 	        
 	        {% with verse.original_content|count_note_nodes as increment %}
@@ -25,7 +24,6 @@
 	        {% endwith %}
 	        
 	        {% endif %}
-	        </span>
         </span>
         {% endfor %}
         
