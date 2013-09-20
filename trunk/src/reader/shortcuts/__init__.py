@@ -66,6 +66,10 @@ class HTML5Converter(HTMLParser):
                 self.current_node = self.dst_doc.createElement( "span" )
                 self.current_node.setAttribute( "class", tag)
                 
+            elif custom_current_node is False:
+                # This node is to be ignored
+                self.nodes_processed = self.nodes_processed + 1
+                
             else:
                 self.current_node = custom_current_node
         
