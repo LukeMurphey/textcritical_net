@@ -24,7 +24,13 @@ from reader.shortcuts import string_limiter, uniquefy, ajaxify, cache_page_if_aj
 from reader.utils import get_word_descriptions
 from reader.contentsearch import search_verses
 from reader.language_tools import normalize_unicode
-from reader.ebook import ePubExport
+
+# Try to import the ePubExport but be forgiving if the necessary dependencies do not exist
+try:
+    from reader.ebook import ePubExport
+except ImportError:
+    # Cannot import ePubExport, this means we won't be able to make epub files
+    ePubExport = None
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
 
@@ -249,6 +255,10 @@ def download_work_epub(request, title=None):
     epub_file_full_path = os.path.join( settings.GENERATED_FILES_DIR, epub_file)
     
     if not use_cached or not os.path.exists(epub_file_full_path):
+        
+        # Stop if we don't have the ability to produce ebook files and it doesn't exist already
+        if ePubExport is None:
+            raise Http404('eBook file not found')
         
         # Generate the ebook
         fname = ePubExport.exportWork(work, epub_file_full_path)
