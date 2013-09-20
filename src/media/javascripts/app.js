@@ -10,7 +10,8 @@ define([
         'libs/text!/media/templates/alert_message.html',
         'libs/text!/media/templates/morphology_dialog.html',
         'libs/text!/media/templates/loading_dialog.html',
-        'libs/text!/media/templates/search_results.html'
+        'libs/text!/media/templates/search_results.html',
+        'facebook'
     ],
     function($, _, alert_message_template,  morphology_dialog_template, loading_template, search_results_template) {
 	
