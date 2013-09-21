@@ -139,6 +139,9 @@ USE_MINIFIED = True
 # Contains the Google analytics ID (optional)
 GOOGLE_ANALYTICS_ID = None
 
+# Defines the path to the kindlegen binary that is used for converting epub files to mobi files. By default, the app assumes that kindlegen is on the path.
+KINDLEGEN = "kindlegen"
+
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
