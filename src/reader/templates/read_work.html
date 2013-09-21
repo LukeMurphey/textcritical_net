@@ -43,7 +43,8 @@
 				<span class="hidden-phone btn-group no-left-margin">
 			        <button class="btn dropdown-toggle middle-button" data-toggle="dropdown"><i class="icon-download-alt"></i> <span class="caret"></span></button>
 			        <ul class="dropdown-menu right" role="menu">
-						<li><a class="download-epub" href="{% url "download_work_epub" work.title_slug %}">Download eBook (epub)</a></li>
+						<li><a class="download-epub" href="{% url "download_work" work.title_slug %}?format=epub">Download eBook, epub format</a></li>
+						<li><a class="download-epub" href="{% url "download_work" work.title_slug %}?format=mobi">Download eBook, mobi format</a></li>
 			        </ul>
 			    </span>
 				
@@ -78,7 +79,8 @@
 						<li><a class="share-link share-email" href="#"><i class="icon icon-mail-alt"></i>Email this</a></li>
 						
 						<li class="nav-header">Download</li>
-						<li><a class="download-epub" href="{% url "download_work_epub" work.title_slug %}">Download eBook (epub)</a></li>
+						<li><a class="download-epub" href="href="{% url "download_work" work.title_slug %}?format=epub">Download eBook, epub format</a></li>
+						<li><a class="download-epub" href="{% url "download_work" work.title_slug %}?format=mobi">Download eBook, mobi format</a></li>
 			        </ul>
 			    </span>
 			    </span>
