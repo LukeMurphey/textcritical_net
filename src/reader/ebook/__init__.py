@@ -1,4 +1,5 @@
 from epub import EpubBook
+
 from reader.models import Work, Division, Verse, RelatedWork
 from reader.templatetags.reader_extras import transform_perseus_text, transform_perseus_node, NoteNumber
 from reader.shortcuts import convert_xml_to_html5
@@ -6,6 +7,7 @@ from reader.shortcuts import convert_xml_to_html5
 from django.core.urlresolvers import reverse
 from django.template import Context, Template
 from django.template import loader 
+from django.conf import settings
 
 from wand.drawing import Drawing
 from wand.image import Image
@@ -15,12 +17,13 @@ import os
 import tempfile
 import shutil
 import xml.dom.minidom
+import subprocess
 
 class ePubExport(object):
     
     # From http://tools.ietf.org/html/rfc5646
     language_map = {
-                    "greek" : "grc",
+                    "greek" : "el",
                     "english" : "en"
                     }
     
@@ -393,3 +396,20 @@ class ePubExport(object):
             toc_node = book.addTocMapNode(epub_division.destPath, title)
         
         return cls.DivisionMap(division, toc_node)
+    
+class MobiExport(object):
+    
+    @classmethod
+    def exportWork(cls, work, epub_file_path, mobi_file_path):
+        
+        mobi_path = os.path.dirname(mobi_file_path)
+        mobi_file = os.path.basename(mobi_file_path)
+        
+        p = subprocess.Popen([settings.KINDLEGEN, epub_file_path, "-o", mobi_file], cwd=mobi_path)
+        p.wait()
+        
+        if p.returncode != 0:
+            return None
+        else:
+            return mobi_file
+        
