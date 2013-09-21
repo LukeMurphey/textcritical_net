@@ -27,10 +27,11 @@ from reader.language_tools import normalize_unicode
 
 # Try to import the ePubExport but be forgiving if the necessary dependencies do not exist
 try:
-    from reader.ebook import ePubExport
+    from reader.ebook import ePubExport, MobiExport
 except ImportError:
-    # Cannot import ePubExport, this means we won't be able to make epub files
+    # Cannot import ePubExport and MobiExport, this means we won't be able to make ebook files
     ePubExport = None
+    MobiExport = None
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
 
@@ -238,38 +239,75 @@ def get_division( work, division_0=None, division_1=None, division_2=None, divis
     else:
         return None # We couldn't find a matching division, perhaps one doesn't exist with the given set of descriptors?
     
-def download_work_epub(request, title=None):
+def download_work(request, title=None,):
     
     if 'refresh' in request.GET and request.GET['refresh'].strip().lower() in ["1", "true", "t", "", None]:
         use_cached = False
     else:
         use_cached = True
     
+    # Get the format that the user is requesting
+    if 'format' in request.GET:
+        book_format = request.GET['format']
+        
+    # Ensure the format is valid
+    book_format = book_format.strip().lower()
+    
+    mime_types = { 'epub' : 'application/epub+zip',
+                   'mobi' : 'application/x-mobipocket-ebook'
+                 }
+    
+    if book_format not in mime_types:
+        raise Http404('No eBook file found for the given format')
+    
     # Try to get the work
     work_alias = get_object_or_404(WorkAlias, title_slug=title)
     work = work_alias.work
     
     # Get the filename of the eBook
-    epub_file = work.title_slug + ".epub"
+    ebook_file = work.title_slug + "." + book_format
+    ebook_file_full_path = os.path.join( settings.GENERATED_FILES_DIR, ebook_file)
     
-    epub_file_full_path = os.path.join( settings.GENERATED_FILES_DIR, epub_file)
-    
-    if not use_cached or not os.path.exists(epub_file_full_path):
+    # If we are using the cached file, then try to make it
+    if not use_cached or not os.path.exists(ebook_file_full_path):
         
-        # Stop if we don't have the ability to produce ebook files and it doesn't exist already
+        # Make the epub. Note that we will need to make the epub even if we need to create a mobi file since mobi's are made from epub's
+        if book_format == "mobi":
+            epub_file_full_path = os.path.join( settings.GENERATED_FILES_DIR,  work.title_slug + ".epub" )
+        else:
+            epub_file_full_path = ebook_file_full_path
+        
+        # Stop if we don't have the ability to produce ebook files
         if ePubExport is None:
             raise Http404('eBook file not found')
-        
+            
         # Generate the ebook
         fname = ePubExport.exportWork(work, epub_file_full_path)
         
-        logger.info("Created epub in, filename=%s", fname)
+        logger.info("Created epub, filename=%s", fname)
+        
+        # If we need to make a mobi file, do it now
+        if book_format == "mobi":
+            
+            # Stop if we don't have the ability to produce mobi files
+            if MobiExport is None:
+                raise Http404('eBook file not found')
+            
+            # Generate the ebook
+            fname = MobiExport.exportWork(work, epub_file_full_path, ebook_file_full_path)
+            
+            if fname is not None:
+                logger.info("Created mobi, filename=%s", fname)
+            else:
+                logger.info("Failed to create mobi, filename=%s", fname)
+                raise Http404('eBook file not found')
     
     # Stream the file from the disk
-    wrapper = FileWrapper(file(epub_file_full_path))
+    wrapper = FileWrapper(file(ebook_file_full_path))
     
-    response = HttpResponse(wrapper, content_type='application/epub+zip')
-    response['Content-Length'] = os.path.getsize(epub_file_full_path)
+    response = HttpResponse(wrapper, content_type=mime_types[book_format])
+    response['Content-Disposition'] = 'attachment; filename="%s"' % (ebook_file)
+    response['Content-Length'] = os.path.getsize(ebook_file_full_path)
     return response
     
 @cache_page_if_ajax(12 * months)
