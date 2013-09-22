@@ -155,3 +155,28 @@ body.dark .verse-container.highlighted{
 .share-link > .icon{
 	margin-right: 8px;
 }
+
+.download-format{
+	padding: 5px 0 5px 8px;
+	margin: 5px; 
+}
+
+.download-format > input[type=radio] {
+	margin-top: 0px;
+	width: 22px;
+}
+
+.download-format .description{
+	margin-left: 22px;
+}
+
+.download-format:hover {
+	border: 3px solid #666;
+	border-radius: 5px;
+}
+
+.download-format {
+	border: 3px solid transparent;
+	background-color: #484848;
+	border-radius: 5px;
+}
