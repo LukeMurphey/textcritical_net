@@ -10,6 +10,34 @@
 {% endblock %}
 {% block content %}
 
+	  <div id="download-dialog" style="display:none" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="download-dialog-label" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="download-dialog-label">Download Book</h3>
+		</div>
+		<div class="modal-body">
+			Select which format you would like to download:
+			
+			<label>
+				<div class="download-format">
+					<input type="radio" name="format" value="epub" data-href="{% url "download_work" work.title_slug %}?format=epub" checked /><strong>ePUB Format (Recommended)</strong>
+					<div class="description">Supported by most <a class="external" href="http://en.wikipedia.org/wiki/Category:EPUB_readers">ebook readers</a> such as <a class="external" href="http://itunes.apple.com/us/app/ibooks/id364709193?mt=8&ls=1&v0=www-its-ipad-builtinapps-ibooks-us">iBooks</a> (iPad and iPhones), or <a class="external" href="http://www.aldiko.com/">Aldiko</a></div>
+				</div>
+			</label>
+			
+			<label>
+				<div class="download-format">
+					<input type="radio" name="format" value="mobi" data-href="{% url "download_work" work.title_slug %}?format=mobi" /><strong>MOBI Format (Amazon Kindle)</strong>
+					<div class="description">Supported by Kindle devices and Kindle reader software</div>
+				</div>
+			</label>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button id="download-work" class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="icon-download-alt icon-white"></i> Download</button>
+		</div>
+	  </div>
+
 		{% load string_utils %}
         <ul class="breadcrumb">
             <li><a href="{% url "home" %}">Home</a> <span class="divider">/</span></li>
@@ -40,13 +68,7 @@
 						<li><a class="share-link share-email" href="#"><i class="icon icon-mail-alt"></i>Email this</a></li>
 			        </ul>
 			    </span>
-				<span class="hidden-phone btn-group no-left-margin">
-			        <button class="btn dropdown-toggle middle-button" data-toggle="dropdown"><i class="icon-download-alt"></i> <span class="caret"></span></button>
-			        <ul class="dropdown-menu right" role="menu">
-						<li><a class="download-epub" href="{% url "download_work" work.title_slug %}?format=epub">Download eBook, epub format</a></li>
-						<li><a class="download-epub" href="{% url "download_work" work.title_slug %}?format=mobi">Download eBook, mobi format</a></li>
-			        </ul>
-			    </span>
+			    <button class="hidden-phone download-work btn show-download-work-dialog" type="submit"><i class="icon-download-alt"></i></button>
 				
 			    <button id="align-break" class="btn align-break"><i class="icon-align-left"></i></button>
 			    
@@ -57,7 +79,8 @@
 			        	{% if divisions and divisions|length > 1 %}
 			        	<li><a href="#" class="show-table-of-contents" data-toggle="button" id="show-table-of-contents-phone">Show table of contents</a></li>
 			            {% endif %}
-			            <li><a class="search-work" href="#">Search this work</a></li>
+			            <li><a class="show-download-work-dialog" href="#">Download book...</a></li>
+			            <li></li>
 			            
 			            {% if related_works and related_works|length > 0 %}
 			            <li class="nav-header">Other Versions</li>
@@ -78,9 +101,6 @@
 						<li><a class="share-link share-twitter" href="#"><i class="icon icon-twitter"></i>Tweet this</a></li>												
 						<li><a class="share-link share-email" href="#"><i class="icon icon-mail-alt"></i>Email this</a></li>
 						
-						<li class="nav-header">Download</li>
-						<li><a class="download-epub" href="href="{% url "download_work" work.title_slug %}?format=epub">Download eBook, epub format</a></li>
-						<li><a class="download-epub" href="{% url "download_work" work.title_slug %}?format=mobi">Download eBook, mobi format</a></li>
 			        </ul>
 			    </span>
 			    </span>
@@ -306,6 +326,18 @@ require(["jquery", "store", "app", "underscore", "bootstrap", "facebook"], funct
     
     $(".share-email").click(function() {
     	TextCritical.sendAnEmail(document.title, $('.verse-container.highlighted .verse:not(.label)').text(), true);
+    });
+    
+    $("#download-work").click(function(){
+    	link = $('.download-format input:checked').attr("data-href");
+    	
+    	if( link != undefined ){
+    		window.location = link;
+    	}
+    });
+    
+    $(".show-download-work-dialog").click(function(){
+    	$('#download-dialog').modal();
     });
     
     
