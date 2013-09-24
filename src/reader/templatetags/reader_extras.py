@@ -365,7 +365,7 @@ def simplify_person_name( name ):
     """
     
     if name is not None:
-        new_name = name.replace("Ph. D.", "").replace("M.A.", "").replace("LL.D.", "").replace("A.M.", "").replace("Esq.", "").replace(",", "").strip()
+        new_name = name.replace("Ph.D.", "").replace("Ph. D.", "").replace("M.A.", "").replace("LL.D.", "").replace("A.M.", "").replace("Esq.", "").replace(",", "").strip()
         
         return new_name.split(" ")[-1]
         
