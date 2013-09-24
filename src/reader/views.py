@@ -27,11 +27,11 @@ from reader.language_tools import normalize_unicode
 
 # Try to import the ePubExport but be forgiving if the necessary dependencies do not exist
 try:
-    from reader.ebook import ePubExport, MobiExport
+    from reader.ebook import ePubExport, MobiConvert
 except ImportError:
-    # Cannot import ePubExport and MobiExport, this means we won't be able to make ebook files
+    # Cannot import ePubExport and MobiConvert, this means we won't be able to make ebook files
     ePubExport = None
-    MobiExport = None
+    MobiConvert = None
 
 JSON_CONTENT_TYPE = "application/json" # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
 
@@ -290,13 +290,13 @@ def download_work(request, title=None,):
         if book_format == "mobi":
             
             # Stop if we don't have the ability to produce mobi files
-            if MobiExport is None:
+            if MobiConvert is None:
                 raise Http404('eBook file not found')
             
             # Generate the ebook
-            fname = MobiExport.exportWork(work, epub_file_full_path, ebook_file_full_path)
+            fname = MobiConvert.convertEpub(work, epub_file_full_path, ebook_file_full_path)
             
-            if fname is not None:
+            if os.path.exists(ebook_file_full_path):
                 logger.info("Created mobi, filename=%s", fname)
             else:
                 logger.info("Failed to create mobi, filename=%s", fname)
