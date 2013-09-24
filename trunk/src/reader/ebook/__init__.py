@@ -363,14 +363,16 @@ class ePubExport(object):
             c = Context({"chapter": division,
                          "verses" : Verse.objects.filter(division=division).order_by("sequence_number"),
                          "note_number" : NoteNumber(),
-                         "notes" : notes
+                         "notes" : notes,
+                         "title" : division.get_division_description()
                          })
             
             template = loader.get_template('epub/chapter.html')
             html = template.render(c).encode("utf-8")
             
         else:
-            c = Context({"division": division
+            c = Context({"division": division,
+                         "title" : division.get_division_description()
                          })
             
             template = loader.get_template('epub/section.html')
@@ -397,18 +399,18 @@ class ePubExport(object):
         
         return cls.DivisionMap(division, toc_node)
     
-class MobiExport(object):
+class MobiConvert(object):
     
     @classmethod
-    def exportWork(cls, work, epub_file_path, mobi_file_path):
+    def convertEpub(cls, work, epub_file_path, mobi_file_path):
         
         mobi_path = os.path.dirname(mobi_file_path)
         mobi_file = os.path.basename(mobi_file_path)
         
         p = subprocess.Popen([settings.KINDLEGEN, epub_file_path, "-o", mobi_file], cwd=mobi_path)
         p.wait()
-        
-        if p.returncode != 0:
+        print "p.returncode=", p.returncode
+        if p.returncode > 1:
             return None
         else:
             return mobi_file

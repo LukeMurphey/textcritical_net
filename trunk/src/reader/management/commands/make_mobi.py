@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.conf import settings
 
 from reader.models import Work
-from reader.ebook import MobiExport
+from reader.ebook import MobiConvert
 
 import sys
 import os
@@ -46,7 +46,7 @@ class Command(BaseCommand):
                 # Make the mobi unless it already exist or if we are forcing it
                 if force or not os.path.exists(mobi_file_full_path):
                     
-                    fname = MobiExport.exportWork(work, epub_file_full_path, mobi_file_full_path)
+                    fname = MobiConvert.convertEpub(work, epub_file_full_path, mobi_file_full_path)
                     
                     if fname is not None:
                         logger.info("Created mobi, filename=%s", fname)
