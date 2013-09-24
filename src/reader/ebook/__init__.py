@@ -409,7 +409,7 @@ class MobiConvert(object):
         
         p = subprocess.Popen([settings.KINDLEGEN, epub_file_path, "-o", mobi_file], cwd=mobi_path)
         p.wait()
-        print "p.returncode=", p.returncode
+        
         if p.returncode > 1:
             return None
         else:
