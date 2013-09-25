@@ -6,10 +6,10 @@
 
         {% if divisions and divisions|length > 1 %}
         <div class="table-of-contents">
-	        <ul class="nav nav-list">
+	        <ul>
 	            {% for division in divisions.all %}
                 <li class="division-{{division.level}}">
-                    <a href="{{division.descriptor}}.html"><i class="icon-book"></i>{{division|capfirst}}</a>
+                    <a href="{{division.descriptor}}.html">{{division|capfirst}}</a>
                 </li>
 	            {% endfor %}
 	        </ul>
