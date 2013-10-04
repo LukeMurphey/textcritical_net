@@ -34,7 +34,7 @@ require(["jquery", "libs/text!/media/templates/works_list.html", "datatables"], 
 	function setupWorksTable(works){
 		
 		$("#works_list_container").html(_.template(works_list_template,{ works:works,
-																		 USE_DARK_THEME:{{USE_DARK_THEME|default_if_none:0|lower}},
+																		 USE_DARK_THEME:{{USE_DARK_THEME|default_if_none:1|lower}},
 																		 search_url:"{% url "search" %}",
 																		 read_work_url: "/work"}));
 		
