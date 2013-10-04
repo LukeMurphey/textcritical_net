@@ -12,46 +12,45 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
 
   <!-- Icons -->
-  <link rel="icon" type="image/png" href="{{ MEDIA_URL }}images/favicon.ico" />
-  <link rel="apple-touch-icon" href="{{ MEDIA_URL }}images/apple-touch-icon.png">
-  <link rel="apple-touch-icon-precomposed" href="{{ MEDIA_URL }}images/apple-touch-icon-precomposed.png">
-  <link rel="apple-touch-icon-precomposed" sizes="57x57" href="{{ MEDIA_URL }}images/apple-touch-icon-57x57-precomposed.png">
-  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ MEDIA_URL }}images/apple-touch-icon-72x72-precomposed.png">
-  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ MEDIA_URL }}images/apple-touch-icon-114x114-precomposed.png">
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ MEDIA_URL }}images/apple-touch-icon-144x144-precomposed.png">
+  <link rel="icon" type="image/png" href="{{ MEDIA_URL|default:"/media/" }}images/favicon.ico" />
+  <link rel="apple-touch-icon" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon.png">
+  <link rel="apple-touch-icon-precomposed" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="57x57" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-57x57-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-72x72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-114x114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-144x144-precomposed.png">
   
   {% if include_default_css|default_if_none:1 %}
-  <link rel="stylesheet" href="{{ MEDIA_URL }}stylesheets/normalize.css">
-  <link rel="stylesheet" href="{{ MEDIA_URL }}stylesheets/main.css">
-  <link rel="stylesheet" href="{{ MEDIA_URL }}stylesheets/app.css">
-  <link rel="stylesheet" href="{{ MEDIA_URL }}stylesheets/add2home.css">
-  <link rel="stylesheet" href="{{ MEDIA_URL }}stylesheets/arthref.css">
+  <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/normalize.css">
+  <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/main.css">
+  <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/app.css">
+  <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/add2home.css">
+  <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/arthref.css">
   
   {% if USE_MINIFIED|default_if_none:1 %}
-  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.min.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL }}stylesheets/bootstrap.min.css">{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.min.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap.min.css">{% endif %}
   {% else %}
-  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL }}stylesheets/bootstrap.css">{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap.css">{% endif %}
   {% endif %}
   
-  {% if USE_DARK_THEME|default_if_none:0 %}
-  <link rel="stylesheet" href="{{ MEDIA_URL }}stylesheets/darkstrap.css">
+  {% if USE_DARK_THEME|default_if_none:1 %}
+  <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/darkstrap.css">
   {% endif %}
   {% endif %}
   {% block links %}{% endblock %}
   
   {% if include_default_css|default_if_none:1 %}
   {% if USE_MINIFIED|default_if_none:1 %}
-  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap-responsive.min.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL }}stylesheets/bootstrap-responsive.min.css">{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap-responsive.min.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap-responsive.min.css">{% endif %}
   {% else %}
-  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap-responsive.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL }}stylesheets/bootstrap-responsive.css">{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap-responsive.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap-responsive.css">{% endif %}
   {% endif %}
   {% endif %}
-  
-  <script type="application/javascript" src="{{ MEDIA_URL }}javascripts/libs/modernizr-2.6.1.min.js"></script>
+  <script type="application/javascript" src="{{ MEDIA_URL|default:"/media/" }}javascripts/libs/modernizr-2.6.1.min.js"></script>
   {% block style %}{% endblock %}
   
 </head>
-<body {% if USE_DARK_THEME|default_if_none:0 %}class="dark view_{{url_name}}"{% endif %}>
+<body {% if USE_DARK_THEME|default_if_none:1 %}class="dark view_{{url_name}}"{% endif %}>
   <!--[if lt IE 7]>
   	 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
   <![endif]-->
@@ -72,14 +71,14 @@
   {% block base_content %}{% endblock %}
   
   {% if USE_MINIFIED|default_if_none:1 %}
-  {% if USE_CDN|default_if_none:1 %}<script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.0.6/require.min.js"></script>{% else %}<script src="{{ MEDIA_URL }}javascripts/libs/require.js"></script>{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.0.6/require.min.js"></script>{% else %}<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/libs/require.js"></script>{% endif %}
   {% else %}
-  {% if USE_CDN|default_if_none:1 %}<script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.0.6/require.js"></script>{% else %}<script src="{{ MEDIA_URL }}javascripts/libs/require.js"></script>{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.0.6/require.js"></script>{% else %}<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/libs/require.js"></script>{% endif %}
   {% endif %}
   {% if USE_MINIFIED|default_if_none:1 %}
-  <script src="{{ MEDIA_URL }}javascripts/main.min.js"></script>
+  <script src="{{ MEDIA_URL|default:"/media/" }}javascripts/main.min.js"></script>
   {% else %}
-  <script src="{{ MEDIA_URL }}javascripts/main.js"></script>
+  <script src="{{ MEDIA_URL|default:"/media/" }}javascripts/main.js"></script>
   {% endif %}
   
   <script language="javascript">
