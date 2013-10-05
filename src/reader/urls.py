@@ -48,6 +48,4 @@ urlpatterns = patterns('',
     
     url(r'^api/works_typehead_hints/?$', 'reader.views.api_works_typehead_hints', name='api_works_typehead_hints' ),
     
-    
-    
 )

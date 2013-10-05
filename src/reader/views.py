@@ -3,7 +3,8 @@ from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
 from django.core.servers.basehttp import FileWrapper
-from django.template.context import RequestContext
+from django.template.context import RequestContext, Context
+from django.template import loader 
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from django.template.defaultfilters import slugify
@@ -450,7 +451,11 @@ def humans_txt(request):
                               context_instance=RequestContext(request))
     
 def not_found_404(request):
-    pass
+    
+    template = loader.get_template('404.html')
+    context = Context({'title': 'Not Found'})
+        
+    return HttpResponse(content=template.render(context), content_type='text/html; charset=utf-8', status=404)
 
 def tests(request):
     return render_to_response('test.html',
