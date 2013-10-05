@@ -26,3 +26,6 @@ if settings.DEBUG:
     urlpatterns += patterns('',
         (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
         'document_root': settings.MEDIA_ROOT}))
+    
+handler404 = 'reader.views.not_found_404'
+handler500 = 'reader.views.not_found_404'
