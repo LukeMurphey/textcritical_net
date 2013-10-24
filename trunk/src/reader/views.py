@@ -46,7 +46,7 @@ days    = 24 * hours
 months  = 30 * days
 years   = 365.25 * days
 
-@cache_page(15 * minutes)
+@cache_page(8 * hours)
 def home(request):
     greek_works_count = Work.objects.filter(language="Greek").count()
     english_works_count = Work.objects.filter(language="English").count()
@@ -56,12 +56,14 @@ def home(request):
                                'english_works_count' : english_works_count},
                               context_instance=RequestContext(request))
 
+@cache_page(8 * hours)
 def about(request):
     
     return render_to_response('about.html',
                               { 'title' : 'About TextCritical.net'},
                               context_instance=RequestContext(request)) 
 
+@cache_page(8 * hours)
 def contact(request):
     
     return render_to_response('contact.html',
@@ -463,6 +465,7 @@ def tests(request):
                                'include_default_css' : 0},
                               context_instance=RequestContext(request))
     
+@cache_page(8 * hours)
 def beta_code_converter(request):
     return render_to_response('beta_code_converter.html',
                               {'title'               : 'Beta-code Converter'},
