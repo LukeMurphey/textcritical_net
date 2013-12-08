@@ -9,7 +9,7 @@ from time import time
 
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
-from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 
 import logging
 
@@ -375,9 +375,8 @@ class cache_page_if_ajax(object):
     ought to be cached, not the outermost call.
     """
     
-    def __init__(self, *args, **kwargs):
-        self.args = args
-        self.kwargs = kwargs
+    def __init__(self, timeout=86400):
+        self.timeout = timeout
     
     def __call__(self, fn):
         
@@ -386,8 +385,28 @@ class cache_page_if_ajax(object):
             request = args[0]
             
             if request.is_ajax():
-                # See https://github.com/django/django/blob/master/django/views/decorators/cache.py
-                return cache_page(fn, *self.args, **self.kwargs)(*args, **kwargs)
+                
+                # Make a key to identify the function call uniquely
+                args_str =  ",".join([str(x) for x in args[1:]])
+                kwargs_str = ",".join("%s=%r" % (key,val) for (key,val) in kwargs.iteritems())
+                
+                if len(args_str) > 0 and len(kwargs_str) > 0:
+                    args_str = args_str + ","
+                
+                key = fn.__name__ + "(" + args_str + kwargs_str + ")"
+                
+                # Try to get the cached entry
+                cached = cache.get(key)
+                
+                # If a cached entry was found, return it
+                if cached is not None:
+                    return cached
+                
+                # Otherwise, refresh the cache
+                else:
+                    result = fn(*args, **kwargs)
+                    cache.set(key, result, self.timeout)
+                    return result
                 
             else:
                 return fn(*args, **kwargs)
