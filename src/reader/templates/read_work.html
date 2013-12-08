@@ -53,7 +53,7 @@
         {% endcomment %}
         {% load reader_extras %}
         {% with chapter_description=chapter.get_division_description %}
-        <div class="control-group {% if verse_not_found %}error{% endif %}">
+        <div class="hidden-print control-group {% if verse_not_found %}error{% endif %}">
         	<div class="input-append">
         		<input autocorrect="off" autocapitalize="off" class="span3" placeholder="Jump to reference..." id="chapter" value="{{chapter_description}}{% if verse_to_highlight %}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse_to_highlight}}{% endif %}" type="text">
 			    <button class="btn" type="submit" id="change-reference">Go</button>
@@ -186,10 +186,12 @@
         
         {% with chapter_description=chapter.get_division_description %}
         
+        {% load cache %}
+        {% cache 0 read_work chapter.id %}
         {% for verse in verses.all %}
-        <span id="verse-{{verse.indicator}}" class="verse-container {% if not chapter_not_found and verse.indicator == verse_to_highlight %}highlighted{% endif %}">
+        <span id="verse-{{verse.indicator}}" class="verse-container">
             {% if verse.indicator|length > 0 %}
-            <a class="verse-link" data-verse="{{verse.indicator}}" data-verse-descriptor="{{chapter_description}}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse}}" id="verse-link_{{verse.indicator}}" href="{% url "read_work" work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}/{{verse.indicator}}"><span class="label {% if not chapter_not_found and verse.indicator == verse_to_highlight %}label-info{% endif %} verse number">{{verse.indicator}}</span></a>
+            <a class="verse-link" data-verse="{{verse.indicator}}" data-verse-descriptor="{{chapter_description}}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse}}" id="verse-link_{{verse.indicator}}" href="{% url "read_work" work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}/{{verse.indicator}}"><span class="label verse number">{{verse.indicator}}</span></a>
 	        {% endif %}
 	        {% if verse.original_content|length == 0 %}
 	        {{verse.content|unbound_text_to_html5|safe}}
@@ -197,7 +199,8 @@
 	        {{verse.original_content|perseus_xml_to_html5:chapter.work.language|safe}}
 	        {% endif %}
         </span>
-        {% endfor %}        
+        {% endfor %}
+        {% endcache %}
         {% endwith %}
           
         {% comment %}
@@ -207,14 +210,14 @@
         {% endcomment %}
         
 		{% if previous_chapter or next_chapter %}
-        <div class="page-shortcuts">
+        <div class="page-shortcuts hidden-print">
         	{% if previous_chapter %}<a href="{% url "read_work" work.title_slug %}/{{ previous_chapter.get_division_indicators|join:"/" }}" class="prior-page-shortcut page-shortcut"></a>{% endif %}
         	{% if next_chapter %}<a href="{% url "read_work" work.title_slug %}/{{ next_chapter.get_division_indicators|join:"/" }}" class="next-page-shortcut page-shortcut"></a>{% endif %}
         </div>
         {% endif %}
         
         {% if chapters|length > 0 or previous_chapter or next_chapter %}
-        <div class="pagination">
+        <div class="pagination hidden-print">
         	<ul>
         {% if previous_chapter %}
 	            <li class="previous">
@@ -282,11 +285,11 @@ require(["jquery", "store", "app", "underscore", "bootstrap", "facebook"], funct
     	$("#chapter").val( $(this).attr("data-verse-descriptor") );
     	document.title = $("h1[data-work-title]").attr("data-work-title") + " " + $(this).attr("data-verse-descriptor");
     	return TextCritical.scrollToVerse( $(this).attr("data-verse"), $("#chapter-base-url").attr("href") );
-    	
     });
     
     {% if verse_to_highlight %}
-    TextCritical.scrolltoAnchor("verse-{{verse_to_highlight}}");
+    TextCritical.highlight_selected_word("verse-{{verse_to_highlight}}");
+    TextCritical.scrollToVerse( "{{verse_to_highlight}}", $("#chapter-base-url").attr("href") );
     {% endif %}
     
     $(".word").click( TextCritical.word_lookup );

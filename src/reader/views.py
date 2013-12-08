@@ -313,7 +313,7 @@ def download_work(request, title=None,):
     response['Content-Length'] = os.path.getsize(ebook_file_full_path)
     return response
     
-@cache_page_if_ajax(12 * months)
+#@cache_page_if_ajax(12 * months)
 @ajaxify
 def read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
     
