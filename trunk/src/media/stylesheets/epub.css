@@ -62,6 +62,37 @@ sup.note {
   font-style: italic; }
 
 /*
+ * The following enables the Open-sans font for the text; this is necessary because some devices don't have a Greek font.
+ */
+@font-face {
+  font-family: OpenSans;
+  font-weight: normal;
+  font-style: normal;
+  src: url(OpenSans-Regular.ttf); }
+
+@font-face {
+  font-family: OpenSansItalic;
+  font-weight: normal;
+  font-style: italic;
+  src: url(OpenSans-Italic.ttf); }
+
+@font-face {
+  font-family: OpenSansBold;
+  font-weight: normal;
+  font-style: italic;
+  src: url(OpenSans-Bold.ttf); }
+
+.verse-container {
+  font-family: "OpenSans", sans-serif;
+  color: #333333; }
+
+.verse-container em, .verse-container i {
+  font-family: "OpenSansItalic", sans-serif; }
+
+.verse-container .label {
+  font-family: "OpenSansBold", sans-serif; }
+
+/*
  * The CSS below is basically content to fill in what Bootstrap would have styled if it was available.
  */
 .label {
@@ -99,5 +130,5 @@ a {
   color: #0088cc; }
 
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, "OpenSans", sans-serif;
   color: #333333; }
