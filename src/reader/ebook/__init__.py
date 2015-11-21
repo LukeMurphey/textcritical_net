@@ -259,6 +259,12 @@ class ePubExport(object):
         book.addImage(r'media/images/glyphicons-halflings.png', 'images/glyphicons-halflings.png')
         book.addImage(r'media/images/glyphicons-halflings-white.png', 'images/glyphicons-halflings-white.png')
         
+        # Add in the fonts
+        book.addImage(r'media/font/epub/OpenSans-Regular.ttf', 'OpenSans-Regular.ttf')
+        book.addImage(r'media/font/epub/OpenSans-Italic.ttf', 'OpenSans-Italic.ttf')
+        book.addImage(r'media/font/epub/OpenSans-Bold.ttf', 'OpenSans-Bold.ttf')
+        book.addImage(r'media/font/epub/OpenSans-BoldItalic.ttf', 'OpenSans-BoldItalic.ttf')
+        
         coverimagefile = cls.makeCoverImage(work)
         book.addCover(coverimagefile)
         
