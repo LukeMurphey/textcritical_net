@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url, include
 from reader.sitemaps import WorksSitemap, StaticSitemap
+from django.views.decorators.cache import cache_page
 
 sitemaps = dict(
                 static = StaticSitemap,

@@ -152,7 +152,7 @@ class DiogenesAnalysesImporter(DiogenesImporter):
     cached_dialects = None
         
     @classmethod
-    @transaction.commit_on_success
+    @transaction.atomic
     def import_line(cls, entry, line_number=None, raise_exception_on_match_failure=False):
         """
         Parse an entry in the Diogenes greek-analyses.txt file.
@@ -486,7 +486,7 @@ class DiogenesLemmataImporter():
     """
     
     @staticmethod
-    @transaction.commit_on_success
+    @transaction.atomic
     def parse_lemma( entry, line_number=None ):
         """
         Parse an entry in the Diogenes greek-lemmata.txt file.

@@ -28,16 +28,17 @@ class PreLoadedWorksRouter(object):
         
         return None
     
-    def allow_syncdb(self, db, model):
+    def allow_migrate(self, db, app_label, model_name, **hints):
         
         # If this is one of the models we support and the database we are storing in, then allow syncdb
-        if db == PreLoadedWorksRouter.DATABASE_NAME and model._meta.app_label == PreLoadedWorksRouter.APP_LABEL:
+        if db == PreLoadedWorksRouter.DATABASE_NAME and app_label == PreLoadedWorksRouter.APP_LABEL:
             return True
         
         # If the model is the one supported by this database but the database is wrong (didn't match above), then disallow syncdb
-        elif model._meta.app_label == PreLoadedWorksRouter.APP_LABEL:
+        elif app_label == PreLoadedWorksRouter.APP_LABEL:
             return False
         
         # Don't allow other models (like users) to be sync'd to this database
         else:
             return False
+        
