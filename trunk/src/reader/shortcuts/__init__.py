@@ -402,8 +402,6 @@ class cache_page_if_ajax(object):
                 if len(args_str) > 0 and len(kwargs_str) > 0:
                     args_str = args_str + ","
                 
-                logger.info(str(dir(fn)))
-                
                 if self.name is not None:
                     key = self.name + "(" + args_str + kwargs_str + ")"
                 else:
