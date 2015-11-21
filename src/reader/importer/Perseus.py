@@ -682,7 +682,7 @@ class PerseusTextImporter(TextImporter):
             logger.info("Deleting work so that new copy can replace it, title=%s, work.id=%i", work.title, work.id)
             work.delete()
     
-    @transaction.commit_on_success
+    @transaction.atomic
     def import_xml_document(self, document):
         """
         Import the given TEI document into the database.

@@ -183,7 +183,7 @@ ROOT_URLCONF = 'textcritical.urls'
 WSGI_APPLICATION = 'textcritical.wsgi.application'
 
 TEMPLATE_DIRS = (
-    os.path.join(SITE_ROOT, 'templates')
+    os.path.join(SITE_ROOT, 'templates'),
 )
 
 INSTALLED_APPS = (
