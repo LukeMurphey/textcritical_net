@@ -12,7 +12,7 @@ from django.views.generic import View
 from django.utils.translation import ungettext, ugettext as _
 from django.utils.encoding import smart_str
 from django.core.exceptions import PermissionDenied
-from django.contrib.admin.util import prepare_lookup_value
+from django.contrib.admin.utils import prepare_lookup_value
 
 # try to use json (2.6+) but stay compatible with 2.5.*
 try:
