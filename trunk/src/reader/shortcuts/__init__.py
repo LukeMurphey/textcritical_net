@@ -11,7 +11,11 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.core.cache import cache
 
+import hashlib
+
 import logging
+
+logger = logging.getLogger(__name__)
 
 class HTML5Converter(HTMLParser):
     """
@@ -271,8 +275,6 @@ def add_xml_as_html( src_doc, src_node, dst_doc, parent_dst_node, language, text
     for child_node in src_node.childNodes:
         add_xml_as_html(src_doc, child_node, dst_doc, new_dst_node, language, text_transformation_fx)
         
-logger = logging.getLogger(__name__)
-        
 def time_function_call(fx):
     """
     This decorator will provide a log message measuring how long a function call took.
@@ -375,8 +377,9 @@ class cache_page_if_ajax(object):
     ought to be cached, not the outermost call.
     """
     
-    def __init__(self, timeout=86400):
+    def __init__(self, timeout=86400, name=None):
         self.timeout = timeout
+        self.name = name
     
     def __call__(self, fn):
         
@@ -387,25 +390,41 @@ class cache_page_if_ajax(object):
             if request.is_ajax():
                 
                 # Make a key to identify the function call uniquely
+                kwargs_array = []
+                
+                for key in sorted(kwargs.keys()):
+                    kwargs_array.append("%s='%s'" % (key,str(kwargs[key])))
+                    
+                kwargs_str = ",".join(kwargs_array)
+                
                 args_str =  ",".join([str(x) for x in args[1:]])
-                kwargs_str = ",".join("%s=%r" % (key,val) for (key,val) in kwargs.iteritems())
                 
                 if len(args_str) > 0 and len(kwargs_str) > 0:
                     args_str = args_str + ","
                 
-                key = fn.__name__ + "(" + args_str + kwargs_str + ")"
+                logger.info(str(dir(fn)))
+                
+                if self.name is not None:
+                    key = self.name + "(" + args_str + kwargs_str + ")"
+                else:
+                    key = fn.__name__ + "(" + args_str + kwargs_str + ")"
+                
+                # Hash the key so that it works with memcache
+                key_hashed = hashlib.sha224(key).hexdigest()
                 
                 # Try to get the cached entry
-                cached = cache.get(key)
+                cached = cache.get(key_hashed)
                 
                 # If a cached entry was found, return it
                 if cached is not None:
+                    logger.debug("Cache hit for key=%s", key)
                     return cached
                 
                 # Otherwise, refresh the cache
                 else:
                     result = fn(*args, **kwargs)
-                    cache.set(key, result, self.timeout)
+                    cache.set(key_hashed, result, self.timeout)
+                    logger.debug("Cache miss for key=%s", key)
                     return result
                 
             else:
