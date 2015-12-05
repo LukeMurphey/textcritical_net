@@ -630,12 +630,36 @@ define([
 		}
 		
 		/**
-		 * Retrieves a list of the typeahead hints used for the works list.
-		 **/
+		 * Flatten the type-ahead hints
+		 */
+		TextCritical.flatten_typeahead_hints = function( typeahead_hints ){
+	    	
+	    	//Flatten the list so that Bootstrap typeahead can accept the list
+	    	hints_flattened = [];
+	    	
+	    	for( var i = 0; i < typeahead_hints.length; i++){
+				if( _.indexOf(hints_flattened, typeahead_hints[i].desc) < 0 ){
+					hints_flattened.push( typeahead_hints[i].desc );
+				}
+			}
+	    	
+	    	return hints_flattened;
+		}
+		
+		/**
+		 *Store the type-ahead hints so that they can be reused.
+		 */
 		TextCritical.works_search_typeahead_hints = [];
 		TextCritical.works_search_typeahead_hints_flattened = [];
 		
+		/**
+		 * Retrieves a list of the typeahead hints used for the works list.
+		 * 
+		 * @param flattened A boolean indicating whether the list should be flattened
+		 **/
 		TextCritical.get_works_search_typeahead_hints = function ( flattened ) {
+			
+			var promise = jQuery.Deferred();
 			
 			if( flattened == undefined ){
 				flattened = true;
@@ -643,40 +667,42 @@ define([
 			
 			// Get the list if it is already cached
 			if( TextCritical.works_search_typeahead_hints_flattened.length > 0){
+				console.info("Type-ahead hints already available via the cache")
 				
 				if( flattened ){
-					return TextCritical.works_search_typeahead_hints_flattened;
+					promise.resolve(TextCritical.works_search_typeahead_hints_flattened);
 				}
 				else{
-					return TextCritical.works_search_typeahead_hints;
+					promise.resolve(TextCritical.works_search_typeahead_hints);
 				}
 			}
 			
 			// Download the list otherwise
 			else{
 				console.info("Retrieving list of typeahead hints from the server");
+				
+				var promise = jQuery.Deferred();
+				
 		    	var request = $.ajax({
-		  		  url: "/api/works_typehead_hints",
-		  		  async : false,
+		  		  url: "/api/works_typeahead_hints",
 		  		  success: function(html) {
 		  			TextCritical.works_search_typeahead_hints = html;
+		  			
+		  			// Flatten the list so that Bootstrap typeahead can accept the list
+		  			TextCritical.works_search_typeahead_hints_flattened = TextCritical.flatten_typeahead_hints(TextCritical.works_search_typeahead_hints);
+		  			
+		  			if(flattened){
+		  				promise.resolve(TextCritical.works_search_typeahead_hints_flattened);
+		  			}
+		  			else{
+		  				promise.resolve(TextCritical.works_search_typeahead_hints);
+		  			}
+		  			
 		  		  },
 		  		  type: "GET"
 		  		});
 		    	
-		    	//Flatten the list so that Bootstrap typeahead can accept the list
-		    	hints_flattened = [];
-		    	
-		    	for( var i = 0; i < TextCritical.works_search_typeahead_hints.length; i++){
-					if( _.indexOf(hints_flattened, TextCritical.works_search_typeahead_hints[i].desc) < 0 ){
-						hints_flattened.push( TextCritical.works_search_typeahead_hints[i].desc );
-					}
-				}
-		    	
-		    	// Save the flattened list
-		    	TextCritical.works_search_typeahead_hints_flattened = hints_flattened;
-		    	
-		    	return TextCritical.works_search_typeahead_hints_flattened;
+		    	return promise;
 			}
 		}
 		
@@ -686,7 +712,8 @@ define([
 		 * @param text The text to search for
 		 */
 		TextCritical.jump_to_searched_text = function ( text ) {
-			list = TextCritical.get_works_search_typeahead_hints(false);
+			
+			list = TextCritical.works_search_typeahead_hints;
 			
 			found = 0;
 			url = null;
