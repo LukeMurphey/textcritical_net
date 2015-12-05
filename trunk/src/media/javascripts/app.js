@@ -691,7 +691,7 @@ define([
 		  			// Flatten the list so that Bootstrap typeahead can accept the list
 		  			TextCritical.works_search_typeahead_hints_flattened = TextCritical.flatten_typeahead_hints(TextCritical.works_search_typeahead_hints);
 		  			
-		  			if(flattened){
+		  			if( flattened ){
 		  				promise.resolve(TextCritical.works_search_typeahead_hints_flattened);
 		  			}
 		  			else{
@@ -702,8 +702,9 @@ define([
 		  		  type: "GET"
 		  		});
 		    	
-		    	return promise;
 			}
+			
+	    	return promise;
 		}
 		
 		/**

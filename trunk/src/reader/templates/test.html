@@ -26,7 +26,6 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
   		});
     	
     	return strReturn;
-		
 	}
 	
     {% comment %}
@@ -38,12 +37,12 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
     	
 		// Test beta-code to unicode
 		it("from beta-code to unicode (as get parameter)", function() {
-			expect( getAsync("/api/betacode_to_unicode/?word=*th/nios")['unicode'] ).toBe( "Τήνιος" );
+			expect( getAsync("/api/betacode_to_unicode/?text=*th/nios")['unicode'] ).toBe( "Τήνιος" );
    		});
     	  
 		// Test unicode the beta-code
 		it("from unicode to beta-code (as get parameter)", function() {
-			expect( getAsync("/api/unicode_to_betacode/?word=Τήνιος")['beta-code'].toLowerCase() ).toBe( "*th/nios" );
+			expect( getAsync("/api/unicode_to_betacode/?text=Τήνιος")['beta-code'].toLowerCase() ).toBe( "*th/nios" );
 		});
     	  
 		// Test beta-code to unicode
@@ -165,17 +164,68 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
     }
     
     describe("Typeahead hints", function() {
+    	var type_ahead_hints = null;
     	
 		it("should be at least 400", function() {
 			expect( getAsync("/api/works_typeahead_hints").length ).toBeGreaterThan( 400 );
    		});
 		
 		it("being loaded from the helper function", function() {
-			expect( TextCritical.get_works_search_typeahead_hints().length ).toBeGreaterThan( 400 );
+			
+			// Get the hints
+			runs(function(){
+				$.when(TextCritical.get_works_search_typeahead_hints()).done(function(hints){
+					type_ahead_hints = hints
+	    		});
+				
+			});
+			
+			// Wait for the hints to be loaded
+			waitsFor(function() {
+				
+				if(type_ahead_hints !== null){
+					return true;
+				}
+				else{
+					return false;
+				}
+				
+			}, "The type-ahead hints did not get loaded", 2000);
+			
+			// Run the test
+			runs(function(){
+				expect( type_ahead_hints.length ).toBeGreaterThan( 400 );
+            }, 2000);
+			
    		});
 		
 		it("should be unique", function() {
-			expect( is_unique(TextCritical.get_works_search_typeahead_hints()) ).toBe( true );
+			
+			// Get the hints
+			runs(function(){
+				$.when(TextCritical.get_works_search_typeahead_hints()).done(function(hints){
+					type_ahead_hints = hints
+	    		});
+				
+			});
+			
+			// Wait for the hints to be loaded
+			waitsFor(function() {
+				
+				if(type_ahead_hints !== null){
+					return true;
+				}
+				else{
+					return false;
+				}
+				
+			}, "The type-ahead hints did not get loaded", 2000);
+			
+			// Run the test
+			runs(function(){
+				expect( is_unique(type_ahead_hints) ).toBe( true );
+            }, 2000);
+			
    		});
   		
     });
@@ -284,7 +334,7 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
 	      jasmineEnv.execute();
 	    }
 	  })();
-		    
+	   
 	});
 </script>
 {% endblock %}
