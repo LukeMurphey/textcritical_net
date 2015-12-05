@@ -74,6 +74,7 @@ require.config({
         jqueryui: ['jquery'],
         datatables: ['jquery'],
         bootstrap: ['jquery'],
+        jasmine_html: ['jasmine'],
 	    underscore: {
 	        exports: '_'
 	    },
