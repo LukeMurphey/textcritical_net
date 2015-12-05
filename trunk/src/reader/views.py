@@ -520,7 +520,7 @@ def description_id_fun(x):
     return str(x)
 
 @cache_page(1 * hours)
-def api_works_typehead_hints(request):
+def api_works_typeahead_hints(request):
     
     hints = []
     

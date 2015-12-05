@@ -154,14 +154,17 @@
     require(["jquery", "bootstrap", "app", "facebook"], function($) {
     	$(document).ready( function() {
     		
-    		// Configure the typeahead
-			$(".search-query").typeahead({
-				source: function (query, process) {
-					process( TextCritical.get_works_search_typeahead_hints() );
-				}
-			});
+    		// Configure the typeahead    		
+    		$.when(TextCritical.get_works_search_typeahead_hints()).done(function(hints){
+    			$(".search-query").typeahead({
+    				source: hints
+    			});
+    		});
+    		
+    		
     		
 			$('#search').submit(function() {
+				console.info("Searching for the searched text");
 				return !TextCritical.jump_to_searched_text( $('#search > .search-query').val() );
 			});
     		

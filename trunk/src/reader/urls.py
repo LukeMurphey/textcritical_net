@@ -47,6 +47,6 @@ urlpatterns = patterns('',
     url(r'^api/beta_code_to_unicode/?$', 'reader.views.api_beta_code_to_unicode', name='api_beta_code_to_unicode' ),
     url(r'^api/resolve_reference/?$', 'reader.views.api_resolve_reference', name='api_resolve_reference' ),
     
-    url(r'^api/works_typehead_hints/?$', 'reader.views.api_works_typehead_hints', name='api_works_typehead_hints' ),
+    url(r'^api/works_typeahead_hints/?$', 'reader.views.api_works_typeahead_hints', name='api_works_typeahead_hints' ),
     
 )
