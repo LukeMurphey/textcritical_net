@@ -1,0 +1,23 @@
+[
+    {
+        "file_name" : "lxx_a_accents_utf8.txt",
+        "title" : "Greek OT: LXX",
+        "import_parameters" : {
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "lxx",
+                    "title"      : "Septuagint (LXX)",
+                    "language"   : "Greek"
+                },
+    			"set_division_title": [
+	    			{
+	    				"existing_division_title_slug" : "genesis",
+	    				"title_slug"                   : "genesis-test",
+	    				"title"                        : "Genesis",
+	    				"descriptor"                   : "Genesis (Test)"
+	    			}
+    			]
+        	}
+        }
+    }
+]
