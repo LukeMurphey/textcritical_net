@@ -37,4 +37,9 @@ else { %>:
     </tbody>
 </table>
 <% } %>
+
+<% if (work) { %>
 Search for other instances of <%= word %> <a href="/search?q=work:<%= work %>%20<%= word %>">in this work</a> or in <a href="/search?q=<%= word %>">all works</a>.
+<% } else { %>
+Search for other <a href="/search?q=<%= word %>">instances of <%= word %></a>.
+<% } %>
