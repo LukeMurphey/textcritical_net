@@ -12,7 +12,8 @@ class Command(BaseCommand):
 
     option_list = BaseCommand.option_list + (
         make_option("-w", "--work", dest="work", help="The work to index"),
-        make_option("-c", "--clear", action="store_true", dest="clear_indexes", default=False, help="Clear the existing indexes before starting")
+        make_option("-c", "--clear", action="store_true", dest="clear_indexes", default=False, help="Clear the existing indexes before starting"),
+        make_option("-f", "--fresh", action="store_true", dest="fresh_index", default=False, help="Start with a fresh index for the given work before re-indexing it")
     )
 
     def handle(self, *args, **options):
@@ -41,7 +42,14 @@ class Command(BaseCommand):
             # Try to find the work
             try:
                 work = Work.objects.get( Q(title=work_title) | Q(title_slug=work_title) )
-                           
+               
+                fresh_index  = options['fresh_index']
+                
+                if fresh_index:
+                    print "Deleting existing index for work..."
+                    WorkIndexer.delete_work_index(work)
+                    print "Existing index for work successfully deleted"
+                
                 print "Creating search indexes for work..."
                 WorkIndexer.index_work(work)
                 print "Search indexes successfully created"
