@@ -182,9 +182,10 @@
         		</ul>
         	</span>
         </span>
-        <a class="hide" id="chapter-base-url" href="{% url "read_work" work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}">Current chapter</a>
         
         {% with chapter_description=chapter.get_division_description %}
+        
+        <a class="hide" id="chapter-base-url" href="{% url "read_work" work.title_slug %}/{{ chapter.get_division_indicators|join:"/" }}" data-parent-division-title-slug="{{chapter.parent_division.title_slug}}" data-chapter-description="{{chapter_description}}" >Current chapter</a>
         
         {% load cache %}
         {% cache 0 read_work chapter.id %}
