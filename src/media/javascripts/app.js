@@ -578,10 +578,18 @@ define([
 		TextCritical.search_this_work = function ( ) {
 			
 			// Get the work that we are to search
-			work = $("h1[data-work-title-slug]").data("work-title-slug");
+			var work = $("h1[data-work-title-slug]").data("work-title-slug");
 			
 			// Make the URL
-			search_uri = "/search?q=work:" + work;
+			var search_uri = "/search?q=work:" + work;
+			
+			// Get the current division name
+			var division_data = $('#chapter-base-url').data();
+			
+			// Add on the division if available
+			if(division_data){
+				search_uri += ' section:"' + division_data.chapterDescription + '"';
+			}
 			
 			// Go to the search page
 			document.location = search_uri;
