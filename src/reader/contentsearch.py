@@ -33,18 +33,24 @@ class WorkIndexer:
     def get_schema(cls):
         """
         Returns a schema for searching works.
+        
+        This schema will be used for indexing the works and provides information about what is a valid search term.
+        
+        Note that changing the schema will have no affect unless you re-create the entire index. 
         """
         
         # Add an analyzer that allows diacritical marks to be within the search queries
         analyzer = SimpleAnalyzer( rcompile(r"[\w/*()=\\+|&']+(\.?[\w/*()=\\+|&']+)*") )
+        slug_analyzer = SimpleAnalyzer( rcompile(r"[a-z0-9-]+") )
+        section_analyzer = SimpleAnalyzer( rcompile(r"[a-zA-Z0-9- ]+") )
         
         return Schema( verse_id      = NUMERIC(unique=True, stored=True),
                        content       = TEXT(analyzer=analyzer),
                        no_diacritics = TEXT(analyzer=analyzer),
                        work_id       = TEXT,
                        section_id    = TEXT,
-                       work          = TEXT,
-                       section       = TEXT,
+                       work          = TEXT(analyzer=slug_analyzer),
+                       section       = TEXT(analyzer=section_analyzer),
                        author        = TEXT)           
     
     @classmethod
@@ -113,6 +119,29 @@ class WorkIndexer:
             cls.index_work(work)
     
         logger.info("Successfully indexed all works, duration=%i", time() - start_time )
+    
+    @classmethod
+    def delete_work_index(cls, work=None, work_title_slug=None):
+        """
+        Deletes the index for the given work. Either the work or the work_title_slug parameter must be provided.
+        
+        Arguments:
+        work -- The work that the index entries will be deleted of
+        work_title_slug -- The slug of the work to delete the indexes of
+        """
+        
+        if work_title_slug is None and work is None:
+            return False
+        
+        elif work_title_slug is None and work is not None:
+            work_title_slug = work.title_slug
+        
+        inx = cls.get_index(False)
+        
+        parser = QueryParser("content", inx.schema)
+        inx.delete_by_query(parser.parse(u'work:' + work_title_slug))
+        writer = inx.writer()
+        writer.commit(optimize=True)
     
     @classmethod
     def index_work(cls, work):
@@ -199,6 +228,8 @@ class WorkIndexer:
         else:
             no_diacritics = None
         
+        #print division.get_division_description(use_titles=False).decode("UTF-8") + ", " + unicode(division.get_division_description(use_titles=True).decode("UTF-8")
+        
         # Add the content
         writer.add_document(content       = content,
                             no_diacritics = no_diacritics,
@@ -214,7 +245,10 @@ class WorkIndexer:
         if commit:
             writer.commit()
     
-        logger.info('Successfully indexed verse, verse=%s, division="%s", work="%s"', str(verse), str(division), str(work) )
+        #logger.info('Successfully indexed verse, verse=%s, division="%s", work="%s"', str(verse), str(division), str(work) )
+        logger.info('Successfully indexed verse, verse=%s, division="%s", work="%s"', str(verse), division.get_division_description(use_titles=False), str(work) )
+        
+        
     
 class VerseSearchResults:
     
@@ -416,6 +450,8 @@ def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_fo
         
         # Parse the search string into an actual search
         search_query = parser.parse(search_text)
+        
+        logger.debug('Search query parsed, raw_query="%s"', search_query)
         
         # Get the search result
         search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen), page, pagelen)
