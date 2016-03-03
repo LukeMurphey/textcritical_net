@@ -187,6 +187,31 @@ class WorkIndexer:
             logger.info('Successfully indexed division, division="%s"', str(division) )
     
     @classmethod
+    def get_section_index_text(cls, division):
+        """
+        Creates a string list of the ways in which the given division can be referenced.
+        
+        Arguments:
+        division -- The division to create the section description of
+        """
+        descriptions = []
+        
+        descriptions.append(unicode(division.get_division_description(use_titles=False).decode("UTF-8")))
+        descriptions.append(unicode(division.get_division_description(use_titles=True).decode("UTF-8")))
+        
+        # Now add in the parent divisions so that they can be searched without having to specifically define the entire hierarchy
+        next_division = division.parent_division
+        
+        # Keep recursing upwards until we hit the top
+        while next_division is not None:
+            descriptions.append(unicode(next_division.get_division_description(use_titles=False).decode("UTF-8")))
+            descriptions.append(unicode(next_division.get_division_description(use_titles=True).decode("UTF-8")))
+            
+            next_division = next_division.parent_division
+        
+        return ",".join(descriptions)
+    
+    @classmethod
     def index_verse(cls, verse, work=None, division=None, commit=False, writer=None):
         """
         Indexes the provided verse.
@@ -228,7 +253,8 @@ class WorkIndexer:
         else:
             no_diacritics = None
         
-        #print division.get_division_description(use_titles=False).decode("UTF-8") + ", " + unicode(division.get_division_description(use_titles=True).decode("UTF-8")
+                
+        #print "Created section_index=", cls.get_section_index_text(division)
         
         # Add the content
         writer.add_document(content       = content,
@@ -237,7 +263,7 @@ class WorkIndexer:
                             work_id       = work.title_slug,
                             section_id    = division.title_slug,
                             work          = unicode(work.title) + ", " + work.title_slug,
-                            section       = unicode(division.get_division_description(use_titles=False).decode("UTF-8")) + ", " + unicode(division.get_division_description(use_titles=True).decode("UTF-8")),
+                            section       = cls.get_section_index_text(division),
                             author        = author_str
                             )
     
