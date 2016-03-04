@@ -637,7 +637,9 @@ def api_search(request, search_text=None ):
                    'result_count' : search_results.result_count,
                    'page' : search_results.page,
                    'page_len' : search_results.pagelen,
-                   'results'  : results_lists
+                   'results'  : results_lists,
+                   'matched_terms' : search_results.matched_terms,
+                   'matched_terms_no_diacritics' : search_results.matched_terms_no_diacritics
                    }
     
     

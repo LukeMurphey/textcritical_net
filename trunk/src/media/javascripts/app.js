@@ -7,13 +7,14 @@ var TextCritical = {};
 define([
         'jquery',
         'underscore',
+        'highcharts',
         'libs/text!/media/templates/alert_message.html',
         'libs/text!/media/templates/morphology_dialog.html',
         'libs/text!/media/templates/loading_dialog.html',
         'libs/text!/media/templates/search_results.html',
         'facebook'
     ],
-    function($, _, alert_message_template,  morphology_dialog_template, loading_template, search_results_template) {
+    function($, _, highcharts, alert_message_template, morphology_dialog_template, loading_template, search_results_template) {
 	
 		/**
 		 * Causes the verses to break onto separate lines. 
@@ -476,6 +477,114 @@ define([
 				
 				$('#search-results-content').unblock();
 				console.info( "Successfully searched for " + word );
+				
+				
+				// Render the stats page
+				var categories = [];
+				var data = [];
+				
+				for (var key in search_results.matched_terms) {
+				  if (search_results.matched_terms.hasOwnProperty(key)) {
+					  categories.push(key);
+					  data.push(search_results.matched_terms[key])
+				  }
+				}
+				
+				
+				$('#chart-word-frequency').highcharts({
+					colors: ['#006dcc'],
+			        chart: {
+			            type: 'bar',
+			            backgroundColor: '#2f2f2f'
+			        },
+			        title: {
+			            text: 'Frequency of matched words',
+			        	style: { "color": "#DDD" }
+			        },
+			        legend:{
+			        	enabled: false
+			        },
+			        xAxis: {
+			            categories: categories,
+			            title: {
+			                text: null
+			            },
+			            labels: {
+			            	style: { "color": "#DDD" }
+			            },
+			            lineColor: "#DDD",
+			            tickColor: "#DDD"
+			        },
+			        yAxis: {
+			            min: 0,
+			            title: {
+			                text: 'Count',
+			                align: 'high'
+			            },
+			            labels: {
+			                overflow: 'justify',
+			                style: { "color": "#DDD" }
+			            }
+			        },
+			        plotOptions: {
+			            bar: {
+			                dataLabels: {
+			                    enabled: false
+			                }
+			            }
+			        },
+			        credits: {
+			            enabled: false
+			        },
+			        series: [{
+			            name: 'Count',
+			            data: data
+			        }]
+			    });
+				
+				/*
+				var graphdef = {
+					    categories : ['uvCharts'],
+					    dataset : {
+					        'uvCharts' : [
+					            { name : '2009', value : 32 },
+					            { name : '2010', value : 60 },
+					            { name : '2011', value : 97 },
+					            { name : '2012', value : 560 },
+					            { name : '2013', value : 999 }
+					        ]
+					    }
+					}
+				
+				var chart = uv.chart('Bar', graphdef, {
+					frame:{
+						bgcolor: 'none'
+					},
+					graph:{
+						bgcolor: 'none',
+						custompalette : ['#006dcc', '#FFFF00']
+					},
+					axis:{
+						strokecolor: "#999999"
+					},
+					label:{
+						showlabel: false
+					},
+					bar:{
+						textcolor: "#FF0000",
+						strokecolor: "#00FF00"
+					},
+					dimension:{
+						height: 200
+					},
+					effects : {
+						textcolor: '#FFF'
+					},
+					meta : {
+						caption : 'Frequency of matched terms'
+					}
+				});
+				*/
 				
 				// Show the results and hide the "searching..." dialog
 				$('#searching').hide();
@@ -1311,6 +1420,8 @@ define([
 				setTimeout(function(){ $('.sharing-buttons').fadeIn(); } , 1500);
 			}
 		}
+		
+		
 
 }
 );

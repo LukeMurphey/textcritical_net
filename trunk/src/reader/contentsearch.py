@@ -20,6 +20,7 @@ from reader.language_tools import strip_accents, normalize_unicode
 from reader.utils import get_all_related_forms
 
 import os
+from collections import OrderedDict # Used to order the stats from the search
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -253,9 +254,6 @@ class WorkIndexer:
         else:
             no_diacritics = None
         
-                
-        #print "Created section_index=", cls.get_section_index_text(division)
-        
         # Add the content
         writer.add_document(content       = content,
                             no_diacritics = no_diacritics,
@@ -274,8 +272,6 @@ class WorkIndexer:
         #logger.info('Successfully indexed verse, verse=%s, division="%s", work="%s"', str(verse), str(division), str(work) )
         logger.info('Successfully indexed verse, verse=%s, division="%s", work="%s"', str(verse), division.get_division_description(use_titles=False), str(work) )
         
-        
-    
 class VerseSearchResults:
     
     def add_to_results_string(self, to_str, from_str, separator="..."):
@@ -319,8 +315,27 @@ class VerseSearchResults:
             
             self.verses.append( VerseSearchResult(verse, highlights ) )
         
-        self.result_count = len(results)
+        self.result_count = results.results.estimated_length() # or len(results)
         
+        temp_matched_terms = {}
+        temp_matched_terms_no_diacritics = {}
+        
+        # Add the matched terms if available
+        if results.results.has_matched_terms():
+            for term, term_matches in results.results.termdocs.items():
+                print term, len(term_matches)
+                
+                # Include terms matched 
+                if term[0] == "content":
+                    temp_matched_terms[term[1]] = len(term_matches)
+                    
+                # Include terms matched that matched without diacritics
+                if term[0] == "no_diacritics":
+                    temp_matched_terms_no_diacritics[term[1]] = len(term_matches)
+                    
+        # Sort the dictionaries
+        self.matched_terms = OrderedDict(sorted(temp_matched_terms.items(), key=lambda x: x[1], reverse=True))
+        self.matched_terms_no_diacritics = OrderedDict(sorted(temp_matched_terms.items(), key=lambda x: x[1], reverse=True))
     
 class VerseSearchResult:
     
@@ -353,6 +368,7 @@ class GreekVariations(Variations):
         
         # Get the result from the cache if available
         if signature in self.cached_variations:
+            #logger.debug( "Found cached variations of the search term, word=%s, variations=%r", text, len(self.cached_variations[signature]) )
             return self.cached_variations[ signature ]
         
         logger.debug( "Looking for variations of the search term in order to perform a search, word=%s", text )
@@ -385,8 +401,15 @@ class GreekVariations(Variations):
             if len(related_forms) == 0 and messages is not None:
                 messages.append("No variations of %s could be found" % text)
                 
-            if len(related_forms) == 0:
+            elif len(related_forms) == 0:
                 logger.debug( "No variations could be found, word=%s", text )
+                
+            # Make a message noting that variations were found
+            if len(related_forms) > 0 and messages is not None:
+                messages.append("Found variations of the search term, word=%s, variations=%r" % (text, len(related_forms)))
+            
+            elif len(related_forms) > 0:
+                logger.debug("Found variations of the search term, word=%s, variations=%r", text, len(related_forms))
             
             # Add the related forms
             for r in related_forms:
@@ -398,6 +421,10 @@ class GreekVariations(Variations):
         # Cache the result
         self.cached_variations[ signature ] = forms
         
+        """
+        for f in forms:
+            print f
+        """
         # Return the forms
         return forms
     
@@ -443,6 +470,63 @@ class GreekBetaCodeVariations(GreekVariations):
     def __init__(self, fieldname, text, boost=1.0):
         super(GreekBetaCodeVariations,self).__init__( fieldname, text, boost, True, False )
     
+def search_stats( search_text, inx=None, limit=2000, include_related_forms=True ):
+    """
+    Search verses for those with the given text and provide high-level stats about the usage of 
+    
+    Arguments:
+    search_text -- The content to search for
+    inx -- The Whoosh index to use
+    limit -- A limit on the the number of verses to include
+    include_related_forms -- Expand the word into all of the related forms
+    """ 
+    
+    logger.info( 'Performing a stats search, limit=%r, include_related_forms=%r, search_query="%s"', limit, include_related_forms, search_text )
+    
+    # Convert the search text to unicode
+    search_text = unicode(search_text)
+    
+    # Get the index if provided
+    if inx is None:
+        inx = WorkIndexer.get_index()
+        
+    # Perform the search
+    with inx.searcher() as searcher:
+        
+        # Make a parser to convert the incoming search string into a search
+        if include_related_forms:
+            parser = QueryParser("content", inx.schema, termclass=GreekVariations)
+        else:
+            parser = QueryParser("content", inx.schema, termclass=GreekBetaCodeVariations)
+        
+        # Parse the search string into an actual search
+        search_query = parser.parse(search_text)
+        
+        logger.debug('Search query parsed, raw_query="%s"', search_query)
+        
+        results = searcher.search_page(search_query, 1, limit, terms=True)
+        
+        stats = {
+                 'matches' : 0,
+                 'terms' : []
+                 }
+        
+        vsr = VerseSearchResults([], 1, 1)
+        
+        # Create the list of search results
+        for r in results:
+            
+            # Get the verse so that the highlighting can be done
+            verse = Verse.objects.get(id=r['verse_id'])
+            
+            highlights = vsr.get_highlights( r, verse )
+            
+            stats['matches'] += highlights.count('<b class="', )
+            
+            #stats['matches'].matched_terms()
+        
+    return stats
+        
     
 def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_forms=True ):
     """
@@ -480,7 +564,7 @@ def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_fo
         logger.debug('Search query parsed, raw_query="%s"', search_query)
         
         # Get the search result
-        search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen), page, pagelen)
+        search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen, terms=True), page, pagelen)
             
     return search_results
 
