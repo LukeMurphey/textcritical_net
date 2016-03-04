@@ -67,6 +67,11 @@ require.config({
         
         flying_focus: [
             "libs/flying-focus"
+        ],
+        
+        highcharts: [
+        	"https://code.highcharts.com/highcharts",
+        	"libs/highcharts"
         ]
 
     },
@@ -75,6 +80,10 @@ require.config({
         datatables: ['jquery'],
         bootstrap: ['jquery'],
         jasmine_html: ['jasmine'],
+        highcharts: {
+            exports: "Highcharts",
+            deps: ["jquery"]
+        },
 	    underscore: {
 	        exports: '_'
 	    },
