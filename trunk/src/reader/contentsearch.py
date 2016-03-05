@@ -320,6 +320,9 @@ class VerseSearchResults:
         temp_matched_terms = {}
         temp_matched_terms_no_diacritics = {}
         
+        temp_matched_works = {}
+        temp_matched_sections = {}
+        
         # Add the matched terms if available
         if results.results.has_matched_terms():
             for term, term_matches in results.results.termdocs.items():
@@ -333,9 +336,21 @@ class VerseSearchResults:
                 if term[0] == "no_diacritics":
                     temp_matched_terms_no_diacritics[term[1]] = len(term_matches)
                     
+                # Include section matches
+                if term[0] == "section":
+                    temp_matched_sections[term[1]] = len(term_matches)
+                    
+                # Include work matches
+                if term[0] == "work":
+                    temp_matched_works[term[1]] = len(term_matches)
+                    
         # Sort the dictionaries
         self.matched_terms = OrderedDict(sorted(temp_matched_terms.items(), key=lambda x: x[1], reverse=True))
         self.matched_terms_no_diacritics = OrderedDict(sorted(temp_matched_terms.items(), key=lambda x: x[1], reverse=True))
+        self.matched_sections = OrderedDict(sorted(temp_matched_sections.items(), key=lambda x: x[1], reverse=True))
+        self.matched_works = OrderedDict(sorted(temp_matched_works.items(), key=lambda x: x[1], reverse=True))
+        
+        
     
 class VerseSearchResult:
     
