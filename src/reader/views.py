@@ -639,7 +639,9 @@ def api_search(request, search_text=None ):
                    'page_len' : search_results.pagelen,
                    'results'  : results_lists,
                    'matched_terms' : search_results.matched_terms,
-                   'matched_terms_no_diacritics' : search_results.matched_terms_no_diacritics
+                   'matched_terms_no_diacritics' : search_results.matched_terms_no_diacritics,
+                   'matched_sections' : search_results.matched_sections,
+                   'matched_works' : search_results.matched_works
                    }
     
     

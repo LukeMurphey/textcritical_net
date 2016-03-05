@@ -378,21 +378,117 @@ define([
 		 * 
 		 * @param query The search query
 		 * @param page The page number
+		 * @param include_related_forms Whether related forms should be included
 		 */
-		TextCritical.set_search_url = function ( query, page ) {
+		TextCritical.set_search_url = function ( query, page, include_related_forms ) {
+			
+			var url = document.location.pathname + "?";
+			
+			// Add the check-box
+			if( related_forms ){
+				url += "include_related=1";
+			}
 			
 			// Get the appropriate URL
 			if( page <= 1 || parseInt(page) <= 1 ){
-				url = document.location.pathname + "?&q=" + query;
+				url += "&q=" + query;
 				page = 1;
 			}
 			else{
-				url = document.location.pathname + "?q=" + query + "&page=" + page;
+				url += "&q=" + query + "&page=" + page;
 			}
 			
 			// Push the state
-			history.pushState( {query: query, page: page}, document.title, url);
+			history.pushState( {query: query, page: page, include_related_forms:include_related_forms}, document.title, url);
 		}
+		
+		/**
+		 * Make a bar chart.
+		 * 
+		 * @param el The jQuery element that should contain the chart
+		 * @param title The title of the chart
+		 * @param categories An array of strings containing the categories
+		 * @param data An array of numbers containing the data
+		 */
+		TextCritical.make_bar_chart = function ( el, title, results, no_data_message ) {
+			
+			// Provide a default for the no_data_message variable
+			if(typeof no_data_message === 'undefined'){
+				no_data_message = "No data matched";
+			}
+			
+			// Process the data into what the charting library expects
+			var categories = [];
+			var data = [];
+			
+			if(results){
+				for (var key in results) {
+					  if (results.hasOwnProperty(key)) {
+						  categories.push(key);
+						  data.push(results[key])
+					  }
+					}
+			}
+			
+			// Put up a message noting that no data was provided
+			if(data.length === 0){
+				el.html('<div class="alert alert-info alert-block">' + no_data_message + '</div>');
+				return false;
+			}
+			
+			// Make the chart
+			el.highcharts({
+				colors: ['#006dcc'],
+		        chart: {
+		            type: 'bar',
+		            backgroundColor: '#2f2f2f'
+		        },
+		        title: {
+		            text: title,
+		        	style: { "color": "#DDD" }
+		        },
+		        legend:{
+		        	enabled: false
+		        },
+		        xAxis: {
+		            categories: categories,
+		            title: {
+		                text: null
+		            },
+		            labels: {
+		            	style: { "color": "#DDD" }
+		            },
+		            lineColor: "#DDD",
+		            tickColor: "#DDD"
+		        },
+		        yAxis: {
+		            min: 0,
+		            title: {
+		                text: 'Count',
+		                align: 'high'
+		            },
+		            labels: {
+		                overflow: 'justify',
+		                style: { "color": "#DDD" }
+		            }
+		        },
+		        plotOptions: {
+		            bar: {
+		                dataLabels: {
+		                    enabled: false
+		                }
+		            }
+		        },
+		        credits: {
+		            enabled: false
+		        },
+		        series: [{
+		            name: 'Count',
+		            data: data
+		        }]
+		    });
+			
+		},
 		
 		/**
 		 * Perform a search and render the results.
@@ -478,120 +574,18 @@ define([
 				$('#search-results-content').unblock();
 				console.info( "Successfully searched for " + word );
 				
+				// Make a bar chart of the word frequency
+				TextCritical.make_bar_chart( $('#chart-word-frequency'), 'Frequency of matched words', search_results.matched_terms, "No data available on matched terms" );
+				TextCritical.make_bar_chart( $('#chart-work-frequency'), 'Frequency of matched works', search_results.matched_works, "No data available on matched works" );
+				TextCritical.make_bar_chart( $('#chart-section-frequency'), 'Frequency of matched sections', search_results.matched_sections, "No data available on matched sections" );
 				
-				// Render the stats page
-				var categories = [];
-				var data = [];
-				
-				for (var key in search_results.matched_terms) {
-				  if (search_results.matched_terms.hasOwnProperty(key)) {
-					  categories.push(key);
-					  data.push(search_results.matched_terms[key])
-				  }
-				}
-				
-				
-				$('#chart-word-frequency').highcharts({
-					colors: ['#006dcc'],
-			        chart: {
-			            type: 'bar',
-			            backgroundColor: '#2f2f2f'
-			        },
-			        title: {
-			            text: 'Frequency of matched words',
-			        	style: { "color": "#DDD" }
-			        },
-			        legend:{
-			        	enabled: false
-			        },
-			        xAxis: {
-			            categories: categories,
-			            title: {
-			                text: null
-			            },
-			            labels: {
-			            	style: { "color": "#DDD" }
-			            },
-			            lineColor: "#DDD",
-			            tickColor: "#DDD"
-			        },
-			        yAxis: {
-			            min: 0,
-			            title: {
-			                text: 'Count',
-			                align: 'high'
-			            },
-			            labels: {
-			                overflow: 'justify',
-			                style: { "color": "#DDD" }
-			            }
-			        },
-			        plotOptions: {
-			            bar: {
-			                dataLabels: {
-			                    enabled: false
-			                }
-			            }
-			        },
-			        credits: {
-			            enabled: false
-			        },
-			        series: [{
-			            name: 'Count',
-			            data: data
-			        }]
-			    });
-				
-				/*
-				var graphdef = {
-					    categories : ['uvCharts'],
-					    dataset : {
-					        'uvCharts' : [
-					            { name : '2009', value : 32 },
-					            { name : '2010', value : 60 },
-					            { name : '2011', value : 97 },
-					            { name : '2012', value : 560 },
-					            { name : '2013', value : 999 }
-					        ]
-					    }
-					}
-				
-				var chart = uv.chart('Bar', graphdef, {
-					frame:{
-						bgcolor: 'none'
-					},
-					graph:{
-						bgcolor: 'none',
-						custompalette : ['#006dcc', '#FFFF00']
-					},
-					axis:{
-						strokecolor: "#999999"
-					},
-					label:{
-						showlabel: false
-					},
-					bar:{
-						textcolor: "#FF0000",
-						strokecolor: "#00FF00"
-					},
-					dimension:{
-						height: 200
-					},
-					effects : {
-						textcolor: '#FFF'
-					},
-					meta : {
-						caption : 'Frequency of matched terms'
-					}
-				});
-				*/
 				
 				// Show the results and hide the "searching..." dialog
 				$('#searching').hide();
 				$('#search-results-content').show();
 				
 				if( update_url ){
-					TextCritical.set_search_url(word, page);
+					TextCritical.set_search_url(word, page, related_forms);
 				}
 				
 			}).error( function(jqXHR, textStatus, errorThrown) {

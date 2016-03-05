@@ -9,7 +9,6 @@
 
 <form id="search-form">
 	<legend>Search</legend>
-	<div id="search-help-link"><i class="icon-question-sign icon-white"> </i> <a href="#">Help</a></div>
 	
 	<div class="input-append ">
 
@@ -45,7 +44,7 @@
     	<a href="#search-results-tab" data-toggle="tab">Results</a>
     </li>
     <li>
-    	<a href="#tab2" data-toggle="tab">Statistics</a>
+    	<a href="#search-stats-tab" data-toggle="tab">Statistics</a>
     </li>
     <li>
     	<a href="#search-help-tab" data-toggle="tab">Help</a>
@@ -55,8 +54,10 @@
     <div class="tab-pane active" id="search-results-tab">
 		<div class="search-results" id="search-results-content"></div>
     </div>
-    <div class="tab-pane" id="tab2">
+    <div class="tab-pane" id="search-stats-tab">
     	<div id="chart-word-frequency"></div>
+    	<div id="chart-work-frequency"></div>
+    	<div id="chart-section-frequency"></div>
     </div>
     <div class="tab-pane" id="search-help-tab">
 		<div id="search-help">
@@ -146,8 +147,6 @@
 				</table>
 			</p>
 		
-			<button id="close-search-help" class="btn pull-right">Close</button>
-		
 		</div>
     </div>
   </div>
@@ -177,9 +176,6 @@ require(["jquery", "store", "app", "underscore", "blockui"], function($) {
 		$(".previous-page-link").click( TextCritical.do_search_previous );
 		
 		window.addEventListener('popstate', TextCritical.search_page_popstate );
-		
-		$('#search-help-link').click( function() { TextCritical.toggle_search_help(); return false; } );
-		$('#close-search-help').click( function() { TextCritical.show_search_help(false); return false; } );
 	});
 
 });

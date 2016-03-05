@@ -740,11 +740,6 @@ b.match {
   cursor: hand;
   cursor: pointer; }
 
-#search-help-link {
-  position: relative;
-  top: -49px;
-  float: right; }
-
 .search-example {
   font-family: monospace; }
 
