@@ -600,47 +600,9 @@ define([
 		}
 		
 		/**
-		 * Show or hide the search help depending on the parameter (by default, it shows it).
-		 * 
-		 * @param show A boolean indicating whether the search help should be shown
-		 */
-		TextCritical.show_search_help = function ( show ) {
-		
-			if( show == undefined ){
-				show = true;
-			}
-			
-			if( show ){
-				$("#search-help").show();
-				$('#search-results-content').hide();
-			}
-			else{
-				$("#search-help").hide();
-				$('#search-results-content').show();
-			}
-		}
-		
-		/**
-		 * Show the search help if it is not shown; hide it otherwise.
-		 */
-		TextCritical.toggle_search_help  = function ( ) {
-			
-			if( $("#search-help").is(":visible") ){
-				TextCritical.show_search_help( false );
-			}
-			else{
-				TextCritical.show_search_help( true );
-			}
-			
-			return false;
-			
-		}
-		
-		/**
 		 * Do a search, starting from page 1.
 		 **/
 		TextCritical.do_fresh_search = function ( ) {
-			TextCritical.show_search_help( false );
 			return TextCritical.do_search( 1 );
 		}
 		
