@@ -213,6 +213,10 @@ class WorkIndexer:
         return ",".join(descriptions)
     
     @classmethod
+    def unslugify(cls, txt):
+        return txt.replace('_', ' ').replace('-', ' ').title()
+    
+    @classmethod
     def index_verse(cls, verse, work=None, division=None, commit=False, writer=None):
         """
         Indexes the provided verse.
@@ -326,7 +330,6 @@ class VerseSearchResults:
         # Add the matched terms if available
         if results.results.has_matched_terms():
             for term, term_matches in results.results.termdocs.items():
-                print term, len(term_matches)
                 
                 # Include terms matched 
                 if term[0] == "content":
@@ -343,15 +346,36 @@ class VerseSearchResults:
                 # Include work matches
                 if term[0] == "work":
                     temp_matched_works[term[1]] = len(term_matches)
-                    
+        
         # Sort the dictionaries
         self.matched_terms = OrderedDict(sorted(temp_matched_terms.items(), key=lambda x: x[1], reverse=True))
         self.matched_terms_no_diacritics = OrderedDict(sorted(temp_matched_terms.items(), key=lambda x: x[1], reverse=True))
         self.matched_sections = OrderedDict(sorted(temp_matched_sections.items(), key=lambda x: x[1], reverse=True))
-        self.matched_works = OrderedDict(sorted(temp_matched_works.items(), key=lambda x: x[1], reverse=True))
+        #self.matched_works = OrderedDict(sorted(temp_matched_works.items(), key=lambda x: x[1], reverse=True)) 
         
+        # De-reference the name of the works
+        self.matched_works = {}
         
-    
+        works = Work.objects.filter(title_slug__in=temp_matched_works.keys())
+        
+        for work_slug, count in temp_matched_works.items():
+            
+            found_work = False
+            
+            for work in works:
+                
+                if work.title_slug == work_slug:
+                    self.matched_works[work.title] = count
+                    found_work = True
+                    continue
+                
+            # If we didn't find the work, then add the slug after attempting to un-slugify it
+            if not found_work:
+                logger.critical("Unable to find work in matched terms, work_slug=%s", work_slug)
+                self.matched_works[self.unslugify(work_slug)] = count
+        
+        self.matched_works = OrderedDict(sorted(self.matched_works.items(), key=lambda x: x[1], reverse=True))
+        
 class VerseSearchResult:
     
     def __init__(self, verse, highlights):
@@ -436,10 +460,6 @@ class GreekVariations(Variations):
         # Cache the result
         self.cached_variations[ signature ] = forms
         
-        """
-        for f in forms:
-            print f
-        """
         # Return the forms
         return forms
     
