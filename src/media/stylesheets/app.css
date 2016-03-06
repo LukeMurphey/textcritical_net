@@ -107,6 +107,11 @@ footer .addthis_toolbox {
     -webkit-box-shadow: 0 0 0;
     -moz-box-shadow: 0 0 0;
     box-shadow: 0 0 0; } }
+.dark .nav-tabs > .active > a:focus {
+  background-color: #2f2f2f;
+  color: white;
+  border-color: #666666 #666666 transparent #666666; }
+
 .facebook-block {
   float: left;
   width: 50%; }
