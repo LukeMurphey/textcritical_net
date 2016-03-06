@@ -441,7 +441,8 @@ define([
 				colors: ['#006dcc'],
 		        chart: {
 		            type: 'bar',
-		            backgroundColor: '#2f2f2f'
+		            backgroundColor: '#2f2f2f',
+		            width: $('.tab-pane.active').width()
 		        },
 		        title: {
 		            text: title,
@@ -518,7 +519,7 @@ define([
 				console.info("Using provided page: " + page );
 			}
 			
-			// Determined if we are to search for related forms
+			// Determine if we are to search for related forms
 			related_forms = $("#related_forms:checked").length;
 			
 			// Assign a default value to the update_url argument if it was not provided
@@ -578,7 +579,6 @@ define([
 				TextCritical.make_bar_chart( $('#chart-word-frequency'), 'Frequency of matched words', search_results.matched_terms, "No data available on matched terms" );
 				TextCritical.make_bar_chart( $('#chart-work-frequency'), 'Frequency of matched works', search_results.matched_works, "No data available on matched works" );
 				TextCritical.make_bar_chart( $('#chart-section-frequency'), 'Frequency of matched sections', search_results.matched_sections, "No data available on matched sections" );
-				
 				
 				// Show the results and hide the "searching..." dialog
 				$('#searching').hide();
