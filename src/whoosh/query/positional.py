@@ -31,7 +31,91 @@ import copy
 from whoosh import matching
 from whoosh.analysis import Token
 from whoosh.compat import u
-from whoosh.query import qcore, terms, nary
+from whoosh.query import qcore, terms, compound
+
+
+class Sequence(compound.CompoundQuery):
+    """Matches documents containing a list of sub-queries in adjacent
+    positions.
+
+    This object has no sanity check to prevent you from using queries in
+    different fields.
+    """
+
+    JOINT = " NEAR "
+    intersect_merge = True
+
+    def __init__(self, subqueries, slop=1, ordered=True, boost=1.0):
+        """
+        :param subqueries: a list of :class:`whoosh.query.Query` objects to
+            match in sequence.
+        :param slop: the maximum difference in position allowed between the
+            subqueries.
+        :param ordered: if True, the position differences between subqueries
+            must be positive (that is, each subquery in the list must appear
+            after the previous subquery in the document).
+        :param boost: a boost factor to add to the score of documents matching
+            this query.
+        """
+
+        compound.CompoundQuery.__init__(self, subqueries, boost=boost)
+        self.slop = slop
+        self.ordered = ordered
+
+    def __eq__(self, other):
+        return (other and type(self) is type(other)
+                and self.subqueries == other.subqueries
+                and self.boost == other.boost)
+
+    def __repr__(self):
+        return "%s(%r, slop=%d, boost=%f)" % (self.__class__.__name__,
+                                              self.subqueries, self.slop,
+                                              self.boost)
+
+    def __hash__(self):
+        h = hash(self.slop) ^ hash(self.boost)
+        for q in self.subqueries:
+            h ^= hash(q)
+        return h
+
+    def normalize(self):
+        # Because the subqueries are in sequence, we can't do the fancy merging
+        # that CompoundQuery does
+        return self.__class__([q.normalize() for q in self.subqueries],
+                              self.slop, self.ordered, self.boost)
+
+    def _and_query(self):
+        return compound.And(self.subqueries)
+
+    def estimate_size(self, ixreader):
+        return self._and_query().estimate_size(ixreader)
+
+    def estimate_min_size(self, ixreader):
+        return self._and_query().estimate_min_size(ixreader)
+
+    def _matcher(self, subs, searcher, context):
+        from whoosh.query.spans import SpanNear
+
+        # Tell the sub-queries this matcher will need the current match to get
+        # spans
+        context = context.set(needs_current=True)
+        m = self._tree_matcher(subs, SpanNear.SpanNearMatcher, searcher,
+                               context, None, slop=self.slop,
+                               ordered=self.ordered)
+        return m
+
+
+class Ordered(Sequence):
+    """Matches documents containing a list of sub-queries in the given order.
+    """
+
+    JOINT = " BEFORE "
+
+    def _matcher(self, subs, searcher, context):
+        from whoosh.query.spans import SpanBefore
+
+        return self._tree_matcher(subs, SpanBefore._Matcher, searcher,
+                                  context, None)
 
 
 class Phrase(qcore.Query):
@@ -57,9 +141,11 @@ class Phrase(qcore.Query):
         self.char_ranges = char_ranges
 
     def __eq__(self, other):
-        return (other and self.__class__ is other.__class__ and
-                self.fieldname == other.fieldname and self.words == other.words
-                and self.slop == other.slop and self.boost == other.boost)
+        return (other and self.__class__ is other.__class__
+                and self.fieldname == other.fieldname
+                and self.words == other.words
+                and self.slop == other.slop
+                and self.boost == other.boost)
 
     def __repr__(self):
         return "%s(%r, %r, slop=%s, boost=%f)" % (self.__class__.__name__,
@@ -68,6 +154,7 @@ class Phrase(qcore.Query):
 
     def __unicode__(self):
         return u('%s:"%s"') % (self.fieldname, u(" ").join(self.words))
+
     __str__ = __unicode__
 
     def __hash__(self):
@@ -78,6 +165,11 @@ class Phrase(qcore.Query):
 
     def has_terms(self):
         return True
+
+    def terms(self, phrases=False):
+        if phrases and self.field():
+            for word in self.words:
+                yield (self.field(), word)
 
     def tokens(self, boost=1.0):
         char_ranges = self.char_ranges
@@ -112,8 +204,8 @@ class Phrase(qcore.Query):
         return q
 
     def _and_query(self):
-        return nary.And([terms.Term(self.fieldname, word)
-                         for word in self.words])
+        return compound.And([terms.Term(self.fieldname, word)
+                             for word in self.words])
 
     def estimate_size(self, ixreader):
         return self._and_query().estimate_size(ixreader)
@@ -121,41 +213,37 @@ class Phrase(qcore.Query):
     def estimate_min_size(self, ixreader):
         return self._and_query().estimate_min_size(ixreader)
 
-    def matcher(self, searcher, weighting=None):
-        fieldname = self.fieldname
-        reader = searcher.reader()
+    def matcher(self, searcher, context=None):
+        from whoosh.query import Term, SpanNear2
 
-        # Shortcut the query if one of the words doesn't exist.
-        for word in self.words:
-            if (fieldname, word) not in reader:
-                return matching.NullMatcher()
+        fieldname = self.fieldname
+        if fieldname not in searcher.schema:
+            return matching.NullMatcher()
 
         field = searcher.schema[fieldname]
         if not field.format or not field.format.supports("positions"):
             raise qcore.QueryError("Phrase search: %r field has no positions"
-                                  % self.fieldname)
+                                   % self.fieldname)
 
-        # Construct a tree of SpanNear queries representing the words in the
-        # phrase and return its matcher
-        from whoosh.spans import SpanNear
-        q = SpanNear.phrase(fieldname, self.words, slop=self.slop)
-        m = q.matcher(searcher, weighting=weighting)
+        terms = []
+        # Build a list of Term queries from the words in the phrase
+        reader = searcher.reader()
+        for word in self.words:
+            try:
+                word = field.to_bytes(word)
+            except ValueError:
+                return matching.NullMatcher()
+
+            if (fieldname, word) not in reader:
+                # Shortcut the query if one of the words doesn't exist.
+                return matching.NullMatcher()
+            terms.append(Term(fieldname, word))
+
+        # Create the equivalent SpanNear2 query from the terms
+        q = SpanNear2(terms, slop=self.slop, ordered=True, mindist=1)
+        # Get the matcher
+        m = q.matcher(searcher, context)
+
         if self.boost != 1.0:
             m = matching.WrappingMatcher(m, boost=self.boost)
         return m
-
-
-class Ordered(nary.And):
-    """Matches documents containing a list of sub-queries in the given order.
-    """
-
-    JOINT = " BEFORE "
-
-    def matcher(self, searcher, weighting=None):
-        from whoosh.spans import SpanBefore
-
-        return self._matcher(SpanBefore._Matcher, None, searcher,
-                             weighting=weighting)
-
-
-

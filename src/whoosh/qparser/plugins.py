@@ -28,11 +28,12 @@
 import copy
 
 from whoosh import query
-from whoosh.compat import iteritems, u, PY3
+from whoosh.compat import u
+from whoosh.compat import iteritems, xrange
 from whoosh.qparser import syntax
 from whoosh.qparser.common import attach
 from whoosh.qparser.taggers import RegexTagger, FnTagger
-from whoosh.util import rcompile
+from whoosh.util.text import rcompile
 
 
 class Plugin(object):
@@ -48,8 +49,8 @@ class Plugin(object):
 
     def filters(self, parser):
         """Should return a list of ``(filter_function, priority)`` tuples to
-        add to parser.
-        
+        add to parser. Lower priority numbers run first.
+
         Filter functions will be called with ``(parser, groupnode)`` and should
         return a group node.
         """
@@ -60,7 +61,7 @@ class Plugin(object):
 class TaggingPlugin(RegexTagger):
     """A plugin that also acts as a Tagger, to avoid having an extra Tagger
     class for simple cases.
-    
+
     A TaggingPlugin object should have a ``priority`` attribute and either a
     ``nodetype`` attribute or a ``create()`` method. If the subclass doesn't
     override ``create()``, the base class will call ``self.nodetype`` with the
@@ -123,11 +124,11 @@ class SingleQuotePlugin(TaggingPlugin):
 class PrefixPlugin(TaggingPlugin):
     """Adds the ability to specify prefix queries by ending a term with an
     asterisk.
-    
+
     This plugin is useful if you want the user to be able to create prefix but
     not wildcard queries (for performance reasons). If you are including the
     wildcard plugin, you should not include this plugin as well.
-    
+
     >>> qp = qparser.QueryParser("content", myschema)
     >>> qp.remove_plugin_class(qparser.WildcardPlugin)
     >>> qp.add_plugin(qparser.PrefixPlugin())
@@ -145,35 +146,64 @@ class PrefixPlugin(TaggingPlugin):
 
 
 class WildcardPlugin(TaggingPlugin):
+    # \u055E = Armenian question mark
+    # \u061F = Arabic question mark
+    # \u1367 = Ethiopic question mark
+    qmarks = u("?\u055E\u061F\u1367")
+    expr = "(?P<text>[*%s])" % qmarks
+
+    def filters(self, parser):
+        # Run early, but definitely before multifield plugin
+        return [(self.do_wildcards, 50)]
+
+    def do_wildcards(self, parser, group):
+        i = 0
+        while i < len(group):
+            node = group[i]
+            if isinstance(node, self.WildcardNode):
+                if i < len(group) - 1 and group[i + 1].is_text():
+                    nextnode = group.pop(i + 1)
+                    node.text += nextnode.text
+                if i > 0 and group[i - 1].is_text():
+                    prevnode = group.pop(i - 1)
+                    node.text = prevnode.text + node.text
+                else:
+                    i += 1
+            else:
+                if isinstance(node, syntax.GroupNode):
+                    self.do_wildcards(parser, node)
+                i += 1
+
+        for i in xrange(len(group)):
+            node = group[i]
+            if isinstance(node, self.WildcardNode):
+                text = node.text
+                if len(text) > 1 and not any(qm in text for qm in self.qmarks):
+                    if text.find("*") == len(text) - 1:
+                        newnode = PrefixPlugin.PrefixNode(text[:-1])
+                        newnode.startchar = node.startchar
+                        newnode.endchar = node.endchar
+                        group[i] = newnode
+        return group
+
     class WildcardNode(syntax.TextNode):
         # Note that this node inherits tokenize = False from TextNode,
         # so the text in this node will not be analyzed... just passed
         # straight to the query
-
-        # TODO: instead of parsing a "wildcard word", create marker nodes for
-        # individual ? and * characters. This will have to wait for a more
-        # advanced wikiparser-like parser.
 
         qclass = query.Wildcard
 
         def r(self):
             return "Wild %r" % self.text
 
-    # Any number of word chars, followed by at least one question mark or
-    # star, followed by any number of word chars, question marks, or stars
-    # \u055E = Armenian question mark
-    # \u061F = Arabic question mark
-    # \u1367 = Ethiopic question mark
-    qms = u("\u055E\u061F\u1367")
-    expr = u("(?P<text>(\\w|[-])*[*?%s](\\w|[-*?%s])*)") % (qms, qms)
     nodetype = WildcardNode
 
 
 class RegexPlugin(TaggingPlugin):
     """Adds the ability to specify regular expression term queries.
-    
+
     The default syntax for a regular expression term is ``r"termexpr"``.
-    
+
     >>> qp = qparser.QueryParser("content", myschema)
     >>> qp.add_plugin(qparser.RegexPlugin())
     >>> q = qp.parse('foo title:r"bar+"')
@@ -191,7 +221,7 @@ class RegexPlugin(TaggingPlugin):
 
 class BoostPlugin(TaggingPlugin):
     """Adds the ability to boost clauses of the query using the circumflex.
-    
+
     >>> qp = qparser.QueryParser("content", myschema)
     >>> q = qp.parse("hello there^2")
     """
@@ -221,7 +251,7 @@ class BoostPlugin(TaggingPlugin):
         return node
 
     def filters(self, parser):
-        return [(self.clean_boost, 0), (self.do_boost, 700)]
+        return [(self.clean_boost, 0), (self.do_boost, 510)]
 
     def clean_boost(self, parser, group):
         """This filter finds any BoostNodes in positions where they can't boost
@@ -271,7 +301,7 @@ class GroupPlugin(Plugin):
         def r(self):
             return ")"
 
-    def __init__(self, openexpr="\\(", closeexpr="\\)"):
+    def __init__(self, openexpr="[(]", closeexpr="[)]"):
         self.openexpr = openexpr
         self.closeexpr = closeexpr
 
@@ -416,6 +446,228 @@ class FieldsPlugin(TaggingPlugin):
         return newgroup
 
 
+class FuzzyTermPlugin(TaggingPlugin):
+    """Adds syntax to the query parser to create "fuzzy" term queries, which
+    match any term within a certain "edit distance" (number of inserted,
+    deleted, or transposed characters) by appending a tilde (``~``) and an
+    optional maximum edit distance to a term. If you don't specify an explicit
+    maximum edit distance, the default is 1.
+
+    >>> qp = qparser.QueryParser("content", myschema)
+    >>> qp.add_plugin(qparser.FuzzyTermPlugin())
+    >>> q = qp.parse("Stephen~2 Colbert")
+
+    For example, the following query creates a :class:`whoosh.query.FuzzyTerm`
+    query with a maximum edit distance of 1::
+
+        bob~
+
+    The following creates a fuzzy term query with a maximum edit distance of
+    2::
+
+        bob~2
+
+    The maximum edit distance can only be a single digit. Note that edit
+    distances greater than 2 can take an extremely long time and are generally
+    not useful.
+
+    You can specify a prefix length using ``~n/m``. For example, to allow a
+    maximum edit distance of 2 and require a prefix match of 3 characters::
+
+        johannson~2/3
+
+    To specify a prefix with the default edit distance::
+
+        johannson~/3
+    """
+
+    expr = rcompile("""
+    (?<=\\S)                          # Only match right after non-space
+    ~                                 # Initial tilde
+    (?P<maxdist>[0-9])?               # Optional maxdist
+    (/                                # Optional prefix slash
+        (?P<prefix>[1-9][0-9]*)       # prefix
+    )?                                # (end prefix group)
+    """, verbose=True)
+
+    class FuzzinessNode(syntax.SyntaxNode):
+        def __init__(self, maxdist, prefixlength, original):
+            self.maxdist = maxdist
+            self.prefixlength = prefixlength
+            self.original = original
+
+        def __repr__(self):
+            return "<~%d/%d>" % (self.maxdist, self.prefixlength)
+
+    class FuzzyTermNode(syntax.TextNode):
+        qclass = query.FuzzyTerm
+
+        def __init__(self, wordnode, maxdist, prefixlength):
+            self.fieldname = wordnode.fieldname
+            self.text = wordnode.text
+            self.boost = wordnode.boost
+            self.startchar = wordnode.startchar
+            self.endchar = wordnode.endchar
+            self.maxdist = maxdist
+            self.prefixlength = prefixlength
+
+        def r(self):
+            return "%r ~%d/%d" % (self.text, self.maxdist, self.prefixlength)
+
+        def query(self, parser):
+            # Use the superclass's query() method to create a FuzzyTerm query
+            # (it looks at self.qclass), just because it takes care of some
+            # extra checks and attributes
+            q = syntax.TextNode.query(self, parser)
+            # Set FuzzyTerm-specific attributes
+            q.maxdist = self.maxdist
+            q.prefixlength = self.prefixlength
+            return q
+
+    def create(self, parser, match):
+        mdstr = match.group("maxdist")
+        maxdist = int(mdstr) if mdstr else 1
+
+        pstr = match.group("prefix")
+        prefixlength = int(pstr) if pstr else 0
+
+        return self.FuzzinessNode(maxdist, prefixlength, match.group(0))
+
+    def filters(self, parser):
+        return [(self.do_fuzzyterms, 0)]
+
+    def do_fuzzyterms(self, parser, group):
+        newgroup = group.empty_copy()
+        i = 0
+        while i < len(group):
+            node = group[i]
+            if i < len(group) - 1 and isinstance(node, syntax.WordNode):
+                nextnode = group[i + 1]
+                if isinstance(nextnode, self.FuzzinessNode):
+                    node = self.FuzzyTermNode(node, nextnode.maxdist,
+                                              nextnode.prefixlength)
+                    i += 1
+            if isinstance(node, self.FuzzinessNode):
+                node = syntax.to_word(node)
+            if isinstance(node, syntax.GroupNode):
+                node = self.do_fuzzyterms(parser, node)
+
+            newgroup.append(node)
+            i += 1
+        return newgroup
+
+
+class FunctionPlugin(TaggingPlugin):
+    """Adds an abitrary "function call" syntax to the query parser to allow
+    advanced and extensible query functionality.
+
+    This is unfinished and experimental.
+    """
+
+    expr = rcompile("""
+    [#](?P<name>[A-Za-z_][A-Za-z0-9._]*)  # function name
+    (                                     # optional args
+        \\[                               # inside square brackets
+        (?P<args>.*?)
+        \\]
+    )?
+    """, verbose=True)
+
+    class FunctionNode(syntax.SyntaxNode):
+        has_fieldname = False
+        has_boost = True
+        merging = False
+
+        def __init__(self, name, fn, args, kwargs):
+            self.name = name
+            self.fn = fn
+            self.args = args
+            self.kwargs = kwargs
+            self.nodes = []
+            self.boost = None
+
+        def __repr__(self):
+            return "#%s<%r>(%r)" % (self.name, self.args, self.nodes)
+
+        def query(self, parser):
+            qs = [n.query(parser) for n in self.nodes]
+            kwargs = self.kwargs
+            if "boost" not in kwargs and self.boost is not None:
+                kwargs["boost"] = self.boost
+            # TODO: If this call raises an exception, return an error query
+            return self.fn(qs, *self.args, **self.kwargs)
+
+    def __init__(self, fns):
+        """
+        :param fns: a dictionary mapping names to functions that return a
+            query.
+        """
+
+        self.fns = fns
+
+    def create(self, parser, match):
+        name = match.group("name")
+        if name in self.fns:
+            fn = self.fns[name]
+            argstring = match.group("args")
+            if argstring:
+                args, kwargs = self._parse_args(argstring)
+            else:
+                args = ()
+                kwargs = {}
+            return self.FunctionNode(name, fn, args, kwargs)
+
+    def _parse_args(self, argstring):
+        args = []
+        kwargs = {}
+
+        parts = argstring.split(",")
+        for part in parts:
+            if "=" in part:
+                name, value = part.split("=", 1)
+                # Wrap with str() because Python 2.5 can't handle unicode kws
+                name = str(name.strip())
+            else:
+                name = None
+                value = part
+
+            value = value.strip()
+            if value.startswith("'") and value.endswith("'"):
+                value = value[1:-1]
+
+            if name:
+                kwargs[name] = value
+            else:
+                args.append(value)
+
+        return args, kwargs
+
+    def filters(self, parser):
+        return [(self.do_functions, 600)]
+
+    def do_functions(self, parser, group):
+        newgroup = group.empty_copy()
+        i = 0
+        while i < len(group):
+            node = group[i]
+            if (isinstance(node, self.FunctionNode)
+                and i < len(group) - 1
+                and isinstance(group[i + 1], syntax.GroupNode)):
+                nextnode = group[i + 1]
+                node.nodes = list(self.do_functions(parser, nextnode))
+
+                if nextnode.boost != 1:
+                    node.set_boost(nextnode.boost)
+
+                i += 1
+            elif isinstance(node, syntax.GroupNode):
+                node = self.do_functions(parser, node)
+
+            newgroup.append(node)
+            i += 1
+        return newgroup
+
+
 class PhrasePlugin(Plugin):
     """Adds the ability to specify phrase queries inside double quotes.
     """
@@ -480,14 +732,94 @@ class PhrasePlugin(Plugin):
 
     class PhraseTagger(RegexTagger):
         def create(self, parser, match):
-            return PhrasePlugin.PhraseNode(match.group("text"),
-                                           match.start("text"))
+            text = match.group("text")
+            textstartchar = match.start("text")
+            slopstr = match.group("slop")
+            slop = int(slopstr) if slopstr else 1
+            return PhrasePlugin.PhraseNode(text, textstartchar, slop)
 
-    def __init__(self, expr='"(?P<text>.*?)"'):
+    def __init__(self, expr='"(?P<text>.*?)"(~(?P<slop>[1-9][0-9]*))?'):
         self.expr = expr
 
     def taggers(self, parser):
         return [(self.PhraseTagger(self.expr), 0)]
+
+
+class SequencePlugin(Plugin):
+    """Adds the ability to group arbitrary queries inside double quotes to
+    produce a query matching the individual sub-queries in sequence.
+
+    To enable this plugin, first remove the default PhrasePlugin, then add
+    this plugin::
+
+        qp = qparser.QueryParser("field", my_schema)
+        qp.remove_plugin_class(qparser.PhrasePlugin)
+        qp.add_plugin(qparser.SequencePlugin())
+
+    This enables parsing "phrases" such as::
+
+        "(jon OR john OR jonathan~1) smith*"
+    """
+
+    def __init__(self, expr='["](~(?P<slop>[1-9][0-9]*))?'):
+        """
+        :param expr: a regular expression for the marker at the start and end
+            of a phrase. The default is the double-quotes character.
+        """
+
+        self.expr = expr
+
+    class SequenceNode(syntax.GroupNode):
+        qclass = query.Sequence
+
+    class QuoteNode(syntax.MarkerNode):
+        def __init__(self, slop=None):
+            self.slop = int(slop) if slop else 1
+
+    def taggers(self, parser):
+        return [(FnTagger(self.expr, self.QuoteNode, "quote"), 0)]
+
+    def filters(self, parser):
+        return [(self.do_quotes, 550)]
+
+    def do_quotes(self, parser, group):
+        # New group to copy nodes into
+        newgroup = group.empty_copy()
+        # Buffer for sequence nodes; when it's None, it means we're not in
+        # a sequence
+        seq = None
+
+        # Start copying nodes from group to newgroup. When we find a quote
+        # node, start copying nodes into the buffer instead. When we find
+        # the next (end) quote, put the buffered nodes into a SequenceNode
+        # and add it to newgroup.
+        for node in group:
+            if isinstance(node, syntax.GroupNode):
+                # Recurse
+                node = self.do_quotes(parser, node)
+
+            if isinstance(node, self.QuoteNode):
+                if seq is None:
+                    # Start a new sequence
+                    seq = []
+                else:
+                    # End the current sequence
+                    sn = self.SequenceNode(seq, slop=node.slop)
+                    newgroup.append(sn)
+                    seq = None
+            elif seq is None:
+                # Not in a sequence, add directly
+                newgroup.append(node)
+            else:
+                # In a sequence, add it to the buffer
+                seq.append(node)
+
+        # We can end up with buffered nodes if there was an unbalanced quote;
+        # just add the buffered nodes directly to newgroup
+        if seq is not None:
+            newgroup.extend(seq)
+
+        return newgroup
 
 
 class RangePlugin(Plugin):
@@ -553,19 +885,19 @@ class OperatorsPlugin(Plugin):
     the parser syntax. This plugin scans the token stream for subclasses of
     :class:`Operator` and calls their :meth:`Operator.make_group` methods
     to allow them to manipulate the stream.
-    
+
     There are two levels of configuration available.
-    
+
     The first level is to change the regular expressions of the default
     operators, using the ``And``, ``Or``, ``AndNot``, ``AndMaybe``, and/or
     ``Not`` keyword arguments. The keyword value can be a pattern string or
     a compiled expression, or None to remove the operator::
-    
+
         qp = qparser.QueryParser("content", schema)
         cp = qparser.OperatorsPlugin(And="&", Or="\\|", AndNot="&!",
                                      AndMaybe="&~", Not=None)
         qp.replace_plugin(cp)
-    
+
     You can also specify a list of ``(OpTagger, priority)`` pairs as the first
     argument to the initializer to use custom operators. See :ref:`custom-op`
     for more information on this.
@@ -669,7 +1001,7 @@ class OperatorsPlugin(Plugin):
 class PlusMinusPlugin(Plugin):
     """Adds the ability to use + and - in a flat OR query to specify required
     and prohibited terms.
-    
+
     This is the basis for the parser configuration returned by
     ``SimpleParser()``.
     """
@@ -702,6 +1034,10 @@ class PlusMinusPlugin(Plugin):
         optional = syntax.OrGroup()
         banned = syntax.OrGroup()
 
+        # If the top-level group is an AndGroup we make everything "required" by default
+        if isinstance(group, syntax.AndGroup):
+            optional = syntax.AndGroup()
+
         # Which group to put the next node we see into
         next = optional
         for node in group:
@@ -728,19 +1064,19 @@ class PlusMinusPlugin(Plugin):
 class GtLtPlugin(TaggingPlugin):
     """Allows the user to use greater than/less than symbols to create range
     queries::
-    
+
         a:>100 b:<=z c:>=-1.4 d:<mz
-        
+
     This is the equivalent of::
-    
+
         a:{100 to] b:[to z] c:[-1.4 to] d:[to mz}
-        
+
     The plugin recognizes ``>``, ``<``, ``>=``, ``<=``, ``=>``, and ``=<``
     after a field specifier. The field specifier is required. You cannot do the
     following::
-    
+
         >100
-        
+
     This plugin requires the FieldsPlugin and RangePlugin to work.
     """
 
@@ -803,12 +1139,12 @@ class GtLtPlugin(TaggingPlugin):
 class MultifieldPlugin(Plugin):
     """Converts any unfielded terms into OR clauses that search for the
     term in a specified list of fields.
-    
+
     >>> qp = qparser.QueryParser(None, myschema)
     >>> qp.add_plugin(qparser.MultifieldPlugin(["a", "b"])
     >>> qp.parse("alfa c:bravo")
     And([Or([Term("a", "alfa"), Term("b", "alfa")]), Term("c", "bravo")])
-    
+
     This plugin is the basis for the ``MultifieldParser``.
     """
 
@@ -850,12 +1186,12 @@ class MultifieldPlugin(Plugin):
 
 class FieldAliasPlugin(Plugin):
     """Adds the ability to use "aliases" of fields in the query string.
-    
+
     This plugin is useful for allowing users of languages that can't be
     represented in ASCII to use field names in their own language, and
     translate them into the "real" field names, which must be valid Python
     identifiers.
-    
+
     >>> # Allow users to use 'body' or 'text' to refer to the 'content' field
     >>> parser.add_plugin(FieldAliasPlugin({"content": ["body", "text"]}))
     >>> parser.parse("text:hello")
@@ -870,6 +1206,7 @@ class FieldAliasPlugin(Plugin):
                 self.reverse[value] = key
 
     def filters(self, parser):
+        # Run before fields plugin at 100
         return [(self.do_aliases, 90)]
 
     def do_aliases(self, parser, group):
@@ -887,23 +1224,23 @@ class CopyFieldPlugin(Plugin):
     """Looks for basic syntax nodes (terms, prefixes, wildcards, phrases, etc.)
     occurring in a certain field and replaces it with a group (by default OR)
     containing the original token and the token copied to a new field.
-    
+
     For example, the query::
-    
+
         hello name:matt
-        
+
     could be automatically converted by ``CopyFieldPlugin({"name", "author"})``
     to::
-    
+
         hello (name:matt OR author:matt)
-    
+
     This is useful where one field was indexed with a differently-analyzed copy
     of another, and you want the query to search both fields.
-    
+
     You can specify a different group type with the ``group`` keyword. You can
     also specify ``group=None``, in which case the copied node is inserted
     "inline" next to the original, instead of in a new group::
-    
+
         hello name:matt author:matt
     """
 
@@ -955,29 +1292,29 @@ class PseudoFieldPlugin(Plugin):
     """This is an advanced plugin that lets you define "pseudo-fields" the user
     can use in their queries. When the parser encounters one of these fields,
     it runs a given function on the following node in the abstract syntax tree.
-    
+
     Unfortunately writing the transform function(s) requires knowledge of the
     parser's abstract syntax tree classes. A transform function takes a
     :class:`whoosh.qparser.SyntaxNode` and returns a
     :class:`~whoosh.qparser.SyntaxNode` (or None if the node should be removed
     instead of transformed).
-    
+
     Some things you can do in the transform function::
-    
+
         from whoosh import qparser
-    
+
         def my_xform_fn(node):
             # Is this a text node?
             if node.has_text:
                 # Change the node's text
                 node.text = node.text + "foo"
-            
+
                 # Change the node into a prefix query
                 node = qparser.PrefixPlugin.PrefixNode(node.text)
-                
+
                 # Set the field the node should search in
                 node.set_fieldname("title")
-                
+
                 return node
             else:
                 # If the pseudo-field wasn't applied to a text node (e.g.
@@ -985,49 +1322,49 @@ class PseudoFieldPlugin(Plugin):
                 # node. Alternatively you could just ``return node`` here to
                 # leave the non-text node intact.
                 return None
-    
+
     In the following example, if the user types ``regex:foo.bar``, the function
     transforms the text in the pseudo-field "regex" into a regular expression
     query in the "content" field::
-    
+
         from whoosh import qparser
-        
+
         def regex_maker(node):
             if node.has_text:
                 node = qparser.RegexPlugin.RegexNode(node.text)
                 node.set_fieldname("content")
                 return node
-    
+
         qp = qparser.QueryParser("content", myindex.schema)
         qp.add_plugin(qparser.PseudoFieldPlugin({"regex": regex_maker}))
         q = qp.parse("alfa regex:br.vo")
-    
+
     The name of the "pseudo" field can be the same as an actual field. Imagine
     the schema has a field named ``reverse``, and you want the user to be able
     to type ``reverse:foo`` and transform it to ``reverse:(foo OR oof)``::
-        
+
         def rev_text(node):
             if node.has_text:
                 # Create a word node for the reversed text
                 revtext = node.text[::-1]  # Reverse the text
                 rnode = qparser.WordNode(revtext)
-                
+
                 # Put the original node and the reversed node in an OrGroup
                 group = qparser.OrGroup([node, rnode])
-                
+
                 # Need to set the fieldname here because the PseudoFieldPlugin
                 # removes the field name syntax
                 group.set_fieldname("reverse")
-                
+
                 return group
-        
+
         qp = qparser.QueryParser("content", myindex.schema)
         qp.add_plugin(qparser.PseudoFieldPlugin({"reverse": rev_text}))
         q = qp.parse("alfa reverse:bravo")
-    
+
     Note that transforming the query like this can potentially really confuse
     the spell checker!
-    
+
     This plugin works as a filter, so it can only operate on the query after it
     has been parsed into an abstract syntax tree. For parsing control (i.e. to
     give a pseudo-field its own special syntax), you would need to write your
@@ -1074,4 +1411,3 @@ class PseudoFieldPlugin(Plugin):
             newgroup.append(node)
 
         return newgroup
-

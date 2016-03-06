@@ -51,6 +51,7 @@ See :doc:`/highlight` for more information.
 from __future__ import division
 from collections import deque
 from heapq import nlargest
+from itertools import groupby
 
 from whoosh.compat import htmlescape
 from whoosh.analysis import Token
@@ -84,22 +85,22 @@ class Fragment(object):
     mainly used to keep track of the start and end points of the fragment and
     the "matched" character ranges inside; it does not contain the text of the
     fragment or do much else.
-    
+
     The useful attributes are:
-    
+
     ``Fragment.text``
         The entire original text from which this fragment is taken.
-    
+
     ``Fragment.matches``
         An ordered list of objects representing the matched terms in the
         fragment. These objects have ``startchar`` and ``endchar`` attributes.
-    
+
     ``Fragment.startchar``
         The index of the first character in the fragment.
-    
+
     ``Fragment.endchar``
         The index of the last character in the fragment.
-    
+
     ``Fragment.matched_terms``
         A ``set`` of the ``text`` of the matched terms in the fragment (if
         available).
@@ -141,7 +142,7 @@ class Fragment(object):
         ec = self.endchar
         fsc = fragment.startchar
         fec = fragment.endchar
-        return (fsc > sc and fsc < ec) or (fec > sc and fec < ec)
+        return (sc < fsc < ec) or (sc < fec < ec)
 
     def overlapped_length(self, fragment):
         sc = self.startchar
@@ -167,12 +168,12 @@ def set_matched_filter(tokens, termset):
 class Fragmenter(object):
     def must_retokenize(self):
         """Returns True if this fragmenter requires retokenized text.
-        
+
         If this method returns True, the fragmenter's ``fragment_tokens``
         method  will be called with an iterator of ALL tokens from the text,
         with the tokens for matched terms having the ``matched`` attribute set
         to True.
-        
+
         If this method returns False, the fragmenter's ``fragment_matches``
         method will be called with a LIST of matching tokens.
         """
@@ -181,7 +182,7 @@ class Fragmenter(object):
 
     def fragment_tokens(self, text, all_tokens):
         """Yields :class:`Fragment` objects based on the tokenized text.
-        
+
         :param text: the string being highlighted.
         :param all_tokens: an iterator of :class:`analysis.Token`
             objects from the string.
@@ -192,9 +193,9 @@ class Fragmenter(object):
     def fragment_matches(self, text, matched_tokens):
         """Yields :class:`Fragment` objects based on the text and the matched
         terms.
-        
+
         :param text: the string being highlighted.
-        :param all_tokens: a list of :class:`analysis.Token` objects
+        :param matched_tokens: a list of :class:`analysis.Token` objects
             representing the term matches in the string.
         """
 
@@ -205,6 +206,24 @@ class WholeFragmenter(Fragmenter):
     """Doesn't fragment the token stream. This object just returns the entire
     entire stream as one "fragment". This is useful if you want to highlight
     the entire text.
+
+    Note that even if you use the `WholeFragmenter`, the highlight code will
+    return no fragment if no terms matched in the given field. To return the
+    whole fragment even in that case, call `highlights()` with `minscore=0`::
+
+        # Query where no terms match in the "text" field
+        q = query.Term("tag", "new")
+
+        r = mysearcher.search(q)
+        r.fragmenter = highlight.WholeFragmenter()
+        r.formatter = highlight.UppercaseFormatter()
+        # Since no terms in the "text" field matched, we get no fragments back
+        assert r[0].highlights("text") == ""
+
+        # If we lower the minimum score to 0, we get a fragment even though it
+        # has no matching terms
+        assert r[0].highlights("text", minscore=0) == "This is the text field."
+
     """
 
     def __init__(self, charlimit=DEFAULT_CHARLIMIT):
@@ -229,10 +248,10 @@ class SentenceFragmenter(Fragmenter):
     """Breaks the text up on sentence end punctuation characters
     (".", "!", or "?"). This object works by looking in the original text for a
     sentence end as the next character after each token's 'endchar'.
-    
+
     When highlighting with this fragmenter, you should use an analyzer that
     does NOT remove stop words, for example::
-    
+
         sa = StandardAnalyzer(stoplist=None)
     """
 
@@ -257,6 +276,7 @@ class SentenceFragmenter(Fragmenter):
         first = None
         # Buffer for matched tokens in the current sentence
         tks = []
+        endchar = None
         # Number of chars in the current sentence
         currentlen = 0
 
@@ -281,8 +301,7 @@ class SentenceFragmenter(Fragmenter):
             # punctuation, finish the sentence and reset
             if endchar < textlen and text[endchar] in sentencechars:
                 # Don't break for two periods in a row (e.g. ignore "...")
-                if (endchar + 1 < textlen
-                    and text[endchar + 1] in sentencechars):
+                if endchar + 1 < textlen and text[endchar + 1] in sentencechars:
                     continue
 
                 # If the sentence had matches and it's not too long, yield it
@@ -293,11 +312,11 @@ class SentenceFragmenter(Fragmenter):
                 tks = []
                 first = None
                 currentlen = 0
-        else:
-            # If we get to the end of the text and there's still a sentence
-            # in the buffer, yield it
-            if tks:
-                yield mkfrag(text, tks, startchar=first, endchar=endchar)
+
+        # If we get to the end of the text and there's still a sentence
+        # in the buffer, yield it
+        if tks:
+            yield mkfrag(text, tks, startchar=first, endchar=endchar)
 
 
 class ContextFragmenter(Fragmenter):
@@ -332,6 +351,7 @@ class ContextFragmenter(Fragmenter):
         countdown = -1
         # Tokens in current fragment
         tks = []
+        endchar = None
         # Number of chars in the current fragment
         currentlen = 0
 
@@ -443,7 +463,11 @@ class PinpointFragmenter(Fragmenter):
         autotrim = self.autotrim
         charlimit = self.charlimit
 
+        j = -1
+
         for i, t in enumerate(tokens):
+            if j >= i:
+                continue
             j = i
             left = t.startchar
             right = t.endchar
@@ -491,7 +515,7 @@ class BasicFragmentScorer(FragmentScorer):
 
 def SCORE(fragment):
     "Sorts higher scored passages first."
-    return None
+    return 1
 
 
 def FIRST(fragment):
@@ -514,7 +538,7 @@ def SHORTER(fragment):
 def get_text(original, token, replace):
     """Convenience function for getting the text to use for a match when
     formatting.
-    
+
     If ``replace`` is False, returns the part of ``original`` between
     ``token.startchar`` and ``token.endchar``. If ``replace`` is True, returns
     ``token.text``.
@@ -528,12 +552,12 @@ def get_text(original, token, replace):
 
 class Formatter(object):
     """Base class for formatters.
-    
+
     For highlighters that return strings, it is usually only necessary to
     override :meth:`Formatter.format_token`.
-    
+
     Use the :func:`get_text` function as a convenience to get the token text::
-    
+
         class MyFormatter(Formatter):
             def format_token(text, token, replace=False):
                 ttext = get_text(text, token, replace)
@@ -549,7 +573,7 @@ class Formatter(object):
         """Returns a formatted version of the given "token" object, which
         should have at least ``startchar`` and ``endchar`` attributes, and
         a ``text`` attribute if ``replace`` is True.
-        
+
         :param text: the original fragment text being highlighted.
         :param token: an object having ``startchar`` and ``endchar`` attributes
             and optionally a ``text`` attribute (if ``replace`` is True).
@@ -563,8 +587,7 @@ class Formatter(object):
     def format_fragment(self, fragment, replace=False):
         """Returns a formatted version of the given text, using the "token"
         objects in the given :class:`Fragment`.
-        
-        :param text: the original fragment text being highlighted.
+
         :param fragment: a :class:`Fragment` object representing a list of
             matches in the text.
         :param replace: if True, the original text corresponding to each
@@ -577,6 +600,10 @@ class Formatter(object):
         text = fragment.text
 
         for t in fragment.matches:
+            if t.startchar is None:
+                continue
+            if t.startchar < index:
+                continue
             if t.startchar > index:
                 output.append(self._text(text[index:t.startchar]))
             output.append(self.format_token(text, t, replace))
@@ -626,18 +653,18 @@ class UppercaseFormatter(Formatter):
 
 class HtmlFormatter(Formatter):
     """Returns a string containing HTML formatting around the matched terms.
-    
+
     This formatter wraps matched terms in an HTML element with two class names.
     The first class name (set with the constructor argument ``classname``) is
     the same for each match. The second class name (set with the constructor
     argument ``termclass`` is different depending on which term matched. This
     allows you to give different formatting (for example, different background
     colors) to the different terms in the excerpt.
-    
+
     >>> hf = HtmlFormatter(tagname="span", classname="match", termclass="term")
     >>> hf(mytext, myfragments)
     "The <span class="match term0">template</span> <span class="match term1">geometry</span> is..."
-    
+
     This object maintains a dictionary mapping terms to HTML class names (e.g.
     ``term0`` and ``term1`` above), so that multiple excerpts will use the same
     class for the same term. If you want to re-use the same HtmlFormatter
@@ -709,8 +736,8 @@ class GenshiFormatter(Formatter):
         self.qname = qname
         self.between = between
 
-        from genshi.core import START, END, TEXT  #@UnresolvedImport
-        from genshi.core import Attrs, Stream  #@UnresolvedImport
+        from genshi.core import START, END, TEXT  # @UnresolvedImport
+        from genshi.core import Attrs, Stream  # @UnresolvedImport
         self.START, self.END, self.TEXT = START, END, TEXT
         self.Attrs, self.Stream = Attrs, Stream
 
@@ -735,7 +762,7 @@ class GenshiFormatter(Formatter):
         for t in fragment.matches:
             if t.startchar > index:
                 self._add_text(text[index:t.startchar], output)
-            output.append(text, t, replace)
+            output.append((text, t, replace))
             index = t.endchar
         if index < len(text):
             self._add_text(text[index:], output)
@@ -757,7 +784,7 @@ class GenshiFormatter(Formatter):
 def top_fragments(fragments, count, scorer, order, minscore=1):
     scored_fragments = ((scorer(f), f) for f in fragments)
     scored_fragments = nlargest(count, scored_fragments)
-    best_fragments = [sf for score, sf in scored_fragments if score > minscore]
+    best_fragments = [sf for score, sf in scored_fragments if score >= minscore]
     best_fragments.sort(key=order)
     return best_fragments
 
@@ -782,7 +809,7 @@ def highlight(text, terms, analyzer, fragmenter, formatter, top=3,
     tokens = analyzer(text, chars=True, mode=mode, removestops=False)
     tokens = set_matched_filter(tokens, termset)
     fragments = fragmenter.fragment_tokens(text, tokens)
-    fragments = top_fragments(fragments, top, scorer, order)
+    fragments = top_fragments(fragments, top, scorer, order, minscore)
     return formatter(text, fragments)
 
 
@@ -796,79 +823,132 @@ class Highlighter(object):
         self.always_retokenize = always_retokenize
 
     def can_load_chars(self, results, fieldname):
+        # Is it possible to build a mapping between the matched terms/docs and
+        # their start and end chars for "pinpoint" highlighting (ie not require
+        # re-tokenizing text)?
+
         if self.always_retokenize:
+            # No, we've been configured to always retokenize some text
             return False
         if not results.has_matched_terms():
+            # No, we don't know what the matched terms are yet
             return False
         if self.fragmenter.must_retokenize():
+            # No, the configured fragmenter doesn't support it
             return False
 
+        # Maybe, if the field was configured to store characters
         field = results.searcher.schema[fieldname]
         return field.supports("characters")
 
-    def _load_chars(self, results, fieldname, texts):
+    @staticmethod
+    def _load_chars(results, fieldname, texts, to_bytes):
+        # For each docnum, create a mapping of text -> [(startchar, endchar)]
+        # for the matched terms
+
         results._char_cache[fieldname] = cache = {}
         sorted_ids = sorted(docnum for _, docnum in results.top_n)
-        texts = [t[1] for t in results.matched_terms() if t[0] == fieldname]
 
         for docnum in sorted_ids:
             cache[docnum] = {}
 
         for text in texts:
-            m = results.searcher.postings(fieldname, text)
-            docset = set(results.termdocs[(fieldname, text)])
+            btext = to_bytes(text)
+            m = results.searcher.postings(fieldname, btext)
+            docset = set(results.termdocs[(fieldname, btext)])
             for docnum in sorted_ids:
                 if docnum in docset:
                     m.skip_to(docnum)
                     assert m.id() == docnum
                     cache[docnum][text] = m.value_as("characters")
 
-    def highlight_hit(self, hitobj, fieldname, text=None, top=3):
+    @staticmethod
+    def _merge_matched_tokens(tokens):
+        # Merges consecutive matched tokens together, so they are highlighted
+        # as one
+
+        token = None
+
+        for t in tokens:
+            if not t.matched:
+                if token is not None:
+                    yield token
+                    token = None
+                yield t
+                continue
+
+            if token is None:
+                token = t.copy()
+            elif t.startchar <= token.endchar:
+                if t.endchar > token.endchar:
+                    token.text += t.text[token.endchar-t.endchar:]
+                    token.endchar = t.endchar
+            else:
+                yield token
+                token = None
+                # t was not merged, also has to be yielded
+                yield t
+
+        if token is not None:
+            yield token
+
+    def highlight_hit(self, hitobj, fieldname, text=None, top=3, minscore=1):
         results = hitobj.results
+        schema = results.searcher.schema
+        field = schema[fieldname]
+        to_bytes = field.to_bytes
+        from_bytes = field.from_bytes
 
         if text is None:
-            d = hitobj.fields()
-            if fieldname not in d:
-                raise KeyError("Field %r is not in the stored fields."
-                               % fieldname)
-            text = d[fieldname]
+            if fieldname not in hitobj:
+                raise KeyError("Field %r is not stored." % fieldname)
+            text = hitobj[fieldname]
 
-        # Get the terms searched for/matched
-        if results.has_matched_terms() is None:
-            terms = hitobj.matched_terms()
+        # Get the terms searched for/matched in this field
+        if results.has_matched_terms():
+            bterms = (term for term in results.matched_terms()
+                      if term[0] == fieldname)
         else:
-            terms = results.query_terms(expand=True)
-        # Get the words searched for in the field
-        words = set(termtext for fname, termtext in terms
-                    if fname == fieldname)
-        if not words:
-            # No terms matches in this field
-            return self.formatter.format([])
+            bterms = results.query_terms(expand=True, fieldname=fieldname)
+        # Convert bytes to unicode
+        words = frozenset(from_bytes(term[1]) for term in bterms)
 
+        # If we can do "pinpoint" highlighting...
         if self.can_load_chars(results, fieldname):
+            # Build the docnum->[(startchar, endchar),] map
             if fieldname not in results._char_cache:
-                self._load_chars(results, fieldname, words)
+                self._load_chars(results, fieldname, words, to_bytes)
 
-            map = results._char_cache[fieldname][hitobj.docnum]
+            hitterms = (from_bytes(term[1]) for term in hitobj.matched_terms()
+                        if term[0] == fieldname)
+
+            # Grab the word->[(startchar, endchar)] map for this docnum
+            cmap = results._char_cache[fieldname][hitobj.docnum]
+            # A list of Token objects for matched words
             tokens = []
             charlimit = self.fragmenter.charlimit
-            for word in words:
-                chars = map[word]
+            for word in hitterms:
+                chars = cmap[word]
                 for pos, startchar, endchar in chars:
                     if charlimit and endchar > charlimit:
                         break
                     tokens.append(Token(text=word, pos=pos,
                                         startchar=startchar, endchar=endchar))
             tokens.sort(key=lambda t: t.startchar)
+            tokens = [max(group, key=lambda t: t.endchar - t.startchar)
+                      for key, group in groupby(tokens, lambda t: t.startchar)]
             fragments = self.fragmenter.fragment_matches(text, tokens)
         else:
+            # Retokenize the text
             analyzer = results.searcher.schema[fieldname].analyzer
-            termset = frozenset(words)
-            tokens = analyzer(text, chars=True, mode="query",
+            tokens = analyzer(text, positions=True, chars=True, mode="index",
                               removestops=False)
-            tokens = set_matched_filter(tokens, termset)
+            # Set Token.matched attribute for tokens that match a query term
+            tokens = set_matched_filter(tokens, words)
+            tokens = self._merge_matched_tokens(tokens)
             fragments = self.fragmenter.fragment_tokens(text, tokens)
 
-        fragments = top_fragments(fragments, top, self.scorer, self.order)
+        fragments = top_fragments(fragments, top, self.scorer, self.order,
+                                  minscore=minscore)
         output = self.formatter.format(fragments)
         return output

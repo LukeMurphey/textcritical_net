@@ -36,6 +36,10 @@ if sys.version_info[0] < 3:
     bytes_type = str
     unichr = unichr
     from urllib import urlretrieve
+    import Queue as queue
+
+    def byte(num):
+        return chr(num)
 
     def u(s):
         return unicode(s, "unicode_escape")
@@ -49,7 +53,7 @@ if sys.version_info[0] < 3:
     zip_ = zip
 
     def memoryview_(source, offset=None, length=None):
-        if offset:
+        if offset or length:
             return buffer(source, offset, length)
         else:
             return buffer(source)
@@ -80,6 +84,10 @@ else:
     bytes_type = bytes
     unichr = chr
     from urllib.request import urlretrieve
+    import queue
+
+    def byte(num):
+        return bytes((num,))
 
     def u(s):
         if isinstance(s, bytes):
@@ -97,7 +105,7 @@ else:
 
     def memoryview_(source, offset=None, length=None):
         mv = memoryview(source)
-        if offset:
+        if offset or length:
             return mv[offset:offset + length]
         else:
             return mv
@@ -198,6 +206,3 @@ except ImportError:
         """
         funcobj.__isabstractmethod__ = True
         return funcobj
-
-
-

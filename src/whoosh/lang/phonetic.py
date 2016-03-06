@@ -1,4 +1,4 @@
-#encoding: utf8
+#encoding: utf-8
 
 """
 This module contains quasi-phonetic encoders for words in different languages.
@@ -117,6 +117,3 @@ def soundex_ar(word):
                     r += code
             prevcode = code
     return r
-
-if __name__ == "__main__":
-    print(soundex_esp("solidad"))

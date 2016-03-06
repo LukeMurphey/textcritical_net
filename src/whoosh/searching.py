@@ -31,17 +31,14 @@
 
 from __future__ import division
 import copy
-import threading
 import weakref
-from collections import defaultdict
-from heapq import heappush, heapreplace, nlargest, nsmallest
 from math import ceil
 
-from whoosh import classify, highlight, query, scoring, sorting
+from whoosh import classify, highlight, query, scoring
 from whoosh.compat import iteritems, itervalues, iterkeys, xrange
+from whoosh.idsets import DocIdSet, BitSet
 from whoosh.reading import TermNotFound
-from whoosh.support.bitvector import DocIdSet, BitSet
-from whoosh.util import now, lru_cache
+from whoosh.util.cache import lru_cache
 
 
 class NoTermsException(Exception):
@@ -59,6 +56,44 @@ class TimeLimit(Exception):
     before the search finishes. If you have a reference to the collector, you
     can get partial results by calling :meth:`TimeLimitedCollector.results`.
     """
+
+    pass
+
+
+# Context class
+
+class SearchContext(object):
+    """A container for information about the current search that may be used
+    by the collector or the query objects to change how they operate.
+    """
+
+    def __init__(self, needs_current=False, weighting=None, top_query=None,
+                 limit=0):
+        """
+        :param needs_current: if True, the search requires that the matcher
+            tree be "valid" and able to access information about the current
+            match. For queries during matcher instantiation, this means they
+            should not instantiate a matcher that doesn't allow access to the
+            current match's value, weight, and so on. For collectors, this
+            means they should advanced the matcher doc-by-doc rather than using
+            shortcut methods such as all_ids().
+        :param weighting: the Weighting object to use for scoring documents.
+        :param top_query: a reference to the top-level query object.
+        :param limit: the number of results requested by the user.
+        """
+
+        self.needs_current = needs_current
+        self.weighting = weighting
+        self.top_query = top_query
+        self.limit = limit
+
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__.__name__, self.__dict__)
+
+    def set(self, **kwargs):
+        ctx = copy.copy(self)
+        ctx.__dict__.update(kwargs)
+        return ctx
 
 
 # Searcher class
@@ -87,6 +122,8 @@ class Searcher(object):
         self._closereader = closereader
         self._ix = fromindex
         self._doccount = self.ixreader.doc_count_all()
+        # Cache for PostingCategorizer objects (supports fields without columns)
+        self._field_caches = {}
 
         if parent:
             self.parent = weakref.ref(parent)
@@ -113,9 +150,9 @@ class Searcher(object):
 
         # Copy attributes/methods from wrapped reader
         for name in ("stored_fields", "all_stored_fields", "has_vector",
-                     "vector", "vector_as", "lexicon", "frequency",
-                     "doc_frequency", "term_info", "doc_field_length",
-                     "corrector"):
+                     "vector", "vector_as", "lexicon", "field_terms",
+                     "frequency", "doc_frequency", "term_info",
+                     "doc_field_length", "corrector", "iter_docs"):
             setattr(self, name, getattr(self.ixreader, name))
 
     def __enter__(self):
@@ -133,6 +170,12 @@ class Searcher(object):
             if ss is subsearcher:
                 return offset
 
+    def leaf_searchers(self):
+        if self.is_atomic():
+            return [(self, 0)]
+        else:
+            return self.subsearchers
+
     def is_atomic(self):
         return self.reader().is_atomic()
 
@@ -145,6 +188,7 @@ class Searcher(object):
         """
 
         if self.has_parent():
+            # Call the weak reference to get the parent searcher
             return self.parent()
         else:
             return self
@@ -163,14 +207,14 @@ class Searcher(object):
         return self._doccount
 
     def field_length(self, fieldname):
-        if self.parent:
-            return self.parent().field_length(fieldname)
+        if self.has_parent():
+            return self.get_parent().field_length(fieldname)
         else:
             return self.reader().field_length(fieldname)
 
     def max_field_length(self, fieldname):
-        if self.parent:
-            return self.parent().max_field_length(fieldname)
+        if self.has_parent():
+            return self.get_parent().max_field_length(fieldname)
         else:
             return self.reader().max_field_length(fieldname)
 
@@ -223,8 +267,21 @@ class Searcher(object):
         """
         return self.ixreader
 
-    def set_caching_policy(self, *args, **kwargs):
-        self.ixreader.set_caching_policy(*args, **kwargs)
+    def context(self, **kwargs):
+        """Generates a :class:`SearchContext` for this searcher.
+        """
+
+        if "weighting" not in kwargs:
+            kwargs["weighting"] = self.weighting
+
+        return SearchContext(**kwargs)
+
+    def boolean_context(self):
+        """Shortcut returns a SearchContext set for unscored (boolean)
+        searching.
+        """
+
+        return self.context(needs_current=False, weighting=None)
 
     def postings(self, fieldname, text, weighting=None, qf=1):
         """Returns a :class:`whoosh.matching.Matcher` for the postings of the
@@ -234,8 +291,30 @@ class Searcher(object):
         """
 
         weighting = weighting or self.weighting
-        scorer = weighting.scorer(self, fieldname, text, qf=qf)
-        return self.ixreader.postings(fieldname, text, scorer=scorer)
+        globalscorer = weighting.scorer(self, fieldname, text, qf=qf)
+
+        if self.is_atomic():
+            return self.ixreader.postings(fieldname, text, scorer=globalscorer)
+        else:
+            from whoosh.matching import MultiMatcher
+
+            matchers = []
+            docoffsets = []
+            term = (fieldname, text)
+            for subsearcher, offset in self.subsearchers:
+                r = subsearcher.reader()
+                if term in r:
+                    # Make a segment-specific scorer; the scorer should call
+                    # searcher.parent() to get global stats
+                    scorer = weighting.scorer(subsearcher, fieldname, text, qf=qf)
+                    m = r.postings(fieldname, text, scorer=scorer)
+                    matchers.append(m)
+                    docoffsets.append(offset)
+
+            if not matchers:
+                raise TermNotFound(fieldname, text)
+
+            return MultiMatcher(matchers, docoffsets, globalscorer)
 
     def idf(self, fieldname, text):
         """Calculates the Inverse Document Frequency of the current term (calls
@@ -300,7 +379,7 @@ class Searcher(object):
     def _kw_to_text(self, kw):
         for k, v in iteritems(kw):
             field = self.schema[k]
-            kw[k] = field.to_text(v)
+            kw[k] = field.to_bytes(v)
 
     def _query_for_kw(self, kw):
         subqueries = []
@@ -338,7 +417,7 @@ class Searcher(object):
             except TermNotFound:
                 return None
         else:
-            m = self._query_for_kw(kw).matcher(self)
+            m = self._query_for_kw(kw).matcher(self, self.boolean_context())
             if m.is_active():
                 return m.id()
 
@@ -364,7 +443,6 @@ class Searcher(object):
                 delset.add(docnum)
         return delset
 
-    @lru_cache(20)
     def _query_to_comb(self, fq):
         return BitSet(self.docs_for_query(fq), size=self.doc_count_all())
 
@@ -374,9 +452,9 @@ class Searcher(object):
         if isinstance(obj, (set, DocIdSet)):
             c = obj
         elif isinstance(obj, Results):
-            c = obj.docset
+            c = obj.docs()
         elif isinstance(obj, ResultsPage):
-            c = obj.results.docset
+            c = obj.results.docs()
         elif isinstance(obj, query.Query):
             c = self._query_to_comb(obj)
         else:
@@ -567,66 +645,6 @@ class Searcher(object):
         q = qp.parse(querystring)
         return self.search(q, **kwargs)
 
-    def sorter(self, *args, **kwargs):
-        """This method is deprecated. Instead of using a Sorter, configure a
-        :class:`whoosh.sorting.FieldFacet` or
-        :class:`whoosh.sorting.MultiFacet` and pass it to the
-        :meth:`Searcher.search` method's ``sortedby`` keyword argument.
-
-        See :doc:`/facets`.
-        """
-
-        return sorting.Sorter(self, *args, **kwargs)
-
-    def add_facet_field(self, name, facet, save=False):
-        """This is an experimental feature which may change in future versions.
-
-        Adds a field cache for a computed field defined by a
-        :class:`whoosh.sorting.FacetType` object, for example a
-        :class:`~whoosh.sorting.QueryFacet` or
-        :class:`~whoosh.sorting.RangeFacet`.
-
-        This creates a field cache from the facet, so once you define the
-        "facet field", sorting/grouping by it will be faster than using the
-        original facet object.
-
-        For example, sorting using a :class:`~whoosh.sorting.QueryFacet`
-        recomputes the queries at sort time, which may be slow::
-
-            qfacet = sorting.QueryFacet({"a-z": TermRange(...
-            results = searcher.search(myquery, sortedby=qfacet)
-
-        You can cache the results of the query facet in a field cache::
-
-            searcher.define_facets("nameranges", qfacet, save=True)
-
-        ..then use the pseudo-field for sorting::
-
-            results = searcher.search(myquery, sortedby="nameranges")
-
-        See :doc:`/facets`.
-
-        :param name: a name for the pseudo-field to cache the query results in.
-        :param qs: a :class:`~whoosh.sorting.FacetType` object.
-        :param save: if True, saves the field cache to disk so it is persistent
-            across searchers. The default is False, which only creates the
-            field cache in memory.
-        """
-
-        if self.subsearchers:
-            ss = self.subsearchers
-        else:
-            ss = [(self, 0)]
-
-        for s, offset in ss:
-            doclists = defaultdict(list)
-            catter = facet.categorizer(self)
-            catter.set_searcher(s, offset)
-            for docnum in xrange(s.doc_count_all()):
-                key = catter.key_for_id(docnum)
-                doclists[key].append(docnum)
-            s.reader().define_facets(name, doclists, save=save)
-
     def docs_for_query(self, q, for_deletion=False):
         """Returns an iterator of document numbers for documents matching the
         given :class:`whoosh.query.Query` object.
@@ -651,31 +669,31 @@ class Searcher(object):
     def collector(self, limit=10, sortedby=None, reverse=False, groupedby=None,
                   collapse=None, collapse_limit=1, collapse_order=None,
                   optimize=True, filter=None, mask=None, terms=False,
-                  maptype=None):
+                  maptype=None, scored=True):
         """Low-level method: returns a configured
         :class:`whoosh.collectors.Collector` object based on the given
         arguments. You can use this object with
         :meth:`Searcher.search_with_collector` to search.
-        
+
         See the documentation for the :meth:`Searcher.search` method for a
         description of the parameters.
-        
+
         This method may be useful to get a basic collector object and then wrap
         it with another collector from ``whoosh.collectors`` or with a custom
         collector of your own::
-        
+
             # Equivalent of
             # results = mysearcher.search(myquery, limit=10)
             # but with a time limt...
 
             # Create a TopCollector
             c = mysearcher.collector(limit=10)
-            
+
             # Wrap it with a TimeLimitedCollector with a time limit of
             # 10.5 seconds
             from whoosh.collectors import TimeLimitedCollector
-            c = TimeLimitedCollector(c, 10.5)
-            
+            c = TimeLimitCollector(c, 10.5)
+
             # Search using the custom collector
             results = mysearcher.search_with_collector(myquery, c)
         """
@@ -685,7 +703,9 @@ class Searcher(object):
         if limit is not None and limit < 1:
             raise ValueError("limit must be >= 1")
 
-        if sortedby:
+        if not scored and not sortedby:
+            c = collectors.UnsortedCollector()
+        elif sortedby:
             c = collectors.SortingCollector(sortedby, limit=limit,
                                             reverse=reverse)
         elif groupedby or reverse or not limit or limit >= self.doc_count():
@@ -725,6 +745,10 @@ class Searcher(object):
         :param limit: the maximum number of documents to score. If you're only
             interested in the top N documents, you can set limit=N to limit the
             scoring for a faster search. Default is 10.
+        :param scored: whether to score the results. Overriden by ``sortedby``.
+            If both ``scored=False`` and ``sortedby=None``, the results will be
+            in arbitrary order, but will usually be computed faster than
+            scored or sorted results.
         :param sortedby: see :doc:`/facets`.
         :param reverse: Reverses the direction of the sort. Default is False.
         :param groupedby: see :doc:`/facets`.
@@ -763,51 +787,41 @@ class Searcher(object):
         # Return the results object from the collector
         return c.results()
 
-    def search_with_collector(self, q, collector):
+    def search_with_collector(self, q, collector, context=None):
         """Low-level method: runs a :class:`whoosh.query.Query` object on this
         searcher using the given :class:`whoosh.collectors.Collector` object
         to collect the results::
-        
+
             myquery = query.Term("content", "cabbage")
-        
+
             uc = collectors.UnlimitedCollector()
             tc = TermsCollector(uc)
-            
+
             mysearcher.search_with_collector(myquery, tc)
             print(tc.docterms)
             print(tc.results())
-        
+
         Note that this method does not return a :class:`Results` object. You
         need to access the collector to get a results object or other
         information the collector might hold after the search.
-        
-        :param query: a :class:`whoosh.query.Query` object to use to match
+
+        :param q: a :class:`whoosh.query.Query` object to use to match
             documents.
         :param collector: a :class:`whoosh.collectors.Collector` object to feed
             the results into.
         """
 
-        collector.prepare(self, q)
+        # Get the search context object from the searcher
+        context = context or self.context()
+        # Allow collector to set up based on the top-level information
+        collector.prepare(self, q, context)
 
-        # Make a list of subsearchers (if the searcher is atomic, it's a list
-        # of one)
-        if self.is_atomic():
-            subsearchers = [(self, 0)]
-        else:
-            subsearchers = self.subsearchers
+        collector.run()
 
-        try:
-            # for each sub-searcher, run the query and collect the matching
-            # docs
-            for subsearcher, offset in subsearchers:
-                collector.set_subsearcher(subsearcher, offset)
-                collector.collect_matches()
-        finally:
-            collector.finish()
-
-    def correct_query(self, q, qstring, correctors=None, allfields=False,
-                      terms=None, prefix=0, maxdist=2):
-        """Returns a corrected version of the given user query using a default
+    def correct_query(self, q, qstring, correctors=None, terms=None, maxdist=2,
+                      prefix=0, aliases=None):
+        """
+        Returns a corrected version of the given user query using a default
         :class:`whoosh.spelling.ReaderCorrector`.
 
         The default:
@@ -818,11 +832,6 @@ class Searcher(object):
           use custom correctors, use the ``correctors`` argument to pass a
           dictionary mapping field names to :class:`whoosh.spelling.Corrector`
           objects.
-
-        * ONLY CORRECTS FIELDS THAT HAVE THE ``spelling`` ATTRIBUTE in the
-          schema (or for which you pass a custom corrector). To automatically
-          check all fields, use ``allfields=True``. Spell checking fields
-          without ``spelling`` is slower.
 
         Expert users who want more sophisticated correction behavior can create
         a custom :class:`whoosh.spelling.QueryCorrector` and use that instead
@@ -862,45 +871,63 @@ class Searcher(object):
             query. You can use this argument to "override" some fields with a
             different correct, for example a
             :class:`whoosh.spelling.GraphCorrector`.
-        :param allfields: if True, automatically spell check all fields, not
-            just fields with the ``spelling`` attribute.
         :param terms: a sequence of ``("fieldname", "text")`` tuples to correct
             in the query. By default, this method corrects terms that don't
             appear in the index. You can use this argument to override that
             behavior and explicitly specify the terms that should be corrected.
+        :param maxdist: the maximum number of "edits" (insertions, deletions,
+            subsitutions, or transpositions of letters) allowed between the
+            original word and any suggestion. Values higher than ``2`` may be
+            slow.
         :param prefix: suggested replacement words must share this number of
             initial characters with the original word. Increasing this even to
             just ``1`` can dramatically speed up suggestions, and may be
             justifiable since spellling mistakes rarely involve the first
             letter of a word.
-        :param maxdist: the maximum number of "edits" (insertions, deletions,
-            subsitutions, or transpositions of letters) allowed between the
-            original word and any suggestion. Values higher than ``2`` may be
-            slow.
+        :param aliases: an optional dictionary mapping field names in the query
+            to different field names to use as the source of spelling
+            suggestions. The mappings in ``correctors`` are applied after this.
         :rtype: :class:`whoosh.spelling.Correction`
         """
 
+        reader = self.reader()
+
+        # Dictionary of field name alias mappings
+        if aliases is None:
+            aliases = {}
+        # Dictionary of custom per-field correctors
         if correctors is None:
             correctors = {}
 
-        if allfields:
-            fieldnames = self.schema.names()
-        else:
-            fieldnames = [name for name, field in self.schema.items()
-                          if field.spelling]
-        for fieldname in fieldnames:
-            if fieldname not in correctors:
-                correctors[fieldname] = self.corrector(fieldname)
+        # Remap correctors dict according to aliases
+        d = {}
+        for fieldname, corr in iteritems(correctors):
+            fieldname = aliases.get(fieldname, fieldname)
+            d[fieldname] = corr
+        correctors = d
 
+        # Fill in default corrector objects for fields that don't have a custom
+        # one in the "correctors" dictionary
+        fieldnames = self.schema.names()
+        for fieldname in fieldnames:
+            fieldname = aliases.get(fieldname, fieldname)
+            if fieldname not in correctors:
+                correctors[fieldname] = self.reader().corrector(fieldname)
+
+        # Get any missing terms in the query in the fields we're correcting
         if terms is None:
             terms = []
             for token in q.all_tokens():
-                if token.fieldname in correctors:
+                aname = aliases.get(token.fieldname, token.fieldname)
+                text = token.text
+                if aname in correctors and (aname, text) not in reader:
+                    # Note that we use the original, not aliases fieldname here
+                    # so if we correct the query we know what it was
                     terms.append((token.fieldname, token.text))
 
+        # Make q query corrector
         from whoosh import spelling
-
-        sqc = spelling.SimpleQueryCorrector(correctors, terms)
+        sqc = spelling.SimpleQueryCorrector(correctors, terms, aliases)
         return sqc.correct_query(q, qstring)
 
 
@@ -932,6 +959,8 @@ class Results(object):
         self._facetmaps = facetmaps or {}
         self.runtime = runtime
         self.highlighter = highlighter or highlight.Highlighter()
+        self.collector = None
+        self._total = None
         self._char_cache = {}
 
     def __repr__(self):
@@ -953,9 +982,9 @@ class Results(object):
         the result set instead of an exact number.
         """
 
-        if self.docset is None:
-            self._load_docs()
-        return len(self.docset)
+        if self._total is None:
+            self._total = self.collector.count()
+        return self._total
 
     def __getitem__(self, n):
         if isinstance(n, slice):
@@ -979,9 +1008,7 @@ class Results(object):
         """Returns True if the given document number matched the query.
         """
 
-        if self.docset is None:
-            self._load_docs()
-        return docnum in self.docset
+        return docnum in self.docs()
 
     def __nonzero__(self):
         return not self.is_empty()
@@ -1066,48 +1093,35 @@ class Results(object):
                            % (name, self.facet_names()))
         return self._facetmaps[name].as_dict()
 
-    def _load_docs(self):
-        # If self.docset is None, that means this results object was created
-        # block optimizations on, which means we didn't record the matching
-        # documents because we might have skipped some blocks. SOOO, we have to
-        # go back and use docs_for_query to get just the matching docnums. This
-        # is much faster than getting the scored results, but might still be
-        # noticeable for complex queries and/or a large index.
-
-        docset = set(self.searcher.docs_for_query(self.q))
-
-        # Apply the filter and mask, if any, from the original search
-        if hasattr(self, "allowed"):
-            docset.intersection_update(self.allowed)
-        if hasattr(self, "restricted"):
-            docset.difference_update(self.restricted)
-
-        self.docset = docset
-
     def has_exact_length(self):
         """Returns True if this results object already knows the exact number
         of matching documents.
         """
 
-        return self.docset is not None
+        if self.collector:
+            return self.collector.computes_count()
+        else:
+            return self._total is not None
 
     def estimated_length(self):
         """The estimated maximum number of matching documents, or the
         exact number of matching documents if it's known.
         """
 
-        if self.docset is not None:
-            return len(self.docset)
-        return self.q.estimate_size(self.searcher.reader())
+        if self.has_exact_length():
+            return len(self)
+        else:
+            return self.q.estimate_size(self.searcher.reader())
 
     def estimated_min_length(self):
         """The estimated minimum number of matching documents, or the
         exact number of matching documents if it's known.
         """
 
-        if self.docset is not None:
-            return len(self.docset)
-        return self.q.estimate_min_size(self.searcher.reader())
+        if self.has_exact_length():
+            return len(self)
+        else:
+            return self.q.estimate_min_size(self.searcher.reader())
 
     def scored_length(self):
         """Returns the number of scored documents in the results, equal to or
@@ -1131,7 +1145,7 @@ class Results(object):
         """
 
         if self.docset is None:
-            self._load_docs()
+            self.docset = set(self.collector.all_ids())
         return self.docset
 
     def copy(self):
@@ -1159,8 +1173,9 @@ class Results(object):
         """
         return self.top_n[n][1]
 
-    def query_terms(self, expand=False):
-        return self.q.existing_terms(self.searcher.reader(), expand=expand)
+    def query_terms(self, expand=False, fieldname=None):
+        return self.q.existing_terms(self.searcher.reader(),
+                                     fieldname=fieldname, expand=expand)
 
     def has_matched_terms(self):
         """Returns True if the search recorded which terms matched in which
@@ -1195,7 +1210,6 @@ class Results(object):
 
         if not self.has_matched_terms():
             raise NoTermsException
-
         return set(self.termdocs.keys())
 
     def _get_fragmenter(self):
@@ -1232,7 +1246,7 @@ class Results(object):
 
     def key_terms(self, fieldname, docs=10, numterms=5,
                   model=classify.Bo1Model, normalize=True):
-        """Returns the 'numterms' most important terms from the top 'numdocs'
+        """Returns the 'numterms' most important terms from the top 'docs'
         documents in these results. "Most important" is generally defined as
         terms that occur frequently in the top hits but relatively infrequently
         in the collection as a whole.
@@ -1240,7 +1254,7 @@ class Results(object):
         :param fieldname: Look at the terms in this field. This field must
             store vectors.
         :param docs: Look at this many of the top documents of the results.
-        :param terms: Return this number of important terms.
+        :param numterms: Return this number of important terms.
         :param model: The classify.ExpansionModel to use. See the classify
             module.
         :returns: list of unicode strings.
@@ -1270,6 +1284,7 @@ class Results(object):
             if item[1] not in docs:
                 self.top_n.append(item)
         self.docset = docs | results.docs()
+        self._total = len(self.docset)
 
     def filter(self, results):
         """Removes any hits that are not also in the other results object.
@@ -1363,6 +1378,7 @@ class Hit(object):
 
         self.results = results
         self.searcher = results.searcher
+        self.reader = self.searcher.reader()
         self.pos = self.rank = pos
         self.docnum = docnum
         self.score = score
@@ -1396,9 +1412,9 @@ class Hit(object):
 
         if not self.results.has_matched_terms():
             raise NoTermsException
-        return self.results.docterms[self.docnum]
+        return self.results.docterms.get(self.docnum, [])
 
-    def highlights(self, fieldname, text=None, top=3):
+    def highlights(self, fieldname, text=None, top=3, minscore=1):
         """Returns highlighted snippets from the given field::
 
             r = searcher.search(myquery)
@@ -1428,10 +1444,13 @@ class Hit(object):
             access to the text another way (for example, loading from a file or
             a database), you can supply it using the ``text`` parameter.
         :param top: the maximum number of fragments to return.
+        :param minscore: the minimum score for fragments to appear in the
+            highlights.
         """
 
         hliter = self.results.highlighter
-        return hliter.highlight_hit(self, fieldname, text=text, top=top)
+        return hliter.highlight_hit(self, fieldname, text=text, top=top,
+                                    minscore=minscore)
 
     def more_like_this(self, fieldname, text=None, top=10, numterms=5,
                        model=classify.Bo1Model, normalize=True, filter=None):
@@ -1482,11 +1501,20 @@ class Hit(object):
     def __iter__(self):
         return iterkeys(self.fields())
 
-    def __getitem__(self, key):
-        return self.fields().__getitem__(key)
+    def __getitem__(self, fieldname):
+        if fieldname in self.fields():
+            return self._fields[fieldname]
+
+        reader = self.reader
+        if reader.has_column(fieldname):
+            cr = reader.column_reader(fieldname)
+            return cr[self.docnum]
+
+        raise KeyError(fieldname)
 
     def __contains__(self, key):
-        return key in self.fields()
+        return (key in self.fields()
+                or self.reader.has_column(key))
 
     def items(self):
         return list(self.fields().items())
@@ -1559,6 +1587,12 @@ class ResultsPage(object):
     >>> for i, fields in enumerate(page):
     ...   print("%s. %r" % (page.offset + i + 1, fields))
     >>> mysearcher.close()
+
+    To set highlighter attributes (for example ``formatter``), access the
+    underlying :class:`Results` object::
+
+        page.results.formatter = highlight.UppercaseFormatter()
+
     """
 
     def __init__(self, results, pagenum, pagelen=10):
@@ -1575,13 +1609,9 @@ class ResultsPage(object):
             raise ValueError("pagenum must be >= 1")
 
         self.pagecount = int(ceil(self.total / pagelen))
-        if pagenum > 1 and pagenum > self.pagecount:
-            raise ValueError("Asked for page %s of %s"
-                             % (pagenum, self.pagecount))
+        self.pagenum = min(self.pagecount, pagenum)
 
-        self.pagenum = pagenum
-
-        offset = (pagenum - 1) * pagelen
+        offset = (self.pagenum - 1) * pagelen
         if (offset + pagelen) > self.total:
             pagelen = self.total - offset
         self.offset = offset
