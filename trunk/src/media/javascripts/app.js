@@ -577,8 +577,8 @@ define([
 				
 				// Make a bar chart of the word frequency
 				TextCritical.make_bar_chart( $('#chart-word-frequency'), 'Frequency of matched words', search_results.matched_terms, "No data available on matched terms" );
-				TextCritical.make_bar_chart( $('#chart-work-frequency'), 'Frequency of matched works', search_results.matched_works, "No data available on matched works" );
-				TextCritical.make_bar_chart( $('#chart-section-frequency'), 'Frequency of matched sections', search_results.matched_sections, "No data available on matched sections" );
+				TextCritical.make_bar_chart( $('#chart-work-frequency'), 'Number of matched verses by work', search_results.matched_works, "No data available on matched works" );
+				TextCritical.make_bar_chart( $('#chart-section-frequency'), 'Number of matched verses by section', search_results.matched_sections, "No data available on matched sections" );
 				
 				// Show the results and hide the "searching..." dialog
 				$('#searching').hide();
