@@ -27,9 +27,9 @@
 
 from __future__ import division
 
-from whoosh.compat import u
-from whoosh.query import qcore, terms, nary, wrappers
-from whoosh.support.times import datetime_to_long
+from whoosh.compat import b, u
+from whoosh.query import qcore, terms, compound, wrappers
+from whoosh.util.times import datetime_to_long
 
 
 class RangeMixin(object):
@@ -183,12 +183,27 @@ class TermRange(RangeMixin, terms.MultiTerm):
     #            q.end = newtext
     #    return q
 
-    def _words(self, ixreader):
+    def _btexts(self, ixreader):
         fieldname = self.fieldname
-        start = '' if self.start is None else self.start
-        end = u('\uFFFF') if self.end is None else self.end
+        field = ixreader.schema[fieldname]
         startexcl = self.startexcl
         endexcl = self.endexcl
+
+        if self.start is None:
+            start = b("")
+        else:
+            try:
+                start = field.to_bytes(self.start)
+            except ValueError:
+                return
+
+        if self.end is None:
+            end = b("\xFF\xFF\xFF\xFF")
+        else:
+            try:
+                end = field.to_bytes(self.end)
+            except ValueError:
+                return
 
         for fname, t in ixreader.terms_from(fieldname, start):
             if fname != fieldname:
@@ -255,31 +270,39 @@ class NumericRange(RangeMixin, qcore.Query):
 
     def _compile_query(self, ixreader):
         from whoosh.fields import NUMERIC
-        from whoosh.support.numeric import tiered_ranges
+        from whoosh.util.numeric import tiered_ranges
 
         field = ixreader.schema[self.fieldname]
         if not isinstance(field, NUMERIC):
             raise Exception("NumericRange: field %r is not numeric"
                             % self.fieldname)
 
-        start = field.prepare_number(self.start)
-        end = field.prepare_number(self.end)
+        start = self.start
+        if start is not None:
+            start = field.prepare_number(start)
+        end = self.end
+        if end is not None:
+            end = field.prepare_number(end)
 
         subqueries = []
+        stb = field.sortable_to_bytes
         # Get the term ranges for the different resolutions
-        for starttext, endtext in tiered_ranges(field.type, field.signed,
-                                                start, end, field.shift_step,
-                                                self.startexcl, self.endexcl):
-            if starttext == endtext:
-                subq = terms.Term(self.fieldname, starttext)
+        ranges = tiered_ranges(field.numtype, field.bits, field.signed,
+                               start, end, field.shift_step,
+                               self.startexcl, self.endexcl)
+        for startnum, endnum, shift in ranges:
+            if startnum == endnum:
+                subq = terms.Term(self.fieldname, stb(startnum, shift))
             else:
-                subq = TermRange(self.fieldname, starttext, endtext)
+                startbytes = stb(startnum, shift)
+                endbytes = stb(endnum, shift)
+                subq = TermRange(self.fieldname, startbytes, endbytes)
             subqueries.append(subq)
 
         if len(subqueries) == 1:
             q = subqueries[0]
         elif subqueries:
-            q = nary.Or(subqueries, boost=self.boost)
+            q = compound.Or(subqueries, boost=self.boost)
         else:
             return qcore.NullQuery
 
@@ -287,9 +310,9 @@ class NumericRange(RangeMixin, qcore.Query):
             q = wrappers.ConstantScoreQuery(q, self.boost)
         return q
 
-    def matcher(self, searcher, weighting=None):
+    def matcher(self, searcher, context=None):
         q = self._compile_query(searcher.reader())
-        return q.matcher(searcher, weighting=weighting)
+        return q.matcher(searcher, context)
 
 
 class DateRange(NumericRange):

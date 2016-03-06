@@ -129,9 +129,15 @@ class UnionMatcher(AdditiveBiMatcher):
 
         # If neither sub-matcher on its own has a high enough max quality to
         # contribute, convert to an intersection matcher
-        if (minquality and a_active and b_active
-            and a.max_quality() < minquality and b.max_quality() < minquality):
-            return IntersectionMatcher(a, b).replace(minquality)
+        if minquality and a_active and b_active:
+            a_max = a.max_quality()
+            b_max = b.max_quality()
+            if a_max < minquality and b_max < minquality:
+                return IntersectionMatcher(a, b).replace(minquality)
+            elif a_max < minquality:
+                return AndMaybeMatcher(b, a)
+            elif b_max < minquality:
+                return AndMaybeMatcher(a, b)
 
         # If one or both of the sub-matchers are inactive, convert
         if not (a_active or b_active):
@@ -182,8 +188,8 @@ class UnionMatcher(AdditiveBiMatcher):
 
     # Using sets is faster in most cases, but could potentially use a lot of
     # memory. Comment out this method override to not use sets.
-    def all_ids(self):
-        return iter(sorted(set(self.a.all_ids()) | set(self.b.all_ids())))
+    #def all_ids(self):
+    #    return iter(sorted(set(self.a.all_ids()) | set(self.b.all_ids())))
 
     def next(self):
         self._id = None
@@ -361,9 +367,6 @@ class DisjunctionMaxMatcher(UnionMatcher):
         else:
             return self
 
-    def max_quality(self):
-        return max(self.a.max_quality(), self.b.max_quality())
-
     def score(self):
         if not self.a.is_active():
             return self.b.score()
@@ -371,6 +374,9 @@ class DisjunctionMaxMatcher(UnionMatcher):
             return self.a.score()
         else:
             return max(self.a.score(), self.b.score())
+
+    def max_quality(self):
+        return max(self.a.max_quality(), self.b.max_quality())
 
     def block_quality(self):
         return max(self.a.block_quality(), self.b.block_quality())
@@ -517,7 +523,7 @@ class IntersectionMatcher(AdditiveBiMatcher):
                 # quality when added to B
                 sk = a.skip_to_quality(minquality - bq)
                 skipped += sk
-                if not sk:
+                if not sk and a.is_active():
                     # The matcher couldn't skip ahead for some reason, so just
                     # advance and try again
                     a.next()
@@ -525,7 +531,7 @@ class IntersectionMatcher(AdditiveBiMatcher):
                 # And vice-versa
                 sk = b.skip_to_quality(minquality - aq)
                 skipped += sk
-                if not sk:
+                if not sk and b.is_active():
                     b.next()
 
             if not a.is_active() or not b.is_active():
@@ -641,9 +647,6 @@ class AndNotMatcher(BiMatcher):
     def id(self):
         return self.a.id()
 
-    def all_ids(self):
-        return iter(sorted(set(self.a.all_ids()) - set(self.b.all_ids())))
-
     def next(self):
         if not self.a.is_active():
             raise mcore.ReadTooFar
@@ -686,8 +689,7 @@ class AndMaybeMatcher(AdditiveBiMatcher):
     """
 
     def __init__(self, a, b):
-        self.a = a
-        self.b = b
+        AdditiveBiMatcher.__init__(self, a, b)
         self._first_b()
 
     def reset(self):
@@ -799,8 +801,3 @@ class AndMaybeMatcher(AdditiveBiMatcher):
 
     def value_as(self, astype):
         return self.a.value_as(astype)
-
-
-
-
-

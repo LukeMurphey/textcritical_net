@@ -25,7 +25,8 @@
 # those of the authors and should not be interpreted as representing official
 # policies, either expressed or implied, of Matt Chaput.
 
-import sys
+from __future__ import division
+
 from whoosh.compat import xrange
 from whoosh.matching import mcore
 
@@ -62,9 +63,6 @@ class WrappingMatcher(mcore.Matcher):
             return self._replacement(r)
         else:
             return self
-
-    def max_quality(self):
-        return self.child.max_quality()
 
     def id(self):
         return self.child.id()
@@ -105,6 +103,9 @@ class WrappingMatcher(mcore.Matcher):
     def skip_to_quality(self, minquality):
         return self.child.skip_to_quality(minquality / self.boost)
 
+    def max_quality(self):
+        return self.child.max_quality() * self.boost
+
     def block_quality(self):
         return self.child.block_quality() * self.boost
 
@@ -119,7 +120,7 @@ class MultiMatcher(mcore.Matcher):
     """Serializes the results of a list of sub-matchers.
     """
 
-    def __init__(self, matchers, idoffsets, current=0):
+    def __init__(self, matchers, idoffsets, scorer=None, current=0):
         """
         :param matchers: a list of Matcher objects.
         :param idoffsets: a list of offsets corresponding to items in the
@@ -128,6 +129,7 @@ class MultiMatcher(mcore.Matcher):
 
         self.matchers = matchers
         self.offsets = idoffsets
+        self.scorer = scorer
         self.current = current
         self._next_matcher()
 
@@ -170,7 +172,8 @@ class MultiMatcher(mcore.Matcher):
             # contribute
             while (m.is_active()
                    and m.matchers[m.current].max_quality() < minquality):
-                m = self.__class__(self.matchers, self.offsets, m.current + 1)
+                m = self.__class__(self.matchers, self.offsets, self.scorer,
+                                   m.current + 1)
                 m._next_matcher()
 
         if not m.is_active():
@@ -180,9 +183,6 @@ class MultiMatcher(mcore.Matcher):
         # this with the last matcher, but wrap it with a matcher that adds the
         # offset. Have to check whether that's actually faster, though.
         return m
-
-    def max_quality(self):
-        return self.matchers[self.current].max_quality()
 
     def id(self):
         current = self.current
@@ -239,6 +239,9 @@ class MultiMatcher(mcore.Matcher):
         return all(mr.supports_block_quality() for mr
                    in self.matchers[self.current:])
 
+    def max_quality(self):
+        return max(m.max_quality() for m in self.matchers[self.current:])
+
     def block_quality(self):
         return self.matchers[self.current].block_quality()
 
@@ -246,7 +249,7 @@ class MultiMatcher(mcore.Matcher):
         return self.matchers[self.current].weight()
 
     def score(self):
-        return self.matchers[self.current].score()
+        return self.scorer.score(self)
 
 
 def ExcludeMatcher(child, excluded, boost=1.0):
@@ -370,6 +373,10 @@ class InverseMatcher(WrappingMatcher):
         if not child.is_active() and not missing(self._id):
             return
 
+        # Skip missing documents
+        while self._id < self.limit and missing(self._id):
+            self._id += 1
+
         # Catch the child matcher up to where this matcher is
         if child.is_active() and child.id() < self._id:
             child.skip_to(self._id)
@@ -424,7 +431,7 @@ class RequireMatcher(WrappingMatcher):
 
         self.a = a
         self.b = b
-        self.child = IntersectionMatcher(a, b)
+        WrappingMatcher.__init__(self, IntersectionMatcher(a, b))
 
     def copy(self):
         return self.__class__(self.a.copy(), self.b.copy())
@@ -478,9 +485,9 @@ class RequireMatcher(WrappingMatcher):
         return self.a.value_as(astype)
 
 
-class ConstantScoreMatcher(WrappingMatcher):
+class ConstantScoreWrapperMatcher(WrappingMatcher):
     def __init__(self, child, score=1.0):
-        super(ConstantScoreMatcher, self).__init__(child)
+        WrappingMatcher.__init__(self, child)
         self._score = score
 
     def copy(self):
@@ -489,6 +496,9 @@ class ConstantScoreMatcher(WrappingMatcher):
     def _replacement(self, newchild):
         return self.__class__(newchild, score=self._score)
 
+    def max_quality(self):
+        return self._score
+
     def block_quality(self):
         return self._score
 
@@ -496,6 +506,67 @@ class ConstantScoreMatcher(WrappingMatcher):
         return self._score
 
 
+class SingleTermMatcher(WrappingMatcher):
+    """Makes a tree of matchers act as if they were a matcher for a single
+    term for the purposes of "what terms are matching?" questions.
+    """
+
+    def __init__(self, child, term):
+        WrappingMatcher.__init__(self, child)
+        self._term = term
+
+    def term(self):
+        return self._term
+
+    def replace(self, minquality=0):
+        return self
 
 
+class CoordMatcher(WrappingMatcher):
+    """Modifies the computed score to penalize documents that don't match all
+    terms in the matcher tree.
 
+    Because this matcher modifies the score, it may give unexpected results
+    when compared to another matcher returning the unmodified score.
+    """
+
+    def __init__(self, child, scale=1.0):
+        WrappingMatcher.__init__(self, child)
+        self._termcount = len(list(child.term_matchers()))
+        self._maxqual = child.max_quality()
+        self._scale = scale
+
+    def _replacement(self, newchild):
+        return self.__class__(newchild, scale=self._scale)
+
+    def _sqr(self, score, matching):
+        # This is the "SQR" (Short Query Ranking) function used by Apple's old
+        # V-twin search library, described in the paper "V-Twin: A Lightweight
+        # Engine for Interactive Use".
+        #
+        # http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.56.1916
+
+        # score - document score using the current weighting function
+        # matching - number of matching terms in the current document
+        termcount = self._termcount  # Number of terms in this tree
+        scale = self._scale  # Scaling factor
+
+        sqr = ((score + ((matching - 1) / (termcount - scale) ** 2))
+               * ((termcount - 1) / termcount))
+        return sqr
+
+    def max_quality(self):
+        return self._sqr(self.child.max_quality(), self._termcount)
+
+    def block_quality(self):
+        return self._sqr(self.child.block_quality(), self._termcount)
+
+    def score(self):
+        child = self.child
+
+        score = child.score()
+        matching = 0
+        for _ in child.matching_terms(child.id()):
+            matching += 1
+
+        return self._sqr(score, matching)

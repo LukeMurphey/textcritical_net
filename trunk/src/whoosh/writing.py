@@ -26,13 +26,19 @@
 # policies, either expressed or implied, of Matt Chaput.
 
 from __future__ import with_statement
-import threading
-import time
+import threading, time
+from bisect import bisect_right
 from contextlib import contextmanager
 
-from whoosh.compat import abstractmethod
-from whoosh.store import LockError
-from whoosh.util import synchronized
+from whoosh import columns
+from whoosh.compat import abstractmethod, bytes_type
+from whoosh.externalsort import SortingPool
+from whoosh.fields import UnknownFieldError
+from whoosh.index import LockError
+from whoosh.system import emptybytes
+from whoosh.util import fib, random_name
+from whoosh.util.filelock import try_for
+from whoosh.util.text import utf8encode
 
 
 # Exceptions
@@ -50,7 +56,131 @@ def groupmanager(writer):
     writer.end_group()
 
 
-# Base class
+# Merge policies
+
+# A merge policy is a callable that takes the Index object, the SegmentWriter
+# object, and the current segment list (not including the segment being
+# written), and returns an updated segment list (not including the segment
+# being written).
+
+def NO_MERGE(writer, segments):
+    """This policy does not merge any existing segments.
+    """
+    return segments
+
+
+def MERGE_SMALL(writer, segments):
+    """This policy merges small segments, where "small" is defined using a
+    heuristic based on the fibonacci sequence.
+    """
+
+    from whoosh.reading import SegmentReader
+
+    unchanged_segments = []
+    segments_to_merge = []
+
+    sorted_segment_list = sorted(segments, key=lambda s: s.doc_count_all())
+    total_docs = 0
+
+    merge_point_found = False
+    for i, seg in enumerate(sorted_segment_list):
+        count = seg.doc_count_all()
+        if count > 0:
+            total_docs += count
+
+        if merge_point_found:  # append the remaining to unchanged
+            unchanged_segments.append(seg)
+        else:  # look for a merge point
+            segments_to_merge.append((seg, i)) # merge every segment up to the merge point
+            if i > 3 and total_docs < fib(i + 5):  
+                merge_point_found = True
+
+    if merge_point_found and len(segments_to_merge) > 1:
+        for seg, i in segments_to_merge:
+            reader = SegmentReader(writer.storage, writer.schema, seg)
+            writer.add_reader(reader)
+            reader.close()
+        return unchanged_segments
+    else:
+        return segments
+
+
+def OPTIMIZE(writer, segments):
+    """This policy merges all existing segments.
+    """
+
+    from whoosh.reading import SegmentReader
+
+    for seg in segments:
+        reader = SegmentReader(writer.storage, writer.schema, seg)
+        writer.add_reader(reader)
+        reader.close()
+    return []
+
+
+def CLEAR(writer, segments):
+    """This policy DELETES all existing segments and only writes the new
+    segment.
+    """
+
+    return []
+
+
+# Customized sorting pool for postings
+
+class PostingPool(SortingPool):
+    # Subclass whoosh.externalsort.SortingPool to use knowledge of
+    # postings to set run size in bytes instead of items
+
+    namechars = "abcdefghijklmnopqrstuvwxyz0123456789"
+
+    def __init__(self, tempstore, segment, limitmb=128, **kwargs):
+        SortingPool.__init__(self, **kwargs)
+        self.tempstore = tempstore
+        self.segment = segment
+        self.limit = limitmb * 1024 * 1024
+        self.currentsize = 0
+        self.fieldnames = set()
+
+    def _new_run(self):
+        path = "%s.run" % random_name()
+        f = self.tempstore.create_file(path).raw_file()
+        return path, f
+
+    def _open_run(self, path):
+        return self.tempstore.open_file(path).raw_file()
+
+    def _remove_run(self, path):
+        return self.tempstore.delete_file(path)
+
+    def add(self, item):
+        # item = (fieldname, tbytes, docnum, weight, vbytes)
+        assert isinstance(item[1], bytes_type), "tbytes=%r" % item[1]
+        if item[4] is not None:
+            assert isinstance(item[4], bytes_type), "vbytes=%r" % item[4]
+        self.fieldnames.add(item[0])
+        size = (28 + 4 * 5  # tuple = 28 + 4 * length
+                + 21 + len(item[0])  # fieldname = str = 21 + length
+                + 26 + len(item[1]) * 2  # text = unicode = 26 + 2 * length
+                + 18  # docnum = long = 18
+                + 16  # weight = float = 16
+                + 21 + len(item[4] or ''))  # valuestring
+        self.currentsize += size
+        if self.currentsize > self.limit:
+            self.save()
+        self.current.append(item)
+
+    def iter_postings(self):
+        # This is just an alias for items() to be consistent with the
+        # iter_postings()/add_postings() interface of a lot of other classes
+        return self.items()
+
+    def save(self):
+        SortingPool.save(self)
+        self.currentsize = 0
+
+
+# Writer base class
 
 class IndexWriter(object):
     """High-level object for writing to an index.
@@ -84,14 +214,14 @@ class IndexWriter(object):
         :meth:`~IndexWriter.start_group` and :meth:`~IndexWriter.end_group` for
         you, allowing you to use a ``with`` statement to group hierarchical
         documents::
-        
+
             with myindex.writer() as w:
                 with w.group():
                     w.add_document(kind="class", name="Accumulator")
                     w.add_document(kind="method", name="add")
                     w.add_document(kind="method", name="get_result")
                     w.add_document(kind="method", name="close")
-                
+
                 with w.group():
                     w.add_document(kind="class", name="Calculator")
                     w.add_document(kind="method", name="add")
@@ -105,7 +235,7 @@ class IndexWriter(object):
     def start_group(self):
         """Start indexing a group of hierarchical documents. The backend should
         ensure that these documents are all added to the same segment::
-        
+
             with myindex.writer() as w:
                 w.start_group()
                 w.add_document(kind="class", name="Accumulator")
@@ -113,7 +243,7 @@ class IndexWriter(object):
                 w.add_document(kind="method", name="get_result")
                 w.add_document(kind="method", name="close")
                 w.end_group()
-                
+
                 w.start_group()
                 w.add_document(kind="class", name="Calculator")
                 w.add_document(kind="method", name="add")
@@ -121,7 +251,7 @@ class IndexWriter(object):
                 w.add_document(kind="method", name="get_result")
                 w.add_document(kind="method", name="close")
                 w.end_group()
-        
+
         A more convenient way to group documents is to use the
         :meth:`~IndexWriter.group` method and the ``with`` statement.
         """
@@ -193,9 +323,8 @@ class IndexWriter(object):
         try:
             count = 0
             for docnum in s.docs_for_query(q, for_deletion=True):
-                if not self.is_deleted(docnum):
-                    self.delete_document(docnum)
-                    count += 1
+                self.delete_document(docnum)
+                count += 1
         finally:
             if not searcher:
                 s.close()
@@ -270,6 +399,10 @@ class IndexWriter(object):
         See also :meth:`Writer.update_document`.
         """
 
+        raise NotImplementedError
+
+    @abstractmethod
+    def add_reader(self, reader):
         raise NotImplementedError
 
     def _doc_boost(self, fields, default=1.0):
@@ -348,8 +481,9 @@ class IndexWriter(object):
         unique_fields = self._unique_fields(fields)
         if unique_fields:
             with self.searcher() as s:
-                for docnum in s._find_unique([(name, fields[name])
-                                              for name in unique_fields]):
+                uniqueterms = [(name, fields[name]) for name in unique_fields]
+                docs = s._find_unique(uniqueterms)
+                for docnum in docs:
                     self.delete_document(docnum)
 
         # Add the given fields
@@ -366,6 +500,447 @@ class IndexWriter(object):
         """
         pass
 
+
+# Codec-based writer
+
+class SegmentWriter(IndexWriter):
+    def __init__(self, ix, poolclass=None, timeout=0.0, delay=0.1, _lk=True,
+                 limitmb=128, docbase=0, codec=None, compound=True, **kwargs):
+        # Lock the index
+        self.writelock = None
+        if _lk:
+            self.writelock = ix.lock("WRITELOCK")
+            if not try_for(self.writelock.acquire, timeout=timeout,
+                           delay=delay):
+                raise LockError
+
+        if codec is None:
+            from whoosh.codec import default_codec
+            codec = default_codec()
+        self.codec = codec
+
+        # Get info from the index
+        self.storage = ix.storage
+        self.indexname = ix.indexname
+        info = ix._read_toc()
+        self.generation = info.generation + 1
+        self.schema = info.schema
+        self.segments = info.segments
+        self.docnum = self.docbase = docbase
+        self._setup_doc_offsets()
+
+        # Internals
+        self._tempstorage = self.storage.temp_storage("%s.tmp" % self.indexname)
+        newsegment = codec.new_segment(self.storage, self.indexname)
+        self.newsegment = newsegment
+        self.compound = compound and newsegment.should_assemble()
+        self.is_closed = False
+        self._added = False
+        self.pool = PostingPool(self._tempstorage, self.newsegment,
+                                limitmb=limitmb)
+
+        # Set up writers
+        self.perdocwriter = codec.per_document_writer(self.storage, newsegment)
+        self.fieldwriter = codec.field_writer(self.storage, newsegment)
+
+        self.merge = True
+        self.optimize = False
+        self.mergetype = None
+
+    def __repr__(self):
+        return "<%s %r>" % (self.__class__.__name__, self.newsegment)
+
+    def _check_state(self):
+        if self.is_closed:
+            raise IndexingError("This writer is closed")
+
+    def _setup_doc_offsets(self):
+        self._doc_offsets = []
+        base = 0
+        for s in self.segments:
+            self._doc_offsets.append(base)
+            base += s.doc_count_all()
+
+    def _document_segment(self, docnum):
+        #Returns the index.Segment object containing the given document
+        #number.
+        offsets = self._doc_offsets
+        if len(offsets) == 1:
+            return 0
+        return bisect_right(offsets, docnum) - 1
+
+    def _segment_and_docnum(self, docnum):
+        #Returns an (index.Segment, segment_docnum) pair for the segment
+        #containing the given document number.
+
+        segmentnum = self._document_segment(docnum)
+        offset = self._doc_offsets[segmentnum]
+        segment = self.segments[segmentnum]
+        return segment, docnum - offset
+
+    def _process_posts(self, items, startdoc, docmap):
+        schema = self.schema
+        for fieldname, text, docnum, weight, vbytes in items:
+            if fieldname not in schema:
+                continue
+            if docmap is not None:
+                newdoc = docmap[docnum]
+            else:
+                newdoc = startdoc + docnum
+
+            yield (fieldname, text, newdoc, weight, vbytes)
+
+    def temp_storage(self):
+        return self._tempstorage
+
+    def add_field(self, fieldname, fieldspec, **kwargs):
+        self._check_state()
+        if self._added:
+            raise Exception("Can't modify schema after adding data to writer")
+        super(SegmentWriter, self).add_field(fieldname, fieldspec, **kwargs)
+
+    def remove_field(self, fieldname):
+        self._check_state()
+        if self._added:
+            raise Exception("Can't modify schema after adding data to writer")
+        super(SegmentWriter, self).remove_field(fieldname)
+
+    def has_deletions(self):
+        """
+        Returns True if the current index has documents that are marked deleted
+        but haven't been optimized out of the index yet.
+        """
+
+        return any(s.has_deletions() for s in self.segments)
+
+    def delete_document(self, docnum, delete=True):
+        self._check_state()
+        if docnum >= sum(seg.doc_count_all() for seg in self.segments):
+            raise IndexingError("No document ID %r in this index" % docnum)
+        segment, segdocnum = self._segment_and_docnum(docnum)
+        segment.delete_document(segdocnum, delete=delete)
+
+    def deleted_count(self):
+        """
+        :returns: the total number of deleted documents in the index.
+        """
+
+        return sum(s.deleted_count() for s in self.segments)
+
+    def is_deleted(self, docnum):
+        segment, segdocnum = self._segment_and_docnum(docnum)
+        return segment.is_deleted(segdocnum)
+
+    def reader(self, reuse=None):
+        from whoosh.index import FileIndex
+
+        self._check_state()
+        return FileIndex._reader(self.storage, self.schema, self.segments,
+                                 self.generation, reuse=reuse)
+
+    def iter_postings(self):
+        return self.pool.iter_postings()
+
+    def add_postings_to_pool(self, reader, startdoc, docmap):
+        items = self._process_posts(reader.iter_postings(), startdoc, docmap)
+        add_post = self.pool.add
+        for item in items:
+            add_post(item)
+
+    def write_postings(self, lengths, items, startdoc, docmap):
+        items = self._process_posts(items, startdoc, docmap)
+        self.fieldwriter.add_postings(self.schema, lengths, items)
+
+    def write_per_doc(self, fieldnames, reader):
+        # Very bad hack: reader should be an IndexReader, but may be a
+        # PerDocumentReader if this is called from multiproc, where the code
+        # tries to be efficient by merging per-doc and terms separately.
+        # TODO: fix this!
+
+        schema = self.schema
+        if reader.has_deletions():
+            docmap = {}
+        else:
+            docmap = None
+
+        pdw = self.perdocwriter
+        # Open all column readers
+        cols = {}
+        for fieldname in fieldnames:
+            fieldobj = schema[fieldname]
+            coltype = fieldobj.column_type
+            if coltype and reader.has_column(fieldname):
+                creader = reader.column_reader(fieldname, coltype)
+                if isinstance(creader, columns.TranslatingColumnReader):
+                    creader = creader.raw_column()
+                cols[fieldname] = creader
+
+        for docnum, stored in reader.iter_docs():
+            if docmap is not None:
+                docmap[docnum] = self.docnum
+
+            pdw.start_doc(self.docnum)
+            for fieldname in fieldnames:
+                fieldobj = schema[fieldname]
+                length = reader.doc_field_length(docnum, fieldname)
+                pdw.add_field(fieldname, fieldobj,
+                              stored.get(fieldname), length)
+
+                if fieldobj.vector and reader.has_vector(docnum, fieldname):
+                    v = reader.vector(docnum, fieldname, fieldobj.vector)
+                    pdw.add_vector_matcher(fieldname, fieldobj, v)
+
+                if fieldname in cols:
+                    cv = cols[fieldname][docnum]
+                    pdw.add_column_value(fieldname, fieldobj.column_type, cv)
+
+            pdw.finish_doc()
+            self.docnum += 1
+
+        return docmap
+
+    def add_reader(self, reader):
+        self._check_state()
+        basedoc = self.docnum
+        ndxnames = set(fname for fname in reader.indexed_field_names()
+                       if fname in self.schema)
+        fieldnames = set(self.schema.names()) | ndxnames
+
+        docmap = self.write_per_doc(fieldnames, reader)
+        self.add_postings_to_pool(reader, basedoc, docmap)
+        self._added = True
+
+    def _check_fields(self, schema, fieldnames):
+        # Check if the caller gave us a bogus field
+        for name in fieldnames:
+            if name not in schema:
+                raise UnknownFieldError("No field named %r in %s"
+                                        % (name, schema))
+
+    def add_document(self, **fields):
+        self._check_state()
+        perdocwriter = self.perdocwriter
+        schema = self.schema
+        docnum = self.docnum
+        add_post = self.pool.add
+
+        docboost = self._doc_boost(fields)
+        fieldnames = sorted([name for name in fields.keys()
+                             if not name.startswith("_")])
+        self._check_fields(schema, fieldnames)
+
+        perdocwriter.start_doc(docnum)
+        for fieldname in fieldnames:
+            value = fields.get(fieldname)
+            if value is None:
+                continue
+            field = schema[fieldname]
+
+            length = 0
+            if field.indexed:
+                # TODO: Method for adding progressive field values, ie
+                # setting start_pos/start_char?
+                fieldboost = self._field_boost(fields, fieldname, docboost)
+                # Ask the field to return a list of (text, weight, vbytes)
+                # tuples
+                items = field.index(value)
+                # Only store the length if the field is marked scorable
+                scorable = field.scorable
+                # Add the terms to the pool
+                for tbytes, freq, weight, vbytes in items:
+                    weight *= fieldboost
+                    if scorable:
+                        length += freq
+                    add_post((fieldname, tbytes, docnum, weight, vbytes))
+
+            if field.separate_spelling():
+                spellfield = field.spelling_fieldname(fieldname)
+                for word in field.spellable_words(value):
+                    word = utf8encode(word)[0]
+                    # item = (fieldname, tbytes, docnum, weight, vbytes)
+                    add_post((spellfield, word, 0, 1, vbytes))
+
+            vformat = field.vector
+            if vformat:
+                analyzer = field.analyzer
+                # Call the format's word_values method to get posting values
+                vitems = vformat.word_values(value, analyzer, mode="index")
+                # Remove unused frequency field from the tuple
+                vitems = sorted((text, weight, vbytes)
+                                for text, _, weight, vbytes in vitems)
+                perdocwriter.add_vector_items(fieldname, field, vitems)
+
+            # Allow a custom value for stored field/column
+            customval = fields.get("_stored_%s" % fieldname, value)
+
+            # Add the stored value and length for this field to the per-
+            # document writer
+            sv = customval if field.stored else None
+            perdocwriter.add_field(fieldname, field, sv, length)
+
+            column = field.column_type
+            if column and customval is not None:
+                cv = field.to_column_value(customval)
+                perdocwriter.add_column_value(fieldname, column, cv)
+
+        perdocwriter.finish_doc()
+        self._added = True
+        self.docnum += 1
+
+    def doc_count(self):
+        return self.docnum - self.docbase
+
+    def get_segment(self):
+        newsegment = self.newsegment
+        newsegment.set_doc_count(self.docnum)
+        return newsegment
+
+    def per_document_reader(self):
+        if not self.perdocwriter.is_closed:
+            raise Exception("Per-doc writer is still open")
+        return self.codec.per_document_reader(self.storage, self.get_segment())
+
+    # The following methods break out the commit functionality into smaller
+    # pieces to allow MpWriter to call them individually
+
+    def _merge_segments(self, mergetype, optimize, merge):
+        # The writer supports two ways of setting mergetype/optimize/merge:
+        # as attributes or as keyword arguments to commit(). Originally there
+        # were just the keyword arguments, but then I added the ability to use
+        # the writer as a context manager using "with", so the user no longer
+        # explicitly called commit(), hence the attributes
+        mergetype = mergetype if mergetype is not None else self.mergetype
+        optimize = optimize if optimize is not None else self.optimize
+        merge = merge if merge is not None else self.merge
+
+        if mergetype:
+            pass
+        elif optimize:
+            mergetype = OPTIMIZE
+        elif not merge:
+            mergetype = NO_MERGE
+        else:
+            mergetype = MERGE_SMALL
+
+        # Call the merge policy function. The policy may choose to merge
+        # other segments into this writer's pool
+        return mergetype(self, self.segments)
+
+    def _flush_segment(self):
+        self.perdocwriter.close()
+        if self.codec.length_stats:
+            pdr = self.per_document_reader()
+        else:
+            pdr = None
+        postings = self.pool.iter_postings()
+        self.fieldwriter.add_postings(self.schema, pdr, postings)
+        self.fieldwriter.close()
+        if pdr:
+            pdr.close()
+
+    def _close_segment(self):
+        if not self.perdocwriter.is_closed:
+            self.perdocwriter.close()
+        if not self.fieldwriter.is_closed:
+            self.fieldwriter.close()
+        self.pool.cleanup()
+
+    def _assemble_segment(self):
+        if self.compound:
+            # Assemble the segment files into a compound file
+            newsegment = self.get_segment()
+            newsegment.create_compound_file(self.storage)
+            newsegment.compound = True
+
+    def _partial_segment(self):
+        # For use by a parent multiprocessing writer: Closes out the segment
+        # but leaves the pool files intact so the parent can access them
+        self._check_state()
+        self.perdocwriter.close()
+        self.fieldwriter.close()
+        # Don't call self.pool.cleanup()! We want to grab the pool files.
+        return self.get_segment()
+
+    def _finalize_segment(self):
+        # Finish writing segment
+        self._flush_segment()
+        # Close segment files
+        self._close_segment()
+        # Assemble compound segment if necessary
+        self._assemble_segment()
+
+        return self.get_segment()
+
+    def _commit_toc(self, segments):
+        from whoosh.index import TOC, clean_files
+
+        # Write a new TOC with the new segment list (and delete old files)
+        toc = TOC(self.schema, segments, self.generation)
+        toc.write(self.storage, self.indexname)
+        # Delete leftover files
+        clean_files(self.storage, self.indexname, self.generation, segments)
+
+    def _finish(self):
+        self._tempstorage.destroy()
+        if self.writelock:
+            self.writelock.release()
+        self.is_closed = True
+        #self.storage.close()
+
+    # Finalization methods
+
+    def commit(self, mergetype=None, optimize=None, merge=None):
+        """Finishes writing and saves all additions and changes to disk.
+
+        There are four possible ways to use this method::
+
+            # Merge small segments but leave large segments, trying to
+            # balance fast commits with fast searching:
+            writer.commit()
+
+            # Merge all segments into a single segment:
+            writer.commit(optimize=True)
+
+            # Don't merge any existing segments:
+            writer.commit(merge=False)
+
+            # Use a custom merge function
+            writer.commit(mergetype=my_merge_function)
+
+        :param mergetype: a custom merge function taking a Writer object and
+            segment list as arguments, and returning a new segment list. If you
+            supply a ``mergetype`` function, the values of the ``optimize`` and
+            ``merge`` arguments are ignored.
+        :param optimize: if True, all existing segments are merged with the
+            documents you've added to this writer (and the value of the
+            ``merge`` argument is ignored).
+        :param merge: if False, do not merge small segments.
+        """
+
+        self._check_state()
+        # Merge old segments if necessary
+        finalsegments = self._merge_segments(mergetype, optimize, merge)
+        if self._added:
+            # Flush the current segment being written and add it to the
+            # list of remaining segments returned by the merge policy
+            # function
+            finalsegments.append(self._finalize_segment())
+        else:
+            # Close segment files
+            self._close_segment()
+        # Write TOC
+        self._commit_toc(finalsegments)
+
+        # Final cleanup
+        self._finish()
+
+    def cancel(self):
+        self._check_state()
+        self._close_segment()
+        self._finish()
+
+
+# Writer wrappers
 
 class AsyncWriter(threading.Thread, IndexWriter):
     """Convenience wrapper for a writer object that might fail due to locking
@@ -469,42 +1044,90 @@ class AsyncWriter(threading.Thread, IndexWriter):
             self.writer.cancel(*args, **kwargs)
 
 
+# Ex post factor functions
+
+def add_spelling(ix, fieldnames, commit=True):
+    """Adds spelling files to an existing index that was created without
+    them, and modifies the schema so the given fields have the ``spelling``
+    attribute. Only works on filedb indexes.
+
+    >>> ix = index.open_dir("testindex")
+    >>> add_spelling(ix, ["content", "tags"])
+
+    :param ix: a :class:`whoosh.filedb.fileindex.FileIndex` object.
+    :param fieldnames: a list of field names to create word graphs for.
+    :param force: if True, overwrites existing word graph files. This is only
+        useful for debugging.
+    """
+
+    from whoosh.automata import fst
+    from whoosh.reading import SegmentReader
+
+    writer = ix.writer()
+    storage = writer.storage
+    schema = writer.schema
+    segments = writer.segments
+
+    for segment in segments:
+        ext = segment.codec().FST_EXT
+
+        r = SegmentReader(storage, schema, segment)
+        f = segment.create_file(storage, ext)
+        gw = fst.GraphWriter(f)
+        for fieldname in fieldnames:
+            gw.start_field(fieldname)
+            for word in r.lexicon(fieldname):
+                gw.insert(word)
+            gw.finish_field()
+        gw.close()
+
+    for fieldname in fieldnames:
+        schema[fieldname].spelling = True
+
+    if commit:
+        writer.commit(merge=False)
+
+
+# Buffered writer class
+
 class BufferedWriter(IndexWriter):
-    """Convenience class that acts like a writer but buffers added documents to
-    a :class:`~whoosh.ramindex.RamIndex` before dumping the buffered documents
-    as a batch into the actual index.
+    """Convenience class that acts like a writer but buffers added documents
+    before dumping the buffered documents as a batch into the actual index.
 
     In scenarios where you are continuously adding single documents very
     rapidly (for example a web application where lots of users are adding
     content simultaneously), using a BufferedWriter is *much* faster than
-    opening and committing a writer for each document you add.
+    opening and committing a writer for each document you add. If you're adding
+    batches of documents at a time, you can just use a regular writer.
 
     (This class may also be useful for batches of ``update_document`` calls. In
     a normal writer, ``update_document`` calls cannot update documents you've
     added *in that writer*. With ``BufferedWriter``, this will work.)
 
-    If you're adding a batches of documents at a time, you can just use a
-    regular writer -- you're already committing a "batch" of documents, so you
-    don't need this class.
-
     To use this class, create it from your index and *keep it open*, sharing
     it between threads.
 
     >>> from whoosh.writing import BufferedWriter
-    >>> writer = BufferedWriter(myindex, period=120, limit=100)
+    >>> writer = BufferedWriter(myindex, period=120, limit=20)
+    >>> # Then you can use the writer to add and update documents
+    >>> writer.add_document(...)
+    >>> writer.add_document(...)
+    >>> writer.add_document(...)
+    >>> # Before the writer goes out of scope, call close() on it
+    >>> writer.close()
 
-    You can control how often the ``BufferedWriter`` flushes the in-memory
-    index to disk using the ``period`` and ``limit`` arguments. ``period`` is
-    the maximum number of seconds between commits. ``limit`` is the maximum
-    number of additions to buffer between commits.
+    .. note::
+        This object stores documents in memory and may keep an underlying
+        writer open, so you must explicitly call the
+        :meth:`~BufferedWriter.close` method on this object before it goes out
+        of scope to release the write lock and make sure any uncommitted
+        changes are saved.
 
-    You can read/search the combination of the on-disk index and the buffered
-    documents in memory by calling ``BufferedWriter.reader()`` or
+    You can read/search the combination of the on-disk index and the
+    buffered documents in memory by calling ``BufferedWriter.reader()`` or
     ``BufferedWriter.searcher()``. This allows quasi-real-time search, where
     documents are available for searching as soon as they are buffered in
     memory, before they are committed to disk.
-
-    >>> searcher = writer.searcher()
 
     .. tip::
         By using a searcher from the shared writer, multiple *threads* can
@@ -513,19 +1136,19 @@ class BufferedWriter(IndexWriter):
         documents to become available to other processes as soon as possible,
         you have to use a traditional writer instead of a ``BufferedWriter``.
 
-    Calling ``commit()`` on the ``BufferedWriter`` manually commits any batched
-    up changes. You can continue to make changes after calling ``commit()``,
-    and you can call ``commit()`` multiple times.
+    You can control how often the ``BufferedWriter`` flushes the in-memory
+    index to disk using the ``period`` and ``limit`` arguments. ``period`` is
+    the maximum number of seconds between commits. ``limit`` is the maximum
+    number of additions to buffer between commits.
 
-    .. note::
-        This object keeps an underlying writer open and stores documents in
-        memory, so you must explicitly call the :meth:`~BufferedWriter.close()`
-        method on this object before it goes out of scope to release the
-        write lock and make sure any uncommitted changes are saved.
+    You don't need to call ``commit()`` on the ``BufferedWriter`` manually.
+    Doing so will just flush the buffered documents to disk early. You can
+    continue to make changes after calling ``commit()``, and you can call
+    ``commit()`` multiple times.
     """
 
     def __init__(self, index, period=60, limit=10, writerargs=None,
-                 commitargs=None, tempixclass=None):
+                 commitargs=None):
         """
         :param index: the :class:`whoosh.index.Index` to write to.
         :param period: the maximum amount of time (in seconds) between commits.
@@ -535,8 +1158,6 @@ class BufferedWriter(IndexWriter):
             committing.
         :param writerargs: dictionary specifying keyword arguments to be passed
             to the index's ``writer()`` method when creating a writer.
-        :param commitargs: dictionary specifying keyword arguments to be passed
-            to the writer's ``commit()`` method when committing a writer.
         """
 
         self.index = index
@@ -544,56 +1165,48 @@ class BufferedWriter(IndexWriter):
         self.limit = limit
         self.writerargs = writerargs or {}
         self.commitargs = commitargs or {}
-        self._sync_lock = threading.RLock()
-        self._write_lock = threading.Lock()
 
-        if tempixclass is None:
-            from whoosh.ramindex import RamIndex as tempixclass
-        self.tempixclass = tempixclass
+        self.lock = threading.RLock()
+        self.writer = self.index.writer(**self.writerargs)
 
-        self.writer = None
-        self.base = self.index.doc_count_all()
+        self._make_ram_index()
         self.bufferedcount = 0
-        self.commitcount = 0
-        self.ramindex = self._create_ramindex()
+
+        # Start timer
         if self.period:
             self.timer = threading.Timer(self.period, self.commit)
+            self.timer.start()
 
-    def __del__(self):
-        if hasattr(self, "writer") and self.writer:
-            if not self.writer.is_closed:
-                try:
-                    self.writer.cancel()
-                except:
-                    pass
-            del self.writer
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
 
-    def _create_ramindex(self):
-        return self.tempixclass(self.index.schema)
+    def _make_ram_index(self):
+        from whoosh.codec.memory import MemoryCodec
 
-    def _get_writer(self):
-        if self.writer is None:
-            self.writer = self.index.writer(**self.writerargs)
-            self.schema = self.writer.schema
-            self.base = self.index.doc_count_all()
-            self.bufferedcount = 0
-        return self.writer
+        self.codec = MemoryCodec()
 
-    @synchronized
+    def _get_ram_reader(self):
+        return self.codec.reader(self.schema)
+
+    @property
+    def schema(self):
+        return self.writer.schema
+
     def reader(self, **kwargs):
         from whoosh.reading import MultiReader
 
-        writer = self._get_writer()
-        ramreader = self.ramindex
-        if self.index.is_empty():
-            return ramreader
-        else:
-            reader = writer.reader(**kwargs)
+        reader = self.writer.reader()
+        with self.lock:
+            ramreader = self._get_ram_reader()
+
+        # If there are in-memory docs, combine the readers
+        if ramreader.doc_count():
             if reader.is_atomic():
                 reader = MultiReader([reader, ramreader])
             else:
                 reader.add_reader(ramreader)
-            return reader
+
+        return reader
 
     def searcher(self, **kwargs):
         from whoosh.searching import Searcher
@@ -607,54 +1220,56 @@ class BufferedWriter(IndexWriter):
         if self.period:
             self.timer.cancel()
 
-        # Replace the RAM index
-        with self._sync_lock:
-            oldramindex = self.ramindex
-            self.ramindex = self._create_ramindex()
+        with self.lock:
+            ramreader = self._get_ram_reader()
+            self._make_ram_index()
 
-        with self._write_lock:
-            if self.bufferedcount:
-                self._get_writer().add_reader(oldramindex.reader())
+        if self.bufferedcount:
+            self.writer.add_reader(ramreader)
+        self.writer.commit(**self.commitargs)
+        self.bufferedcount = 0
 
-            if self.writer:
-                self.writer.commit(**self.commitargs)
-                self.writer = None
-                self.commitcount += 1
-
-            if restart:
-                if self.period:
-                    self.timer = threading.Timer(self.period, self.commit)
+        if restart:
+            self.writer = self.index.writer(**self.writerargs)
+            if self.period:
+                self.timer = threading.Timer(self.period, self.commit)
+                self.timer.start()
 
     def add_reader(self, reader):
-        with self._write_lock:
-            self._get_writer().add_reader(reader)
+        # Pass through to the underlying on-disk index
+        self.writer.add_reader(reader)
+        self.commit()
 
     def add_document(self, **fields):
-        with self._sync_lock:
-            self.ramindex.add_document(**fields)
+        with self.lock:
+            # Hijack a writer to make the calls into the codec
+            with self.codec.writer(self.writer.schema) as w:
+                w.add_document(**fields)
+
             self.bufferedcount += 1
-        if self.bufferedcount >= self.limit:
-            self.commit()
+            if self.bufferedcount >= self.limit:
+                self.commit()
 
-    @synchronized
     def update_document(self, **fields):
-        self._get_writer()
-        super(BufferedWriter, self).update_document(**fields)
+        with self.lock:
+            IndexWriter.update_document(self, **fields)
 
-    @synchronized
     def delete_document(self, docnum, delete=True):
-        if docnum < self.base:
-            return self._get_writer().delete_document(docnum, delete=delete)
-        else:
-            return self.ramindex.delete_document(docnum - self.base,
-                                                 delete=delete)
+        with self.lock:
+            base = self.index.doc_count_all()
+            if docnum < base:
+                self.writer.delete_document(docnum, delete=delete)
+            else:
+                ramsegment = self.codec.segment
+                ramsegment.delete_document(docnum - base, delete=delete)
 
-    @synchronized
     def is_deleted(self, docnum):
-        if docnum < self.base:
+        base = self.index.doc_count_all()
+        if docnum < base:
             return self.writer.is_deleted(docnum)
         else:
-            return self.ramindex.is_deleted(docnum - self.base)
+            return self._get_ram_reader().is_deleted(docnum - base)
+
 
 # Backwards compatibility with old name
 BatchWriter = BufferedWriter

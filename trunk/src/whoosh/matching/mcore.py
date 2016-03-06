@@ -135,6 +135,9 @@ class Matcher(object):
         else:
             yield t
 
+    def is_leaf(self):
+        return not bool(self.children())
+
     def children(self):
         """Returns an (possibly empty) list of the submatchers of this
         matcher.
@@ -171,6 +174,15 @@ class Matcher(object):
 
         return False
 
+    def max_quality(self):
+        """Returns the maximum possible quality measurement for this matcher,
+        according to the current weighting algorithm. Raises
+        ``NoQualityAvailable`` if the matcher or weighting do not support
+        quality measurements.
+        """
+
+        raise NoQualityAvailable(self.__class__)
+
     def block_quality(self):
         """Returns a quality measurement of the current block of postings,
         according to the current weighting algorithm. Raises
@@ -197,12 +209,13 @@ class Matcher(object):
         """
 
         i = 0
-        while self.is_active():
-            yield self.id()
-            self.next()
+        m = self
+        while m.is_active():
+            yield m.id()
+            m.next()
             i += 1
             if i == 10:
-                self = self.replace()
+                m = m.replace()
                 i = 0
 
     def all_items(self):
@@ -215,12 +228,13 @@ class Matcher(object):
         """
 
         i = 0
+        m = self
         while self.is_active():
-            yield (self.id(), self.value())
-            self.next()
+            yield (m.id(), m.value())
+            m.next()
             i += 1
             if i == 10:
-                self = self.replace()
+                m = m.replace()
                 i = 0
 
     def items_as(self, astype):
@@ -261,12 +275,13 @@ class Matcher(object):
                                   % self.__class__)
 
     def spans(self):
-        """Returns a list of :class:`whoosh.spans.Span` objects for the matches
-        in this document. Raises an exception if the field being searched does
-        not store positions.
+        """Returns a list of :class:`~whoosh.query.spans.Span` objects for the
+        matches in this document. Raises an exception if the field being
+        searched does not store positions.
         """
 
-        from whoosh.spans import Span
+        from whoosh.query.spans import Span
+
         if self.supports("characters"):
             return [Span(pos, startchar=startchar, endchar=endchar)
                     for pos, startchar, endchar in self.value_as("characters")]
@@ -329,6 +344,31 @@ class Matcher(object):
         return self.__eq__(other) or self.__gt__(other)
 
 
+# Simple intermediate classes
+
+class ConstantScoreMatcher(Matcher):
+    def __init__(self, score=1.0):
+        self._score = score
+
+    def supports_block_quality(self):
+        return True
+
+    def max_quality(self):
+        return self._score
+
+    def block_quality(self):
+        return self._score
+
+    def skip_to_quality(self, minquality):
+        if minquality >= self._score:
+            self.go_inactive()
+
+    def score(self):
+        return self._score
+
+
+# Null matcher
+
 class NullMatcherClass(Matcher):
     """Matcher with no postings which is never active.
     """
@@ -336,8 +376,14 @@ class NullMatcherClass(Matcher):
     def __call__(self):
         return self
 
+    def __repr__(self):
+        return "<NullMatcher>"
+
     def supports_block_quality(self):
         return True
+
+    def max_quality(self):
+        return 0
 
     def block_quality(self):
         return 0
@@ -356,9 +402,6 @@ class NullMatcherClass(Matcher):
 
     def copy(self):
         return self
-
-    def max_quality(self):
-        return 0
 
 
 # Singleton instance
@@ -405,6 +448,15 @@ class ListMatcher(Matcher):
     def reset(self):
         self._i = 0
 
+    def skip_to(self, id):
+        if not self.is_active():
+            raise ReadTooFar
+        if id < self.id():
+            return
+
+        while self._i < len(self._ids) and self._ids[self._i] < id:
+            self._i += 1
+
     def term(self):
         return self._term
 
@@ -414,25 +466,30 @@ class ListMatcher(Matcher):
                               self._all_weights)
 
     def replace(self, minquality=0):
-        if not self.is_active() or (minquality
-                                    and self.max_quality() < minquality):
+        if not self.is_active():
+            return NullMatcher()
+        elif minquality and self.max_quality() < minquality:
             return NullMatcher()
         else:
             return self
-
-    def max_quality(self):
-        return self.block_max_weight()
 
     def supports_block_quality(self):
         return (self._scorer is not None
                 and self._scorer.supports_block_quality())
 
+    def max_quality(self):
+        # This matcher treats all postings in the list as one "block", so the
+        # block quality is the same as the quality of the entire list
+        if self._scorer:
+            return self._scorer.block_quality(self)
+        else:
+            return self.block_max_weight()
+
     def block_quality(self):
         return self._scorer.block_quality(self)
 
     def skip_to_quality(self, minquality):
-        self._i += 1
-        while self._i < len(self._ids) and self.quality() <= minquality:
+        while self._i < len(self._ids) and self.block_quality() <= minquality:
             self._i += 1
         return 0
 
@@ -514,5 +571,52 @@ class ListMatcher(Matcher):
             return self.weight()
 
 
+# Term/vector leaf posting matcher middleware
 
+class LeafMatcher(Matcher):
+    # Subclasses need to set
+    #   self.scorer -- a Scorer object or None
+    #   self.format -- Format object for the posting values
 
+    def __repr__(self):
+        return "%s(%r, %s)" % (self.__class__.__name__, self.term(),
+                               self.is_active())
+
+    def term(self):
+        return self._term
+
+    def items_as(self, astype):
+        decoder = self.format.decoder(astype)
+        for id, value in self.all_items():
+            yield (id, decoder(value))
+
+    def supports(self, astype):
+        return self.format.supports(astype)
+
+    def value_as(self, astype):
+        decoder = self.format.decoder(astype)
+        return decoder(self.value())
+
+    def spans(self):
+        from whoosh.query.spans import Span
+
+        if self.supports("characters"):
+            return [Span(pos, startchar=startchar, endchar=endchar)
+                    for pos, startchar, endchar in self.value_as("characters")]
+        elif self.supports("positions"):
+            return [Span(pos) for pos in self.value_as("positions")]
+        else:
+            raise Exception("Field does not support positions (%r)"
+                            % self.term())
+
+    def supports_block_quality(self):
+        return self.scorer and self.scorer.supports_block_quality()
+
+    def max_quality(self):
+        return self.scorer.max_quality()
+
+    def block_quality(self):
+        return self.scorer.block_quality(self)
+
+    def score(self):
+        return self.scorer.score(self)

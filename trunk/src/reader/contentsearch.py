@@ -4,7 +4,6 @@ from whoosh.filedb.filestore import FileStorage
 from whoosh.fields import Schema, NUMERIC, TEXT
 from whoosh.analysis import SimpleAnalyzer
 from whoosh.query import Variations
-from whoosh.util import rcompile
 import re
 
 from django.conf import settings
@@ -41,11 +40,11 @@ class WorkIndexer:
         """
         
         # Add an analyzer that allows diacritical marks to be within the search queries
-        analyzer = SimpleAnalyzer( rcompile(r"[\w/*()=\\+|&']+(\.?[\w/*()=\\+|&']+)*") )
-        slug_analyzer = SimpleAnalyzer( rcompile(r"[a-z0-9-]+") )
-        section_analyzer = SimpleAnalyzer( rcompile(r"[a-zA-Z0-9- ]+") )
+        analyzer = SimpleAnalyzer( expression="[\w/*()=\\+|&']+(\.?[\w/*()=\\+|&']+)*" )
+        slug_analyzer = SimpleAnalyzer( expression="[a-z0-9-]+" )
+        section_analyzer = SimpleAnalyzer( expression="[a-zA-Z0-9- ]+" )
         
-        return Schema( verse_id      = NUMERIC(unique=True, stored=True),
+        return Schema( verse_id      = NUMERIC(unique=True, stored=True, sortable=True),
                        content       = TEXT(analyzer=analyzer),
                        no_diacritics = TEXT(analyzer=analyzer),
                        work_id       = TEXT,
@@ -302,7 +301,7 @@ class VerseSearchResults:
     
         return highlights_str
         
-    def __init__(self, results, page, pagelen ):
+    def __init__(self, results, page, pagelen, use_estimated_length=False ):
         
         self.page = page
         self.pagelen = pagelen
@@ -319,7 +318,10 @@ class VerseSearchResults:
             
             self.verses.append( VerseSearchResult(verse, highlights ) )
         
-        self.result_count = results.results.estimated_length()
+        if use_estimated_length:
+            self.result_count = results.results.estimated_length()
+        else:
+            self.result_count = len(results.results)
         
         temp_matched_terms = {}
         temp_matched_terms_no_diacritics = {}
@@ -466,7 +468,7 @@ class GreekVariations(Variations):
         # Return the forms
         return forms
     
-    def _words(self, ixreader):
+    def _btexts(self, ixreader):
         
         # Determine if we are searching the field that is stripped of diacritical marks
         if self.fieldname == "no_diacritics":
@@ -542,7 +544,7 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True 
         
         logger.debug('Search query parsed, raw_query="%s"', search_query)
         
-        results = searcher.search_page(search_query, 1, limit, terms=True)
+        results = searcher.search_page(search_query, 1, limit, terms=True, sortedby="verse_id")
         
         stats = {
                  'matches' : 0,
@@ -602,7 +604,7 @@ def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_fo
         logger.debug('Search query parsed, raw_query="%s"', search_query)
         
         # Get the search result
-        search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen, terms=True), page, pagelen)
+        search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen, terms=True, sortedby="verse_id"), page, pagelen)
             
     return search_results
 

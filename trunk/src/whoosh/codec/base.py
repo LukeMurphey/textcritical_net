@@ -29,75 +29,115 @@
 This module contains base classes/interfaces for "codec" objects.
 """
 
-import random
-from array import array
-from struct import Struct, pack
 from bisect import bisect_right
 
-from whoosh.compat import (loads, dumps, b, bytes_type, string_type, xrange,
-                           array_frombytes, array_tobytes)
+from whoosh import columns
+from whoosh.automata import lev
+from whoosh.compat import abstractmethod, izip, unichr, xrange
 from whoosh.filedb.compound import CompoundStorage
-from whoosh.matching import Matcher, ReadTooFar
-from whoosh.reading import TermInfo
-from whoosh.spans import Span
-from whoosh.system import (_INT_SIZE, _FLOAT_SIZE, pack_long, unpack_long,
-                           IS_LITTLE)
-from whoosh.util import byte_to_length, length_to_byte
+from whoosh.system import emptybytes
+from whoosh.util import random_name
 
 
-try:
-    from zlib import compress, decompress
-    can_compress = True
-except ImportError:
-    can_compress = False
+# Exceptions
+
+class OutOfOrderError(Exception):
+    pass
 
 
 # Base classes
 
 class Codec(object):
+    length_stats = True
+
     # Per document value writer
+
+    @abstractmethod
     def per_document_writer(self, storage, segment):
         raise NotImplementedError
 
     # Inverted index writer
+
+    @abstractmethod
     def field_writer(self, storage, segment):
         raise NotImplementedError
 
-    # Readers
+    # Postings
 
+    @abstractmethod
+    def postings_writer(self, dbfile, byteids=False):
+        raise NotImplementedError
+
+    @abstractmethod
+    def postings_reader(self, dbfile, terminfo, format_, term=None, scorer=None):
+        raise NotImplementedError
+
+    # Index readers
+
+    def automata(self, storage, segment):
+        return Automata()
+
+    @abstractmethod
     def terms_reader(self, storage, segment):
         raise NotImplementedError
 
-    def lengths_reader(self, storage, segment):
-        raise NotImplementedError
-
-    def vector_reader(self, storage, segment):
-        raise NotImplementedError
-
-    def stored_fields_reader(self, storage, segment):
-        raise NotImplementedError
-
-    def graph_reader(self, storage, segment):
+    @abstractmethod
+    def per_document_reader(self, storage, segment):
         raise NotImplementedError
 
     # Segments and generations
 
+    @abstractmethod
     def new_segment(self, storage, indexname):
         raise NotImplementedError
 
-    def commit_toc(self, storage, indexname, schema, segments, generation):
-        raise NotImplementedError
+
+class WrappingCodec(Codec):
+    def __init__(self, child):
+        self._child = child
+
+    def per_document_writer(self, storage, segment):
+        return self._child.per_document_writer(storage, segment)
+
+    def field_writer(self, storage, segment):
+        return self._child.field_writer(storage, segment)
+
+    def postings_writer(self, dbfile, byteids=False):
+        return self._child.postings_writer(dbfile, byteids=byteids)
+
+    def postings_reader(self, dbfile, terminfo, format_, term=None, scorer=None):
+        return self._child.postings_reader(dbfile, terminfo, format_, term=term,
+                                           scorer=scorer)
+
+    def automata(self, storage, segment):
+        return self._child.automata(storage, segment)
+
+    def terms_reader(self, storage, segment):
+        return self._child.terms_reader(storage, segment)
+
+    def per_document_reader(self, storage, segment):
+        return self._child.per_document_reader(storage, segment)
+
+    def new_segment(self, storage, indexname):
+        return self._child.new_segment(storage, indexname)
 
 
 # Writer classes
 
 class PerDocumentWriter(object):
+    @abstractmethod
     def start_doc(self, docnum):
         raise NotImplementedError
 
+    @abstractmethod
     def add_field(self, fieldname, fieldobj, value, length):
         raise NotImplementedError
 
+    @abstractmethod
+    def add_column_value(self, fieldname, columnobj, value):
+        raise NotImplementedError("Codec does not implement writing columns")
+
+    @abstractmethod
     def add_vector_items(self, fieldname, fieldobj, items):
         raise NotImplementedError
 
@@ -107,73 +147,110 @@ class PerDocumentWriter(object):
                 text = vmatcher.id()
                 weight = vmatcher.weight()
                 valuestring = vmatcher.value()
-                yield (text, None, weight, valuestring)
+                yield (text, weight, valuestring)
                 vmatcher.next()
         self.add_vector_items(fieldname, fieldobj, readitems())
 
     def finish_doc(self):
         pass
 
-    def lengths_reader(self):
-        raise NotImplementedError
+    def close(self):
+        pass
 
 
 class FieldWriter(object):
     def add_postings(self, schema, lengths, items):
+        # This method translates a generator of (fieldname, btext, docnum, w, v)
+        # postings into calls to start_field(), start_term(), add(),
+        # finish_term(), finish_field(), etc.
+
         start_field = self.start_field
         start_term = self.start_term
         add = self.add
         finish_term = self.finish_term
         finish_field = self.finish_field
 
-        # items = (fieldname, text, docnum, weight, valuestring) ...
-        lastfn = None
-        lasttext = None
-        dfl = lengths.doc_field_length
-        for fieldname, text, docnum, weight, valuestring in items:
-            # Items where docnum is None indicate words that should be added
-            # to the spelling graph
-            if docnum is None and (fieldname != lastfn or text != lasttext):
-                self.add_spell_word(fieldname, text)
-                lastfn = fieldname
-                lasttext = text
-                continue
+        if lengths:
+            dfl = lengths.doc_field_length
+        else:
+            dfl = lambda docnum, fieldname: 0
 
-            # This comparison is so convoluted because Python 3 removed the
-            # ability to compare a string to None
-            if ((lastfn is not None and fieldname < lastfn)
-                or (fieldname == lastfn and lasttext is not None
-                    and text < lasttext)):
-                raise Exception("Postings are out of order: %r:%s .. %r:%s" %
-                                (lastfn, lasttext, fieldname, text))
-            if fieldname != lastfn or text != lasttext:
+        # The fieldname of the previous posting
+        lastfn = None
+        # The bytes text of the previous posting
+        lasttext = None
+        # The (fieldname, btext) of the previous spelling posting
+        lastspell = None
+        # The field object for the current field
+        fieldobj = None
+        for fieldname, btext, docnum, weight, value in items:
+            # Check for out-of-order postings. This is convoluted because Python
+            # 3 removed the ability to compare a string to None
+            if lastfn is not None and fieldname < lastfn:
+                raise OutOfOrderError("Field %r .. %r" % (lastfn, fieldname))
+            if fieldname == lastfn and lasttext and btext < lasttext:
+                raise OutOfOrderError("Term %s:%r .. %s:%r"
+                                      % (lastfn, lasttext, fieldname, btext))
+
+            # If the fieldname of this posting is different from the last one,
+            # tell the writer we're starting a new field
+            if fieldname != lastfn:
                 if lasttext is not None:
                     finish_term()
-                if fieldname != lastfn:
-                    if lastfn is not None:
-                        finish_field()
-                    start_field(fieldname, schema[fieldname])
-                    lastfn = fieldname
-                start_term(text)
-                lasttext = text
+                if lastfn is not None and fieldname != lastfn:
+                    finish_field()
+                fieldobj = schema[fieldname]
+                start_field(fieldname, fieldobj)
+                lastfn = fieldname
+                lasttext = None
+
+            # HACK: items where docnum == -1 indicate words that should be added
+            # to the spelling graph, not the postings
+            if docnum == -1:
+                # spellterm = (fieldname, btext)
+                # # There can be duplicates of spelling terms, so only add a spell
+                # # term if it's greater than the last one
+                # if lastspell is None or spellterm > lastspell:
+                #     spellword = fieldobj.from_bytes(btext)
+                #     self.add_spell_word(fieldname, spellword)
+                #     lastspell = spellterm
+                continue
+
+            # If this term is different from the term in the previous posting,
+            # tell the writer to start a new term
+            if btext != lasttext:
+                if lasttext is not None:
+                    finish_term()
+                start_term(btext)
+                lasttext = btext
+
+            # Add this posting
             length = dfl(docnum, fieldname)
-            add(docnum, weight, valuestring, length)
+            if value is None:
+                value = emptybytes
+            add(docnum, weight, value, length)
+
         if lasttext is not None:
             finish_term()
+        if lastfn is not None:
             finish_field()
 
+    @abstractmethod
     def start_field(self, fieldname, fieldobj):
         raise NotImplementedError
 
+    @abstractmethod
     def start_term(self, text):
         raise NotImplementedError
 
-    def add(self, docnum, weight, valuestring, length):
+    @abstractmethod
+    def add(self, docnum, weight, vbytes, length):
         raise NotImplementedError
 
     def add_spell_word(self, fieldname, text):
         raise NotImplementedError
 
+    @abstractmethod
     def finish_term(self):
         raise NotImplementedError
 
@@ -184,390 +261,219 @@ class FieldWriter(object):
         pass
 
 
+# Postings
+
+class PostingsWriter(object):
+    @abstractmethod
+    def start_postings(self, format_, terminfo):
+        raise NotImplementedError
+
+    @abstractmethod
+    def add_posting(self, id_, weight, vbytes, length=None):
+        raise NotImplementedError
+
+    def finish_postings(self):
+        pass
+
+    @abstractmethod
+    def written(self):
+        """Returns True if this object has already written to disk.
+        """
+
+        raise NotImplementedError
+
+
 # Reader classes
 
+class FieldCursor(object):
+    def first(self):
+        raise NotImplementedError
+
+    def find(self, string):
+        raise NotImplementedError
+
+    def next(self):
+        raise NotImplementedError
+
+    def term(self):
+        raise NotImplementedError
+
+
 class TermsReader(object):
+    @abstractmethod
     def __contains__(self, term):
         raise NotImplementedError
 
+    @abstractmethod
+    def cursor(self, fieldname, fieldobj):
+        raise NotImplementedError
+
+    @abstractmethod
     def terms(self):
         raise NotImplementedError
 
+    @abstractmethod
     def terms_from(self, fieldname, prefix):
         raise NotImplementedError
 
+    @abstractmethod
     def items(self):
         raise NotImplementedError
 
+    @abstractmethod
     def items_from(self, fieldname, prefix):
         raise NotImplementedError
 
-    def terminfo(self, fieldname, text):
+    @abstractmethod
+    def term_info(self, fieldname, text):
         raise NotImplementedError
 
+    @abstractmethod
     def frequency(self, fieldname, text):
-        return self.terminfo(fieldname, text).weight()
+        return self.term_info(fieldname, text).weight()
 
+    @abstractmethod
     def doc_frequency(self, fieldname, text):
-        return self.terminfo(fieldname, text).doc_frequency()
+        return self.term_info(fieldname, text).doc_frequency()
 
-    def graph_reader(self, fieldname, text):
-        raise NotImplementedError
-
+    @abstractmethod
     def matcher(self, fieldname, text, format_, scorer=None):
         raise NotImplementedError
 
+    @abstractmethod
+    def indexed_field_names(self):
+        raise NotImplementedError
+
     def close(self):
         pass
 
 
-class VectorReader(object):
-    def __contains__(self, key):
+class Automata(object):
+    @staticmethod
+    def levenshtein_dfa(uterm, maxdist, prefix=0):
+        return lev.levenshtein_automaton(uterm, maxdist, prefix).to_dfa()
+
+    @staticmethod
+    def find_matches(dfa, cur):
+        unull = unichr(0)
+
+        term = cur.text()
+        if term is None:
+            return
+
+        match = dfa.next_valid_string(term)
+        while match:
+            cur.find(match)
+            term = cur.text()
+            if term is None:
+                return
+            if match == term:
+                yield match
+                term += unull
+            match = dfa.next_valid_string(term)
+
+    def terms_within(self, fieldcur, uterm, maxdist, prefix=0):
+        dfa = self.levenshtein_dfa(uterm, maxdist, prefix)
+        return self.find_matches(dfa, fieldcur)
+
+
+# Per-doc value reader
+
+class PerDocumentReader(object):
+    def close(self):
+        pass
+
+    @abstractmethod
+    def doc_count(self):
         raise NotImplementedError
 
-    def matcher(self, docnum, fieldname, format_):
-        raise NotImplementedError
-
-
-class LengthsReader(object):
+    @abstractmethod
     def doc_count_all(self):
         raise NotImplementedError
 
+    # Deletions
+
+    @abstractmethod
+    def has_deletions(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def is_deleted(self, docnum):
+        raise NotImplementedError
+
+    @abstractmethod
+    def deleted_docs(self):
+        raise NotImplementedError
+
+    def all_doc_ids(self):
+        """
+        Returns an iterator of all (undeleted) document IDs in the reader.
+        """
+
+        is_deleted = self.is_deleted
+        return (docnum for docnum in xrange(self.doc_count_all())
+                if not is_deleted(docnum))
+
+    def iter_docs(self):
+        for docnum in self.all_doc_ids():
+            yield docnum, self.stored_fields(docnum)
+
+    # Columns
+
+    def supports_columns(self):
+        return False
+
+    def has_column(self, fieldname):
+        return False
+
+    def list_columns(self):
+        raise NotImplementedError
+
+    # Don't need to override this if supports_columns() returns False
+    def column_reader(self, fieldname, column):
+        raise NotImplementedError
+
+    # Bitmaps
+
+    def field_docs(self, fieldname):
+        return None
+
+    # Lengths
+
+    @abstractmethod
     def doc_field_length(self, docnum, fieldname, default=0):
         raise NotImplementedError
 
+    @abstractmethod
     def field_length(self, fieldname):
         raise NotImplementedError
 
+    @abstractmethod
     def min_field_length(self, fieldname):
         raise NotImplementedError
 
+    @abstractmethod
     def max_field_length(self, fieldname):
         raise NotImplementedError
 
-    def close(self):
-        pass
+    # Vectors
 
+    def has_vector(self, docnum, fieldname):
+        return False
 
-class MultiLengths(LengthsReader):
-    def __init__(self, lengths, offset=0):
-        self.lengths = []
-        self.doc_offsets = []
-        self._count = 0
-        for lr in lengths:
-            if lr.doc_count_all():
-                self.lengths.append(lr)
-                self.doc_offsets.append(self._count)
-                self._count += lr.doc_count_all()
-        self.is_closed = False
-
-    def _document_reader(self, docnum):
-        return max(0, bisect_right(self.doc_offsets, docnum) - 1)
-
-    def _reader_and_docnum(self, docnum):
-        lnum = self._document_reader(docnum)
-        offset = self.doc_offsets[lnum]
-        return lnum, docnum - offset
-
-    def doc_count_all(self):
-        return self._count
-
-    def doc_field_length(self, docnum, fieldname, default=0):
-        x, y = self._reader_and_docnum(docnum)
-        return self.lengths[x].doc_field_length(y, fieldname, default=default)
-
-    def min_field_length(self):
-        return min(lr.min_field_length() for lr in self.lengths)
-
-    def max_field_length(self):
-        return max(lr.max_field_length() for lr in self.lengths)
-
-    def close(self):
-        for lr in self.lengths:
-            lr.close()
-        self.is_closed = True
-
-
-class StoredFieldsReader(object):
-    def __iter__(self):
+    # Don't need to override this if has_vector() always returns False
+    def vector(self, docnum, fieldname, format_):
         raise NotImplementedError
 
-    def __getitem__(self, docnum):
+    # Stored
+
+    @abstractmethod
+    def stored_fields(self, docnum):
         raise NotImplementedError
 
-    def cell(self, docnum, fieldname):
-        fielddict = self.get(docnum)
-        return fielddict.get(fieldname)
-
-    def column(self, fieldname):
-        for fielddict in self:
-            yield fielddict.get(fieldname)
-
-    def close(self):
-        pass
-
-
-# File posting matcher middleware
-
-class FilePostingMatcher(Matcher):
-    # Subclasses need to set
-    #   self._term -- (fieldname, text) or None
-    #   self.scorer -- a Scorer object or None
-    #   self.format -- Format object for the posting values
-
-    def __repr__(self):
-        return "%s(%r, %r, %s)" % (self.__class__.__name__, str(self.postfile),
-                                   self.term(), self.is_active())
-
-    def term(self):
-        return self._term
-
-    def items_as(self, astype):
-        decoder = self.format.decoder(astype)
-        for id, value in self.all_items():
-            yield (id, decoder(value))
-
-    def supports(self, astype):
-        return self.format.supports(astype)
-
-    def value_as(self, astype):
-        decoder = self.format.decoder(astype)
-        return decoder(self.value())
-
-    def spans(self):
-        if self.supports("characters"):
-            return [Span(pos, startchar=startchar, endchar=endchar)
-                    for pos, startchar, endchar in self.value_as("characters")]
-        elif self.supports("positions"):
-            return [Span(pos) for pos in self.value_as("positions")]
-        else:
-            raise Exception("Field does not support positions (%r)"
-                            % self._term)
-
-    def supports_block_quality(self):
-        return self.scorer and self.scorer.supports_block_quality()
-
-    def max_quality(self):
-        return self.scorer.max_quality
-
-    def block_quality(self):
-        return self.scorer.block_quality(self)
-
-
-class BlockPostingMatcher(FilePostingMatcher):
-    # Subclasses need to set
-    #   self.block -- BlockBase object for the current block
-    #   self.i -- Numerical index to the current place in the block
-    # And implement
-    #   _read_block()
-    #   _next_block()
-    #   _skip_to_block()
-
-    def id(self):
-        return self.block.ids[self.i]
-
-    def weight(self):
-        weights = self.block.weights
-        if not weights:
-            weights = self.block.read_weights()
-        return weights[self.i]
-
-    def value(self):
-        values = self.block.values
-        if values is None:
-            values = self.block.read_values()
-        return values[self.i]
-
-    def all_ids(self):
-        nextoffset = self.baseoffset
-        for _ in xrange(self.blockcount):
-            block = self._read_block(nextoffset)
-            nextoffset = block.nextoffset
-            ids = block.read_ids()
-            for id in ids:
-                yield id
-
-    def next(self):
-        if self.i == self.block.count - 1:
-            self._next_block()
-            return True
-        else:
-            self.i += 1
-            return False
-
-    def skip_to(self, id):
-        if not self.is_active():
-            raise ReadTooFar
-
-        i = self.i
-        # If we're already in the block with the target ID, do nothing
-        if id <= self.block.ids[i]:
-            return
-
-        # Skip to the block that would contain the target ID
-        if id > self.block.maxid:
-            self._skip_to_block(lambda: id > self.block.maxid)
-        if not self.is_active():
-            return
-
-        # Iterate through the IDs in the block until we find or pass the
-        # target
-        ids = self.block.ids
-        i = self.i
-        while ids[i] < id:
-            i += 1
-            if i == len(ids):
-                self._active = False
-                return
-        self.i = i
-
-    def skip_to_quality(self, minquality):
-        bq = self.block_quality
-        if bq() > minquality:
-            return 0
-        return self._skip_to_block(lambda: bq() <= minquality)
-
-    def block_min_length(self):
-        return self.block.min_length()
-
-    def block_max_length(self):
-        return self.block.max_length()
-
-    def block_max_weight(self):
-        return self.block.max_weight()
-
-    def block_max_wol(self):
-        return self.block.max_wol()
-
-
-# File TermInfo
-
-NO_ID = 0xffffffff
-
-
-class FileTermInfo(TermInfo):
-    # Freq, Doc freq, min len, max length, max weight, unused, min ID, max ID
-    struct = Struct("!fIBBffII")
-
-    def __init__(self, *args, **kwargs):
-        self.postings = None
-        if "postings" in kwargs:
-            self.postings = kwargs["postings"]
-            del kwargs["postings"]
-        TermInfo.__init__(self, *args, **kwargs)
-
-    # filedb specific methods
-
-    def add_block(self, block):
-        self._weight += sum(block.weights)
-        self._df += len(block)
-
-        ml = block.min_length()
-        if self._minlength is None:
-            self._minlength = ml
-        else:
-            self._minlength = min(self._minlength, ml)
-
-        self._maxlength = max(self._maxlength, block.max_length())
-        self._maxweight = max(self._maxweight, block.max_weight())
-        if self._minid is None:
-            self._minid = block.ids[0]
-        self._maxid = block.ids[-1]
-
-    def to_string(self):
-        # Encode the lengths as 0-255 values
-        ml = 0 if self._minlength is None else length_to_byte(self._minlength)
-        xl = length_to_byte(self._maxlength)
-        # Convert None values to the out-of-band NO_ID constant so they can be
-        # stored as unsigned ints
-        mid = NO_ID if self._minid is None else self._minid
-        xid = NO_ID if self._maxid is None else self._maxid
-
-        # Pack the term info into bytes
-        st = self.struct.pack(self._weight, self._df, ml, xl, self._maxweight,
-                              0, mid, xid)
-
-        if isinstance(self.postings, tuple):
-            # Postings are inlined - dump them using the pickle protocol
-            isinlined = 1
-            st += dumps(self.postings, -1)[2:-1]
-        else:
-            # Append postings pointer as long to end of term info bytes
-            isinlined = 0
-            # It's possible for a term info to not have a pointer to postings
-            # on disk, in which case postings will be None. Convert a None
-            # value to -1 so it can be stored as a long.
-            p = -1 if self.postings is None else self.postings
-            st += pack_long(p)
-
-        # Prepend byte indicating whether the postings are inlined to the term
-        # info bytes
-        return pack("B", isinlined) + st
-
-    @classmethod
-    def from_string(cls, s):
-        assert isinstance(s, bytes_type)
-
-        if isinstance(s, string_type):
-            hbyte = ord(s[0])  # Python 2.x - str
-        else:
-            hbyte = s[0]  # Python 3 - bytes
-
-        if hbyte < 2:
-            st = cls.struct
-            # Weight, Doc freq, min len, max len, max w, unused, min ID, max ID
-            w, df, ml, xl, xw, _, mid, xid = st.unpack(s[1:st.size + 1])
-            mid = None if mid == NO_ID else mid
-            xid = None if xid == NO_ID else xid
-            # Postings
-            pstr = s[st.size + 1:]
-            if hbyte == 0:
-                p = unpack_long(pstr)[0]
-            else:
-                p = loads(pstr + b("."))
-        else:
-            # Old format was encoded as a variable length pickled tuple
-            v = loads(s + b("."))
-            if len(v) == 1:
-                w = df = 1
-                p = v[0]
-            elif len(v) == 2:
-                w = df = v[1]
-                p = v[0]
-            else:
-                w, p, df = v
-            # Fake values for stats which weren't stored before
-            ml = 1
-            xl = 255
-            xw = 999999999
-            mid = -1
-            xid = -1
-
-        ml = byte_to_length(ml)
-        xl = byte_to_length(xl)
-        obj = cls(w, df, ml, xl, xw, mid, xid)
-        obj.postings = p
-        return obj
-
-    @classmethod
-    def read_weight(cls, dbfile, datapos):
-        return dbfile.get_float(datapos + 1)
-
-    @classmethod
-    def read_doc_freq(cls, dbfile, datapos):
-        return dbfile.get_uint(datapos + 1 + _FLOAT_SIZE)
-
-    @classmethod
-    def read_min_and_max_length(cls, dbfile, datapos):
-        lenpos = datapos + 1 + _FLOAT_SIZE + _INT_SIZE
-        ml = byte_to_length(dbfile.get_byte(lenpos))
-        xl = byte_to_length(dbfile.get_byte(lenpos + 1))
-        return ml, xl
-
-    @classmethod
-    def read_max_weight(cls, dbfile, datapos):
-        weightspos = datapos + 1 + _FLOAT_SIZE + _INT_SIZE + 2
-        return dbfile.get_float(weightspos)
+    def all_stored_fields(self):
+        for docnum in self.all_doc_ids():
+            yield self.stored_fields(docnum)
 
 
 # Segment base class
@@ -576,7 +482,7 @@ class Segment(object):
     """Do not instantiate this object directly. It is used by the Index object
     to hold information about a segment. A list of objects of this class are
     pickled as part of the TOC file.
-    
+
     The TOC file stores a minimal amount of information -- mostly a list of
     Segment objects. Segments are the real reverse indexes. Having multiple
     segments allows quick incremental indexing: just create a new segment for
@@ -586,30 +492,36 @@ class Segment(object):
     along the way).
     """
 
-    # These must be valid separate characters in CASE-INSENSTIVE filenames
-    IDCHARS = "0123456789abcdefghijklmnopqrstuvwxyz"
     # Extension for compound segment files
     COMPOUND_EXT = ".seg"
 
     # self.indexname
     # self.segid
 
+    def __init__(self, indexname):
+        self.indexname = indexname
+        self.segid = self._random_id()
+        self.compound = False
+
     @classmethod
-    def _random_id(cls, size=12):
-        return "".join(random.choice(cls.IDCHARS) for _ in xrange(size))
+    def _random_id(cls, size=16):
+        return random_name(size=size)
 
     def __repr__(self):
-        return "<%s %s>" % (self.__class__.__name__, getattr(self, "segid", ""))
+        return "<%s %s>" % (self.__class__.__name__, self.segment_id())
 
     def codec(self):
         raise NotImplementedError
+
+    def index_name(self):
+        return self.indexname
 
     def segment_id(self):
         if hasattr(self, "name"):
             # Old segment class
             return self.name
         else:
-            return "%s_%s" % (self.indexname, self.segid)
+            return "%s_%s" % (self.index_name(), self.segid)
 
     def is_compound(self):
         if not hasattr(self, "compound"):
@@ -650,13 +562,16 @@ class Segment(object):
         CompoundStorage.assemble(cfile, storage, segfiles)
         for name in segfiles:
             storage.delete_file(name)
+        self.compound = True
 
     def open_compound_file(self, storage):
         name = self.make_filename(self.COMPOUND_EXT)
-        return CompoundStorage(storage, name)
+        dbfile = storage.open_file(name)
+        return CompoundStorage(dbfile, use_mmap=storage.supports_mmap)
 
-    # Abstract methods dealing with document counts and deletions
+    # Abstract methods
 
+    @abstractmethod
     def doc_count_all(self):
         """
         Returns the total number of documents, DELETED OR UNDELETED, in this
@@ -667,25 +582,34 @@ class Segment(object):
 
     def doc_count(self):
         """
-        :returns: the number of (undeleted) documents in this segment.
+        Returns the number of (undeleted) documents in this segment.
         """
 
+        return self.doc_count_all() - self.deleted_count()
+
+    def set_doc_count(self, doccount):
         raise NotImplementedError
 
     def has_deletions(self):
         """
-        :returns: True if any documents in this segment are deleted.
+        Returns True if any documents in this segment are deleted.
         """
 
-        raise NotImplementedError
+        return self.deleted_count() > 0
 
+    @abstractmethod
     def deleted_count(self):
         """
-        :returns: the total number of deleted documents in this segment.
+        Returns the total number of deleted documents in this segment.
         """
 
         raise NotImplementedError
 
+    @abstractmethod
+    def deleted_docs(self):
+        raise NotImplementedError
+
+    @abstractmethod
     def delete_document(self, docnum, delete=True):
         """Deletes the given document number. The document is not actually
         removed from the index until it is optimized.
@@ -696,161 +620,224 @@ class Segment(object):
 
         raise NotImplementedError
 
+    @abstractmethod
     def is_deleted(self, docnum):
-        """:returns: True if the given document number is deleted."""
+        """
+        Returns True if the given document number is deleted.
+        """
 
         raise NotImplementedError
 
+    def should_assemble(self):
+        return True
 
-# Posting block format
 
-class BlockBase(object):
-    def __init__(self, postingsize, stringids=False):
-        self.postingsize = postingsize
-        self.stringids = stringids
-        self.ids = [] if stringids else array("I")
-        self.weights = array("f")
-        self.values = None
+# Wrapping Segment
 
-        self.minlength = None
-        self.maxlength = 0
-        self.maxweight = 0
+class WrappingSegment(Segment):
+    def __init__(self, child):
+        self._child = child
 
-    def __len__(self):
-        return len(self.ids)
+    def codec(self):
+        return self._child.codec()
 
-    def __nonzero__(self):
-        return bool(self.ids)
+    def index_name(self):
+        return self._child.index_name()
 
-    def min_id(self):
-        if self.ids:
-            return self.ids[0]
+    def segment_id(self):
+        return self._child.segment_id()
+
+    def is_compound(self):
+        return self._child.is_compound()
+
+    def should_assemble(self):
+        return self._child.should_assemble()
+
+    def make_filename(self, ext):
+        return self._child.make_filename(ext)
+
+    def list_files(self, storage):
+        return self._child.list_files(storage)
+
+    def create_file(self, storage, ext, **kwargs):
+        return self._child.create_file(storage, ext, **kwargs)
+
+    def open_file(self, storage, ext, **kwargs):
+        return self._child.open_file(storage, ext, **kwargs)
+
+    def create_compound_file(self, storage):
+        return self._child.create_compound_file(storage)
+
+    def open_compound_file(self, storage):
+        return self._child.open_compound_file(storage)
+
+    def delete_document(self, docnum, delete=True):
+        return self._child.delete_document(docnum, delete=delete)
+
+    def has_deletions(self):
+        return self._child.has_deletions()
+
+    def deleted_count(self):
+        return self._child.deleted_count()
+
+    def deleted_docs(self):
+        return self._child.deleted_docs()
+
+    def is_deleted(self, docnum):
+        return self._child.is_deleted(docnum)
+
+    def set_doc_count(self, doccount):
+        self._child.set_doc_count(doccount)
+
+    def doc_count(self):
+        return self._child.doc_count()
+
+    def doc_count_all(self):
+        return self._child.doc_count_all()
+
+
+# Multi per doc reader
+
+class MultiPerDocumentReader(PerDocumentReader):
+    def __init__(self, readers, offset=0):
+        self._readers = readers
+
+        self._doc_offsets = []
+        self._doccount = 0
+        for pdr in readers:
+            self._doc_offsets.append(self._doccount)
+            self._doccount += pdr.doc_count_all()
+
+        self.is_closed = False
+
+    def close(self):
+        for r in self._readers:
+            r.close()
+        self.is_closed = True
+
+    def doc_count_all(self):
+        return self._doccount
+
+    def doc_count(self):
+        total = 0
+        for r in self._readers:
+            total += r.doc_count()
+        return total
+
+    def _document_reader(self, docnum):
+        return max(0, bisect_right(self._doc_offsets, docnum) - 1)
+
+    def _reader_and_docnum(self, docnum):
+        rnum = self._document_reader(docnum)
+        offset = self._doc_offsets[rnum]
+        return rnum, docnum - offset
+
+    # Deletions
+
+    def has_deletions(self):
+        return any(r.has_deletions() for r in self._readers)
+
+    def is_deleted(self, docnum):
+        x, y = self._reader_and_docnum(docnum)
+        return self._readers[x].is_deleted(y)
+
+    def deleted_docs(self):
+        for r, offset in izip(self._readers, self._doc_offsets):
+            for docnum in r.deleted_docs():
+                yield docnum + offset
+
+    def all_doc_ids(self):
+        for r, offset in izip(self._readers, self._doc_offsets):
+            for docnum in r.all_doc_ids():
+                yield docnum + offset
+
+    # Columns
+
+    def has_column(self, fieldname):
+        return any(r.has_column(fieldname) for r in self._readers)
+
+    def column_reader(self, fieldname, column):
+        if not self.has_column(fieldname):
+            raise ValueError("No column %r" % (fieldname,))
+
+        default = column.default_value()
+        colreaders = []
+        for r in self._readers:
+            if r.has_column(fieldname):
+                cr = r.column_reader(fieldname, column)
+            else:
+                cr = columns.EmptyColumnReader(default, r.doc_count_all())
+            colreaders.append(cr)
+
+        if len(colreaders) == 1:
+            return colreaders[0]
         else:
-            raise IndexError
+            return columns.MultiColumnReader(colreaders)
 
-    def max_id(self):
-        if self.ids:
-            return self.ids[-1]
-        else:
-            raise IndexError
+    # Lengths
 
-    def min_length(self):
-        return self.minlength
+    def doc_field_length(self, docnum, fieldname, default=0):
+        x, y = self._reader_and_docnum(docnum)
+        return self._readers[x].doc_field_length(y, fieldname, default)
 
-    def max_length(self):
-        return self.maxlength
+    def field_length(self, fieldname):
+        total = 0
+        for r in self._readers:
+            total += r.field_length(fieldname)
+        return total
 
-    def max_weight(self):
-        return self.maxweight
+    def min_field_length(self):
+        return min(r.min_field_length() for r in self._readers)
 
-    def add(self, id_, weight, valuestring, length=None):
-        self.ids.append(id_)
-        self.weights.append(weight)
-        if weight > self.maxweight:
-            self.maxweight = weight
-        if valuestring:
-            if self.values is None:
-                self.values = []
-            self.values.append(valuestring)
-        if length:
-            if self.minlength is None or length < self.minlength:
-                self.minlength = length
-            if length > self.maxlength:
-                self.maxlength = length
+    def max_field_length(self):
+        return max(r.max_field_length() for r in self._readers)
 
-    def to_file(self, postfile):
+
+# Extended base classes
+
+class PerDocWriterWithColumns(PerDocumentWriter):
+    def __init__(self):
+        PerDocumentWriter.__init__(self)
+        # Implementations need to set these attributes
+        self._storage = None
+        self._segment = None
+        self._docnum = None
+
+    @abstractmethod
+    def _has_column(self, fieldname):
         raise NotImplementedError
 
+    @abstractmethod
+    def _create_column(self, fieldname, column):
+        raise NotImplementedError
 
-# Utility functions
+    @abstractmethod
+    def _get_column(self, fieldname):
+        raise NotImplementedError
 
-def minimize_ids(arry, stringids, compression=0):
-    amax = arry[-1]
-
-    if stringids:
-        typecode = ''
-        string = dumps(arry)
-    else:
-        typecode = arry.typecode
-        if amax <= 255:
-            typecode = "B"
-        elif amax <= 65535:
-            typecode = "H"
-
-        if typecode != arry.typecode:
-            arry = array(typecode, iter(arry))
-        if not IS_LITTLE:
-            arry.byteswap()
-        string = array_tobytes(arry)
-    if compression:
-        string = compress(string, compression)
-    return (typecode, string)
+    def add_column_value(self, fieldname, column, value):
+        if not self._has_column(fieldname):
+            self._create_column(fieldname, column)
+        self._get_column(fieldname).add(self._docnum, value)
 
 
-def deminimize_ids(typecode, count, string, compression=0):
-    if compression:
-        string = decompress(string)
-    if typecode == '':
-        return loads(string)
-    else:
-        arry = array(typecode)
-        array_frombytes(arry, string)
-        if not IS_LITTLE:
-            arry.byteswap()
-        return arry
+# FieldCursor implementations
 
+class EmptyCursor(FieldCursor):
+    def first(self):
+        return None
 
-def minimize_weights(weights, compression=0):
-    if all(w == 1.0 for w in weights):
-        string = b("")
-    else:
-        if not IS_LITTLE:
-            weights.byteswap()
-        string = array_tobytes(weights)
-    if string and compression:
-        string = compress(string, compression)
-    return string
+    def find(self, term):
+        return None
 
+    def next(self):
+        return None
 
-def deminimize_weights(count, string, compression=0):
-    if not string:
-        return array("f", (1.0 for _ in xrange(count)))
-    if compression:
-        string = decompress(string)
-    arry = array("f")
-    array_frombytes(arry, string)
-    if not IS_LITTLE:
-        arry.byteswap()
-    return arry
+    def text(self):
+        return None
 
+    def term_info(self):
+        return None
 
-def minimize_values(postingsize, values, compression=0):
-    if postingsize < 0:
-        string = dumps(values, -1)[2:]
-    elif postingsize == 0:
-        string = b('')
-    else:
-        string = b('').join(values)
-    if string and compression:
-        string = compress(string, compression)
-    return string
-
-
-def deminimize_values(postingsize, count, string, compression=0):
-    if compression:
-        string = decompress(string)
-
-    if postingsize < 0:
-        return loads(string)
-    elif postingsize == 0:
-        return [None] * count
-    else:
-        return [string[i:i + postingsize] for i
-                in xrange(0, len(string), postingsize)]
-
-
-
-
-
-
-
+    def is_valid(self):
+        return False

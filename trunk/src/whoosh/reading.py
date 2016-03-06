@@ -32,14 +32,24 @@ from math import log
 from bisect import bisect_right
 from heapq import heapify, heapreplace, heappop, nlargest
 
-from whoosh.compat import xrange, zip_, next
-from whoosh.support.levenshtein import distance
-from whoosh.util import ClosableMixin
-from whoosh.matching import MultiMatcher
+from whoosh import columns
 from whoosh.compat import abstractmethod
+from whoosh.compat import xrange, zip_, next, iteritems
+from whoosh.filedb.filestore import OverlayStorage
+from whoosh.matching import MultiMatcher
+from whoosh.support.levenshtein import distance
+from whoosh.system import emptybytes
 
 
 # Exceptions
+
+class ReaderClosed(Exception):
+    """Exception raised when you try to do some operation on a closed searcher
+    (or a Results object derived from a searcher that has since been closed).
+    """
+
+    message = "Operation on a closed reader"
+
 
 class TermNotFound(Exception):
     pass
@@ -62,6 +72,21 @@ class TermInfo(object):
         self._maxweight = maxweight
         self._minid = minid
         self._maxid = maxid
+
+    def add_posting(self, docnum, weight, length=None):
+        if self._minid is None:
+            self._minid = docnum
+        self._maxid = docnum
+        self._weight += weight
+        self._df += 1
+        self._maxweight = max(self._maxweight, weight)
+
+        if length is not None:
+            if self._minlength is None:
+                self._minlength = length
+            else:
+                self._minlength = min(self._minlength, length)
+            self._maxlength = max(self._maxlength, length)
 
     def weight(self):
         """Returns the total frequency of the term across all documents.
@@ -111,12 +136,15 @@ class TermInfo(object):
 
 # Reader base class
 
-class IndexReader(ClosableMixin):
+class IndexReader(object):
     """Do not instantiate this object directly. Instead use Index.reader().
     """
 
-    def is_atomic(self):
-        return True
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
 
     @abstractmethod
     def __contains__(self, term):
@@ -124,6 +152,38 @@ class IndexReader(ClosableMixin):
         in this reader.
         """
         raise NotImplementedError
+
+    def codec(self):
+        """Returns the :class:`whoosh.codec.base.Codec` object used to read
+        this reader's segment. If this reader is not atomic
+        (``reader.is_atomic() == True``), returns None.
+        """
+
+        return None
+
+    def segment(self):
+        """Returns the :class:`whoosh.index.Segment` object used by this reader.
+        If this reader is not atomic (``reader.is_atomic() == True``), returns
+        None.
+        """
+
+        return None
+
+    def storage(self):
+        """Returns the :class:`whoosh.filedb.filestore.Storage` object used by
+        this reader to read its files. If the reader is not atomic,
+        (``reader.is_atomic() == True``), returns None.
+        """
+
+        return None
+
+    def is_atomic(self):
+        return True
+
+    def _text_to_bytes(self, fieldname, text):
+        if fieldname not in self.schema:
+            raise TermNotFound((fieldname, text))
+        return self.schema[fieldname].to_bytes(text)
 
     def close(self):
         """Closes the open files associated with this reader.
@@ -137,6 +197,15 @@ class IndexReader(ClosableMixin):
         """
 
         return None
+
+    @abstractmethod
+    def indexed_field_names(self):
+        """Returns an iterable of strings representing the names of the indexed
+        fields. This may include additional names not explicitly listed in the
+        Schema if you use "glob" fields.
+        """
+
+        raise NotImplementedError
 
     @abstractmethod
     def all_terms(self):
@@ -168,19 +237,29 @@ class IndexReader(ClosableMixin):
         """Yields terms in the given field that start with the given prefix.
         """
 
+        prefix = self._text_to_bytes(fieldname, prefix)
         for fn, text in self.terms_from(fieldname, prefix):
             if fn != fieldname or not text.startswith(prefix):
                 return
             yield text
 
     def lexicon(self, fieldname):
-        """Yields all terms in the given field.
+        """Yields all bytestrings in the given field.
         """
 
-        for fn, text in self.terms_from(fieldname, ''):
+        for fn, btext in self.terms_from(fieldname, emptybytes):
             if fn != fieldname:
                 return
-            yield text
+            yield btext
+
+    def field_terms(self, fieldname):
+        """Yields all term values (converted from on-disk bytes) in the given
+        field.
+        """
+
+        from_bytes = self.schema[fieldname].from_bytes
+        for btext in self.lexicon(fieldname):
+            yield from_bytes(btext)
 
     def __iter__(self):
         """Yields ((fieldname, text), terminfo) tuples for each term in the
@@ -197,6 +276,7 @@ class IndexReader(ClosableMixin):
         """
 
         term_info = self.term_info
+        text = self._text_to_bytes(fieldname, text)
         for term in self.terms_from(fieldname, text):
             yield (term, term_info(*term))
 
@@ -204,6 +284,7 @@ class IndexReader(ClosableMixin):
         """Yields (text, terminfo) tuples for all terms in the given field.
         """
 
+        prefix = self._text_to_bytes(fieldname, prefix)
         for (fn, text), terminfo in self.iter_from(fieldname, prefix):
             if fn != fieldname:
                 return
@@ -214,6 +295,7 @@ class IndexReader(ClosableMixin):
         a certain prefix.
         """
 
+        prefix = self._text_to_bytes(fieldname, prefix)
         for text, terminfo in self.iter_field(fieldname, prefix):
             if not text.startswith(prefix):
                 return
@@ -231,14 +313,17 @@ class IndexReader(ClosableMixin):
         """Returns an iterator of all (undeleted) document IDs in the reader.
         """
 
-        # This default implementation works for backends like filedb that use
-        # a continuous 0-N range of numbers to address documents, but will need
-        # to be overridden if a backend, e.g., looks up documents using
-        # persistent ID strings.
-
         is_deleted = self.is_deleted
         return (docnum for docnum in xrange(self.doc_count_all())
                 if not is_deleted(docnum))
+
+    def iter_docs(self):
+        """Yields a series of ``(docnum, stored_fields_dict)``
+        tuples for the undeleted documents in the reader.
+        """
+
+        for docnum in self.all_doc_ids():
+            yield docnum, self.stored_fields(docnum)
 
     @abstractmethod
     def is_deleted(self, docnum):
@@ -250,7 +335,7 @@ class IndexReader(ClosableMixin):
     @abstractmethod
     def stored_fields(self, docnum):
         """Returns the stored fields for the given document number.
-        
+
         :param numerickeys: use field numbers as the dictionary keys instead of
             field names.
         """
@@ -258,11 +343,12 @@ class IndexReader(ClosableMixin):
         raise NotImplementedError
 
     def all_stored_fields(self):
-        """Yields the stored fields for all documents.
+        """Yields the stored fields for all non-deleted documents.
         """
 
+        is_deleted = self.is_deleted
         for docnum in xrange(self.doc_count_all()):
-            if not self.is_deleted(docnum):
+            if not is_deleted(docnum):
                 yield self.stored_fields(docnum)
 
     @abstractmethod
@@ -278,7 +364,7 @@ class IndexReader(ClosableMixin):
         """Returns the total number of UNDELETED documents in this reader.
         """
 
-        raise NotImplementedError
+        return self.doc_count_all() - self.deleted_count()
 
     @abstractmethod
     def frequency(self, fieldname, text):
@@ -326,6 +412,7 @@ class IndexReader(ClosableMixin):
         may be optimized in certain backends.
         """
 
+        text = self._text_to_bytes(fieldname, text)
         p = self.postings(fieldname, text)
         if p.is_active():
             return p.id()
@@ -336,22 +423,22 @@ class IndexReader(ClosableMixin):
         ``(fieldname, text, docnum, weight, valuestring)`` tuples.
         """
 
-        for fieldname, text in self.all_terms():
-            m = self.postings(fieldname, text)
+        for fieldname, btext in self.all_terms():
+            m = self.postings(fieldname, btext)
             while m.is_active():
-                yield (fieldname, text, m.id(), m.weight(), m.value())
+                yield (fieldname, btext, m.id(), m.weight(), m.value())
                 m.next()
 
     @abstractmethod
-    def postings(self, fieldname, text, scorer=None):
+    def postings(self, fieldname, text):
         """Returns a :class:`~whoosh.matching.Matcher` for the postings of the
         given term.
-        
+
         >>> pr = reader.postings("content", "render")
         >>> pr.skip_to(10)
         >>> pr.id
         12
-        
+
         :param fieldname: the field name or field number of the term.
         :param text: the text of the term.
         :rtype: :class:`whoosh.matching.Matcher`
@@ -367,15 +454,15 @@ class IndexReader(ClosableMixin):
         raise NotImplementedError
 
     @abstractmethod
-    def vector(self, docnum, fieldname):
+    def vector(self, docnum, fieldname, format_=None):
         """Returns a :class:`~whoosh.matching.Matcher` object for the
         given term vector.
-        
+
         >>> docnum = searcher.document_number(path=u'/a/b/c')
         >>> v = searcher.vector(docnum, "content")
         >>> v.all_as("frequency")
         [(u"apple", 3), (u"bear", 2), (u"cab", 2)]
-        
+
         :param docnum: the document number of the document for which you want
             the term vector.
         :param fieldname: the field name or field number of the field for which
@@ -389,11 +476,11 @@ class IndexReader(ClosableMixin):
         given term vector. This is a convenient shortcut to calling vector()
         and using the Matcher object when all you want are the terms and/or
         values.
-        
+
         >>> docnum = searcher.document_number(path=u'/a/b/c')
         >>> searcher.vector_as("frequency", docnum, "content")
         [(u"apple", 3), (u"bear", 2), (u"cab", 2)]
-        
+
         :param docnum: the document number of the document for which you want
             the term vector.
         :param fieldname: the field name or field number of the field for which
@@ -414,23 +501,6 @@ class IndexReader(ClosableMixin):
                 yield (vec.id(), decoder(vec.value()))
                 vec.next()
 
-    def has_word_graph(self, fieldname):
-        """Returns True if the given field has a "word graph" associated with
-        it, allowing suggestions for correcting mis-typed words and fast fuzzy
-        term searching.
-        """
-
-        return False
-
-    def word_graph(self, fieldname):
-        """Returns the root :class:`whoosh.support.dawg.Node` for the given
-        field, if the field has a stored word graph (otherwise raises an
-        exception). You can check whether a field has a word graph using
-        :meth:`IndexReader.has_word_graph`.
-        """
-
-        raise KeyError
-
     def corrector(self, fieldname):
         """Returns a :class:`whoosh.spelling.Corrector` object that suggests
         corrections based on the terms in the given field.
@@ -438,19 +508,21 @@ class IndexReader(ClosableMixin):
 
         from whoosh.spelling import ReaderCorrector
 
-        return ReaderCorrector(self, fieldname)
+        fieldobj = self.schema[fieldname]
+        return ReaderCorrector(self, fieldname, fieldobj)
 
     def terms_within(self, fieldname, text, maxdist, prefix=0):
-        """Returns a generator of words in the given field within ``maxdist``
+        """
+        Returns a generator of words in the given field within ``maxdist``
         Damerau-Levenshtein edit distance of the given text.
-        
+
         Important: the terms are returned in **no particular order**. The only
         criterion is that they are within ``maxdist`` edits of ``text``. You
         may want to run this method multiple times with increasing ``maxdist``
         values to ensure you get the closest matches first. You may also have
         additional information (such as term frequency or an acoustic matching
         algorithm) you can use to rank terms with the same edit distance.
-        
+
         :param maxdist: the maximum edit distance.
         :param prefix: require suggestions to share a prefix of this length
             with the given word. This is often justifiable since most
@@ -461,7 +533,9 @@ class IndexReader(ClosableMixin):
             not be yielded.
         """
 
-        for word in self.expand_prefix(fieldname, text[:prefix]):
+        fieldobj = self.schema[fieldname]
+        for btext in self.expand_prefix(fieldname, text[:prefix]):
+            word = fieldobj.from_bytes(btext)
             k = distance(word, text, limit=maxdist)
             if k <= maxdist:
                 yield word
@@ -493,19 +567,322 @@ class IndexReader(ClosableMixin):
 
         return [(self, 0)]
 
-    #
-
     def supports_caches(self):
-        """Returns True if this reader supports the field cache protocol.
-        """
-
         return False
 
-    def set_caching_policy(self, *args, **kwargs):
-        """Sets the field caching policy for this reader.
+    def has_column(self, fieldname):
+        return False
+
+    def column_reader(self, fieldname, column=None, reverse=False,
+                      translate=False):
         """
 
-        pass
+        :param fieldname: the name of the field for which to get a reader.
+        :param column: if passed, use this Column object instead of the one
+            associated with the field in the Schema.
+        :param reverse: if passed, reverses the order of keys returned by the
+            reader's ``sort_key()`` method. If the column type is not
+            reversible, this will raise a ``NotImplementedError``.
+        :param translate: if True, wrap the reader to call the field's
+            ``from_bytes()`` method on the returned values.
+        :return: a :class:`whoosh.columns.ColumnReader` object.
+        """
+
+        raise NotImplementedError
+
+
+# Segment-based reader
+
+class SegmentReader(IndexReader):
+    def __init__(self, storage, schema, segment, generation=None, codec=None):
+        self.schema = schema
+        self.is_closed = False
+
+        self._segment = segment
+        self._segid = self._segment.segment_id()
+        self._gen = generation
+
+        # self.files is a storage object from which to load the segment files.
+        # This is different from the general storage (which will be used for
+        # caches) if the segment is in a compound file.
+        if segment.is_compound():
+            # Open the compound file as a storage object
+            files = segment.open_compound_file(storage)
+            # Use an overlay here instead of just the compound storage, in rare
+            # circumstances a segment file may be added after the segment is
+            # written
+            self._storage = OverlayStorage(files, storage)
+        else:
+            self._storage = storage
+
+        # Get subreaders from codec
+        self._codec = codec if codec else segment.codec()
+        self._terms = self._codec.terms_reader(self._storage, segment)
+        self._perdoc = self._codec.per_document_reader(self._storage, segment)
+
+    def codec(self):
+        return self._codec
+
+    def segment(self):
+        return self._segment
+
+    def storage(self):
+        return self._storage
+
+    def has_deletions(self):
+        if self.is_closed:
+            raise ReaderClosed
+        return self._perdoc.has_deletions()
+
+    def doc_count(self):
+        if self.is_closed:
+            raise ReaderClosed
+        return self._perdoc.doc_count()
+
+    def doc_count_all(self):
+        if self.is_closed:
+            raise ReaderClosed
+        return self._perdoc.doc_count_all()
+
+    def is_deleted(self, docnum):
+        if self.is_closed:
+            raise ReaderClosed
+        return self._perdoc.is_deleted(docnum)
+
+    def generation(self):
+        return self._gen
+
+    def __repr__(self):
+        return "%s(%r, %r)" % (self.__class__.__name__, self._storage,
+                               self._segment)
+
+    def __contains__(self, term):
+        if self.is_closed:
+            raise ReaderClosed
+        fieldname, text = term
+        if fieldname not in self.schema:
+            return False
+        text = self._text_to_bytes(fieldname, text)
+        return (fieldname, text) in self._terms
+
+    def close(self):
+        if self.is_closed:
+            raise ReaderClosed("Reader already closed")
+        self._terms.close()
+        self._perdoc.close()
+
+        # It's possible some weird codec that doesn't use storage might have
+        # passed None instead of a storage object
+        if self._storage:
+            self._storage.close()
+
+        self.is_closed = True
+
+    def stored_fields(self, docnum):
+        if self.is_closed:
+            raise ReaderClosed
+        assert docnum >= 0
+        schema = self.schema
+        sfs = self._perdoc.stored_fields(docnum)
+        # Double-check with schema to filter out removed fields
+        return dict(item for item in iteritems(sfs) if item[0] in schema)
+
+    # Delegate doc methods to the per-doc reader
+
+    def all_doc_ids(self):
+        if self.is_closed:
+            raise ReaderClosed
+        return self._perdoc.all_doc_ids()
+
+    def iter_docs(self):
+        if self.is_closed:
+            raise ReaderClosed
+        return self._perdoc.iter_docs()
+
+    def all_stored_fields(self):
+        if self.is_closed:
+            raise ReaderClosed
+        return self._perdoc.all_stored_fields()
+
+    def field_length(self, fieldname):
+        if self.is_closed:
+            raise ReaderClosed
+        return self._perdoc.field_length(fieldname)
+
+    def min_field_length(self, fieldname):
+        if self.is_closed:
+            raise ReaderClosed
+        return self._perdoc.min_field_length(fieldname)
+
+    def max_field_length(self, fieldname):
+        if self.is_closed:
+            raise ReaderClosed
+        return self._perdoc.max_field_length(fieldname)
+
+    def doc_field_length(self, docnum, fieldname, default=0):
+        if self.is_closed:
+            raise ReaderClosed
+        return self._perdoc.doc_field_length(docnum, fieldname, default)
+
+    def has_vector(self, docnum, fieldname):
+        if self.is_closed:
+            raise ReaderClosed
+        return self._perdoc.has_vector(docnum, fieldname)
+
+    #
+
+    def _test_field(self, fieldname):
+        if self.is_closed:
+            raise ReaderClosed
+        if fieldname not in self.schema:
+            raise TermNotFound("No field %r" % fieldname)
+        if self.schema[fieldname].format is None:
+            raise TermNotFound("Field %r is not indexed" % fieldname)
+
+    def indexed_field_names(self):
+        return self._terms.indexed_field_names()
+
+    def all_terms(self):
+        if self.is_closed:
+            raise ReaderClosed
+        schema = self.schema
+        return ((fieldname, text) for fieldname, text in self._terms.terms()
+                if fieldname in schema)
+
+    def terms_from(self, fieldname, prefix):
+        self._test_field(fieldname)
+        prefix = self._text_to_bytes(fieldname, prefix)
+        schema = self.schema
+        return ((fname, text) for fname, text
+                in self._terms.terms_from(fieldname, prefix)
+                if fname in schema)
+
+    def term_info(self, fieldname, text):
+        self._test_field(fieldname)
+        text = self._text_to_bytes(fieldname, text)
+        try:
+            return self._terms.term_info(fieldname, text)
+        except KeyError:
+            raise TermNotFound("%s:%r" % (fieldname, text))
+
+    def expand_prefix(self, fieldname, prefix):
+        self._test_field(fieldname)
+        prefix = self._text_to_bytes(fieldname, prefix)
+        return IndexReader.expand_prefix(self, fieldname, prefix)
+
+    def lexicon(self, fieldname):
+        self._test_field(fieldname)
+        return IndexReader.lexicon(self, fieldname)
+
+    def __iter__(self):
+        if self.is_closed:
+            raise ReaderClosed
+        schema = self.schema
+        return ((term, terminfo) for term, terminfo in self._terms.items()
+                if term[0] in schema)
+
+    def iter_from(self, fieldname, text):
+        self._test_field(fieldname)
+        schema = self.schema
+        text = self._text_to_bytes(fieldname, text)
+        for term, terminfo in self._terms.items_from(fieldname, text):
+            if term[0] not in schema:
+                continue
+            yield (term, terminfo)
+
+    def frequency(self, fieldname, text):
+        self._test_field(fieldname)
+        text = self._text_to_bytes(fieldname, text)
+        try:
+            return self._terms.frequency(fieldname, text)
+        except KeyError:
+            return 0
+
+    def doc_frequency(self, fieldname, text):
+        self._test_field(fieldname)
+        text = self._text_to_bytes(fieldname, text)
+        try:
+            return self._terms.doc_frequency(fieldname, text)
+        except KeyError:
+            return 0
+
+    def postings(self, fieldname, text, scorer=None):
+        from whoosh.matching.wrappers import FilterMatcher
+
+        if self.is_closed:
+            raise ReaderClosed
+        if fieldname not in self.schema:
+            raise TermNotFound("No  field %r" % fieldname)
+        text = self._text_to_bytes(fieldname, text)
+        format_ = self.schema[fieldname].format
+        matcher = self._terms.matcher(fieldname, text, format_, scorer=scorer)
+        deleted = frozenset(self._perdoc.deleted_docs())
+        if deleted:
+            matcher = FilterMatcher(matcher, deleted, exclude=True)
+        return matcher
+
+    def vector(self, docnum, fieldname, format_=None):
+        if self.is_closed:
+            raise ReaderClosed
+        if fieldname not in self.schema:
+            raise TermNotFound("No  field %r" % fieldname)
+        vformat = format_ or self.schema[fieldname].vector
+        if not vformat:
+            raise Exception("No vectors are stored for field %r" % fieldname)
+        return self._perdoc.vector(docnum, fieldname, vformat)
+
+    def cursor(self, fieldname):
+        if self.is_closed:
+            raise ReaderClosed
+        fieldobj = self.schema[fieldname]
+        return self._terms.cursor(fieldname, fieldobj)
+
+    def terms_within(self, fieldname, text, maxdist, prefix=0):
+        # Replaces the horribly inefficient base implementation with one based
+        # on skipping through the word list efficiently using a DFA
+
+        fieldobj = self.schema[fieldname]
+        spellfield = fieldobj.spelling_fieldname(fieldname)
+        auto = self._codec.automata(self._storage, self._segment)
+        fieldcur = self.cursor(spellfield)
+        return auto.terms_within(fieldcur, text, maxdist, prefix)
+
+    # Column methods
+
+    def has_column(self, fieldname):
+        if self.is_closed:
+            raise ReaderClosed
+        coltype = self.schema[fieldname].column_type
+        return coltype and self._perdoc.has_column(fieldname)
+
+    def column_reader(self, fieldname, column=None, reverse=False,
+                      translate=True):
+        if self.is_closed:
+            raise ReaderClosed
+
+        fieldobj = self.schema[fieldname]
+        column = column or fieldobj.column_type
+        if not column:
+            raise Exception("No column for field %r in %r"
+                            % (fieldname, self))
+
+        if self._perdoc.has_column(fieldname):
+            creader = self._perdoc.column_reader(fieldname, column)
+            if reverse:
+                creader.set_reverse()
+        else:
+            # This segment doesn't have a column file for this field, so create
+            # a fake column reader that always returns the default value.
+            default = column.default_value(reverse)
+            creader = columns.EmptyColumnReader(default, self.doc_count_all())
+
+        if translate:
+            # Wrap the column in a Translator to give the caller
+            # nice values instead of sortable representations
+            fcv = fieldobj.from_column_value
+            creader = columns.TranslatingColumnReader(creader, fcv)
+
+        return creader
 
 
 # Fake IndexReader class for empty indexes
@@ -520,6 +897,14 @@ class EmptyReader(IndexReader):
     def __iter__(self):
         return iter([])
 
+    def cursor(self, fieldname):
+        from whoosh.codec.base import EmptyCursor
+
+        return EmptyCursor()
+
+    def indexed_field_names(self):
+        return []
+
     def all_terms(self):
         return iter([])
 
@@ -529,10 +914,10 @@ class EmptyReader(IndexReader):
     def iter_from(self, fieldname, text):
         return iter([])
 
-    def iter_field(self, fieldname):
+    def iter_field(self, fieldname, prefix=''):
         return iter([])
 
-    def iter_prefix(self, fieldname):
+    def iter_prefix(self, fieldname, prefix=''):
         return iter([])
 
     def lexicon(self, fieldname):
@@ -580,7 +965,7 @@ class EmptyReader(IndexReader):
     def has_vector(self, docnum, fieldname):
         return False
 
-    def vector(self, docnum, fieldname):
+    def vector(self, docnum, fieldname, format_=None):
         raise KeyError("No document number %s" % docnum)
 
     def most_frequent_terms(self, fieldname, number=5, prefix=''):
@@ -595,9 +980,6 @@ class EmptyReader(IndexReader):
 class MultiReader(IndexReader):
     """Do not instantiate this object directly. Instead use Index.reader().
     """
-
-    def is_atomic(self):
-        return False
 
     def __init__(self, readers, generation=None):
         self.readers = readers
@@ -614,9 +996,6 @@ class MultiReader(IndexReader):
 
         self.is_closed = False
 
-    def __contains__(self, term):
-        return any(r.__contains__(term) for r in self.readers)
-
     def _document_segment(self, docnum):
         return max(0, bisect_right(self.doc_offsets, docnum) - 1)
 
@@ -624,6 +1003,15 @@ class MultiReader(IndexReader):
         segmentnum = self._document_segment(docnum)
         offset = self.doc_offsets[segmentnum]
         return segmentnum, docnum - offset
+
+    def cursor(self, fieldname):
+        return MultiCursor([r.cursor(fieldname) for r in self.readers])
+
+    def is_atomic(self):
+        return False
+
+    def leaf_readers(self):
+        return zip_(self.readers, self.doc_offsets)
 
     def add_reader(self, reader):
         self.readers.append(reader)
@@ -638,6 +1026,23 @@ class MultiReader(IndexReader):
     def generation(self):
         return self._gen
 
+    def format(self, fieldname):
+        for r in self.readers:
+            fmt = r.format(fieldname)
+            if fmt is not None:
+                return fmt
+
+    def vector_format(self, fieldname):
+        for r in self.readers:
+            vfmt = r.vector_format(fieldname)
+            if vfmt is not None:
+                return vfmt
+
+    # Term methods
+
+    def __contains__(self, term):
+        return any(r.__contains__(term) for r in self.readers)
+
     def _merge_terms(self, iterlist):
         # Merge-sorts terms coming from a list of term iterators.
 
@@ -650,12 +1055,25 @@ class MultiReader(IndexReader):
 
         current = []
         for it in iterlist:
-            term = next(it)
+            try:
+                term = next(it)
+            except StopIteration:
+                continue
             current.append((term, id(it)))
-        heapify(current)
-
         # Number of active iterators
         active = len(current)
+
+        # If only one iterator is active, just yield from it and return
+        if active == 1:
+            term, itid = current[0]
+            it = itermap[itid]
+            yield term
+            for term in it:
+                yield term
+            return
+
+        # Otherwise, do a streaming heap sort of the terms from the iterators
+        heapify(current)
         while active:
             # Peek at the first term in the sorted list
             term = current[0][0]
@@ -672,6 +1090,12 @@ class MultiReader(IndexReader):
 
             # Yield the term
             yield term
+
+    def indexed_field_names(self):
+        names = set()
+        for r in self.readers:
+            names.update(r.indexed_field_names())
+        return iter(names)
 
     def all_terms(self):
         return self._merge_terms([r.all_terms() for r in self.readers])
@@ -691,24 +1115,49 @@ class MultiReader(IndexReader):
         # added
         if not tis:
             raise TermNotFound(term)
-        elif len(tis) == 1:
-            ti, offset = tis[0]
-            ti._minid += offset
-            ti._maxid += offset
-            return ti
 
-        # Combine the various statistics
-        w = sum(ti.weight() for ti, _ in tis)
-        df = sum(ti.doc_frequency() for ti, _ in tis)
-        ml = min(ti.min_length() for ti, _ in tis)
-        xl = max(ti.max_length() for ti, _ in tis)
-        xw = max(ti.max_weight() for ti, _ in tis)
+        return combine_terminfos(tis)
 
-        # For min and max ID, we need to add the doc offsets
-        mid = min(ti.min_id() + offset for ti, offset in tis)
-        xid = max(ti.max_id() + offset for ti, offset in tis)
+    def frequency(self, fieldname, text):
+        return sum(r.frequency(fieldname, text) for r in self.readers)
 
-        return TermInfo(w, df, ml, xl, xw, mid, xid)
+    def doc_frequency(self, fieldname, text):
+        return sum(r.doc_frequency(fieldname, text) for r in self.readers)
+
+    def postings(self, fieldname, text):
+        # This method does not add a scorer; for that, use Searcher.postings()
+
+        postreaders = []
+        docoffsets = []
+        term = (fieldname, text)
+
+        for i, r in enumerate(self.readers):
+            if term in r:
+                offset = self.doc_offsets[i]
+                pr = r.postings(fieldname, text)
+                postreaders.append(pr)
+                docoffsets.append(offset)
+
+        if not postreaders:
+            raise TermNotFound(fieldname, text)
+
+        return MultiMatcher(postreaders, docoffsets)
+
+    def first_id(self, fieldname, text):
+        for i, r in enumerate(self.readers):
+            try:
+                id = r.first_id(fieldname, text)
+            except (KeyError, TermNotFound):
+                pass
+            else:
+                if id is None:
+                    raise TermNotFound((fieldname, text))
+                else:
+                    return self.doc_offsets[i] + id
+
+        raise TermNotFound((fieldname, text))
+
+    # Deletion methods
 
     def has_deletions(self):
         return any(r.has_deletions() for r in self.readers)
@@ -720,6 +1169,25 @@ class MultiReader(IndexReader):
     def stored_fields(self, docnum):
         segmentnum, segmentdoc = self._segment_and_docnum(docnum)
         return self.readers[segmentnum].stored_fields(segmentdoc)
+
+    # Columns
+
+    def has_column(self, fieldname):
+        return any(r.has_column(fieldname) for r in self.readers)
+
+    def column_reader(self, fieldname, column=None, reverse=False,
+                      translate=True):
+        crs = []
+        doc_offsets = []
+        for i, r in enumerate(self.readers):
+            if r.has_column(fieldname):
+                cr = r.column_reader(fieldname, column=column, reverse=reverse,
+                                     translate=translate)
+                crs.append(cr)
+                doc_offsets.append(self.doc_offsets[i])
+        return columns.MultiColumnReader(crs, doc_offsets)
+
+    # Per doc methods
 
     def all_stored_fields(self):
         for reader in self.readers:
@@ -746,46 +1214,11 @@ class MultiReader(IndexReader):
         reader = self.readers[segmentnum]
         return reader.doc_field_length(segmentdoc, fieldname, default=default)
 
-    # max_field_length
-
-    def first_id(self, fieldname, text):
-        for i, r in enumerate(self.readers):
-            try:
-                id = r.first_id(fieldname, text)
-            except (KeyError, TermNotFound):
-                pass
-            else:
-                if id is None:
-                    raise TermNotFound((fieldname, text))
-                else:
-                    return self.doc_offsets[i] + id
-
-        raise TermNotFound((fieldname, text))
-
-    def postings(self, fieldname, text, scorer=None):
-        postreaders = []
-        docoffsets = []
-        term = (fieldname, text)
-
-        for i, r in enumerate(self.readers):
-            if term in r:
-                offset = self.doc_offsets[i]
-
-                # Get a posting reader for the term and add it to the list
-                pr = r.postings(fieldname, text, scorer=scorer)
-                postreaders.append(pr)
-                docoffsets.append(offset)
-
-        if not postreaders:
-            raise TermNotFound(fieldname, text)
-        else:
-            return MultiMatcher(postreaders, docoffsets)
-
     def has_vector(self, docnum, fieldname):
         segmentnum, segmentdoc = self._segment_and_docnum(docnum)
         return self.readers[segmentnum].has_vector(segmentdoc, fieldname)
 
-    def vector(self, docnum, fieldname):
+    def vector(self, docnum, fieldname, format_=None):
         segmentnum, segmentdoc = self._segment_and_docnum(docnum)
         return self.readers[segmentnum].vector(segmentdoc, fieldname)
 
@@ -794,54 +1227,70 @@ class MultiReader(IndexReader):
         return self.readers[segmentnum].vector_as(astype, segmentdoc,
                                                   fieldname)
 
-    def has_word_graph(self, fieldname):
-        return any(r.has_word_graph(fieldname) for r in self.readers)
 
-    def word_graph(self, fieldname):
-        from whoosh.support.dawg import UnionNode
-        from whoosh.util import make_binary_tree
+def combine_terminfos(tis):
+    if len(tis) == 1:
+        ti, offset = tis[0]
+        ti._minid += offset
+        ti._maxid += offset
+        return ti
 
-        if not self.has_word_graph(fieldname):
-            raise Exception("No word graph for field %r" % fieldname)
+    # Combine the various statistics
+    w = sum(ti.weight() for ti, _ in tis)
+    df = sum(ti.doc_frequency() for ti, _ in tis)
+    ml = min(ti.min_length() for ti, _ in tis)
+    xl = max(ti.max_length() for ti, _ in tis)
+    xw = max(ti.max_weight() for ti, _ in tis)
 
-        graphs = [r.word_graph(fieldname) for r in self.readers
-                  if r.has_word_graph(fieldname)]
-        if len(graphs) == 0:
-            raise KeyError("No readers have graph for %r" % fieldname)
-        if len(graphs) == 1:
-            return graphs[0]
-        return make_binary_tree(UnionNode, graphs)
+    # For min and max ID, we need to add the doc offsets
+    mid = min(ti.min_id() + offset for ti, offset in tis)
+    xid = max(ti.max_id() + offset for ti, offset in tis)
 
-    def terms_within(self, fieldname, text, maxdist, prefix=0):
-        tset = set()
-        for r in self.readers:
-            tset.update(r.terms_within(fieldname, text, maxdist, prefix=prefix))
-        return tset
+    return TermInfo(w, df, ml, xl, xw, mid, xid)
 
-    def format(self, fieldname):
-        for r in self.readers:
-            fmt = r.format(fieldname)
-            if fmt is not None:
-                return fmt
 
-    def vector_format(self, fieldname):
-        for r in self.readers:
-            vfmt = r.vector_format(fieldname)
-            if vfmt is not None:
-                return vfmt
+class MultiCursor(object):
+    def __init__(self, cursors):
+        self._cursors = [c for c in cursors if c.is_valid()]
+        self._low = []
+        self._text = None
+        self.next()
 
-    def frequency(self, fieldname, text):
-        return sum(r.frequency(fieldname, text) for r in self.readers)
+    def _find_low(self):
+        low = []
+        lowterm = None
 
-    def doc_frequency(self, fieldname, text):
-        return sum(r.doc_frequency(fieldname, text) for r in self.readers)
+        for c in self._cursors:
+            if c.is_valid():
+                cterm = c.term()
+                if low and cterm == lowterm:
+                    low.append(c)
+                elif low and cterm < lowterm:
+                    low = [c]
+                    lowterm = cterm
 
-    # most_frequent_terms
-    # most_distinctive_terms
+        self._low = low
+        self._text = lowterm
+        return lowterm
 
-    def leaf_readers(self):
-        return zip_(self.readers, self.doc_offsets)
+    def first(self):
+        for c in self._cursors:
+            c.first()
+        return self._find_low()
 
-    def set_caching_policy(self, *args, **kwargs):
-        for r in self.readers:
-            r.set_caching_policy(*args, **kwargs)
+    def find(self, term):
+        for c in self._cursors:
+            c.find(term)
+        return self._find_low()
+
+    def next(self):
+        for c in self._cursors:
+            c.next()
+        return self._find_low()
+
+    def term_info(self):
+        tis = [c.term_info() for c in self._low]
+        return combine_terminfos(tis) if tis else None
+
+    def is_valid(self):
+        return any(c.is_valid() for c in self._cursors)
