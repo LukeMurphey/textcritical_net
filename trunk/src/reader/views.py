@@ -885,11 +885,11 @@ def parse_reference_and_get_division_and_verse(regex, escaped_ref, work, divisio
 def api_resolve_reference(request, work=None, ref=None):
     
     # Get the work and reference from the arguments
-    if work is None and 'work' in request.REQUEST:
-        work = request.REQUEST['work']
+    if work is None and 'work' in request.GET:
+        work = request.GET['work']
         
-    if ref is None and 'ref' in request.REQUEST:
-        ref = request.REQUEST['ref']
+    if ref is None and 'ref' in request.GET:
+        ref = request.GET['ref']
     
     # Get the work that is being referred to
     work_alias = get_object_or_404(WorkAlias, title_slug=work)
