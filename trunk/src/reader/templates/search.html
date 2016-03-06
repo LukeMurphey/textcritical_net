@@ -18,46 +18,65 @@
 	 	<button id="search-button" class="btn btn-primary" type="button" ><span class="hidden-phone">Submit </span>Search</button>
 	</div>
 	<label class="checkbox-label" for="related_forms">
-		<input class="checkbox" type="checkbox" id="related_forms" name="related_forms">Search related Greek forms<span class="hidden-phone"> (slower but more thorough)</span></input>
+		<input class="checkbox" type="checkbox" id="related_forms" name="related_forms" {% if search_related_forms %}checked{% endif %}>Search related Greek forms<span class="hidden-phone"> (slower but more thorough)</span></input>
 	</label>	
 </form>
 
 <div id="searching" class="hide hidden-phone searching-animation">Searching ...</div>
 
-<!-- 
+<!--
 <ul class="nav nav-pills">
-	<li class="active">
-		<a href="#">Results</a>
-	</li>
-  	<li>
-  		<a href="#">Stats</a>
-  	</li>
-  	<li>
-  		<a href="#">Help</a>
-  	</li>
+    <li class="active">
+    	<a href="#search-results-tab" data-toggle="tab">Results</a>
+    </li>
+    <li>
+    	<a href="#search-stats-tab" data-toggle="tab">Statistics: words</a>
+    </li>
+    <li>
+    	<a href="#search-stats-tab1" data-toggle="tab">Statistics: works</a>
+    </li>
+    <li>
+    	<a href="#search-stats-tab2" data-toggle="tab">Statistics: sections</a>
+    </li>
+    <li>
+    	<a href="#search-help-tab" data-toggle="tab">Help</a>
+    </li>
 </ul>
- -->
-
+-->
+ 
 <div class="tabbable">
   <ul class="nav nav-tabs">
     <li class="active">
     	<a href="#search-results-tab" data-toggle="tab">Results</a>
     </li>
     <li>
-    	<a href="#search-stats-tab" data-toggle="tab">Statistics</a>
+    	<a href="#search-stats-tab" data-toggle="tab">Matched words</a>
+    </li>
+    <li>
+    	<a href="#search-stats-tab1" data-toggle="tab">Matched works</a>
+    </li>
+    <li>
+    	<a href="#search-stats-tab2" data-toggle="tab">Matched sections</a>
     </li>
     <li>
     	<a href="#search-help-tab" data-toggle="tab">Help</a>
     </li>
   </ul>
+   
   <div class="tab-content">
     <div class="tab-pane active" id="search-results-tab">
 		<div class="search-results" id="search-results-content"></div>
     </div>
     <div class="tab-pane" id="search-stats-tab">
-    	<div id="chart-word-frequency"></div>
-    	<div id="chart-work-frequency"></div>
-    	<div id="chart-section-frequency"></div>
+    	<div class="chart" id="chart-word-frequency"></div>
+    	<!-- <div class="chart" id="chart-work-frequency"></div>
+    	<div class="chart" id="chart-section-frequency"></div> -->
+    </div>
+    <div class="tab-pane" id="search-stats-tab1">
+    	<div class="chart" id="chart-work-frequency"></div>
+    </div>
+    <div class="tab-pane" id="search-stats-tab2">
+    	<div class="chart" id="chart-section-frequency"></div>
     </div>
     <div class="tab-pane" id="search-help-tab">
 		<div id="search-help">
