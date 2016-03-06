@@ -83,13 +83,19 @@ def search(request, query=None):
         page = request.GET['page']
     else:
         page = None
+        
+    if 'include_related' in request.GET:
+        search_related_forms = (request.GET['include_related'] == '1')
+    else:
+        search_related_forms = False
     
     return render_to_response('search.html',
                               {'title'   : 'Search',
                                'authors' : authors,
                                'works'   : works,
                                'query'   : query,
-                               'page'    : page
+                               'page'    : page,
+                               'search_related_forms' : search_related_forms
                                },
                               context_instance=RequestContext(request)) 
 
