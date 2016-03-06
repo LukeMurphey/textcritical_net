@@ -646,6 +646,7 @@ def api_search(request, search_text=None ):
                    'results'  : results_lists,
                    'matched_terms' : search_results.matched_terms,
                    'matched_terms_no_diacritics' : search_results.matched_terms_no_diacritics,
+                   'match_count' : search_results.match_count,
                    'matched_sections' : search_results.matched_sections,
                    'matched_works' : search_results.matched_works
                    }
