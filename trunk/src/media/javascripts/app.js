@@ -688,7 +688,7 @@ define([
 		}
 		
 		/**
-		 * Update the search results when the user presses the back button.
+		 * Convert the beta-code to the associated Greek.
 		 **/
 		TextCritical.convert_search_query_beta_code = function ( ) {
 			
@@ -699,6 +699,21 @@ define([
 				url: "/api/convert_query_beta_code/?q=" + query
 			}).done(function(converted_query) {
 				$("#search-term").val(converted_query);
+			});
+		}
+		
+		/**
+		 * Get the associated Greek forms.
+		 **/
+		TextCritical.get_related_forms = function ( ) {
+			
+			query = $("#text").val();
+			
+			// Submit the AJAX request to display the information
+			$.ajax({
+				url: "/api/word_forms/" + query
+			}).done(function(results) {
+				$("#output").text(results.forms.join(", ").toLowerCase());
 			});
 		}
 		
