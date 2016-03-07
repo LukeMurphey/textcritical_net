@@ -22,7 +22,7 @@ from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy, ajaxify, cache_page_if_ajax
 from reader.utils import get_word_descriptions
-from reader.contentsearch import search_verses
+from reader.contentsearch import search_verses, GreekVariations
 from reader.language_tools import normalize_unicode
 
 # Try to import the ePubExport but be forgiving if the necessary dependencies do not exist
@@ -475,6 +475,12 @@ def beta_code_converter(request):
     return render_to_response('beta_code_converter.html',
                               {'title'               : 'Beta-code Converter'},
                               context_instance=RequestContext(request))
+
+@cache_page(8 * hours)
+def word_forms(request):
+    return render_to_response('word_forms.html',
+                              {'title'               : 'Word forms'},
+                              context_instance=RequestContext(request))
     
 # -----------------------------------
 # API views are defined below
@@ -781,6 +787,21 @@ def api_word_parse_beta_code(request, word=None):
         word = request.GET['word']
     
     return api_word_parse(request, Greek.beta_code_to_unicode(word))
+
+@cache_page(15 * minutes)
+def api_word_forms(request, word=None):
+    
+    if word is None or len(word) == 0 and 'word' in request.GET:
+        word = request.GET['word']
+        
+    d = {}
+    messages = []
+    
+    greekVariations = GreekVariations("content", "")
+    d['forms'] = greekVariations.get_variations(word, include_beta_code=True, include_alternate_forms=True, ignore_diacritics=False, messages=messages)
+    d['messages'] = messages
+    
+    return render_api_response(request, d)
 
 @cache_page(15 * minutes)
 def api_unicode_to_betacode(request, text=None):
