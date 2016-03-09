@@ -1,7 +1,7 @@
 from django.core.serializers import serialize
 from django.db.models.query import QuerySet
 from django import template
-from django.utils import json
+import json
 register = template.Library()
  
 @register.filter(is_safe=True)
@@ -11,3 +11,7 @@ def jsonify(obj):
         return serialize('json', obj)
     
     return json.dumps(object)
+
+@register.filter(is_safe=True)
+def unslugify(txt):
+    return str(txt).replace('_', ' ').replace('-', ' ').title()

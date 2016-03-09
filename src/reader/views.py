@@ -22,7 +22,7 @@ from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy, ajaxify, cache_page_if_ajax
 from reader.utils import get_word_descriptions
-from reader.contentsearch import search_verses, GreekVariations
+from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
 
 # Try to import the ePubExport but be forgiving if the necessary dependencies do not exist
@@ -560,6 +560,34 @@ def api_works_typeahead_hints(request):
     return render_api_response(request, hints)
 
 @cache_page(15 * minutes)
+def api_search_stats(request, search_text=None ):
+    
+    # Get the text to search for
+    if search_text is not None and len(search_text) > 0:
+        pass
+    elif 'q' in request.GET:
+        search_text = request.GET['q']
+    else:
+        return render_api_error(request, "No search query was provided", 400)
+    
+    # Normalize the query string
+    search_text = language_tools.normalize_unicode(search_text)
+        
+    # Determine if the related forms ought to be included
+    if 'related_forms' in request.GET:
+        try:
+            include_related_forms = bool( int(request.GET['related_forms']) )
+        except ValueError:
+            include_related_forms = False
+    else:
+        include_related_forms = False
+        
+    stats = search_stats(search_text, include_related_forms=include_related_forms)
+    
+    return render_api_response(request, stats)
+    
+
+@cache_page(15 * minutes)
 def api_search(request, search_text=None ):
     
     # Get the text to search for
@@ -645,14 +673,18 @@ def api_search(request, search_text=None ):
         # Append the results
         results_lists.append(d)
     
+    # Get the search stats
+    stats = search_stats( search_text, include_related_forms=include_related_forms )
+    
     results_set = {
                    'result_count' : search_results.result_count,
                    'page' : search_results.page,
                    'page_len' : search_results.pagelen,
                    'results'  : results_lists,
-                   'matched_terms' : search_results.matched_terms,
+                   'matched_terms' : stats['matched_terms'],
+                   'matched_terms_verses' : search_results.matched_terms,
                    'matched_terms_no_diacritics' : search_results.matched_terms_no_diacritics,
-                   'match_count' : search_results.match_count,
+                   'match_count' : stats['matches'],
                    'matched_sections' : search_results.matched_sections,
                    'matched_works' : search_results.matched_works
                    }
