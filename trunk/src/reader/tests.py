@@ -19,7 +19,7 @@ from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Work, WorkAlias
 from reader.views import get_division
-from reader.contentsearch import WorkIndexer, search_verses
+from reader.contentsearch import WorkIndexer, search_verses, search_stats
 from reader import utils
 from reader.ebook import ePubExport
 
@@ -1837,7 +1837,7 @@ class TestContentSearch(TestReader):
         self.assertEquals( len(results.verses), 1 )
 
         results = search_verses( u'work:"New Testament"', self.indexer.get_index() )
-        self.assertEquals( len(results.verses), 1 )        
+        self.assertEquals( len(results.verses), 1 )
         
     def test_search_division_by_slug(self):
         
@@ -1877,6 +1877,48 @@ class TestContentSearch(TestReader):
         results = search_verses( "amet", self.indexer.get_index() )
         
         self.assertEquals( len(results.verses), 1 )
+        
+    def test_matched_terms(self):
+        
+        # Make a work
+        verse, division, work = self.make_work(u"οὐ νοεῖτε ὅτι πᾶν τὸ εἰσπορευόμενον εις τὸ στόμα εἰς τὴν κοιλίαν χωρεῖ καὶ εἰς ἀφεδρῶνα ἐκβάλλεται;")
+        
+        self.indexer.get_index(create=True)
+        self.indexer.index_division(division)
+        
+        results = search_verses( u"no_diacritics:εις τὸ", self.indexer.get_index() )
+        
+        self.assertEquals( len(results.verses), 1 )
+            
+        self.assertEquals( len(results.matched_terms), 1 )
+        
+    def test_search_stats(self):
+        
+        # Make a work
+        verse, division, work = self.make_work(u"οὐ νοεῖτε ὅτι πᾶν τὸ εἰσπορευόμενον εἰς τὸ στόμα εἰς τὴν κοιλίαν χωρεῖ καὶ εἰς ἀφεδρῶνα ἐκβάλλεται;")
+        
+        self.indexer.get_index(create=True)
+        self.indexer.index_verse(verse, commit=True)
+        
+        results = search_stats( u"εἰς OR τὸ", self.indexer.get_index() )
+        
+        self.assertEquals( results['matches'], 5 )
+        self.assertEquals( results['matched_terms'][u"εἰς"], 3 )
+        self.assertEquals( results['matched_terms'][u"τὸ"], 2 )
+        
+    def test_search_stats_no_diacritics(self):
+        
+        # Make a work
+        verse, division, work = self.make_work(u"οὐ νοεῖτε ὅτι πᾶν τὸ εἰσπορευόμενον εἰς τὸ στόμα εἰς τὴν κοιλίαν χωρεῖ καὶ εἰς ἀφεδρῶνα ἐκβάλλεται;")
+        
+        self.indexer.get_index(create=True)
+        self.indexer.index_verse(verse, commit=True)
+        
+        results = search_stats( u"εἰς OR no_diacritics:το", self.indexer.get_index() )
+        
+        self.assertEquals( results['matches'], 5 )
+        self.assertEquals( results['matched_terms'][u"εἰς"], 3 )
+        self.assertEquals( results['matched_terms'][u"το"], 2 )
         
 class TestUnboundBibleImport(TestReader):
     

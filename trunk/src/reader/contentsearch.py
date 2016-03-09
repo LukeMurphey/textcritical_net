@@ -17,6 +17,7 @@ from reader.models import Verse, Division, Work
 from reader.language_tools.greek import Greek
 from reader.language_tools import strip_accents, normalize_unicode
 from reader.utils import get_all_related_forms
+from reader.templatetags.shortcuts import unslugify
 
 import os
 from collections import OrderedDict # Used to order the stats from the search
@@ -45,8 +46,8 @@ class WorkIndexer:
         section_analyzer = SimpleAnalyzer( expression="[a-zA-Z0-9- ]+" )
         
         return Schema( verse_id      = NUMERIC(unique=True, stored=True, sortable=True),
-                       content       = TEXT(analyzer=analyzer),
-                       no_diacritics = TEXT(analyzer=analyzer),
+                       content       = TEXT(analyzer=analyzer, vector=True),
+                       no_diacritics = TEXT(analyzer=analyzer, vector=True),
                        work_id       = TEXT,
                        section_id    = TEXT,
                        work          = TEXT(analyzer=slug_analyzer),
@@ -212,10 +213,6 @@ class WorkIndexer:
         return ",".join(descriptions)
     
     @classmethod
-    def unslugify(cls, txt):
-        return txt.replace('_', ' ').replace('-', ' ').title()
-    
-    @classmethod
     def index_verse(cls, verse, work=None, division=None, commit=False, writer=None):
         """
         Indexes the provided verse.
@@ -377,7 +374,7 @@ class VerseSearchResults:
             # If we didn't find the work, then add the slug after attempting to un-slugify it
             if not found_work:
                 logger.critical("Unable to find work in matched terms, work_slug=%s", work_slug)
-                self.matched_works[self.unslugify(work_slug)] = count
+                self.matched_works[unslugify(work_slug)] = count
         
         self.matched_works = OrderedDict(sorted(self.matched_works.items(), key=lambda x: x[1], reverse=True))
         
@@ -512,7 +509,8 @@ class GreekBetaCodeVariations(GreekVariations):
     
 def search_stats( search_text, inx=None, limit=2000, include_related_forms=True ):
     """
-    Search verses for those with the given text and provide high-level stats about the usage of 
+    Search verses for those with the given text and provide high-level stats about the usage of this term. This function is necessary because Whoosh
+    term matching stats indicate the number of verses that contain the given term, not the count of absolute count of the term.
     
     Arguments:
     search_text -- The content to search for
@@ -547,28 +545,60 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True 
         results = searcher.search_page(search_query, 1, limit, terms=True, sortedby="verse_id")
         
         stats = {
-                 'matches' : 0,
-                 'terms' : []
+                 'matches' : 0
                  }
         
-        vsr = VerseSearchResults([], 1, 1)
+        #matched_terms = stats['matches'].matched_terms()
+        matched_terms = {}
+        matched_terms_no_diacritics = {}
         
-        # Create the list of search results
+        if results.results.has_matched_terms():
+            for term, term_matches in results.results.termdocs.items():
+                if term[0] == "content":
+                    matched_terms[term[1].decode('utf-8')] = 0
+                    
+                if term[0] == "no_diacritics":
+                    matched_terms[term[1].decode('utf-8')] = 0
+                    
+        results_count = 0
+        
+        # Iterate through the search results
         for r in results:
             
-            # Get the verse so that the highlighting can be done
-            verse = Verse.objects.get(id=r['verse_id'])
+            results_count += 1
+            matched_in_result = 0
             
-            highlights = vsr.get_highlights( r, verse )
+            # For each document: get the matched terms
+            docnum = searcher.document_number(verse_id=r['verse_id'])
             
-            stats['matches'] += highlights.count('<b class="', )
+            # Process the main content
+            for term in searcher.vector(docnum,"content").items_as("frequency"):
+                
+                for matched_term in matched_terms:
+                    
+                    if matched_term == normalize_unicode(term[0]):
+                        matched_terms[matched_term] += term[1]
+                        matched_in_result += term[1]
+                        
+            # Process the no_diacritics content
+            for term in searcher.vector(docnum,"no_diacritics").items_as("frequency"):
+                
+                for matched_term in matched_terms:
+                    
+                    if matched_term == normalize_unicode(term[0]):
+                        matched_terms[matched_term] += term[1]
+                        matched_in_result += term[1]
             
-            #stats['matches'].matched_terms()
+            stats['matches'] += matched_in_result
+        
+        stats['matched_terms'] = OrderedDict(sorted(matched_terms.items(), key=lambda x: x[1], reverse=True))
+        stats['results_count'] = results_count
+        
+        
         
     return stats
-        
-    
-def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_forms=True ):
+
+def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_forms=True):
     """
     Search all verses for those with the given text.
     
