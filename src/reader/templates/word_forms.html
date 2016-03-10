@@ -24,7 +24,7 @@
 {% block javascript %}
 <script language="javascript">
 
-require(["jquery", "app"], function($) {
+require(["jquery", "app", "underscore"], function($) {
 	
 	var converted_content = null;
 	
@@ -37,9 +37,7 @@ require(["jquery", "app"], function($) {
 	
 	$(document).ready(function() {
 		
-		$('#text').keyup( function(){
-			update_output();
-		})
+		$('#text').keyup( _.debounce(update_output, 250));
 		
 		$('#search-button').click( function(){
 			document.location = "/search?include_related=1&q=" + $('#text').val();
