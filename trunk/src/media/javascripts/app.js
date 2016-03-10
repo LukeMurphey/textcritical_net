@@ -176,9 +176,13 @@ define([
 		 **/
 		TextCritical.word_lookup = function () {
 			
-			work = $("h1[data-work-title-slug]").data("work-title-slug");
+			// Get the work information
+			var work = $("h1[data-work-title-slug]").data("work-title-slug");
 			
-			TextCritical.open_morphology_dialog( $(this).text(), work );
+			// Get the current division name
+			var division_data = $('#chapter-base-url').data();
+			
+			TextCritical.open_morphology_dialog( $(this).text(), work, division_data.chapterDescription );
 			return false;
 		}
 		
@@ -217,8 +221,12 @@ define([
 		 * @param word the word to look up
 		 * @param work the work that contains the word we are looking up
 		 **/
-		TextCritical.open_morphology_dialog = function ( word, work ) {
+		TextCritical.open_morphology_dialog = function ( word, work, division ) {
 		
+			if(typeof division === "undefined"){
+				var division = null;
+			}
+			
 			console.info( "Obtaining the morphology of " + word );
 		
 			// Trim the word in case extra space was included
@@ -244,7 +252,7 @@ define([
 			}).done(function(data) {
 		
 				// Render the lemma information
-				$("#popup-dialog-content").html(_.template(morphology_dialog_template,{parses:data, word: _.escape(word), work: work}));
+				$("#popup-dialog-content").html(_.template(morphology_dialog_template,{parses:data, word: _.escape(word), work: work, division: _.escape(division)}));
 		
 				// Set the lemmas to be links
 				$("a.lemma").click(TextCritical.word_lookup);
