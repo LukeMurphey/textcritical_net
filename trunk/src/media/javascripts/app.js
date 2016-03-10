@@ -182,7 +182,13 @@ define([
 			// Get the current division name
 			var division_data = $('#chapter-base-url').data();
 			
-			TextCritical.open_morphology_dialog( $(this).text(), work, division_data.chapterDescription );
+			if(division_data && division_data.chapterDescription){
+				TextCritical.open_morphology_dialog( $(this).text(), work, division_data.chapterDescription );
+			}
+			else{
+				TextCritical.open_morphology_dialog( $(this).text(), work );
+			}
+			
 			return false;
 		}
 		
@@ -711,11 +717,36 @@ define([
 		}
 		
 		/**
+		 * Add links to open the morphology dialog on the given text.
+		 * 
+		 * @param selector The selector that indicates where the processed text (which will include HTML) should go
+		 * @param text The text to convert. If this is not provided, then the text will be gathered from the selector.
+		 */
+		TextCritical.add_word_morphology_links = function(selector, text){
+			
+			// If the user didn't provide the text, then assume we should change the existing text
+			if(typeof text === 'undefined'){
+				var text = selector.text();
+			}
+			
+			var words = text.split(' ');
+
+			// clear the existing content
+			selector.text('');
+
+			// insert each word wrapped with a span class to facilitate lookups
+			for (var i = 0; i < words.length; i++)
+			{
+				selector.append('<span class="word">' + words[i] + ' </span>');
+			}
+		}
+		
+		/**
 		 * Get the associated Greek forms.
 		 **/
 		TextCritical.get_related_forms = function ( ) {
 			
-			query = $("#text").val();
+			query = encodeURIComponent($("#text").val());
 			
 			// Submit the AJAX request to display the information
 			$.ajax({
@@ -727,6 +758,8 @@ define([
 		
 		/**
 		 * Flatten the type-ahead hints
+		 * 
+		 * @param typeahead_hints The type-aheads hints to flatten
 		 */
 		TextCritical.flatten_typeahead_hints = function( typeahead_hints ){
 	    	
@@ -1075,6 +1108,8 @@ define([
 		
 		/**
 		 * Convert the beta-code to Unicode.
+		 * 
+		 * @param beta_code The beta-code to convert to Greek
 		 **/
 		TextCritical.convert_search_query_beta_code = function ( beta_code) {
 			
@@ -1093,6 +1128,8 @@ define([
 		
 		/**
 		 * Freeze the height of the given object.
+		 * 
+		 * @param selector The selector of the panel to freeze the height for
 		 **/
 		TextCritical.freeze_height = function(selector){
 			
@@ -1101,6 +1138,8 @@ define([
 		
 		/**
 		 * Unfreeze the height of the given object.
+		 * 
+		 * @param selector The selector of the panel to un0freeze the height for
 		 **/
 		TextCritical.unfreeze_height = function(selector){
 			
