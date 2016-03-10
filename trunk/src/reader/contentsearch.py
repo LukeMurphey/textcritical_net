@@ -2,7 +2,7 @@ import whoosh
 from whoosh.qparser import QueryParser
 from whoosh.filedb.filestore import FileStorage
 from whoosh.fields import Schema, NUMERIC, TEXT
-from whoosh.analysis import SimpleAnalyzer
+from whoosh.analysis import SimpleAnalyzer, LowercaseFilter, RegexTokenizer
 from whoosh.query import Variations
 import re
 
@@ -40,17 +40,21 @@ class WorkIndexer:
         Note that changing the schema will have no affect unless you re-create the entire index. 
         """
         
-        # Add an analyzer that allows diacritical marks to be within the search queries
-        analyzer = SimpleAnalyzer( expression="[\w/*()=\\+|&']+(\.?[\w/*()=\\+|&']+)*" )
-        slug_analyzer = SimpleAnalyzer( expression="[a-z0-9-]+" )
-        section_analyzer = SimpleAnalyzer( expression="[a-zA-Z0-9- ]+" )
+        # This analyzer allows diacritical marks to be within the search queries
+        greek_word_analyzer = SimpleAnalyzer(expression="[\w/*()=\\+|&']+(\.?[\w/*()=\\+|&']+)*")
+        
+        # This analyzer supports section names (which include spaces)
+        section_analyzer = SimpleAnalyzer(expression="[a-zA-Z0-9- ]+")
+        
+        # This analyzer is used for the work name
+        work_analyzer = RegexTokenizer(expression="[a-zA-Z0-9- ]+") | LowercaseFilter()
         
         return Schema( verse_id      = NUMERIC(unique=True, stored=True, sortable=True),
-                       content       = TEXT(analyzer=analyzer, vector=True),
-                       no_diacritics = TEXT(analyzer=analyzer, vector=True),
+                       content       = TEXT(analyzer=greek_word_analyzer, vector=True),
+                       no_diacritics = TEXT(analyzer=greek_word_analyzer, vector=True),
                        work_id       = TEXT,
                        section_id    = TEXT,
-                       work          = TEXT(analyzer=slug_analyzer),
+                       work          = TEXT(analyzer=work_analyzer),
                        section       = TEXT(analyzer=section_analyzer),
                        author        = TEXT)           
     
@@ -260,7 +264,7 @@ class WorkIndexer:
                             verse_id      = verse.id,
                             work_id       = work.title_slug,
                             section_id    = division.title_slug,
-                            work          = unicode(work.title) + ", " + work.title_slug,
+                            work          = unicode(work.title) + "," + work.title_slug,
                             section       = cls.get_section_index_text(division),
                             author        = author_str
                             )
@@ -635,7 +639,7 @@ def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_fo
         logger.debug('Search query parsed, raw_query="%s"', search_query)
         
         # Get the search result
-        search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen, terms=False, sortedby="verse_id"), page, pagelen)
+        search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen, terms=True, sortedby="verse_id"), page, pagelen)
             
     return search_results
 
