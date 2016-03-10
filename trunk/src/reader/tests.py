@@ -141,6 +141,9 @@ fwnh=s sunegraya/mhn."""
             
             self.assertEqual( beta_original, beta_actual )
             
+        def test_fix_final_sigma(self):
+            self.assertEqual(Greek.fix_final_sigma(u"κόσμοσ"), "κόσμος")
+            
 class TestImportContext(TestCase):
         
     def test_division_level(self):

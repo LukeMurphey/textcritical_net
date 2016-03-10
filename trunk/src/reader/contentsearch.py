@@ -402,15 +402,16 @@ class GreekVariations(Variations):
         # This was added because it was found that Whoosh makes multiple requests for the same variation repeatedly.
         self.cached_variations = {}
         
-    def get_variations(self, text, include_beta_code=True, include_alternate_forms=True, ignore_diacritics=False, messages=None):
+    @classmethod
+    def get_variations(cls, text, include_beta_code=True, include_alternate_forms=True, ignore_diacritics=False, messages=None, cached_variations=None):
         
         # Make a signature so that we can be used to find cached results for the same request
         signature = str(include_beta_code) + "." + str(include_alternate_forms) + "." + str(ignore_diacritics) + "." + text
         
         # Get the result from the cache if available
-        if signature in self.cached_variations:
-            #logger.debug( "Found cached variations of the search term, word=%s, variations=%r", text, len(self.cached_variations[signature]) )
-            return self.cached_variations[ signature ]
+        if cached_variations is not None and signature in cached_variations:
+            #logger.debug( "Found cached variations of the search term, word=%s, variations=%r", text, len(cached_variations[signature]) )
+            return cached_variations[ signature ]
         
         logger.debug( "Looking for variations of the search term in order to perform a search, word=%s", text )
         
@@ -422,7 +423,7 @@ class GreekVariations(Variations):
         if include_alternate_forms:
             
             # Convert the content from beta-code if necessary
-            text = normalize_unicode(Greek.beta_code_to_unicode(text) )
+            text = normalize_unicode(Greek.beta_code_to_unicode(text))
             
             # Get the related forms
             related_forms = get_all_related_forms(text, ignore_diacritics)
@@ -460,7 +461,8 @@ class GreekVariations(Variations):
                     forms.append(r.form)
         
         # Cache the result
-        self.cached_variations[ signature ] = forms
+        if cached_variations is not None:
+            cached_variations[ signature ] = forms
         
         # Return the forms
         return forms
@@ -490,7 +492,7 @@ class GreekVariations(Variations):
         
         # Add the other Greek variations
         if GreekVariations.variation_fields is None or self.fieldname in GreekVariations.variation_fields:
-            variations.extend( self.get_variations(prepared_text, self.include_beta_code, self.include_alternate_forms, ignore_diacritics) )
+            variations.extend( GreekVariations.get_variations(prepared_text, self.include_beta_code, self.include_alternate_forms, ignore_diacritics, None, self.cached_variations) )
         
         # Return the variations list
         return [word for word in variations
@@ -550,7 +552,6 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True 
         
         #matched_terms = stats['matches'].matched_terms()
         matched_terms = {}
-        matched_terms_no_diacritics = {}
         
         if results.results.has_matched_terms():
             for term, term_matches in results.results.termdocs.items():
@@ -634,7 +635,7 @@ def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_fo
         logger.debug('Search query parsed, raw_query="%s"', search_query)
         
         # Get the search result
-        search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen, terms=True, sortedby="verse_id"), page, pagelen)
+        search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen, terms=False, sortedby="verse_id"), page, pagelen)
             
     return search_results
 

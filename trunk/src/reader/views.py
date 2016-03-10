@@ -825,12 +825,11 @@ def api_word_forms(request, word=None):
     
     if word is None or len(word) == 0 and 'word' in request.GET:
         word = request.GET['word']
-        
+    
     d = {}
     messages = []
     
-    greekVariations = GreekVariations("content", "")
-    d['forms'] = greekVariations.get_variations(word, include_beta_code=True, include_alternate_forms=True, ignore_diacritics=False, messages=messages)
+    d['forms'] = GreekVariations.get_variations(word, include_beta_code=True, include_alternate_forms=True, ignore_diacritics=False, messages=messages)
     d['messages'] = messages
     
     return render_api_response(request, d)
