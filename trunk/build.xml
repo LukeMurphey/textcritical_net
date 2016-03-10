@@ -49,7 +49,7 @@
           target: package
          ================================= -->
     <target name="package" depends="get_build_number" description="Create the application package (sans media)">
-    	<echo file="src/reader/templates/VERSION.txt" append="false">${value.build.version}</echo>
+    	<echo file="src/reader/templates/VERSION.txt" append="false">${value.build.version} (build ${svn.revision.max})</echo>
     	<mkdir dir="${value.build.packageoutput.directory}" />
         <zip destfile="${value.build.packageoutput.directory}/textcritical_${svn.revision.max}.zip"
             basedir="src"
