@@ -24,35 +24,26 @@
 {% block javascript %}
 <script language="javascript">
 
-require(["jquery", "app"], function($) {
+require(["jquery", "app", "underscore"], function($) {
 	
 	var converted_content = null;
 	
 	function update_output(){
 		
-		str = TextCritical.convert_search_query_beta_code( $('#text').val() );
+		var str = TextCritical.convert_search_query_beta_code( $('#text').val() );
 		converted_content = str;
 		
-		var words = str.split(' ');
-
-		// clear the existing content
-		$('#converted-content').text('');
-
-		// insert each word wrapped with a span class to facilitate lookups
-		for (var i = 0; i < words.length; i++)
-		{
-			$('#converted-content').append('<span class="word">' + words[i] + ' </span>');
-		}
+		TextCritical.add_word_morphology_links($('#converted-content'), str);
 		
 	}
 	
 	$(document).ready(function() {
 		
-		$('#text').keyup( function(){
+		$('#text').keyup(_.debounce(function(){
 			
 			update_output();
 			$(".word").click( TextCritical.word_lookup );
-		})
+		}, 250))
 		
 		$('#search-button').click( function(){
 			document.location = "/search?q=" + converted_content;

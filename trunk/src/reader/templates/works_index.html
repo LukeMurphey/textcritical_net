@@ -21,7 +21,7 @@
 
 {% block javascript %}
 <script language="javascript">
-require(["jquery", "libs/text!/media/templates/works_list.html", "datatables"], function($, works_list_template) {
+require(["jquery", "libs/text!/media/templates/works_list.html", "datatables", "underscore"], function($, works_list_template) {
 	
 	function updateFilter(){
 		textcritical.datatable.fnFilter( $('input.search-query').val() );
@@ -49,11 +49,11 @@ require(["jquery", "libs/text!/media/templates/works_list.html", "datatables"], 
 		} );
 		
 		{% if filter %}textcritical.datatable.fnFilter( "{{filter|escapejs}}" );{% endif %}
-		$('input.search-query').keyup(updateFilter);
-		$('input.search-query').change(updateFilter);
+		$('input.search-query').keyup(_.debounce(updateFilter, 150));
+		$('input.search-query').change(_.debounce(updateFilter, 150));
 		$('#search').submit( function() { return false; });
 		
-		$('input[aria-controls="works_list"]').keyup(updateMainFilter);
+		$('input[aria-controls="works_list"]').keyup(_.debounce(updateMainFilter, 150));
 		
 		$('#async-loading-message').hide();
 		$('#works_list').fadeIn('slow');
