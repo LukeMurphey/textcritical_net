@@ -1,17 +1,16 @@
-# humanstxt.org/
-# The humans responsible & technology colophon
 
-# TEAM
+/* TEAM */
 
-    Luke Murphey -- Founder / Lead Developer -- Luke@LukeMurphey.net
+Founder / Lead Developer: Luke Murphey (Luke@LukeMurphey.net)
 
-# THANKS
+/* THANKS */
 
-    Tufts University (http://www.perseus.tufts.edu)
-    Peter Heslin (p.j.heslin@dur.ac.uk)
+Tufts University: http://www.perseus.tufts.edu
+Peter Heslin: p.j.heslin@dur.ac.uk
 
-# TECHNOLOGY COLOPHON
+/* SITE */
 
-    HTML5, CSS3
-    Modernizr, jQuery, Twitter Bootstrap, Require.js, jQuery DataTables, HTML5 Boilerplate
-    Eclipse, SVN, SASS
+Version: {% include "VERSION.txt" %}
+Standards: HTML5, CSS3
+Components: Modernizr, jQuery, Twitter Bootstrap, Require.js, jQuery DataTables, HTML5 Boilerplate, Underscore.js, Highcharts.js
+Software: Eclipse, SVN, SASS
