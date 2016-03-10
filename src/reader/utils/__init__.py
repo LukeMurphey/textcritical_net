@@ -1,7 +1,7 @@
 from reader import language_tools
 from reader.models import WordDescription
 from reader.shortcuts import uniquefy
-
+from reader.language_tools import Greek
 
 def description_id_fun(x):
     """
@@ -24,6 +24,7 @@ def get_word_descriptions( word, ignore_diacritics=False ):
     
     # Do a search for the parse
     word_lookup = language_tools.normalize_unicode( word.lower() )
+    word_lookup = Greek.fix_final_sigma(word_lookup)
     
     # If the lookup for the word failed, try doing a lookup without the diacritics
     if ignore_diacritics:
@@ -47,6 +48,13 @@ def get_all_related_forms(word, ignore_diacritics=False ):
     1) Get a list of all WordDescription that match the given word.
     2) Get a list of all Lemma instances associated with the WordDescription
     3) For each lemma, get all forms of the lemma entry
+    
+    Here is the relationship of the relevant forms:
+    
+        WordForm: describes each Greek word form
+         |- WordDescription -> Lemma: includes the possible meanings of a form and associates them to the root lemmas
+             |- Case
+    
     
     Arguments:
     word -- The word to return WordDescription instances for

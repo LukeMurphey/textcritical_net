@@ -280,6 +280,10 @@ class Greek():
         return Greek.beta_code_to_unicode(unicode(beta_code_string, "UTF-8", mode))
     
     @staticmethod
+    def fix_final_sigma(greek_unicode):
+        return Greek.ENDING_SIGMA_RE.sub(u"ς", greek_unicode)
+    
+    @staticmethod
     def beta_code_to_unicode(beta_code_string):
         """
         Convert the beta code into unicode. The input string must be a unicode object.
@@ -303,7 +307,7 @@ class Greek():
             beta_code_string = beta_code_string.replace(beta_char, greek_char)
     
         # Fix the ending sigmas (i.e. change "λογοσ" to "λογος")
-        beta_code_string = Greek.ENDING_SIGMA_RE.sub(u"ς", beta_code_string)
+        beta_code_string = Greek.fix_final_sigma(beta_code_string)
         
         # Return the encoded result
         return beta_code_string
