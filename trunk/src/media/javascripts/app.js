@@ -113,7 +113,7 @@ define([
 			
 			// Update the URL
 			title = document.title;
-			history.pushState( {verse: verse_number}, title, base_chapter_url + "/" + verse_number);
+			history.pushState( {verse: verse_number}, title, base_chapter_url + "/" + verse_number + document.location.search);
 			console.info("Updating the URL to point to the selected verse");
 			
 			// Remove existing highlights
@@ -345,13 +345,13 @@ define([
 			}
 			
 			// Make the regular expression for finding the words
-			var escaped_word = TextCritical.escape_regex(word);
+			var escaped_word = TextCritical.escape_regex(word.normalize());
 			var pattern = new RegExp("^" + escaped_word + "$");
 			console.info( "Highlighting " + word );
 			
 			// Add the CSS to make these words highlighted
 			$('.word').filter(function(){
-		  		return pattern.test($(this).text())
+		  		return pattern.test($(this).text().normalize())
 			}).addClass(div_class);
 		}
 		

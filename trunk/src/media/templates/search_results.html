@@ -2,11 +2,23 @@
 <div class="alert alert-block">
   No results were found matching the provided search
 </div>
-	<% } %>
+<% } %>
+	<%
+    var highlight_url = "";
+    
+    for (term in search_results.matched_terms){
+    	if(highlight_url == ""){
+    		highlight_url = "?";
+    	}
+    	
+    	highlight_url += ("&highlight=" + term);
+    }
+    
+	%>
 	<% for (var i = 0; i < search_results.results.length; i++) { %>
 		<% var search_result = search_results.results[i]; %>
 		<div class="work-description">
-			<a href="<%= search_result["url"] %>"><%= search_result["work"] %>, <%= search_result["description"] %></a>
+			<a href="<%= search_result["url"] + highlight_url %>"><%= search_result["work"] %>, <%= search_result["description"] %></a>
 		</div>
 		<div class="highlights">
 			<% if( search_result["highlights"].length > 0 ){ %>
@@ -15,7 +27,7 @@
 			<%= search_result["content_snippet"] %>
 			<% } %>
 		</div>
-	<% } %>
+<% } %>
 
 <% 
 if( search_results.result_count > ( search_results.page * search_results.page_len ) ) {
