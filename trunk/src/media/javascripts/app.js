@@ -346,7 +346,7 @@ define([
 			
 			// Make the regular expression for finding the words
 			var escaped_word = TextCritical.escape_regex(word.normalize());
-			var pattern = new RegExp("^" + escaped_word + "$");
+			var pattern = new RegExp("^" + escaped_word + "$", "i");
 			console.info( "Highlighting " + word );
 			
 			// Add the CSS to make these words highlighted
