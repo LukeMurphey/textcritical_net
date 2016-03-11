@@ -73,10 +73,17 @@ body.dark .verse-container.highlighted{
     @include animation(highlighted-dark, 2.5s);
 }
 
-.word.highlighted{
+.word.highlighted, .word.searched{
     @include rounded(3px);
-    background-color: #49AFCD;
     color: white;
+}
+
+.word.highlighted{
+    background-color: #49AFCD;
+}
+
+.word.searched{
+    background-color: #A753AF;
 }
 
 @for $i from 2 through 5 {

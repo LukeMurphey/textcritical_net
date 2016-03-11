@@ -90,7 +90,7 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
     	
 		// Test search for unicode
 		it("on unicode content", function() {
-			search_results = getAsync("/api/search/και");
+			search_results = getAsync("/api/search/no_diacritics:και");
 			
 	        expect( search_results["results"].length ).toBeGreaterThan( 0 );
 			expect( search_results["results"][0]["url"].search("work")  ).not.toBeLessThan( 0 );
@@ -300,6 +300,40 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
 		
 		it("that exists within a complete URL", function() {
 			expect(TextCritical.get_parameter_by_name("http://TextCritical.net/quix?number=20", "number") ).toEqual( "20" );
+   		});
+		
+		it("with multiple values within a complete URL", function() {
+			
+			var values = TextCritical.get_parameter_by_name("http://TextCritical.net/quix?number=20&number=21", "number", true);
+			
+			expect(values.length).toEqual(2);
+			expect(values[0]).toEqual("20");
+			expect(values[1]).toEqual("21");
+   		});
+		
+		it("looking for multiple values but an empty value", function() {
+			
+			var values = TextCritical.get_parameter_by_name("http://TextCritical.net/quix?number=", "number", true);
+			
+			expect(values.length).toEqual(1);
+			expect(values[0]).toEqual("");
+   		});
+		
+	    it("looking for multiple values but only one in the URL arguments", function() {
+			
+			var values = TextCritical.get_parameter_by_name("?number=20", "number", true);
+			
+			expect(values.length).toEqual(1);
+			expect(values[0]).toEqual("20");
+   		});
+	    
+	    it("looking for multiple values but with a partial URL", function() {
+			
+			var values = TextCritical.get_parameter_by_name("?number=20&number=21", "number", true);
+			
+			expect(values.length).toEqual(2);
+			expect(values[0]).toEqual("20");
+			expect(values[1]).toEqual("21");
    		});
 		
     });    

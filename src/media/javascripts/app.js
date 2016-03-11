@@ -85,7 +85,7 @@ define([
 			
 			scrollTo = $("#"+ id ).offset();
 			
-			if( scrollTo == undefined ){
+			if( typeof scrollTo == "undefined" ){
 				console.warn("The id (" + id + ") to scroll to is undefined");
 			}
 			else{
@@ -102,7 +102,7 @@ define([
 		TextCritical.scrollToVerse = function (verse_number, base_chapter_url) {
 		
 			// Make sure a base chapter URL was provided
-			if ( base_chapter_url == null || base_chapter_url == undefined ){
+			if ( typeof base_chapter_url == "undefined" || base_chapter_url == null ){
 				console.warn("No base chapter URL was provided; will not be able to update the URL for the given verse");
 				return true; // Let the href propagate
 			}
@@ -201,7 +201,7 @@ define([
 		 **/
 		TextCritical.open_dialog = function ( title, content, extra_options ) {
 			
-			if ( extra_options == null || extra_options == undefined ){
+			if ( typeof extra_options == "undefined" || extra_options == null ){
 				extra_options = '';
 			}
 			
@@ -290,12 +290,12 @@ define([
 		 */
 		TextCritical.shorten = function(s, n, use_word_boundary, shorten_text){
 			
-			if( shorten_text == undefined || shorten_text == null ){
-				shorten_text = '&hellip;';
+			if( typeof shorten_text == "undefined" || shorten_text == null ){
+				var shorten_text = '&hellip;'; // An ellipsis
 			}
 			
-			if( use_word_boundary == undefined || use_word_boundary == null ){
-				use_word_boundary = true;
+			if( typeof use_word_boundary == "undefined" || use_word_boundary == null ){
+				var use_word_boundary = true;
 			}
 			
 		    var toLong = s.length > n,
@@ -315,8 +315,13 @@ define([
 		/**
 		 * Unhighlights all words.
 		 */
-		TextCritical.unhighlight_all_words = function () {
-			$('.word').removeClass('highlighted');
+		TextCritical.unhighlight_all_words = function (div_class) {
+			
+			if(typeof div_class == 'undefined'){
+				var div_class = 'highlighted';
+			}
+			
+			$('.word').removeClass(div_class);
 		}
 		
 		/**
@@ -324,20 +329,30 @@ define([
 		 * 
 		 * @param word The word to highlight
 		 */
-		TextCritical.highlight_word = function ( word ) {
+		TextCritical.highlight_word = function ( word, div_class, remove_existing_highlights ) {
+			
+			if(typeof div_class == 'undefined'){
+				var div_class = 'highlighted';
+			}
+			
+			if(typeof remove_existing_highlights == 'undefined'){
+				var remove_existing_highlights = true;
+			}
 			
 			// Unhighlight all existing words to make sure we don't accumulate highlights
-			TextCritical.unhighlight_all_words();
+			if(remove_existing_highlights){
+				TextCritical.unhighlight_all_words(div_class);
+			}
 			
 			// Make the regular expression for finding the words
-			escaped_word = TextCritical.escape_regex(word);
+			var escaped_word = TextCritical.escape_regex(word);
 			var pattern = new RegExp("^" + escaped_word + "$");
 			console.info( "Highlighting " + word );
 			
 			// Add the CSS to make these words highlighted
 			$('.word').filter(function(){
 		  		return pattern.test($(this).text())
-			}).addClass('highlighted');
+			}).addClass(div_class);
 		}
 		
 		/**
@@ -347,7 +362,8 @@ define([
 		 * @param query The query to perform a search on
 		 **/
 		TextCritical.contains_search_words = function ( query ) {
-			split_query = query.match(/([_0-9a-z]+[:][-_0-9a-z]+)|([\w_]+[:]["][-\w ]*["])|([^ :]+)/gi);
+			
+			var split_query = query.match(/([_0-9a-z]+[:][-_0-9a-z]+)|([\w_]+[:]["][-\w ]*["])|([^ :]+)/gi);
 			
 			for( c = 0; c < split_query.length; c++){
 				if( split_query[c].search(":") < 0 ){
@@ -515,10 +531,10 @@ define([
 		TextCritical.do_search = function ( page, update_url ) {
 			
 			// Get the word to search for
-			word = $("#search-term").val();
+			var word = $("#search-term").val();
 			
 			// Get the page number
-			if( page == undefined || page == null ){
+			if( typeof page == "undefined" || page == null ){
 				
 				if ( $("#page-number").val().length > 0 ){
 					page = parseInt( $("#page-number").val() );
@@ -537,12 +553,12 @@ define([
 			related_forms = $("#related_forms:checked").length;
 			
 			// Assign a default value to the update_url argument if it was not provided
-			if( update_url == undefined ){
+			if( typeof update_url == 'undefined' ){
 				update_url = true;
 			}
 			
 			// Assign a default value to the related_forms argument if it was not provided
-			if( related_forms == undefined ){
+			if( typeof related_forms == "undefined" ){
 				related_forms = 0;
 			}
 			else if (!related_forms){
@@ -635,9 +651,9 @@ define([
 		TextCritical.change_page = function ( offset ) {
 			
 			// Get the page number
-			page = parseInt( $('#search-results-content').attr("data-page-number") );
+			var page = parseInt( $('#search-results-content').attr("data-page-number") );
 			
-			if( page == undefined ){
+			if( typeof page == "undefined" ){
 				page = 1;
 			}
 			else if( isNaN(page) ){
@@ -706,7 +722,7 @@ define([
 		 **/
 		TextCritical.convert_search_query_beta_code = function ( ) {
 			
-			query = $("#search-term").val();
+			var query = $("#search-term").val();
 			
 			// Submit the AJAX request to display the information
 			$.ajax({
@@ -744,7 +760,7 @@ define([
 		/**
 		 * Get the associated Greek forms.
 		 **/
-		TextCritical.get_related_forms = function ( ) {
+		TextCritical.get_related_forms = function( ) {
 			
 			query = encodeURIComponent($("#text").val());
 			
@@ -790,8 +806,8 @@ define([
 			
 			var promise = jQuery.Deferred();
 			
-			if( flattened == undefined ){
-				flattened = true;
+			if( typeof flattened == "undefined" ){
+				var flattened = true;
 			}
 			
 			// Get the list if it is already cached
@@ -877,7 +893,7 @@ define([
 		 **/
 		TextCritical.show_alert = function ( title, message, level ) {
 			
-			if( level == undefined || level == null ){
+			if( typeof level == "undefined" || level == null ){
 				level = 'info';
 			}
 			
@@ -909,8 +925,8 @@ define([
 		 **/
 		TextCritical.get_note_content = function (target, shorten_to, shorten_text) {
 			
-			if( shorten_to == undefined || shorten_to == null ){
-				shorten_to = false;
+			if( typeof shorten_to == undefined || shorten_to == null ){
+				var shorten_to = false;
 			}
 			
 			if( shorten_to > 0 ){
@@ -964,31 +980,63 @@ define([
 		}
 		
 		/**
+		 * Highlight all of the words
+		 */
+		TextCritical.highlight_searched_terms = function(){
+			
+			 var search_highlights = TextCritical.get_parameter_by_name(document.location.search, "highlight", true);
+			 
+			 for(var c = 0; c < search_highlights.length; c++){
+				 TextCritical.highlight_word(decodeURIComponent(search_highlights[c]), "searched", false);
+			 }
+		}
+		
+		/**
 		 * Get the parameter from the query string.
 		 * 
 		 * @param url The URL containing the GET parameter
 		 * @param name The name of the parameter to obtain
+		 * @param return_as_array Return an array containing all instances of the argument
 		 */
-		TextCritical.get_parameter_by_name = function ( url, name ) {
+		TextCritical.get_parameter_by_name = function ( url, name, return_as_array ) {
+			
+			if(typeof return_as_array == 'undefined'){
+				var return_as_array = false;
+			}
+			
 		    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
 		    
-		    var regex = new RegExp("[\\?&]" + name + "(=([^&#]*))?"),
-		        results = regex.exec(url);
+		    var regex = new RegExp("[\\?&]" + name + "(=([^&#]*))?", "g");
 		    
-		    // Parameter was not found
-		    if (results == null){
+		    var results;
+		    var parameter_values = [];
+		    
+		    while(results = regex.exec(url)){
+			    
+			    // Parameter was found and has a value
+			    if(results[2] !== undefined){
+			    	parameter_values.push(results[2].replace(/\+/g, " "));
+			    }
+			    
+			    // Parameter was found and has no value
+			    else{
+			    	parameter_values.push("");
+			    }
+			    
+			    // If only returning one value, then stop
+			    if(!return_as_array){
+			    	return parameter_values[0];
+			    }
+		    }
+		    
+		    // Return the results
+		    if(parameter_values.length == 0){
 		    	return undefined;
 		    }
-		    
-		    // Parameter was found and has a value
-		    else if(results[2] !== undefined){
-		    	return results[2].replace(/\+/g, " ");
-		    }
-		    
-		    // Parameter was found and has no value
 		    else{
-		    	return "";
+		    	return parameter_values;
 		    }
+		    
 		}
 		
 		/**
@@ -1178,8 +1226,8 @@ define([
 		TextCritical.list_filter = function(input, list, freeze_height) {
 			
 			// Do not freeze the height of the div by default
-			if( freeze_height == undefined ){
-				freeze_height = false;
+			if( typeof freeze_height == "undefined" ){
+				var freeze_height = false;
 			}
 
 			$(input).change( function () {
@@ -1269,8 +1317,8 @@ define([
 		 */
 		TextCritical.getTextToShare = function(text, give_selection_precedence){
 
-			if( text === undefined || text == null){
-				text = "";
+			if( typeof text === "undefined" || text == null){
+				var text = "";
 			}
 			
 			// If the text was not defined, then find a way to discover it automatically
@@ -1317,13 +1365,13 @@ define([
 		TextCritical.postToFacebook = function(caption, description, give_selection_precedence, link, name){
 			
 			// If the link was not defined, then use the current URL
-			if( link === undefined || link == null ){
-				link = location.href;
+			if( typeof link === "undefined" || link == null ){
+				var link = location.href;
 			}
 			
 			// If the name was not defined, then use the document title
-			if( name === undefined || name == null ){
-				name = document.title;
+			if( typeof name === "undefined" || name == null ){
+				var name = document.title;
 			}
 			
 			// If the text was not defined, then find a way to discover it automatically
@@ -1348,8 +1396,8 @@ define([
 		TextCritical.makeTweetURL = function( link, text, give_selection_precedence ){
 			
 			// If the link was not defined, then use the current URL
-			if( link === undefined || link == null ){
-				link = location.href;
+			if( typeof link === "undefined" || link == null ){
+				var link = location.href;
 			}
 			
 			// If the text was not defined, then find a way to discover it automatically

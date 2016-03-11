@@ -294,7 +294,7 @@ require(["jquery", "store", "app", "underscore", "bootstrap", "facebook"], funct
     {% endif %}
     
     $(".word").click( TextCritical.word_lookup );
-    $(".word").hover( TextCritical.highlight_selected_word, TextCritical.unhighlight_all_words );
+    $(".word").hover( TextCritical.highlight_selected_word, function(){TextCritical.unhighlight_all_words();} );
     
     $(".note-tag").each(function() {
         var $pElem= $(this);
@@ -343,8 +343,8 @@ require(["jquery", "store", "app", "underscore", "bootstrap", "facebook"], funct
     $(".show-download-work-dialog").click(function(){
     	$('#download-dialog').modal();
     });
-    
-    
+	
+    TextCritical.highlight_searched_terms();
 });
 </script>
 {% endblock %}
