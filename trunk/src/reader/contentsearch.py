@@ -112,7 +112,34 @@ class WorkIndexer:
         return inx
     
     @classmethod
-    def index_all_works(cls):
+    def is_work_in_index(cls, work):
+        
+        inx = WorkIndexer.get_index()
+        
+        # Perform the search
+        with inx.searcher() as searcher:
+            
+            parser = QueryParser("work", inx.schema)
+            query_str = str(work.title_slug)
+            search_query = parser.parse(query_str)
+            
+            results = searcher.search_page(search_query, 1, 1)
+            return len(results) > 0
+            
+            
+    @classmethod
+    def get_writer(cls, inx=None):
+        """
+        Get a writer that can be used to update the search indexes.
+        """
+        
+        if inx is None:
+            inx = cls.get_index()
+        
+        return inx.writer(limitmb=settings.SEARCH_INDEXER_MEMORY_MB, procs=settings.SEARCH_INDEXER_PROCS)
+    
+    @classmethod
+    def index_all_works(cls, commit_only_once=False, index_only_if_empty=True):
         """
         Indexes all verses for all works.
         """
@@ -120,9 +147,29 @@ class WorkIndexer:
         # Record the start time so that we can measure performance
         start_time = time()
         
+        if commit_only_once:
+            writer = cls.get_writer()
+        else:
+            writer = None
+        
         for work in Work.objects.all():
-            cls.index_work(work)
+            
+            # If we are only indexing if the index does not contain the document, then check first
+            if index_only_if_empty and cls.is_work_in_index(work):
+                logger.info("Work already in index and will be skipped, work=%s", str(work))
+                
+                # Skip to the next document
+                continue
+            
+            if not commit_only_once:
+                cls.index_work(work, commit=True)
+            else:
+                cls.index_work(work, commit=False, writer=writer)
     
+        # Commit at the end to reduce the time it takes to index
+        if commit_only_once and writer is not None:
+            writer.commit()
+        
         logger.info("Successfully indexed all works, duration=%i", time() - start_time )
     
     @classmethod
@@ -145,11 +192,11 @@ class WorkIndexer:
         
         parser = QueryParser("content", inx.schema)
         inx.delete_by_query(parser.parse(u'work:' + work_title_slug))
-        writer = inx.writer()
+        writer = cls.get_writer(inx)
         writer.commit(optimize=True)
     
     @classmethod
-    def index_work(cls, work):
+    def index_work(cls, work, commit=True, writer=None):
         """
         Indexes all verses within the given work.
         
@@ -160,13 +207,21 @@ class WorkIndexer:
         # Record the start time so that we can measure performance
         start_time = time()
         
+        if writer is None:
+            writer = cls.get_writer()
+            
+            commit = True
+        
         for division in Division.objects.filter(work=work):
-            cls.index_division(division)
+            cls.index_division(division, commit=False, writer=writer)
+        
+        if commit:
+            writer.commit()
             
         logger.info('Successfully indexed work, work="%s", duration=%i', str(work), time() - start_time )
     
     @classmethod
-    def index_division(cls, division, work=None):
+    def index_division(cls, division, work=None, commit=False, writer=None):
         """
         Indexes all verse within the provided division.
         
@@ -175,8 +230,10 @@ class WorkIndexer:
         work -- The work that the division is associated with
         """
         
-        inx = cls.get_index()
-        writer = inx.writer()
+        if writer is None:
+            writer = cls.get_writer()
+            
+            commit = True
         
         for verse in Verse.objects.filter(division=division):
             cls.index_verse(verse, division=division, writer=writer, commit=False)
@@ -184,7 +241,8 @@ class WorkIndexer:
         if work is None:
             work = division.work
             
-        writer.commit()
+        if commit:
+            writer.commit()
         
         if work is not None:
             logger.info('Successfully indexed division, division="%s", work="%s"', str(division), str(work) )
@@ -227,12 +285,9 @@ class WorkIndexer:
         division -- The division that the verse is associated with
         """
         
-        # Get the index
-        inx = cls.get_index()
-        
         # Get a writer
         if writer is None:
-            writer = inx.writer()
+            writer = cls.get_writer()
         
         if division is None and verse is not None:
             division = verse.division
