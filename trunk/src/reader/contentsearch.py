@@ -120,7 +120,7 @@ class WorkIndexer:
         with inx.searcher() as searcher:
             
             parser = QueryParser("work", inx.schema)
-            query_str = str(work.title_slug)
+            query_str = unicode(work.title_slug)
             search_query = parser.parse(query_str)
             
             results = searcher.search_page(search_query, 1, 1)
