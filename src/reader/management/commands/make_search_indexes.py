@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from reader.contentsearch import WorkIndexer
 from reader.models import Work
 from django.db.models import Q
+from django.conf import settings
 
 from optparse import make_option
 
@@ -32,6 +33,11 @@ class Command(BaseCommand):
         
         # Index all works if no work was provided
         if work_title is None:
+            
+            if settings.DEBUG:
+                print "ERROR: Debug setting are enabled; this will almost certainly cause the script to run out of memory since database queries will be retained in debug mode."
+                return
+            
             print "Creating search indexes..."
             WorkIndexer.index_all_works()
             print "Search indexes successfully created"
