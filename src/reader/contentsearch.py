@@ -50,13 +50,13 @@ class WorkIndexer:
         work_analyzer = RegexTokenizer(expression="[a-zA-Z0-9- ]+") | LowercaseFilter()
         
         return Schema( verse_id      = NUMERIC(unique=True, stored=True, sortable=True),
-                       content       = TEXT(analyzer=greek_word_analyzer, vector=True),
+                       content       = TEXT(analyzer=greek_word_analyzer, vector=True), #analyzer=greek_word_analyzer, 
                        no_diacritics = TEXT(analyzer=greek_word_analyzer, vector=True),
                        work_id       = TEXT,
                        section_id    = TEXT,
                        work          = TEXT(analyzer=work_analyzer),
                        section       = TEXT(analyzer=section_analyzer),
-                       author        = TEXT)           
+                       author        = TEXT)
     
     @classmethod
     def get_index_dir(cls):
@@ -144,6 +144,8 @@ class WorkIndexer:
         Indexes all verses for all works.
         """
         
+        logger.info("Beginning updating the index of all available works, indexing_only_if_empty=%r", index_only_if_empty)
+        
         # Record the start time so that we can measure performance
         start_time = time()
         
@@ -152,11 +154,11 @@ class WorkIndexer:
         else:
             writer = None
         
-        for work in Work.objects.all():
+        for work in Work.objects.all().exclude(title_slug="laws").exclude(title_slug="commentary-on-plato-protagoras-adam").exclude(title_slug="speeches-hyperides-english"):
             
             # If we are only indexing if the index does not contain the document, then check first
             if index_only_if_empty and cls.is_work_in_index(work):
-                logger.info("Work already in index and will be skipped, work=%s", str(work))
+                logger.info("Work already in index and will be skipped, work=%s", str(work.title_slug))
                 
                 # Skip to the next document
                 continue
@@ -215,10 +217,10 @@ class WorkIndexer:
         for division in Division.objects.filter(work=work):
             cls.index_division(division, commit=False, writer=writer)
         
-        if commit:
+        if commit and writer is not None:
             writer.commit()
             
-        logger.info('Successfully indexed work, work="%s", duration=%i', str(work), time() - start_time )
+        logger.info('Successfully indexed work, work="%s", duration=%i', str(work.title_slug), time() - start_time )
     
     @classmethod
     def index_division(cls, division, work=None, commit=False, writer=None):
@@ -241,11 +243,11 @@ class WorkIndexer:
         if work is None:
             work = division.work
             
-        if commit:
+        if commit and writer is not None:
             writer.commit()
         
         if work is not None:
-            logger.info('Successfully indexed division, division="%s", work="%s"', str(division), str(work) )
+            logger.info('Successfully indexed division, division="%s", work="%s"', str(division), str(work.title_slug) )
         else:
             logger.info('Successfully indexed division, division="%s"', str(division) )
     
@@ -273,6 +275,22 @@ class WorkIndexer:
             next_division = next_division.parent_division
         
         return ",".join(descriptions)
+    
+    @classmethod
+    def replace_empty_string(cls, val):
+        """
+        This function will replace empty strings with a non-empty string. This is necessary to workaround a bug in Whoosh that causes corruption of the index.
+        
+        https://bitbucket.org/mchaput/whoosh/issues/439/block-tag-error-vpst-generated-on-indexing
+        
+        Arguments:
+        val -- A string which may be empty
+        """
+    
+        if val is None or len(val.strip()) == 0:
+            return u"()"
+        else:
+            return val
     
     @classmethod
     def index_verse(cls, verse, work=None, division=None, commit=False, writer=None):
@@ -305,7 +323,8 @@ class WorkIndexer:
         if verse.content is not None and len(verse.content) > 0:
             content = normalize_unicode(verse.content)
         else:
-            content = normalize_unicode(verse.original_content)
+            logger.debug('Found empty content for verse=%s, division="%s", work="%s"', str(verse), division.get_division_description(use_titles=False), str(work.title_slug) )
+            content = None#normalize_unicode(verse.original_content)
         
         # Strip diacritical marks
         if work is None or work.language is None or work.language != "english":
@@ -313,23 +332,24 @@ class WorkIndexer:
         else:
             no_diacritics = None
         
-        # Add the content
-        writer.add_document(content       = content,
-                            no_diacritics = no_diacritics,
-                            verse_id      = verse.id,
-                            work_id       = work.title_slug,
-                            section_id    = division.title_slug,
-                            work          = unicode(work.title) + "," + work.title_slug,
-                            section       = cls.get_section_index_text(division),
-                            author        = author_str
-                            )
+        if content is not None:
+            # Add the content
+            writer.add_document(content       = cls.replace_empty_string(content),
+                                no_diacritics = cls.replace_empty_string(no_diacritics),
+                                verse_id      = verse.id,
+                                work_id       = work.title_slug,
+                                section_id    = division.title_slug,
+                                work          = unicode(work.title) + "," + work.title_slug,
+                                section       = cls.get_section_index_text(division),
+                                author        = author_str
+                                )
     
         # Commit it
         if commit:
             writer.commit()
     
-        #logger.info('Successfully indexed verse, verse=%s, division="%s", work="%s"', str(verse), str(division), str(work) )
-        logger.info('Successfully indexed verse, verse=%s, division="%s", work="%s"', str(verse), division.get_division_description(use_titles=False), str(work) )
+        #logger.info('Successfully indexed verse, verse=%s, division="%s", work="%s"', str(verse), str(division), str(work.title_slug) )
+        logger.info('Successfully indexed verse, verse=%s, division="%s", work="%s"', str(verse), division.get_division_description(use_titles=False), str(work.title_slug) )
         
 class VerseSearchResults:
     
