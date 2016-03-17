@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
 from django.core.servers.basehttp import FileWrapper
 from django.template.context import RequestContext, Context
-from django.template import loader 
+from django.template import loader, TemplateDoesNotExist
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from django.template.defaultfilters import slugify
@@ -454,7 +454,15 @@ def robots_txt(request):
     
 @cache_page(8 * hours)
 def humans_txt(request):
+    
+    try:
+        version_info = loader.get_template('VERSION.txt').render()
+    except TemplateDoesNotExist:
+        version_info = None
+    
+    
     return render_to_response('humans.txt',
+                              {'version_info': version_info},
                               context_instance=RequestContext(request))
     
 def not_found_404(request):
