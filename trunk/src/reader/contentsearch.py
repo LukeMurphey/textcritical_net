@@ -50,7 +50,7 @@ class WorkIndexer:
         work_analyzer = RegexTokenizer(expression="[a-zA-Z0-9- ]+") | LowercaseFilter()
         
         return Schema( verse_id      = NUMERIC(unique=True, stored=True, sortable=True),
-                       content       = TEXT(analyzer=greek_word_analyzer, vector=True), #analyzer=greek_word_analyzer, 
+                       content       = TEXT(analyzer=greek_word_analyzer, vector=True),
                        no_diacritics = TEXT(analyzer=greek_word_analyzer, vector=True),
                        work_id       = TEXT,
                        section_id    = TEXT,
