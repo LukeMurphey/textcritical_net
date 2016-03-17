@@ -585,7 +585,7 @@ define([
 			
 			// Submit the AJAX request to display the information
 			$.ajax({
-				url: "/api/search/?q=" + encodeURIComponent(word) + "&page=" + page + "&related_forms=" + related_forms
+				url: "/api/search/" + encodeURIComponent(word) + "?page=" + page + "&related_forms=" + related_forms
 			}).done(function(search_results) {
 				
 				$("#search-results-content").html(_.template(search_results_template,{ word:_.escape(word), search_results:search_results }));
