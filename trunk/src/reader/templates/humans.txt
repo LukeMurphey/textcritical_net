@@ -9,8 +9,8 @@ Tufts University: http://www.perseus.tufts.edu
 Peter Heslin: p.j.heslin@dur.ac.uk
 
 /* SITE */
-
-Version: {% include "VERSION.txt" %}
+{% if version_info %}
+Version: {{ version_info }}{% endif %}
 Standards: HTML5, CSS3
 Components: Modernizr, jQuery, Twitter Bootstrap, Require.js, jQuery DataTables, HTML5 Boilerplate, Underscore.js, Highcharts.js
 Software: Eclipse, SVN, SASS
