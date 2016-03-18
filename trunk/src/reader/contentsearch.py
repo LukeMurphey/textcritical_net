@@ -154,7 +154,7 @@ class WorkIndexer:
         else:
             writer = None
         
-        for work in Work.objects.all().exclude(title_slug="laws").exclude(title_slug="commentary-on-plato-protagoras-adam").exclude(title_slug="speeches-hyperides-english"):
+        for work in Work.objects.all(): #.exclude(title_slug="laws").exclude(title_slug="commentary-on-plato-protagoras-adam").exclude(title_slug="speeches-hyperides-english"):
             
             # If we are only indexing if the index does not contain the document, then check first
             if index_only_if_empty and cls.is_work_in_index(work):
