@@ -17,9 +17,12 @@
 	 	
 	 	<button id="search-button" class="btn btn-primary" type="button" ><span class="hidden-phone">Submit </span>Search</button>
 	</div>
-	<label class="checkbox-label" for="related_forms">
+	<label class="checkbox inline no-left-padding" for="related_forms">
 		<input class="checkbox" type="checkbox" id="related_forms" name="related_forms" {% if search_related_forms %}checked{% endif %}>Search related Greek forms<span class="hidden-phone"> (slower but more thorough)</span></input>
-	</label>	
+	</label>
+	<label class="checkbox inline" for="ignore_diacritics">
+		<input class="checkbox" type="checkbox" id="ignore_diacritics" name="ignore_diacritics" {% if ignore_diacritics %}checked{% endif %}>Search ignoring diacritics</input>
+	</label>
 </form>
 
 <div id="searching" class="hide hidden-phone searching-animation">Searching ...</div>

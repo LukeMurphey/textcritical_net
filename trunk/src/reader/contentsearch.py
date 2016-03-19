@@ -154,7 +154,7 @@ class WorkIndexer:
         else:
             writer = None
         
-        for work in Work.objects.all(): #.exclude(title_slug="laws").exclude(title_slug="commentary-on-plato-protagoras-adam").exclude(title_slug="speeches-hyperides-english"):
+        for work in Work.objects.all():
             
             # If we are only indexing if the index does not contain the document, then check first
             if index_only_if_empty and cls.is_work_in_index(work):
@@ -588,7 +588,7 @@ class GreekBetaCodeVariations(GreekVariations):
     def __init__(self, fieldname, text, boost=1.0):
         super(GreekBetaCodeVariations,self).__init__( fieldname, text, boost, True, False )
     
-def search_stats( search_text, inx=None, limit=2000, include_related_forms=True ):
+def search_stats( search_text, inx=None, limit=2000, include_related_forms=True, ignore_diacritics=False ):
     """
     Search verses for those with the given text and provide high-level stats about the usage of this term. This function is necessary because Whoosh
     term matching stats indicate the number of verses that contain the given term, not the count of absolute count of the term.
@@ -598,6 +598,7 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True 
     inx -- The Whoosh index to use
     limit -- A limit on the the number of verses to include
     include_related_forms -- Expand the word into all of the related forms
+    ignore_diacritics -- Search ignoring dia-critical marks by default
     """ 
     
     logger.info( 'Performing a stats search, limit=%r, include_related_forms=%r, search_query="%s"', limit, include_related_forms, search_text )
@@ -612,16 +613,22 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True 
     # Perform the search
     with inx.searcher() as searcher:
         
+        # Determine which field will be searched by default
+        default_search_field = "content"
+        
+        if ignore_diacritics:
+            default_search_field = "no_diacritics"
+        
         # Make a parser to convert the incoming search string into a search
         if include_related_forms:
-            parser = QueryParser("content", inx.schema, termclass=GreekVariations)
+            parser = QueryParser(default_search_field, inx.schema, termclass=GreekVariations)
         else:
-            parser = QueryParser("content", inx.schema, termclass=GreekBetaCodeVariations)
+            parser = QueryParser(default_search_field, inx.schema, termclass=GreekBetaCodeVariations)
         
         # Parse the search string into an actual search
         search_query = parser.parse(search_text)
         
-        logger.debug('Search query parsed, raw_query="%s"', search_query)
+        logger.debug('Search query parsed, default_search_field="%s", raw_query="%s"', default_search_field, search_query)
         
         results = searcher.search_page(search_query, 1, limit, terms=True, sortedby="verse_id")
         
@@ -639,7 +646,7 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True 
                     
                 if term[0] == "no_diacritics":
                     matched_terms[term[1].decode('utf-8')] = 0
-                    
+        
         results_count = 0
         
         # Iterate through the search results
@@ -668,6 +675,7 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True 
                     if matched_term == normalize_unicode(term[0]):
                         matched_terms[matched_term] += term[1]
                         matched_in_result += term[1]
+                        print "matched"
             
             stats['matches'] += matched_in_result
         
@@ -678,7 +686,7 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True 
         
     return stats
 
-def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_forms=True):
+def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_forms=True, ignore_diacritics=False ):
     """
     Search all verses for those with the given text.
     
@@ -688,6 +696,7 @@ def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_fo
     page -- Indicates the page number to retrieve
     pagelen -- Indicates how many entries constitute a page
     include_related_forms -- Expand the word into all of the related forms
+    ignore_diacritics -- Search ignoring dia-critical marks by default
     """
     
     logger.info( 'Performing a search, page=%r, page_len=%r, include_related_forms=%r, search_query="%s"', page, pagelen, include_related_forms, search_text )
@@ -702,16 +711,22 @@ def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_fo
     # Perform the search
     with inx.searcher() as searcher:
         
+        # Determine which field will be searched by default
+        default_search_field = "content"
+        
+        if ignore_diacritics:
+            default_search_field = "no_diacritics"
+        print ""
         # Make a parser to convert the incoming search string into a search
         if include_related_forms:
-            parser = QueryParser("content", inx.schema, termclass=GreekVariations)
+            parser = QueryParser(default_search_field, inx.schema, termclass=GreekVariations)
         else:
-            parser = QueryParser("content", inx.schema, termclass=GreekBetaCodeVariations)
+            parser = QueryParser(default_search_field, inx.schema, termclass=GreekBetaCodeVariations)
         
         # Parse the search string into an actual search
         search_query = parser.parse(search_text)
         
-        logger.debug('Search query parsed, raw_query="%s"', search_query)
+        logger.debug('Search query parsed, default_search_field="%s", raw_query="%s"', default_search_field, search_query)
         
         # Get the search result
         search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen, terms=True, sortedby="verse_id"), page, pagelen)

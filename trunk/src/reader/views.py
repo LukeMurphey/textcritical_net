@@ -88,6 +88,11 @@ def search(request, query=None):
         search_related_forms = (request.GET['include_related'] == '1')
     else:
         search_related_forms = False
+        
+    if 'ignore_diacritics' in request.GET:
+        ignore_diacritics = (request.GET['ignore_diacritics'] == '1')
+    else:
+        ignore_diacritics = False
     
     return render_to_response('search.html',
                               {'title'   : 'Search',
@@ -95,7 +100,8 @@ def search(request, query=None):
                                'works'   : works,
                                'query'   : query,
                                'page'    : page,
-                               'search_related_forms' : search_related_forms
+                               'search_related_forms' : search_related_forms,
+                               'ignore_diacritics' : ignore_diacritics
                                },
                               context_instance=RequestContext(request)) 
 
@@ -590,7 +596,16 @@ def api_search_stats(request, search_text=None ):
     else:
         include_related_forms = False
         
-    stats = search_stats(search_text, include_related_forms=include_related_forms)
+    # Determine if the diacritics ought to be ignored
+    if 'ignore_diacritics' in request.GET:
+        try:
+            ignore_diacritics = bool( int(request.GET['ignore_diacritics']) )
+        except ValueError:
+            ignore_diacritics = False
+    else:
+        ignore_diacritics = False
+        
+    stats = search_stats(search_text, include_related_forms=include_related_forms, ignore_diacritics=ignore_diacritics)
     
     return render_api_response(request, stats)
     
@@ -635,9 +650,18 @@ def api_search(request, search_text=None ):
             include_related_forms = False
     else:
         include_related_forms = False
+        
+    # Determine if the diacritics ought to be ignored
+    if 'ignore_diacritics' in request.GET:
+        try:
+            ignore_diacritics = bool( int(request.GET['ignore_diacritics']) )
+        except ValueError:
+            ignore_diacritics = False
+    else:
+        ignore_diacritics = False
     
     # Perform the search
-    search_results = search_verses( search_text, page=page, pagelen=pagelen, include_related_forms=include_related_forms )
+    search_results = search_verses( search_text, page=page, pagelen=pagelen, include_related_forms=include_related_forms, ignore_diacritics=ignore_diacritics )
     
     # This will be were the results are stored
     results_lists = []
@@ -682,7 +706,7 @@ def api_search(request, search_text=None ):
         results_lists.append(d)
     
     # Get the search stats
-    stats = search_stats( search_text, include_related_forms=include_related_forms )
+    stats = search_stats( search_text, include_related_forms=include_related_forms, ignore_diacritics=ignore_diacritics )
     
     results_set = {
                    'result_count' : search_results.result_count,

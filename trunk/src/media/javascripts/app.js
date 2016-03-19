@@ -409,27 +409,46 @@ define([
 		 * @param query The search query
 		 * @param page The page number
 		 * @param include_related_forms Whether related forms should be included
+		 * @param ignore_diacritics Whether diacritics should be ignored
 		 */
-		TextCritical.set_search_url = function ( query, page, include_related_forms ) {
+		TextCritical.set_search_url = function ( query, page, include_related_forms, ignore_diacritics ) {
 			
-			var url = document.location.pathname + "?";
+			// Get defaults for the arguments
+			if(typeof include_related_forms === 'undefined'){
+				var include_related_forms = false;
+			}
 			
-			// Add the check-box
+			if(typeof ignore_diacritics === 'undefined'){
+				var ignore_diacritics = false;
+			}
+			
+			var params = {};
+			
+			// Add the related forms argument
 			if( related_forms ){
-				url += "include_related=1";
+				params['include_related'] = 1;
+			}
+			
+			// Add the ignore diacritics argument
+			if( ignore_diacritics ){
+				params['ignore_diacritics'] = 1;
 			}
 			
 			// Get the appropriate URL
 			if( page <= 1 || parseInt(page) <= 1 ){
-				url += "&q=" + query;
+				params['q'] = query;
 				page = 1;
 			}
 			else{
-				url += "&q=" + query + "&page=" + page;
+				params['q'] = query;
+				params['page'] = page;
 			}
 			
+			// Make the URL
+			var url = document.location.pathname + "?" + $.param(params);
+			
 			// Push the state
-			history.pushState( {query: query, page: page, include_related_forms:include_related_forms}, document.title, url);
+			history.pushState( {query: query, page: page, include_related_forms:include_related_forms, ignore_diacritics:ignore_diacritics}, document.title, url);
 		}
 		
 		/**
@@ -551,6 +570,7 @@ define([
 			
 			// Determine if we are to search for related forms
 			related_forms = $("#related_forms:checked").length;
+			ignore_diacritics = $("#ignore_diacritics:checked").length;
 			
 			// Assign a default value to the update_url argument if it was not provided
 			if( typeof update_url == 'undefined' ){
@@ -566,6 +586,17 @@ define([
 			}
 			else{
 				related_forms = 1;
+			}
+			
+			// Assign a default value to the ignore_diacritics argument if it was not provided
+			if( typeof ignore_diacritics == "undefined" ){
+				ignore_diacritics = 0;
+			}
+			else if (!ignore_diacritics){
+				ignore_diacritics = 0;
+			}
+			else{
+				ignore_diacritics = 1;
 			}
 			
 			// Assign a value to the page number if it is not valid
@@ -585,7 +616,7 @@ define([
 			
 			// Submit the AJAX request to display the information
 			$.ajax({
-				url: "/api/search/" + encodeURIComponent(word) + "?page=" + page + "&related_forms=" + related_forms
+				url: "/api/search/" + encodeURIComponent(word) + "?page=" + page + "&related_forms=" + related_forms + "&ignore_diacritics=" + ignore_diacritics
 			}).done(function(search_results) {
 				
 				$("#search-results-content").html(_.template(search_results_template,{ word:_.escape(word), search_results:search_results }));
@@ -615,7 +646,7 @@ define([
 				$('#search-results-content').show();
 				
 				if( update_url ){
-					TextCritical.set_search_url(word, page, related_forms);
+					TextCritical.set_search_url(word, page, related_forms, ignore_diacritics);
 				}
 				
 			}).error( function(jqXHR, textStatus, errorThrown) {
