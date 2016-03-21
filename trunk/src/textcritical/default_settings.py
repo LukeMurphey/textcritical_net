@@ -82,6 +82,9 @@ SITE_ID = 1
 # Note that the content loaded in require 
 USE_CDN = True
 
+# Indicates if the sharing buttons (Twitter, Google, LinkedIn, etc) should be included
+INCLUDE_SHARING_BUTTONS = True
+
 # Set the name in the admin interface
 GRAPPELLI_ADMIN_TITLE = "TextCritical.net"
 

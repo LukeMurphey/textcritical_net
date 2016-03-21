@@ -54,7 +54,7 @@
 		    </p>
 	        
 	        </div>
-			
+			{% if INCLUDE_SHARING_BUTTONS %}
 	        <div class="pull-right sharing-buttons hidden-phone hide">
 	        
 		       <div id="buttons">
@@ -144,7 +144,7 @@
 				</div>
         		
 	        </div>
-	        
+	        {% endif %}
 	    </footer>
     </div>
 {% endblock %}
@@ -167,9 +167,9 @@
 			});
     		
 			window.fbAsyncInit = TextCritical.facebookInit();
-			
+			{% if INCLUDE_SHARING_BUTTONS %}
 			TextCritical.pollForShareButtons();
-    		
+    		{% endif %}
     	});
     });
     </script>
