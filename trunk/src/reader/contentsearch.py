@@ -126,7 +126,6 @@ class WorkIndexer:
             results = searcher.search_page(search_query, 1, 1)
             return len(results) > 0
             
-            
     @classmethod
     def get_writer(cls, inx=None):
         """
@@ -675,7 +674,6 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True,
                     if matched_term == normalize_unicode(term[0]):
                         matched_terms[matched_term] += term[1]
                         matched_in_result += term[1]
-                        print "matched"
             
             stats['matches'] += matched_in_result
         
