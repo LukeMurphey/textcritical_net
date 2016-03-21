@@ -210,6 +210,10 @@ class WorkAlias(models.Model):
     @staticmethod
     def populate_alias_from_work( work ):
         
+        # If the title_slug is empty, then just ignore this for now
+        if work.title_slug is None or len(work.title_slug) == 0:
+            return None
+        
         # Determine if the entry already exists for this work
         if WorkAlias.objects.filter(title_slug=work.title_slug, work=work).count() >= 1:
             return None
