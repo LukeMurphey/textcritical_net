@@ -33,7 +33,7 @@ class Command(BaseCommand):
         import_policy = JSONImportPolicy()
         import_policy.load_policy( import_policy_file )
         
-        print "Importing ", os.path.basename(filename)
+        print "Importing", os.path.basename(filename)
         importer = UnboundBibleTextImporter(import_policy=import_policy.should_be_processed)
         importer.import_file(filename)
         

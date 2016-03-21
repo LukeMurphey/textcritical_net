@@ -110,7 +110,7 @@ class UnboundBibleTextImporter(TextImporter):
             logger.info('Loaded book names, file="%s"', self.book_names_file)
             return book_names
             
-        # Try to import the file if it is the same directory as the 
+        # Try to import the book names file if it is the same directory as the 
         if import_file_name is not None:
             
             book_name_file = os.path.join( os.path.split(import_file_name)[0], "book_names.txt" )
@@ -119,12 +119,14 @@ class UnboundBibleTextImporter(TextImporter):
                 book_names = self.load_book_names( book_name_file )
                 logger.info('Loaded book names, file="%s"', book_name_file)
                 return book_names
+            else:
+                raise Exception("Book names not found; the book_names.txt file is necessary for the import of this work to be successful")
         
     def get_processing_parameters(self, file_path, title ):
         """
         Get the processing parameters associated with the given work.
         """
-                
+        
         logger.debug("Analyzing %s to determine if it ought to be imported" % (title ) )
         
         return self.import_policy( title=title, file_path=file_path )
@@ -177,6 +179,7 @@ class UnboundBibleTextImporter(TextImporter):
                 # If the line is comment with the document name
                 if line.startswith("#name"):
                     title = self.get_name_from_comment(line)
+                    logger.info('Parsed name from the file, name="%s"', title)
                     
                     if work_created:
                         self.work.title = title
