@@ -24,5 +24,18 @@
     			]
         	}
         }
+    },
+    {
+        "file_name" : "asv_utf8.txt",
+        "title" : "English: American Standard Version",
+        "import_parameters" : {
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "asv",
+                    "title"      : "New Testament",
+                    "language"   : "English"
+                }
+        	}
+        }
     }
 ]
