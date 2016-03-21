@@ -1017,8 +1017,10 @@ define([
 			
 			 var search_highlights = TextCritical.get_parameter_by_name(document.location.search, "highlight", true);
 			 
-			 for(var c = 0; c < search_highlights.length; c++){
-				 TextCritical.highlight_word(decodeURIComponent(search_highlights[c]), "searched", false);
+			 if(search_highlights !== undefined){
+				 for(var c = 0; c < search_highlights.length; c++){
+					 TextCritical.highlight_word(decodeURIComponent(search_highlights[c]), "searched", false);
+				 } 
 			 }
 		}
 		
