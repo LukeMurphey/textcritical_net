@@ -24,7 +24,6 @@
   <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/normalize.css">
   <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/main.css">
   <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/app.css">
-  <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/add2home.css">
   <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/arthref.css">
   
   {% if USE_MINIFIED|default_if_none:1 %}
@@ -82,17 +81,9 @@
   {% endif %}
   
   <script language="javascript">
-  	  var textcritical = textcritical || {}; 
-  	  
-  	  var addToHomeConfig = {
-  			returningVisitor:true
-  	  };
+  	  var textcritical = textcritical || {};
   	
-      require(["jquery", "bootstrap", "add2home", "flying_focus"]);
-      
-      require(["app"], function() {
-      	TextCritical.setup_link_handlers_for_ios_web_apps();
-      });
+      require(["jquery", "bootstrap", "flying_focus"]);
   </script>
   {% block javascript_base %}{% endblock %}
   {% block javascript %}{% endblock %}
