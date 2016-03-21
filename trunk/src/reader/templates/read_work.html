@@ -257,7 +257,7 @@
 {% block javascript %}
 <script language="javascript">
 
-require(["jquery", "store", "app", "underscore", "bootstrap", "facebook"], function($) {
+require(["jquery", "store", "app", "underscore", "bootstrap", "libs/optional!facebook"], function($) {
 	
 	TextCritical.loadStoreSettings();
     $('.align-break').click( TextCritical.toggleVerseBreak );

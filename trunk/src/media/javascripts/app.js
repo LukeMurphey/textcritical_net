@@ -12,7 +12,7 @@ define([
         'libs/text!/media/templates/morphology_dialog.html',
         'libs/text!/media/templates/loading_dialog.html',
         'libs/text!/media/templates/search_results.html',
-        'facebook'
+        'libs/optional!facebook'
     ],
     function($, _, highcharts, alert_message_template, morphology_dialog_template, loading_template, search_results_template) {
 	
@@ -1121,39 +1121,6 @@ define([
 		}
 		
 		/**
-		 * This function sets up links such that apps saved locally don't open Safari for links. 
-		 * 
-		 * For more informtaion see: http://stackoverflow.com/questions/2898740/iphone-safari-web-app-opens-links-in-new-window
-		 */
-		TextCritical.setup_link_handlers_for_ios_web_apps = function ( ) {
-			
-			if (("standalone" in window.navigator) && window.navigator.standalone) {
-			     
-				// Use a delegated event handler so that new content added via AJAX is handled properly
-				$(document).on('click', 'a', function(e){
-			        
-					var href = $(this).attr("href");
-					
-					// Don't override links that:
-					// 1) Have a target of _blank (and should open in a new window)
-					// 2) Are for external domains
-					
-					if( e.target.target != "_blank" && (href.indexOf(location.hostname) > -1 || href.indexOf("http") != 0 ) ){
-						
-						e.preventDefault();
-				        
-				        var new_location = href;
-				        
-				        // Stop on undefined links, local handlers (#) and Bootstrap links
-				        if (new_location != undefined && new_location.substr(0, 1) != '#' && $(this).attr('data-method') == undefined){
-				        	window.location = new_location;
-				        }
-					}
-			    });
-			 }
-		}
-		
-		/**
 		 * Load the link reference in next link tag so that it gets cached and loads quickly if user continues to the next chapter.
 		 */
 		TextCritical.pre_load_next_link = function ( ) {
@@ -1330,11 +1297,14 @@ define([
 		 * Initialize the Facebook API
 		 */
 		TextCritical.facebookInit = function() {
-	        // init the FB JS SDK
-	        FB.init({
-	          appId      : '226685657481279', // App ID from the app dashboard
-	          xfbml      : true               // Look for social plugins on the page
-	        });
+			
+			if(typeof FB !== "undefined"){
+		        // init the FB JS SDK
+		        FB.init({
+		          appId      : '226685657481279', // App ID from the app dashboard
+		          xfbml      : true               // Look for social plugins on the page
+		        });
+			}
 		}
 		
 		/**
