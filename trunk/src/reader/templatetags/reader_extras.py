@@ -35,6 +35,10 @@ def unbound_text_to_html5(text, language=None):
     {{text|unbound_text_to_html5:"Greek"}}
     """
     
+    # If the language is English, then don't bother doing anything
+    if language is not None and language.lower() == "english":
+        return text
+    
     # Make the document that will contain the verse
     converted_doc = minidom.Document()
     
@@ -60,7 +64,7 @@ def unbound_text_to_html5(text, language=None):
             word_node.setAttribute( "class", "word" )
             
             # Create the text node and append it
-            if language is None:
+            if language is None or language.lower() == "greek":
                 txt_node = converted_doc.createTextNode( s )
             else:
                 txt_node = converted_doc.createTextNode( transform_text(s, language).decode( "utf-8" ) )
