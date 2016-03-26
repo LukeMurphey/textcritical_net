@@ -18,7 +18,7 @@ from reader.importer.Diogenes import DiogenesLemmataImporter, DiogenesAnalysesIm
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Work, WorkAlias
-from reader.views import get_division
+from reader.views import get_division, convert_to_numbered_division_name, convert_to_lettered_division_name, has_lettered_book_number, has_numbered_book_number
 from reader.contentsearch import WorkIndexer, search_verses, search_stats
 from reader import utils
 from reader.ebook import ePubExport
@@ -1545,6 +1545,35 @@ class TestViews(TestReader):
         
         self.assertEquals( division.descriptor, '1' )
         self.assertEquals( division.parent_division.descriptor, 'Matthew' )
+    
+    def test_convert_to_numbered_division_name(self):
+        self.assertEquals(convert_to_numbered_division_name("I Timothy"), '1 Timothy' )
+        self.assertEquals(convert_to_numbered_division_name("II Timothy"), '2 Timothy' )
+        self.assertEquals(convert_to_numbered_division_name("I Corinthians"), '1 Corinthians' )
+        self.assertEquals(convert_to_numbered_division_name("III John"), '3 John' )
+        self.assertEquals(convert_to_numbered_division_name("VII John"), 'VII John' )
+        self.assertEquals(convert_to_numbered_division_name("Mark"), 'Mark' )
+    
+    def test_convert_to_lettered_division_name(self):
+        self.assertEquals(convert_to_lettered_division_name("1 Timothy"), 'I Timothy' )
+        self.assertEquals(convert_to_lettered_division_name("2 Timothy"), 'II Timothy' )
+        self.assertEquals(convert_to_lettered_division_name("3 John"), 'III John' )
+        self.assertEquals(convert_to_numbered_division_name("9 John"), '9 John' )
+        self.assertEquals(convert_to_lettered_division_name("Mark"), 'Mark' )
+        
+    def test_has_lettered_book_number(self):
+        self.assertEquals(has_lettered_book_number("I Timothy"), True )
+        self.assertEquals(has_lettered_book_number("II Timothy"), True )
+        self.assertEquals(has_lettered_book_number("I Corinthians"), True )
+        self.assertEquals(has_lettered_book_number("III John"), True )
+        self.assertEquals(has_lettered_book_number("Mark"), False )
+    
+    def test_has_numbered_book_number(self):
+        self.assertEquals(has_numbered_book_number("1 Timothy"), True )
+        self.assertEquals(has_numbered_book_number("2 Timothy"), True )
+        self.assertEquals(has_numbered_book_number("3 John"), True )
+        self.assertEquals(has_numbered_book_number("Mark"), False )
+        
                 
 class TestDiogenesLemmaImport(TestReader):    
     

@@ -200,7 +200,76 @@ def get_division_and_verse( work, division_0=None, division_1=None, division_2=N
     elif division_0 is not None:
         return get_division( work ), division_0
 
-def get_division( work, division_0=None, division_1=None, division_2=None, division_3=None ):
+def has_numbered_book_number(division_name):
+    
+    if division_name is None:
+        return None
+    
+    r = re.compile("([1-9])( .*)")
+    if r.match(division_name):
+        return True
+    else:
+        return False
+    
+def has_lettered_book_number(division_name):
+    
+    if division_name is None:
+        return None
+    
+    r = re.compile("([IV]+)( .*)")
+    if r.match(division_name):
+        return True
+    else:
+        return False
+
+def convert_to_lettered_division_name(division_name):
+    
+    if division_name is None:
+        return None
+    
+    number_to_letter_map = {
+                        '1' : 'I',
+                        '2' : 'II',
+                        '3' : 'III',
+                        '4' : 'IV',
+                        '5' : 'V'
+                        }
+    
+    r = re.compile("([1-9])( .*)")
+    m = r.match(division_name)
+    
+    if m and m.groups()[0] in number_to_letter_map:
+        converted_character = number_to_letter_map[m.groups()[0]]
+        
+        return converted_character + m.groups()[1]
+    else:
+        return division_name
+
+def convert_to_numbered_division_name(division_name):
+    
+    if division_name is None:
+        return None
+    
+    letter_to_number_map = {
+                        'I' : '1',
+                        'II' : '2',
+                        'III' : '3',
+                        'IV' : '4',
+                        'V' : '5'
+                        }
+    
+    r = re.compile("([IV]+)( .*)")
+    m = r.match(division_name)
+    
+    if m and m.groups()[0] in letter_to_number_map:
+            
+        converted_character = letter_to_number_map[m.groups()[0]]
+        
+        return converted_character + m.groups()[1]
+    else:
+        return division_name
+        
+def get_division( work, division_0=None, division_1=None, division_2=None, division_3=None, try_to_match_converting_numbering=True ):
     """
     This function gets the division that is associated with the given descriptor set.
     
@@ -210,7 +279,10 @@ def get_division( work, division_0=None, division_1=None, division_2=None, divis
     division_1 -- The next highest division to lookup
     division_2 -- The next highest division to lookup
     division_3 -- The next highest division to lookup
+    try_to_match_converting_numbering -- If not none, then attempt get a match by normalizing the division name
     """
+    
+    print division_0, division_1, division_2, division_3, try_to_match_converting_numbering
     
     # Filter down the list to the division within the given work
     divisions = Division.objects.filter(work=work)
@@ -251,6 +323,12 @@ def get_division( work, division_0=None, division_1=None, division_2=None, divis
     if len(divisions) > 0:
         return divisions[0]
     else:
+        
+        if try_to_match_converting_numbering and (has_numbered_book_number(division_0) or has_numbered_book_number(division_1) or has_numbered_book_number(division_2) or has_numbered_book_number(division_3)):
+            return get_division(work, convert_to_lettered_division_name(division_0), convert_to_lettered_division_name(division_1), convert_to_lettered_division_name(division_2), convert_to_lettered_division_name(division_3), try_to_match_converting_numbering=False)
+        elif try_to_match_converting_numbering and (has_lettered_book_number(division_0) or has_lettered_book_number(division_1) or has_lettered_book_number(division_2) or has_lettered_book_number(division_3)):
+            return get_division(work, convert_to_numbered_division_name(division_0), convert_to_numbered_division_name(division_1), convert_to_numbered_division_name(division_2), convert_to_numbered_division_name(division_3), try_to_match_converting_numbering=False)
+        
         return None # We couldn't find a matching division, perhaps one doesn't exist with the given set of descriptors?
     
 def download_work(request, title=None,):
