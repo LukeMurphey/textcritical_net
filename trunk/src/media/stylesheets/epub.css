@@ -25,7 +25,8 @@ sup.note {
   display: block;
   padding-top: 12px; }
 .view_read_work .l {
-  display: block; }
+  display: block;
+  margin-left: 24px; }
 .view_read_work .gap {
   content: "..."; }
 .view_read_work .quote, .view_read_work .q {
