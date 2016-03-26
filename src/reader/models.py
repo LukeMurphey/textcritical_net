@@ -308,7 +308,7 @@ class Division(models.Model):
                 title = next_division.descriptor
             
             # Determine if this is a number
-            is_number = re.match("[0-9]+", title)
+            is_number = re.match("^[0-9]+ ?$", title)
             
             # Put a period between the numbers
             if s is not None and prior_was_number and is_number:
