@@ -32,7 +32,7 @@
             "transforms" : {
                 "set_meta_data" : {
                     "title_slug" : "asv",
-                    "title"      : "New Testament",
+                    "title"      : "Bible (American Standard Version)",
                     "language"   : "English"
                 }
         	}
