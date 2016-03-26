@@ -174,17 +174,24 @@ class RelatedWork(models.Model):
         """
         
         for first_work in Work.objects.all():
+            cls.find_related_for_work(first_work, ignore_editors)
             
-            for second_work in Work.objects.all():
+    @classmethod
+    def find_related_for_work( cls, first_work, ignore_editors=False ):
+        """
+        Automatically discover any other related works and make a reference to the provided work.
+        """
+        
+        for second_work in Work.objects.all():
                 
-                if second_work.id != first_work.id and cls.are_works_identical(first_work, second_work, ignore_editors):
+            if second_work.id != first_work.id and cls.are_works_identical(first_work, second_work, ignore_editors):
                     
-                    # Make the related work instances
-                    entries_made = RelatedWork.make_related_work(first_work, second_work)
+                # Make the related work instances
+                entries_made = RelatedWork.make_related_work(first_work, second_work)
                     
-                    if entries_made > 0:
-                        logger.info("Made a reference between two works, first_work=%s, second_work=%s" % ( first_work.title_slug, second_work.title_slug) )
-            
+                if entries_made > 0:
+                    logger.info("Made a reference between two works, first_work=%s, second_work=%s" % ( first_work.title_slug, second_work.title_slug) )
+    
         
 class WorkAlias(models.Model):
     """
