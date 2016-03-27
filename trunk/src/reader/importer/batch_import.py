@@ -1,4 +1,4 @@
-from reader.models import Division, Verse, Work
+from reader.models import Division, Verse, Work, RelatedWork
 from django.template.defaultfilters import slugify
 import logging
 import re
@@ -350,6 +350,19 @@ class ImportTransforms():
                 division.delete()
                 
             return len(divisions)
+    
+    @staticmethod
+    def assign_related_work(work=None, title_slug=None, **kwargs):
+        
+        # If the slug
+        if isinstance(title_slug, basestring):
+            title_slug = [title_slug]
+        
+        for slug in title_slug:
+            # Find the related work
+            second_work = Work.objects.get(title_slug=slug)
+            
+            RelatedWork.make_related_work(work, second_work)
     
     @staticmethod
     def run_transforms( work, transforms ):
