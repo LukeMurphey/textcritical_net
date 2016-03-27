@@ -115,7 +115,7 @@ class RelatedWork(models.Model):
         return True
     
     @classmethod
-    def are_works_identical( cls, first_work, second_work, ignore_editors=False ):
+    def are_works_identical( cls, first_work, second_work, ignore_editors=False, ignore_divisions=True ):
         """
         Determine if these works appear to be identical.
         """
@@ -128,10 +128,12 @@ class RelatedWork(models.Model):
         second_work_authors = second_work.authors.all().order_by("name")
         
         if first_work_authors.count() != second_work_authors.count():
+            logger.info("Work are not identical, author counts are different, first_work=%s, second_work=%s" % ( first_work.title_slug, second_work.title_slug) )
             return False
         
         for i in range(0, first_work_authors.count() ):
             if first_work_authors[i].name != second_work_authors[i].name:
+                logger.info("Work are not identical, author is different, first_work=%s, second_work=%s, first_work_author=%s, second_work_author=%s" % ( first_work.title_slug, second_work.title_slug, first_work_authors[i].name, second_work_authors[i].name) )
                 return False
         
         # Compare the editors
@@ -144,9 +146,14 @@ class RelatedWork(models.Model):
             
             for i in range(0, first_work_editors.count() ):
                 if first_work_editors[i].name != second_work_editors[i].name:
+                    logger.info("Work are not identical, author is different, first_work=%s, second_work=%s, first_work_editor=%s, second_work_editor=%s" % ( first_work.title_slug, second_work.title_slug, first_work_editors[i].name, second_work_editors[i].name) )
                     return False
             
-        return cls.are_divisions_identical( first_work, second_work )
+        # Compare the divisions
+        if not ignore_divisions:
+            return cls.are_divisions_identical( first_work, second_work )
+        else:
+            return True
     
     @staticmethod
     def make_related_work(first_work, second_work):
