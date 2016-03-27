@@ -714,7 +714,7 @@ def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_fo
         
         if ignore_diacritics:
             default_search_field = "no_diacritics"
-        print ""
+        
         # Make a parser to convert the incoming search string into a search
         if include_related_forms:
             parser = QueryParser(default_search_field, inx.schema, termclass=GreekVariations)

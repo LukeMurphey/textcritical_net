@@ -282,8 +282,6 @@ def get_division( work, division_0=None, division_1=None, division_2=None, divis
     try_to_match_converting_numbering -- If not none, then attempt get a match by normalizing the division name
     """
     
-    print division_0, division_1, division_2, division_3, try_to_match_converting_numbering
-    
     # Filter down the list to the division within the given work
     divisions = Division.objects.filter(work=work)
     
