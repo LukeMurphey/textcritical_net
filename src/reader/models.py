@@ -115,7 +115,7 @@ class RelatedWork(models.Model):
         return True
     
     @classmethod
-    def are_works_identical( cls, first_work, second_work, ignore_editors=False, ignore_divisions=True ):
+    def are_works_equivalent( cls, first_work, second_work, ignore_editors=False, ignore_divisions=False, consider_a_match_if_divisions_or_editors_match=True ):
         """
         Determine if these works appear to be identical.
         """
@@ -128,32 +128,61 @@ class RelatedWork(models.Model):
         second_work_authors = second_work.authors.all().order_by("name")
         
         if first_work_authors.count() != second_work_authors.count():
-            logger.info("Work are not identical, author counts are different, first_work=%s, second_work=%s" % ( first_work.title_slug, second_work.title_slug) )
+            logger.info("Works are not identical, author counts are different, first_work=%s, second_work=%s" % ( first_work.title_slug, second_work.title_slug) )
             return False
         
         for i in range(0, first_work_authors.count() ):
             if first_work_authors[i].name != second_work_authors[i].name:
-                logger.info("Work are not identical, author is different, first_work=%s, second_work=%s, first_work_author=%s, second_work_author=%s" % ( first_work.title_slug, second_work.title_slug, first_work_authors[i].name, second_work_authors[i].name) )
+                logger.info("Works are not identical, author is different, first_work=%s, second_work=%s, first_work_author=%s, second_work_author=%s" % ( first_work.title_slug, second_work.title_slug, first_work_authors[i].name, second_work_authors[i].name) )
                 return False
         
         # Compare the editors
-        if not ignore_editors:
+        editors_match = None
+        
+        if not ignore_editors or consider_a_match_if_divisions_or_editors_match:
             first_work_editors = first_work.editors.all().order_by("name")
             second_work_editors = second_work.editors.all().order_by("name")
             
+            # Match up the count of editors
             if first_work_editors.count() != second_work_editors.count():
-                return False
+                editors_match = False
             
-            for i in range(0, first_work_editors.count() ):
-                if first_work_editors[i].name != second_work_editors[i].name:
-                    logger.info("Work are not identical, author is different, first_work=%s, second_work=%s, first_work_editor=%s, second_work_editor=%s" % ( first_work.title_slug, second_work.title_slug, first_work_editors[i].name, second_work_editors[i].name) )
-                    return False
-            
+            # If the count is the same, then check the values
+            if editors_match is None:
+                for i in range(0, first_work_editors.count() ):
+                    if first_work_editors[i].name != second_work_editors[i].name:
+                        logger.info("Works are not identical, editor is different, first_work=%s, second_work=%s, first_work_editor=%s, second_work_editor=%s" % ( first_work.title_slug, second_work.title_slug, first_work_editors[i].name, second_work_editors[i].name) )
+                        editors_match = False
+                
+                editors_match = True
+        
         # Compare the divisions
-        if not ignore_divisions:
-            return cls.are_divisions_identical( first_work, second_work )
-        else:
-            return True
+        divisions_match = None
+        
+        if not ignore_divisions or consider_a_match_if_divisions_or_editors_match:
+            divisions_match = cls.are_divisions_identical( first_work, second_work )
+        
+        # If we are considering this a match if the editors or divisions match, then evaluate accordingly
+        if consider_a_match_if_divisions_or_editors_match:
+            
+            if editors_match or divisions_match:
+                logger.info("Works are identical since editors or divisions match, first_work=%s, second_work=%s", first_work.title_slug, second_work.title_slug )
+                return True
+            else:
+                logger.info("Works are not identical, since the neither the divisions nor the editors matched, first_work=%s, second_work=%s", first_work.title_slug, second_work.title_slug )
+                return False   
+             
+        # Stop if the divisions don't match but should
+        elif not ignore_divisions and not divisions_match:
+            return False
+        
+        # Stop if the editors don't match but should
+        elif not ignore_editors and not editors_match:
+            return False
+        
+        # If we failed to reject the equivalency of the work, then treat them as equivalent
+        return True
+        
     
     @staticmethod
     def make_related_work(first_work, second_work):
@@ -175,23 +204,23 @@ class RelatedWork(models.Model):
         return entries_made
     
     @classmethod
-    def autodiscover( cls, ignore_editors=False ):
+    def autodiscover( cls, ignore_editors=False, ignore_divisions=False, consider_a_match_if_divisions_or_editors_match=True ):
         """
         Automatically discover related works and make references to them.
         """
         
         for first_work in Work.objects.all():
-            cls.find_related_for_work(first_work, ignore_editors)
+            cls.find_related_for_work(first_work, ignore_editors, ignore_divisions, consider_a_match_if_divisions_or_editors_match)
             
     @classmethod
-    def find_related_for_work( cls, first_work, ignore_editors=False ):
+    def find_related_for_work( cls, first_work, ignore_editors=False, ignore_divisions=False, consider_a_match_if_divisions_or_editors_match=True ):
         """
         Automatically discover any other related works and make a reference to the provided work.
         """
         
         for second_work in Work.objects.all():
                 
-            if second_work.id != first_work.id and cls.are_works_identical(first_work, second_work, ignore_editors):
+            if second_work.id != first_work.id and cls.are_works_equivalent(first_work, second_work, ignore_editors, ignore_divisions, consider_a_match_if_divisions_or_editors_match):
                     
                 # Make the related work instances
                 entries_made = RelatedWork.make_related_work(first_work, second_work)
