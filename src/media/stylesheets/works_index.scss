@@ -29,3 +29,16 @@
 #works_list_paginate{
 	height: 22px;
 }
+
+.sorting_asc, .sorting_desc{
+  background-repeat: no-repeat;
+  background-position: right;
+}
+
+.sorting_asc{
+  background-image: url("../images/sort_up.png");
+}
+
+.sorting_desc{
+  background-image: url("../images/sort_down.png");
+}
