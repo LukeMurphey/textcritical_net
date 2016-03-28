@@ -23,7 +23,8 @@ Below are other versions of this work that may interest you:
 
 {% endif %}
 
-{% if authors_works and authors_works|length > 0 %}
+{% if work.authors.all|length > 0 and authors_works|length > 0 %}
+{% if authors_works|length <= 20 %}
 <p class="add-space-small">
 If you liked this work, then you may like other works from this author:
 </p>
@@ -40,7 +41,12 @@ If you liked this work, then you may like other works from this author:
 {% endfor %}
 </ul>
 
-{% endif %}
+{% else %}
+<p class="add-space-small">
+If you liked this work, then you may like some of the other <a href="http://TextCritical.net{% url "works_index" %}?search={{work.authors.all.0}}">{{authors_works|length}} works from this author</a>.
+</p>
 
+{% endif %}
+{% endif %}
 
 {% endblock %}
