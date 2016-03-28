@@ -484,26 +484,25 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     # Filter out entries for related works that do not have the related section
     for r in related_works_tmp:
         
-        # Make up the list of chapter divisions. We will remove the verse division in a second.
-        args = [r.related_work]
+        # Make up the list of chapter division descriptors
+        args = []
         
-        # Filter out nones
-        for arg in [division_0, division_1, division_2, division_3]:
-            if arg is None:
-                break
+        next_division = chapter
+    
+        while next_division is not None:
+            args.insert(0, next_division.descriptor)
+            next_division = next_division.parent_division
             
-            args.append(arg)
-        
-        # Remove the last entry if it is the verse to highlight
-        if verse_to_highlight is not None:
-            del args[-1]
+        # Insert the first argument (the related work)
+        args.insert(0, r.related_work)
         
         # Try to get the related division
-        division = get_division(*args)
-    
+        related_work_division = get_division(*args)
+        
         # If we got a match, then the link to the related work should function.
-        if division is not None:
+        if related_work_division is not None:
             related_works.append(r.related_work)
+            
     
     # Make the chapter title
     title = work.title
