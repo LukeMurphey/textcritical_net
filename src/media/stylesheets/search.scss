@@ -67,6 +67,11 @@ div.search-example{
 #related_forms{
 	margin-right: 6px;
 	margin-left: 2px;
+    margin-top: 6px;
+}
+
+#ignore_diacritics{
+	margin-top: 6px;
 }
 
 .checkbox.no-left-padding{
@@ -83,4 +88,5 @@ input[type='checkbox'] {
     position: relative;
     top: -3px;
     *overflow: hidden;
+    margin-top: 6px;
 }
