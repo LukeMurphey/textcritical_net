@@ -309,6 +309,7 @@ define([
 			}).done(function(data) {
 				
 				data['topic'] = topic;
+				data['success'] = true;
 				
 				// Set the link to Wikipedia
 				var extra_options_template = '<a target="_blank" class="external" href="<%= url %>">View on wikipedia</a>';
@@ -323,8 +324,16 @@ define([
 			}).error( function(jqXHR, textStatus, errorThrown) {
 				
 				// Handle cases where the request succeeded but no information could be found
-				if(jqXHR.status === 403){
-					$("#popup-dialog-content").html( "<h4>No information</h4>No information could be found for " +  _.escape(topic) + "." );
+				if(jqXHR.status === 404){
+					
+					data = {
+							'topic': topic,
+							'success' : false
+					}
+					
+					$("#popup-dialog-content").html(_.template(work_info_dialog_template, data));
+					
+					//$("#popup-dialog-content").html( "<h4>No information</h4>No information could be found on Wikipedia for " +  _.escape(topic) + "." );
 					console.warn( "No information could be obtained for " + topic );
 				}
 				
