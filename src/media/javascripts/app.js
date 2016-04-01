@@ -277,16 +277,20 @@ define([
 		 * 
 		 * @param topic the topic (author or work) to get information for
 		 **/
-		TextCritical.open_topic_dialog = function ( topic, topic_type ) {
+		TextCritical.open_topic_dialog = function ( topic, search, topic_type ) {
 			
 			if(typeof topic_type === "undefined"){
 				var topic_type = null;
 			}
 			
+			if(typeof search === "undefined"){
+				var search = topic;
+			}
+			
 			console.info( "Obtaining information about " + topic );
 		
 			// Trim the topic in case extra space was included
-			topic = TextCritical.trim(topic);
+			search = TextCritical.trim(search);
 		
 			// Reset the content to the loading content
 			$("#popup-dialog-content").html(_.template(loading_template,{ message: "Looking up info for " +  _.escape(topic) + "..." }));
@@ -301,8 +305,10 @@ define([
 		
 			// Submit the AJAX request to display the information
 			$.ajax({
-				url: "/api/wikipedia_info/" + topic
+				url: "/api/wikipedia_info/" + search
 			}).done(function(data) {
+				
+				data['topic'] = topic;
 				
 				// Set the link to Wikipedia
 				var extra_options_template = '<a target="_blank" class="external" href="<%= url %>">View on wikipedia</a>';

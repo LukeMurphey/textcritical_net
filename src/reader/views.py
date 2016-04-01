@@ -1083,7 +1083,7 @@ def api_wikipedia_info(request, topic=None, ref=None):
                    'url': wiki_page.url,
                    'content': wiki_page.content,
                    'links': wiki_page.links,
-                   'topic': topic
+                   'searched_for': topic
                    }
         
         return render_api_response(request, content )

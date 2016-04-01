@@ -44,7 +44,7 @@
             <li><a href="{% url "works_index" %}">Library</a> <span class="divider">/</span></li>
             <li class="active">{{work.title}}{% if chapter %}: {{chapter.get_division_description}}{% endif %}</li>
         </ul>
-        <h1 data-work-title-slug="{{work.title_slug}}" data-work-title="{{work.title}}">{{work.title}}{% if authors|length > 0 %} <small>By {{authors|join:", "}}</small>{% endif %}</h1>
+        <h1 data-work-title-slug="{{work.title_slug}}" data-author="{{authors|join:", "}}" data-work-title="{{work.title}}">{{work.title}}{% if authors|length > 0 %} <small>By {{authors|join:", "}}</small>{% endif %}</h1>
         
         {% comment %}
         ##############################
@@ -347,7 +347,7 @@ require(["jquery", "store", "app", "underscore", "bootstrap", "libs/optional!fac
     });
     
     $(".get-work-info").click(function(){
-    	TextCritical.open_topic_dialog($('h1').data('work-title'));
+    	TextCritical.open_topic_dialog($('h1').data('work-title'), $('h1').data('work-title') + " " + $('h1').data('author'));
     });
 	
     TextCritical.highlight_searched_terms();
