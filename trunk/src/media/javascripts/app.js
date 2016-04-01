@@ -10,11 +10,12 @@ define([
         'highcharts',
         'libs/text!/media/templates/alert_message.html',
         'libs/text!/media/templates/morphology_dialog.html',
+        'libs/text!/media/templates/work_info_dialog.html',
         'libs/text!/media/templates/loading_dialog.html',
         'libs/text!/media/templates/search_results.html',
         'libs/optional!facebook'
     ],
-    function($, _, highcharts, alert_message_template, morphology_dialog_template, loading_template, search_results_template) {
+    function($, _, highcharts, alert_message_template, morphology_dialog_template, work_info_dialog_template, loading_template, search_results_template) {
 	
 		/**
 		 * Causes the verses to break onto separate lines. 
@@ -268,6 +269,64 @@ define([
 			}).error( function(jqXHR, textStatus, errorThrown) {
 				$("#popup-dialog-content").html( "<h4>Parse failed</h4> The request to parse could not be completed" );
 				console.error( "The request for the morphology failed for " + word );
+			});
+		}
+		
+		/**
+		 * Opens a dialog that shows the information about a topic.
+		 * 
+		 * @param topic the topic (author or work) to get information for
+		 **/
+		TextCritical.open_topic_dialog = function ( topic, topic_type ) {
+			
+			if(typeof topic_type === "undefined"){
+				var topic_type = null;
+			}
+			
+			console.info( "Obtaining information about " + topic );
+		
+			// Trim the topic in case extra space was included
+			topic = TextCritical.trim(topic);
+		
+			// Reset the content to the loading content
+			$("#popup-dialog-content").html(_.template(loading_template,{ message: "Looking up info for " +  _.escape(topic) + "..." }));
+		
+			$("#popup-dialog-extra-options").html("");
+			
+			// Set the title
+			$("#popup-dialog-label").text( _.escape(topic) );
+		
+			// Open the form
+			$("#popup-dialog").modal();
+		
+			// Submit the AJAX request to display the information
+			$.ajax({
+				url: "/api/wikipedia_info/" + topic
+			}).done(function(data) {
+				
+				// Set the link to Wikipedia
+				var extra_options_template = '<a target="_blank" class="external" href="<%= url %>">View on wikipedia</a>';
+			
+				$("#popup-dialog-extra-options").html(_.template(extra_options_template,{ url : data.url }));
+				
+				// Render the lemma information
+				$("#popup-dialog-content").html(_.template(work_info_dialog_template, data));
+		
+				console.info( "Successfully performed a request for information on " + topic );
+		
+			}).error( function(jqXHR, textStatus, errorThrown) {
+				
+				// Handle cases where the request succeeded but no information could be found
+				if(jqXHR.status === 403){
+					$("#popup-dialog-content").html( "<h4>No information</h4>No information could be found for " +  _.escape(topic) + "." );
+					console.warn( "No information could be obtained for " + topic );
+				}
+				
+				// Handle errors
+				else{
+					$("#popup-dialog-content").html( "<h4>Request failed</h4> The request for information could not be completed" );
+					console.error( "The request on the topic failed for " + topic );
+				}
 			});
 		}
 		

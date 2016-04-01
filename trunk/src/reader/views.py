@@ -595,12 +595,12 @@ def word_forms(request):
 # -----------------------------------
 # API views are defined below
 # -----------------------------------
-def render_api_response(request, content):
+def render_api_response(request, content, status=200):
     
     # For XML, see: http://code.activestate.com/recipes/577268-python-data-structure-to-xml-serialization/
     raw_content = json.dumps(content)
     
-    return HttpResponse(raw_content, content_type=JSON_CONTENT_TYPE)
+    return HttpResponse(raw_content, content_type=JSON_CONTENT_TYPE, status=status)
 
 def render_api_error(request, message, status=400):
     
@@ -1061,6 +1061,35 @@ def parse_reference_and_get_division_and_verse(regex, escaped_ref, work, divisio
     division, verse_to_highlight = get_division_and_verse(work, division_0, division_1, division_2, division_3, division_4)
     
     return division, verse_to_highlight, division_0, division_1, division_2, division_3, division_4
+
+def api_wikipedia_info(request, topic=None, ref=None):
+    
+    # Get the topic from the arguments
+    if topic is None and 'topic' in request.GET:
+        topic = request.GET['topic']
+        
+    import sys
+    sys.path.append("lib")
+    
+    import wikipedia
+    from wikipedia import PageError
+    
+    try:
+        wiki_page = wikipedia.page(topic)
+        
+        content = {
+                   'summary': wiki_page.summary,
+                   'title': wiki_page.title,
+                   'url': wiki_page.url,
+                   'content': wiki_page.content,
+                   'links': wiki_page.links,
+                   'topic': topic
+                   }
+        
+        return render_api_response(request, content )
+    except PageError:
+        return render_api_response(request, {'topic': topic}, status=403 )
+
 
 def api_resolve_reference(request, work=None, ref=None):
     

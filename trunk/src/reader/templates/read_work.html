@@ -69,6 +69,7 @@
 			        </ul>
 			    </span>
 			    <button class="hidden-phone download-work btn show-download-work-dialog" type="submit"><i class="icon-download-alt"></i></button>
+			    <button class="hidden-phone get-work-info btn" type="submit"><i class="icon-info-sign"></i></button>
 				
 			    <button id="align-break" class="btn align-break"><i class="icon-align-left"></i></button>
 			    
@@ -343,6 +344,10 @@ require(["jquery", "store", "app", "underscore", "bootstrap", "libs/optional!fac
     
     $(".show-download-work-dialog").click(function(){
     	$('#download-dialog').modal();
+    });
+    
+    $(".get-work-info").click(function(){
+    	TextCritical.open_topic_dialog($('h1').data('work-title'));
     });
 	
     TextCritical.highlight_searched_terms();
