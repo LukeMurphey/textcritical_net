@@ -1,0 +1,10 @@
+<% if ( typeof summary === "undefined" ) { %>
+<h4>Information not found</h4>
+No information could be found for <%= topic %>.
+<p>
+Try looking for more information on <a target="_blank" class="external" href="https://www.google.com/search?q=<%= topic %>">Google</a>.
+</p>
+<% }
+else { %>
+<%= summary %>
+<% } %>

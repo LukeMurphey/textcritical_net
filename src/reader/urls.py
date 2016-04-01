@@ -53,4 +53,6 @@ urlpatterns = patterns('',
     
     url(r'^api/works_typeahead_hints/?$', 'reader.views.api_works_typeahead_hints', name='api_works_typeahead_hints' ),
     
+    url(r'^api/wikipedia_info/(?P<topic>[^/]*)/?$', 'reader.views.api_wikipedia_info', name='api_wikipedia_info' ),
+    
 )
