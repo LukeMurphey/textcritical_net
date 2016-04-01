@@ -1072,7 +1072,7 @@ def api_wikipedia_info(request, topic=None, ref=None):
     sys.path.append("lib")
     
     import wikipedia
-    from wikipedia import PageError
+    from wikipedia import PageError, DisambiguationError
     
     try:
         wiki_page = wikipedia.page(topic)
@@ -1088,6 +1088,8 @@ def api_wikipedia_info(request, topic=None, ref=None):
         
         return render_api_response(request, content )
     except PageError:
+        return render_api_response(request, {'topic': topic}, status=403 )
+    except DisambiguationError:
         return render_api_response(request, {'topic': topic}, status=403 )
 
 
