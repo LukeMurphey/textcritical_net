@@ -347,7 +347,15 @@ require(["jquery", "store", "app", "underscore", "bootstrap", "libs/optional!fac
     });
     
     $(".get-work-info").click(function(){
-    	TextCritical.open_topic_dialog($('h1').data('work-title'), $('h1').data('work-title') + " " + $('h1').data('author'));
+    	
+    	var query = $('h1').data('work-title');
+    	
+    	// If the work title is short, include the author's name in order to prevent an overly generic search
+    	if(query.length < 10){
+    		query = query + " " + $('h1').data('author');
+    	}
+    	
+    	TextCritical.open_topic_dialog($('h1').data('work-title'), query);
     });
 	
     TextCritical.highlight_searched_terms();
