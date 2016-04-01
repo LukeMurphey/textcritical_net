@@ -1,6 +1,6 @@
 import logging
 from reader.importer import TextImporter
-from reader.models import Work
+from reader.models import Work, WorkSource
 from reader import language_tools
 from reader.importer.batch_import import ImportTransforms
 import os
@@ -162,6 +162,18 @@ class UnboundBibleTextImporter(TextImporter):
             self.work = Work()
             self.work.save()
             work_created = True
+            
+            # Make the work source
+            if self.work_source is None:
+                self.work_source = WorkSource()
+            
+            # Save the source of the document
+            self.work_source.source = "unbound.biola.edu"
+            self.work_source.resource = os.path.basename(file_name)
+            self.work_source.work = self.work
+            self.work_source.description = "" # Not used yet
+            self.work_source.save()
+                
         else:
             work_created = False
         
