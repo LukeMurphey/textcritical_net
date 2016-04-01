@@ -1088,9 +1088,9 @@ def api_wikipedia_info(request, topic=None, ref=None):
         
         return render_api_response(request, content )
     except PageError:
-        return render_api_response(request, {'topic': topic}, status=403 )
+        return render_api_response(request, {'topic': topic}, status=404 )
     except DisambiguationError:
-        return render_api_response(request, {'topic': topic}, status=403 )
+        return render_api_response(request, {'topic': topic}, status=404 )
 
 
 def api_resolve_reference(request, work=None, ref=None):

@@ -1,8 +1,8 @@
-<% if ( typeof summary === "undefined" ) { %>
+<% if ( !success || summary === "undefined" ) { %>
 <h4>Information not found</h4>
-No information could be found for <%= topic %>.
-<p>
-Try looking for more information on <a target="_blank" class="external" href="https://www.google.com/search?q=<%= topic %>">Google</a>.
+No information could be found on Wikipedia for <%= topic %>.
+<p class="some-margin-top">
+You can try searching <a target="_blank" class="external" href="https://www.google.com/search?q=<%= topic %>">Google</a> or <a target="_blank" class="external" href="https://en.wikipedia.org/wiki/Special:Search?search=<%= topic %>">Wikipedia</a>.
 </p>
 <% }
 else { %>
