@@ -387,6 +387,12 @@ html {
   content: ""; }
 .view_read_work .argument {
   font-style: italic; }
+.view_read_work .p {
+  margin-bottom: 16px;
+  display: block; }
+.view_read_work .lemma {
+  text-decoration: underline;
+  font-weight: bold; }
 
 /* -----------------------------------------
    Read work

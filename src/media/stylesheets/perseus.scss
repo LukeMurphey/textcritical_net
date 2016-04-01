@@ -93,4 +93,14 @@
     .argument{
     	font-style:italic;
     }
+    
+	.p{
+	  margin-bottom: 16px;
+	  display: block
+	}
+	
+	.lemma{
+		text-decoration: underline;
+    	font-weight: bold;
+	}
 }
