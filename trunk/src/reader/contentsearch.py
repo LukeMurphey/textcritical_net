@@ -52,7 +52,7 @@ class WorkIndexer:
         return Schema( verse_id      = NUMERIC(unique=True, stored=True, sortable=True),
                        content       = TEXT(analyzer=greek_word_analyzer, vector=True),
                        no_diacritics = TEXT(analyzer=greek_word_analyzer, vector=True),
-                       work_id       = TEXT,
+                       work_id       = TEXT(stored=True),
                        section_id    = TEXT,
                        work          = TEXT(analyzer=work_analyzer),
                        section       = TEXT(analyzer=section_analyzer),
@@ -434,27 +434,7 @@ class VerseSearchResults:
         #self.matched_works = OrderedDict(sorted(temp_matched_works.items(), key=lambda x: x[1], reverse=True)) 
         
         # De-reference the name of the works
-        self.matched_works = {}
-        
-        works = Work.objects.filter(title_slug__in=temp_matched_works.keys())
-        
-        for work_slug, count in temp_matched_works.items():
-            
-            found_work = False
-            
-            for work in works:
-                
-                if work.title_slug == work_slug:
-                    self.matched_works[work.title] = count
-                    found_work = True
-                    continue
-                
-            # If we didn't find the work, then add the slug after attempting to un-slugify it
-            if not found_work:
-                logger.critical("Unable to find work in matched terms, work_slug=%s", work_slug)
-                self.matched_works[unslugify(work_slug)] = count
-        
-        self.matched_works = OrderedDict(sorted(self.matched_works.items(), key=lambda x: x[1], reverse=True))
+        self.matched_works = replace_work_names_with_titles(temp_matched_works)
         
 class VerseSearchResult:
     
@@ -587,6 +567,31 @@ class GreekBetaCodeVariations(GreekVariations):
     def __init__(self, fieldname, text, boost=1.0):
         super(GreekBetaCodeVariations,self).__init__( fieldname, text, boost, True, False )
     
+def replace_work_names_with_titles(list_of_matches_in_works):
+    works = Work.objects.filter(title_slug__in=list_of_matches_in_works.keys())
+    matched_works = {}
+    
+    for work_slug, count in list_of_matches_in_works.items():
+        
+        found_work = False
+        
+        for work in works:
+            
+            if work.title_slug == work_slug:
+                matched_works[work.title] = count
+                found_work = True
+                continue
+            
+        # If we didn't find the work, then add the slug after attempting to un-slugify it
+        if not found_work:
+            logger.critical("Unable to find work in matched terms, work_slug=%s", work_slug)
+            matched_works[unslugify(work_slug)] = count
+    
+    matched_works = OrderedDict(sorted(matched_works.items(), key=lambda x: x[1], reverse=True))
+    
+    return matched_works
+    
+    
 def search_stats( search_text, inx=None, limit=2000, include_related_forms=True, ignore_diacritics=False ):
     """
     Search verses for those with the given text and provide high-level stats about the usage of this term. This function is necessary because Whoosh
@@ -635,7 +640,7 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True,
                  'matches' : 0
                  }
         
-        #matched_terms = stats['matches'].matched_terms()
+        # Build a list of the matched terms
         matched_terms = {}
         
         if results.results.has_matched_terms():
@@ -647,6 +652,9 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True,
                     matched_terms[term[1].decode('utf-8')] = 0
         
         results_count = 0
+                      
+        # Build a list of matched works
+        matched_works = {}
         
         # Iterate through the search results
         for r in results:
@@ -676,12 +684,26 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True,
                         matched_in_result += term[1]
             
             stats['matches'] += matched_in_result
+            
+            # Get the stored fields so that we determine which works were matched 
+            fields = searcher.stored_fields(docnum)
+            
+            for field, value in fields.items():
+                
+                # Make sure that this field is for the work
+                if field == "work_id":
+                    
+                    # Add the number of matches
+                    if value in matched_works:
+                        matched_works[value] = matched_works[value] + matched_in_result
+                    else:
+                        matched_works[value] = matched_in_result
+        
+        stats['matched_works'] = replace_work_names_with_titles(matched_works)
         
         stats['matched_terms'] = OrderedDict(sorted(matched_terms.items(), key=lambda x: x[1], reverse=True))
         stats['results_count'] = results_count
-        
-        
-        
+    
     return stats
 
 def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_forms=True, ignore_diacritics=False ):

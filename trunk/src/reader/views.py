@@ -814,7 +814,7 @@ def api_search(request, search_text=None ):
                    'matched_terms_no_diacritics' : search_results.matched_terms_no_diacritics,
                    'match_count' : stats['matches'],
                    'matched_sections' : search_results.matched_sections,
-                   'matched_works' : search_results.matched_works
+                   'matched_works' : stats['matched_works']
                    }
     
     
