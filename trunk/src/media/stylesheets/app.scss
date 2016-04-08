@@ -105,6 +105,30 @@ footer .addthis_toolbox {
     &::after {left:auto !important; right:10px;}
 }
 
+@media print {
+    /* Override the addition of hrefs to the print media */
+	.textcritical a[href]:after {
+		content: "";
+	}
+
+	a.print-append-href[href]:after {
+		content: " (" attr(href) ")";
+	}
+
+	a.print-dont-append-href[href]:after {
+		content: "";
+	}
+	
+	.breadcrumb, .footer-links, .current-place-in-text, .sharing-buttons, .container > .nav-collapse, .container > .btn.btn-navbar{
+		display: none;
+	}
+	
+	.print-url{
+		margin-top: 12px;
+	}
+	
+}
+
 /*
  * Below are some fixes for Darkstrap
  */

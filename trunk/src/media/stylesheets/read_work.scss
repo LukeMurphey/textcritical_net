@@ -188,3 +188,11 @@ body.dark .verse-container.highlighted{
 	background-color: #484848;
 	border-radius: 5px;
 }
+
+@media print {
+
+	.view_read_work .note-tag{
+		display: none;
+	}
+
+}
