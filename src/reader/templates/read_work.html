@@ -160,7 +160,9 @@
         {% endcomment %}
         {% if total_chapters > 1 %}
         {% load humanize %}
+        <span class="current-place-in-text">
         {{completed_chapters|ordinal}} of {{total_chapters}} chapters ({{progress|floatformat:"0"}}%)
+        </span>
         <div class="reading progress progress-striped">
             <div class="bar" style="width: {{progress}}%;"></div>
         </div>

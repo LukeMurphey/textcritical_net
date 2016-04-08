@@ -1560,7 +1560,7 @@ define([
 			}
 			else{
 				// Now that iframes exist, give it another second or so to render before showing them
-				setTimeout(function(){ $('.sharing-buttons').fadeIn(); } , 1500);
+				setTimeout(function(){ $('.sharing-buttons').fadeIn(400, function(){$(".sharing-buttons").removeClass("hide").css("display", "");}); } , 1500);
 			}
 		}
 		
