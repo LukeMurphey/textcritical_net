@@ -147,7 +147,7 @@ class TextImporter():
     class ImportContext():
         """
         Represents the context that used during the process of importing. This is necessary so that
-        the verse are associated with the correct books and chapters.
+        the verses are associated with the correct books and chapters.
         """
         
         def __init__(self, tag_name, book=None, division=None, verse=None):

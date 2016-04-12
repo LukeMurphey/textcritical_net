@@ -520,7 +520,7 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
             title = title + ":"
             
         title = title + verse_to_highlight
-    
+    print len(verses)
     response = render_to_response('read_work.html',
                                  {'title'                : title,
                                   'work_alias'           : work_alias,
