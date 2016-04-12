@@ -1,11 +1,12 @@
 [
- 
-	 {
-	     "language"  : "Greek",
-	     "should_import" : false
-	 },
- 
-  
+	{
+	    "author" : "Marcus Aurelius",
+	    "title" : "M. Antonius Imperator Ad Se Ipsum",
+	    "language" : "Greek",
+        "import_parameters" : {
+            "division_min" : 1
+        }
+	},  
     {
         "author" : "Flavius Josephus",
         "title" : ["De bello Judaico libri vii", "Antiquitates Judaicae" ],
@@ -971,5 +972,9 @@
             "state_set" : 0,
             "only_leaf_divisions_readable" : true
         }
-    }
+    },
+	{
+	    "language"  : "Greek",
+        "should_import" : true
+	}
 ]

@@ -72,7 +72,7 @@ class PerseusTextImporter(TextImporter):
     
     def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None,
                        ignore_content_before_first_milestone=False, ignore_undeclared_divs=False, only_last_state_is_non_chunk=False,
-                       only_leaf_divisions_readable=False, division_tags=None):
+                       only_leaf_divisions_readable=False, division_tags=None, division_min=None):
         """
         Constructs a Perseus text importer.
         
@@ -88,6 +88,7 @@ class PerseusTextImporter(TextImporter):
         only_last_state_is_non_chunk -- if true, then all state in the refsdecl other than the last one will assumed to be chunks
         only_bottom_division_readable -- if true, then only the bottom-most division will be allowed to be readable
         division_tags -- if not none, only division tags within this list will be considered valid
+        division_min -- if not none, then only division with a number less than or equal to this value will be recognized
         """
         
         self.overwrite_existing = overwrite_existing
@@ -105,6 +106,7 @@ class PerseusTextImporter(TextImporter):
         self.ignore_undeclared_divs = ignore_undeclared_divs
         self.only_last_state_is_non_chunk = only_last_state_is_non_chunk
         self.only_leaf_divisions_readable = only_leaf_divisions_readable
+        self.division_min = division_min
         
         if division_tags is not None:
             self.division_tags = division_tags[:]
@@ -1068,6 +1070,19 @@ class PerseusTextImporter(TextImporter):
             if node.nodeType == minidom.Element.PROCESSING_INSTRUCTION_NODE:
                 pass
             
+            # Treat items at the minimum division number as a verse
+            break_at_this_division = False
+            
+            if self.division_min is not None and node.nodeType != node.TEXT_NODE:
+                m = PerseusTextImporter.DIV_PARSE_REGEX.search( node.tagName )
+                
+                if m:
+                    level = int(m.groupdict()['level'] )
+                    
+                    # Break verses at the division just under the minimum division break
+                    if level == (self.division_min + 1):
+                        break_at_this_division = True
+            
             if node.nodeType == node.TEXT_NODE:
                 
                 # We need to see a milestone before we can set the text for a verse
@@ -1093,7 +1108,7 @@ class PerseusTextImporter(TextImporter):
                 #    attach_xml_content = False
                 
             # Is a verse marker?
-            elif node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node):
+            elif break_at_this_division or (self.division_min is None and node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node)):
                 
                 # Make the verse
                 self.make_verse(import_context, save=False)
@@ -1383,8 +1398,13 @@ class PerseusTextImporter(TextImporter):
                         is_in_state_set = True
                         break
                 
+                # Ignore division that are considered too deep (low)
+                if self.division_min is not None and level > self.division_min:
+                    logger.debug("Ignoring division since it doesn't meet level requirement, level=%s", level)
+                    pass
+                
                 # Ignore the div if is not in the state set then ignore it we ought to
-                if self.ignore_undeclared_divs and not is_in_state_set:
+                elif self.ignore_undeclared_divs and not is_in_state_set:
                     
                     # Ignore this one
                     pass

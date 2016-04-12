@@ -35,7 +35,7 @@ def import_perseus_file(request):
             else:
                 state_set = 0
                 
-            # Convert the state set indicator to a boolean
+            # Convert the state set indicator to an integer
             try:
                 state_set = int(state_set)
             except ValueError:
@@ -64,6 +64,19 @@ def import_perseus_file(request):
                 ignore_undeclared_divs = form.cleaned_data['ignore_undeclared_divs']
             else:
                 ignore_undeclared_divs = False
+                
+            # Handle the division minimum
+            if 'division_min' in request.POST and len(form.cleaned_data['division_min']) > 0:
+                division_min = form.cleaned_data['division_min']
+            else:
+                division_min = None
+                
+            # Convert the division minimum to a integer
+            try:
+                if division_min is not None:
+                    division_min = int(division_min)
+            except ValueError:
+                pass
             
             # Get the file contents
             if request.FILES['perseus_file'].multiple_chunks():
@@ -76,7 +89,7 @@ def import_perseus_file(request):
             for chunk in f.chunks():
                 perseus_xml_string = perseus_xml_string + str(chunk)  
                 
-            importer = PerseusTextImporter(state_set=state_set, ignore_division_markers=ignore_divisions, overwrite_existing=overwrite, ignore_content_before_first_milestone=ignore_content_before_milestones, ignore_undeclared_divs=ignore_undeclared_divs)
+            importer = PerseusTextImporter(state_set=state_set, ignore_division_markers=ignore_divisions, overwrite_existing=overwrite, ignore_content_before_first_milestone=ignore_content_before_milestones, ignore_undeclared_divs=ignore_undeclared_divs, division_min=division_min)
             work = importer.import_xml_string(perseus_xml_string)
                 
             messages.add_message(request, messages.INFO, 'Work successfully imported')
