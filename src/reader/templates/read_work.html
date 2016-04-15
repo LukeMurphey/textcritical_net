@@ -66,6 +66,7 @@
 						<li><a class="share-link share-facebook" href="#"><i class="icon icon-facebook"></i>Post on Facebook</a></li>
 						<li><a class="share-link share-twitter" href="#"><i class="icon icon-twitter"></i>Tweet this</a></li>												
 						<li><a class="share-link share-email" href="#"><i class="icon icon-mail-alt"></i>Email this</a></li>
+						<li><a class="share-link share-clipboard" href="#"><i class="icon icon-share"></i>Copy to clipboard</a></li>
 			        </ul>
 			    </span>
 			    <button class="hidden-phone download-work btn show-download-work-dialog" type="submit"><i class="icon-download-alt"></i></button>
@@ -102,7 +103,7 @@
 						<li><a class="share-link share-facebook" href="#"><i class="icon icon-facebook"></i>Post on Facebook</a></li>
 						<li><a class="share-link share-twitter" href="#"><i class="icon icon-twitter"></i>Tweet this</a></li>												
 						<li><a class="share-link share-email" href="#"><i class="icon icon-mail-alt"></i>Email this</a></li>
-						
+						<li><a class="share-link share-clipboard" href="#"><i class="icon icon-share"></i>Copy to clipboard</a></li>
 			        </ul>
 			    </span>
 			    </span>
@@ -261,7 +262,7 @@
 {% block javascript %}
 <script language="javascript">
 
-require(["jquery", "store", "app", "underscore", "bootstrap", "libs/optional!facebook"], function($) {
+require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs/optional!facebook"], function($, Clipboard) {
 	
 	TextCritical.loadStoreSettings();
     $('.align-break').click( TextCritical.toggleVerseBreak );
@@ -361,6 +362,13 @@ require(["jquery", "store", "app", "underscore", "bootstrap", "libs/optional!fac
     });
 	
     TextCritical.highlight_searched_terms();
+    
+    new Clipboard('.share-clipboard', {
+    	text: function(trigger) {
+    		return TextCritical.getTextToShare($('.verse-container.highlighted .verse:not(.label)').text(), true) + "\n\n" + document.title + "\n[Source: " + location.href + "]";
+            
+        }
+    });
 });
 </script>
 {% endblock %}

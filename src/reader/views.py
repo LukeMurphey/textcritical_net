@@ -1062,6 +1062,7 @@ def parse_reference_and_get_division_and_verse(regex, escaped_ref, work, divisio
     
     return division, verse_to_highlight, division_0, division_1, division_2, division_3, division_4
 
+@cache_page(4 * hours)
 def api_wikipedia_info(request, topic=None, ref=None):
     
     # Get the topic from the arguments
