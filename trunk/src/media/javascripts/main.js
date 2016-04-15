@@ -68,6 +68,11 @@ require.config({
         highcharts: [
         	"https://code.highcharts.com/highcharts",
         	"libs/highcharts"
+        ],
+        
+        clipboard: [
+            "https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard",
+            "libs/clipboard"
         ]
 
     },
