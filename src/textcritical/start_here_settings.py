@@ -7,7 +7,7 @@
 from textcritical.default_settings import *
 
 # Define where the media will be served from.
-MEDIA_URL = '/media'
+MEDIA_URL = '/media/'
 
 # Define the absolute path to the media on the file-system
 MEDIA_ROOT = 'C:/Users/Luke/Workspace/TextCritical.com/src/media/'
