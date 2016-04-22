@@ -1,4 +1,7 @@
 {% extends "base_with_nav.html" %}
+{% block links %}
+<link rel="next" href="{% url "api_works_list" %}" />
+{% endblock %}
 {% block content %}
       
       <div class="hero-unit main_background"">
