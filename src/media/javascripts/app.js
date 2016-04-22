@@ -279,7 +279,7 @@ define([
 		 * @param text the text to copy
 		 **/
 		TextCritical.open_copy_dialog = function ( text ) {
-		
+			
 			// Trim the text in case extra space was included
 			text = TextCritical.trim(text);
 			
