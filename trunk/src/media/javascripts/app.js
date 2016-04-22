@@ -13,9 +13,10 @@ define([
         'libs/text!/media/templates/work_info_dialog.html',
         'libs/text!/media/templates/loading_dialog.html',
         'libs/text!/media/templates/search_results.html',
+        'libs/text!/media/templates/copy_dialog.html',
         'libs/optional!facebook'
     ],
-    function($, _, highcharts, alert_message_template, morphology_dialog_template, work_info_dialog_template, loading_template, search_results_template) {
+    function($, _, highcharts, alert_message_template, morphology_dialog_template, work_info_dialog_template, loading_template, search_results_template, copy_dialog_template) {
 	
 		/**
 		 * Causes the verses to break onto separate lines. 
@@ -273,6 +274,39 @@ define([
 		}
 		
 		/**
+		 * Opens a dialog with text to copy.
+		 * 
+		 * @param text the text to copy
+		 **/
+		TextCritical.open_copy_dialog = function ( text ) {
+		
+			// Trim the text in case extra space was included
+			text = TextCritical.trim(text);
+			
+			// Reset the content to the loading content
+			$("#popup-dialog-content").html(_.template(copy_dialog_template,{ text_to_copy: text }));
+			
+			$("#popup-dialog-extra-options").html("");
+		
+			// Set the title
+			$("#popup-dialog-label").text("Copy to clipboard");
+		
+			// Open the form
+			$("#popup-dialog").modal();
+			
+			// Select the text
+			setTimeout(function(){
+				$(".clipboard-copy-text").focus();
+				$(".clipboard-copy-text")[0].setSelectionRange(0,5000);
+			}, 800);
+			
+			$(".clipboard-copy-text").on("click", function(){
+				$(".clipboard-copy-text").focus();
+				$(".clipboard-copy-text")[0].setSelectionRange(0,5000);
+			})
+		}
+		
+		/**
 		 * Opens a dialog that shows the information about a topic.
 		 * 
 		 * @param topic the topic (author or work) to get information for
@@ -399,6 +433,21 @@ define([
 		}
 		
 		/**
+		 * Attempt to normalize the Unicode if the browser supports it.
+		 * 
+		 * @param text The text to normalize
+		 */
+		TextCritical.normalize = function( text ){
+			if(text.hasOwnProperty("normalize")){
+				return text.normalize();
+			}
+			else{
+				return text;
+			}
+			
+		}
+		
+		/**
 		 * Highlights all of the word nodes with the given text.
 		 * 
 		 * @param word The word to highlight
@@ -419,13 +468,14 @@ define([
 			}
 			
 			// Make the regular expression for finding the words
-			var escaped_word = TextCritical.escape_regex(word.normalize());
+			var escaped_word = TextCritical.escape_regex(TextCritical.normalize(word));
+			
 			var pattern = new RegExp("^" + escaped_word + "$", "i");
 			console.info( "Highlighting " + word );
 			
 			// Add the CSS to make these words highlighted
 			$('.word').filter(function(){
-		  		return pattern.test($(this).text().normalize())
+		  		return pattern.test(TextCritical.normalize($(this).text()))
 			}).addClass(div_class);
 		}
 		

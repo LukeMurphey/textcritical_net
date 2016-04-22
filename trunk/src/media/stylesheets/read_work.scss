@@ -189,6 +189,16 @@ body.dark .verse-container.highlighted{
 	border-radius: 5px;
 }
 
+textarea.clipboard-copy-text{
+	width: 97%;
+	min-height: 150px;
+	margin-top: 16px;
+}
+
+textarea.clipboard-copy-text[readonly]{
+	background-color: rgba(0, 0, 0, 0.3);
+}
+
 @media print {
 
 	.view_read_work .note-tag{

@@ -363,11 +363,26 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
 	
     TextCritical.highlight_searched_terms();
     
-    new Clipboard('.share-clipboard', {
+    var clip = new Clipboard('.share-clipboard', {
     	text: function(trigger) {
     		return TextCritical.getTextToShare($('.verse-container.highlighted .verse:not(.label)').text(), true) + "\n\n" + document.title + "\n[Source: " + location.href + "]";
-            
         }
+    });
+    
+    clip.on('success', function(e) {
+    	console.info("Did it");
+    	e.clearSelection();
+    });
+    
+    clip.on('error', function(e) {
+    	console.warn("Couldn't copy using API; opening the copy dialog");
+    	
+    	if(window.getSelection().toString().length == 0){
+    		TextCritical.open_copy_dialog(TextCritical.getTextToShare($('.verse-container.highlighted .verse:not(.label)').text(), true) + "\n\n" + document.title + "\n[Source2: " + location.href + "]");
+    	}
+    	else{
+        	TextCritical.open_copy_dialog(window.getSelection().toString());
+    	}
     });
 });
 </script>
