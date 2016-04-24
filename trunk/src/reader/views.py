@@ -1062,13 +1062,7 @@ def parse_reference_and_get_division_and_verse(regex, escaped_ref, work, divisio
     
     return division, verse_to_highlight, division_0, division_1, division_2, division_3, division_4
 
-@cache_page(4 * hours)
-def api_wikipedia_info(request, topic=None, ref=None):
-    
-    # Get the topic from the arguments
-    if topic is None and 'topic' in request.GET:
-        topic = request.GET['topic']
-        
+def get_wikipedia_info(topic):
     import sys
     sys.path.append("lib")
     
@@ -1094,12 +1088,40 @@ def api_wikipedia_info(request, topic=None, ref=None):
                    'searched_for': topic
                    }
         
-        return render_api_response(request, content )
+        return content
     except PageError:
-        return render_api_response(request, {'topic': topic}, status=404 )
+        return None
     except DisambiguationError:
+        return None
+        
+    return None
+    
+@cache_page(4 * hours)
+def api_wikipedia_info(request, topic=None, topic2=None):
+    
+    # Get the topic from the arguments
+    if topic is None and 'topic' in request.GET:
+        topic = request.GET['topic']
+        
+    import sys
+    sys.path.append("lib")
+    
+    import wikipedia
+    from wikipedia import PageError, DisambiguationError
+    
+    # See if an article is listed for this search term
+    topic_override = WikiArticle.get_wiki_article(topic)
+    
+    if topic_override is not None:
+        topic = topic_override
+    
+    # Get the wiki article
+    content = get_wikipedia_info(topic)
+    
+    if content is None:
         return render_api_response(request, {'topic': topic}, status=404 )
-
+    else:
+        return render_api_response(request, content )
 
 def api_resolve_reference(request, work=None, ref=None):
     
