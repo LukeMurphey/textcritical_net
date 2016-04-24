@@ -17,7 +17,7 @@ import difflib
 import re
 import os
 
-from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork
+from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork, WikiArticle
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy, ajaxify, cache_page_if_ajax
@@ -1075,6 +1075,13 @@ def api_wikipedia_info(request, topic=None, ref=None):
     import wikipedia
     from wikipedia import PageError, DisambiguationError
     
+    # See if an article is listed for this search term
+    topic_override = WikiArticle.get_wiki_article(topic)
+    print topic, topic_override
+    if topic_override is not None:
+        topic = topic_override
+    
+    # Get the wiki article
     try:
         wiki_page = wikipedia.page(topic)
         

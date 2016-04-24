@@ -17,7 +17,7 @@ from reader.importer import TextImporter, LineNumber
 from reader.importer.Diogenes import DiogenesLemmataImporter, DiogenesAnalysesImporter
 from reader.language_tools.greek import Greek
 from reader import language_tools
-from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Work, WorkAlias
+from reader.models import Author, Division, Verse, WordDescription, WordForm, Lemma, Work, WorkAlias, WikiArticle
 from reader.views import get_division, convert_to_numbered_division_name, convert_to_lettered_division_name, has_lettered_book_number, has_numbered_book_number
 from reader.contentsearch import WorkIndexer, search_verses, search_stats
 from reader import utils
@@ -2176,5 +2176,28 @@ class TestEpubExport(TestReader):
         lines = ePubExport.splitTextIntoMultipleLines("Alcibiades 1, Alcibiades 2, Hipparchus, Lovers, Theages, Charmides, Laches, Lysis", 24)
         self.assertEqual(lines, "Alcibiades 1, Alcibiades\n2, Hipparchus, Lovers,\nTheages, Charmides,\nLaches, Lysis")
         
+class TestWikiArticle(TestReader):
+    
+    def test_get_wiki_article(self):
+        wiki = WikiArticle(search="M. Antonius Imperator Ad Se Ipsum", article="Meditations")
+        wiki.save()
         
+        wiki2 = WikiArticle(search="M. Antonius Imperator Ad Se Ipsum Marcus Aurelius", article="Meditations")
+        wiki2.save()
+        
+        # Try a lookup with the string
+        article = WikiArticle.get_wiki_article("M. Antonius Imperator Ad Se Ipsum")
+        self.assertEqual(article, "Meditations")
+        
+        # Try a lookup with an array of strings
+        article = WikiArticle.get_wiki_article(["M. Antonius Imperator Ad Se Ipsum"])
+        self.assertEqual(article, "Meditations")
+        
+        # Try a lookup with an array of strings where the first one doesn't match
+        article = WikiArticle.get_wiki_article(["Tree", "M. Antonius Imperator Ad Se Ipsum"])
+        self.assertEqual(article, "Meditations")
+        
+        # Try a lookup that fails
+        article = WikiArticle.get_wiki_article(["Tree", "Frogs"])
+        self.assertEqual(article, None)
         
