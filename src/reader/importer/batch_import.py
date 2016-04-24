@@ -1,5 +1,6 @@
-from reader.models import Division, Verse, Work, RelatedWork
+from reader.models import Division, Verse, Work, RelatedWork, WikiArticle
 from django.template.defaultfilters import slugify
+from django.db import IntegrityError
 import logging
 import re
 import os
@@ -189,6 +190,22 @@ class ImportTransforms():
             
         if changes > 0:
             work.save()
+            
+    @staticmethod
+    def add_wiki_article(work=None, term=None, article=None, **kwargs):
+        
+        if term is None:
+            return False
+            
+        if article is None:
+            return False
+        
+        wiki = WikiArticle(search=term, article=article)
+        
+        try:
+            wiki.save()
+        except IntegrityError:
+            pass # Looks like it already existed
             
     @staticmethod
     def update_title_slug(work=None, additional_fields=None):

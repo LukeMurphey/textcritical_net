@@ -1,7 +1,9 @@
 from django.db import models
+from django.db.models import Q
 from django.template.defaultfilters import slugify
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.exceptions import ObjectDoesNotExist
 
 import logging
 import re
@@ -742,6 +744,36 @@ class WordDescription(models.Model):
             pass
         
         return unicode(" ".join(a).strip().lower())
+
+class WikiArticle(models.Model):
+    """
+    Links Wiki articles to search terms.
+    """
+    
+    search = models.CharField(max_length=200, db_index=True, unique=True)
+    article = models.CharField(max_length=200)
+    
+    def __unicode__(self):
+        return unicode(self.search)
+    
+    @classmethod
+    def get_wiki_article(cls, terms=None):
+        
+        # Make sure the terms provided are an array
+        if not isinstance(terms, list) and isinstance(terms, basestring):
+            
+            try:
+                wiki = WikiArticle.objects.get(search=terms)
+                return wiki.article
+            except ObjectDoesNotExist:
+                return None
+        
+        # Try to find each term, return the first one
+        for term in terms:
+            wiki = cls.get_wiki_article(term)
+            
+            if wiki is not None:
+                return wiki
 
 @receiver(post_save, sender=Work)
 def work_alias_create(sender, instance, signal, created, **kwargs):

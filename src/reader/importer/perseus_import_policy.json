@@ -4,7 +4,13 @@
 	    "title" : "M. Antonius Imperator Ad Se Ipsum",
 	    "language" : "Greek",
         "import_parameters" : {
-            "division_min" : 1
+            "division_min" : 1,
+            "transforms" : {
+	            "add_wiki_article" : {
+	                "term" : "M. Antonius Imperator Ad Se Ipsum",
+	                "article" : "Meditations"
+	            }
+            }
         }
 	},  
     {
