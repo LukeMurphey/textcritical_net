@@ -1103,6 +1103,9 @@ def api_wikipedia_info(request, topic=None, topic2=None):
     if topic is None and 'topic' in request.GET:
         topic = request.GET['topic']
         
+    if topic2 is None and 'topic2' in request.GET:
+        topic2 = request.GET['topic2']
+        
     import sys
     sys.path.append("lib")
     
@@ -1112,14 +1115,19 @@ def api_wikipedia_info(request, topic=None, topic2=None):
     # See if an article is listed for this search term
     topic_override = WikiArticle.get_wiki_article(topic)
     
+    if topic_override is None and topic2 is not None and topic != topic2:
+        topic_override = WikiArticle.get_wiki_article(topic)
+        
     if topic_override is not None:
         topic = topic_override
     
     # Get the wiki article
     content = get_wikipedia_info(topic)
     
-    if content is None:
+    if content is None and topic2 is None:
         return render_api_response(request, {'topic': topic}, status=404 )
+    if content is None and topic2 is not None:
+        return api_wikipedia_info(request, topic2)
     else:
         return render_api_response(request, content )
 
