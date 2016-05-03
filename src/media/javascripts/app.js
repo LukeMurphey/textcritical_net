@@ -307,11 +307,20 @@ define([
 		}
 		
 		/**
+		 * Open the topic dialog for the given item.
+		 */
+		TextCritical.open_topic_dialog_for_element = function () {
+			TextCritical.open_topic_dialog(this.dataset['querytitle'], this.dataset['query'], this.dataset['query2']);
+		}
+		
+		/**
 		 * Opens a dialog that shows the information about a topic.
 		 * 
 		 * @param topic the topic (author or work) to get information for
+		 * @param search the search to perform
+		 * @param search2 an alternative search to perform (in case the first doesn't return anything)
 		 **/
-		TextCritical.open_topic_dialog = function ( topic, search, topic_type ) {
+		TextCritical.open_topic_dialog = function ( topic, search, search2 ) {
 			
 			if(typeof topic_type === "undefined"){
 				var topic_type = null;
@@ -319,6 +328,10 @@ define([
 			
 			if(typeof search === "undefined"){
 				var search = topic;
+			}
+			
+			if(typeof search2 === "undefined"){
+				var search2 = null;
 			}
 			
 			console.info( "Obtaining information about " + topic );
@@ -338,8 +351,14 @@ define([
 			$("#popup-dialog").modal();
 		
 			// Submit the AJAX request to display the information
+			var url = "/api/wikipedia_info/" + search;
+			
+			if(search2 !== null){
+				url = "/api/wikipedia_info/" + search +"/" + search2;
+			}
+			
 			$.ajax({
-				url: "/api/wikipedia_info/" + search
+				url: url
 			}).done(function(data) {
 				
 				data['topic'] = topic;
