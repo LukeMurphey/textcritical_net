@@ -9,11 +9,11 @@
 		    <tbody>
 		    <% for (var i = 0; i < works.length; i++) { %>
 			    <tr>
-			        <td><i class="hidden-phone icon-book <% if (USE_DARK_THEME) { %>icon-white<% } %>"></i> <a href="<%= read_work_url %>/<%= works[i].title_slug %>"><%= works[i].title %></a></td>
+			        <td><i class="hidden-phone icon-book <% if (USE_DARK_THEME) { %>icon-white<% } %>"></i> <a href="<%= read_work_url %>/<%= works[i].title_slug %>"><%= works[i].title %></a> </td>
 			        <td><%= works[i].language %></td>
 			        <td><%= works[i].author %></td>
 			        <td class="hidden-phone"><%= works[i].editor %></td>
-			        <td class="hidden-phone"><a href="<%= search_url %>?q=work:<%= works[i].title_slug %>">Search<span class="hidden-tablet"> this work</span></a></td>
+			        <td class="hidden-phone"><a href="<%= search_url %>?q=work:<%= works[i].title_slug %>">[Search]</a> <a href="#" class="book-info" data-querytitle="<%= works[i].title %>" data-query="<%= works[i].title %>" data-query2="<%= works[i].title %><%= works[i].author %>">[Info]</a></td>
 			    </tr>
 		    <% } %>
 		    </tbody>
