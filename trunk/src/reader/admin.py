@@ -1,4 +1,4 @@
-from reader.models import Author, Work, WorkType, Division, Verse, Lemma, WordForm, WordDescription
+from reader.models import Author, Work, WorkType, Division, Verse, Lemma, WordForm, WordDescription, WikiArticle
 from django.contrib import admin
 
 class AuthorAdmin(admin.ModelAdmin):
@@ -144,3 +144,12 @@ class WordDescriptionModel(admin.ModelAdmin):
     ) 
 
 admin.site.register(WordDescription, WordDescriptionModel)
+
+class WikiArticleAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (None, {
+            'fields': ('search', 'article'),
+        }),
+    )
+
+admin.site.register(WikiArticle, WikiArticleAdmin)
