@@ -1634,6 +1634,13 @@ define([
 		}
 		
 		
+		/**
+		 * Setup handlers for the wiki-info links
+		 */
+		$('body').delegate('.wiki-info', 'click',  function(){
+			TextCritical.open_topic_dialog(this.dataset['querytitle'], this.dataset['query'], this.dataset['query2']);
+			return false;
+		});
 
 }
 );

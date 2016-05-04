@@ -1116,10 +1116,12 @@ def api_wikipedia_info(request, topic=None, topic2=None):
     topic_override = WikiArticle.get_wiki_article(topic)
     
     if topic_override is None and topic2 is not None and topic != topic2:
-        topic_override = WikiArticle.get_wiki_article(topic)
+        topic_override = WikiArticle.get_wiki_article(topic2)
         
     if topic_override is not None:
         topic = topic_override
+    else:
+        logger.info("Failed to find wiki article for topic=%r or topic2=%r", topic, topic2)
     
     # Get the wiki article
     content = get_wikipedia_info(topic)

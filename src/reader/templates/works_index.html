@@ -22,12 +22,7 @@
 {% block javascript %}
 <script language="javascript">
 require(["jquery", "libs/text!/media/templates/works_list.html", "datatables", "underscore"], function($, works_list_template) {
-	
-	$('body').delegate('.book-info', 'click',  function(){
-		TextCritical.open_topic_dialog(this.dataset['querytitle'], this.dataset['query'], this.dataset['query2']);
-		return false;
-	});
-	
+		
 	function updateFilter(){
 		textcritical.datatable.fnFilter( $('input.search-query').val() );
 	}

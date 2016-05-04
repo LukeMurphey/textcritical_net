@@ -763,6 +763,7 @@ class WikiArticle(models.Model):
         if not isinstance(terms, list) and isinstance(terms, basestring):
             
             try:
+                logger.info("Looking for %r", terms)
                 wiki = WikiArticle.objects.get(search=terms)
                 return wiki.article
             except ObjectDoesNotExist:
