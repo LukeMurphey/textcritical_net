@@ -37,7 +37,14 @@
                 },
                 "assign_related_work" : {
                 	"title_slug" : ["lxx", "new-testament"]
-                }
+                },
+                "set_division_title": [
+	    			{
+	    				"existing_division_title_slug" : "acts-of-the-apostles",
+	    				"title"                        : "Acts Of The Apostles",
+	    				"descriptor"                   : "Acts"
+	    			}
+    			]
         	}
         }
     }
