@@ -367,7 +367,14 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     
     var clip = new Clipboard('.share-clipboard', {
     	text: function(trigger) {
-    		return TextCritical.getTextToShare($('.verse-container.highlighted .verse:not(.label)').text(), true) + "\n\n" + document.title + "\n[Source: " + location.href + "]";
+    		// Get the highlighted verse
+    		var text = $('.verse-container.highlighted .verse:not(.label)').text();
+    		
+    		if(text === ""){
+    			text = $('.verse-container:first .verse:not(.label)').text();
+    		}
+    		
+    		return TextCritical.getTextToShare(text, true) + "\n\n" + document.title + "\n[Source: " + location.href + "]";
         }
     });
     
