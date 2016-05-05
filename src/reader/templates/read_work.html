@@ -125,6 +125,11 @@
 			        </ul>
 			    </span>
 			</div>
+			<div class="pull-right">
+				<div id="small-message" class="alert alert-success" style="display:none">
+					<i class="icon-ok icon-white"> </i> <strong class="message-text">Copied to clipboard</strong>
+				</div>
+			</div>
         </div>
 
     	
@@ -367,8 +372,9 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     });
     
     clip.on('success', function(e) {
-    	console.info("Did it");
     	e.clearSelection();
+    	//TextCritical.show_alert("Copied", "content was copied to the clipboard", "success", 3000);
+    	TextCritical.show_small_alert("Copied to clipboard");
     });
     
     clip.on('error', function(e) {
