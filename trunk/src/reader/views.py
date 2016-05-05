@@ -1138,7 +1138,6 @@ def api_wikipedia_info(request, topic=None, topic2=None, topic3=None):
     
     # Get the wiki article
     for t in topics:
-        print t
         content = get_wikipedia_info(t)
         
         if content is not None:
