@@ -1525,6 +1525,9 @@ define([
 			// Remove endlines
 			text = text.replace(/[ ]*\n[ ]*/g, ' ');
 			
+			// Remove double-spaces
+			text = text.replace(/ [ ]+/gi, " ")
+			
 			return text
 		}
 		
