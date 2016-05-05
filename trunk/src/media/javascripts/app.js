@@ -1076,10 +1076,14 @@ define([
 		 * @param level The level of the message (needs to be either 'error', 'info', or 'success')
 		 * @param hide_timeout How long until automatically hiding this alert
 		 **/
-		TextCritical.show_alert = function ( title, message, level, hide_timeout=null ) {
+		TextCritical.show_alert = function ( title, message, level, hide_timeout ) {
 			
 			if( typeof level == "undefined" || level == null ){
 				level = 'info';
+			}
+			
+			if( typeof hide_timeout == "undefined" ){
+				hide_timeout = null;
 			}
 			
 			$("#messages").append(_.template(alert_message_template,{title:_.escape(title), message: _.escape(message), level: level}));
@@ -1502,6 +1506,17 @@ define([
 				if( window.getSelection().toString().length > 0){
 					text = window.getSelection().toString();
 				}
+				
+				// Try to get the selected verse
+				else if($('.verse-container.highlighted .verse:not(.label)').length > 0){
+					text = $('.verse-container.highlighted .verse:not(.label)').text();
+				}
+				
+				// Try to get content of the verse
+				else if($('.verse-container .verse:not(.label)').length > 0){
+					text = $('.verse-container .verse:not(.label)').text();
+				}
+				
 			}
 			
 			// Trim the text
@@ -1520,7 +1535,7 @@ define([
 		 */
 		TextCritical.trimTrailingPound = function( str ){
 			if( str.slice(-1) == "#" ){
-				return str.slice(0, str.length-2)
+				return str.slice(0, str.length-1)
 			}
 			else{
 				return str;
@@ -1624,7 +1639,7 @@ define([
 		TextCritical.sendAnEmail = function(subject, body, give_selection_precedence, link){
 			
 			// If the link was not defined, then use the current URL
-			if( link === undefined || link == null ){
+			if( typeof link === 'undefined' || link == null ){
 				link = location.href;
 			}
 			

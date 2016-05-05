@@ -371,16 +371,15 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     		var text = $('.verse-container.highlighted .verse:not(.label)').text();
     		
     		if(text === ""){
-    			text = $('.verse-container:first .verse:not(.label)').text();
+    			text = $('.verse-container .verse:not(.label)').text();
     		}
     		
-    		return TextCritical.getTextToShare(text, true) + "\n\n" + document.title + "\n[Source: " + location.href + "]";
+    		return TextCritical.getTextToShare(null, true) + "\n\n" + document.title + "\n[Source: " + location.href + "]";
         }
     });
     
     clip.on('success', function(e) {
     	e.clearSelection();
-    	//TextCritical.show_alert("Copied", "content was copied to the clipboard", "success", 3000);
     	TextCritical.show_small_alert("Copied to clipboard");
     });
     
