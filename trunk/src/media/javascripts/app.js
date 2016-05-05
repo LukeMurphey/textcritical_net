@@ -1069,19 +1069,37 @@ define([
 		}
 		
 		/**
-		 * Creates an alert message.
+		 * Creates an alert message bar at the top of the page.
 		 * 
 		 * @param title The title of the message
 		 * @param message The message to show
 		 * @param level The level of the message (needs to be either 'error', 'info', or 'success')
+		 * @param hide_timeout How long until automatically hiding this alert
 		 **/
-		TextCritical.show_alert = function ( title, message, level ) {
+		TextCritical.show_alert = function ( title, message, level, hide_timeout=null ) {
 			
 			if( typeof level == "undefined" || level == null ){
 				level = 'info';
 			}
 			
 			$("#messages").append(_.template(alert_message_template,{title:_.escape(title), message: _.escape(message), level: level}));
+			var added_alert = $("#messages  > .alert:last-child");
+			
+			if(hide_timeout !== null && hide_timeout > 0){
+				setTimeout(function(){ added_alert.animate({height: '0px', 'margin-top':'0px', 'margin-bottom':'0px', 'padding-top': '0px', 'padding-bottom': '0px'}, 250, function(){added_alert.remove()})}, hide_timeout );
+			}
+			
+		}
+		
+		/**
+		 * Show a small message indicating that something was successful. This only works on the read work page.
+		 * 
+		 * @param message The message to show
+		 */
+		TextCritical.show_small_alert = function ( message ) {
+			$("#small-message  > .message-text").text(message);
+			$("#small-message").show();
+			setTimeout(function(){ $("#small-message").slideUp(100)}, 2500 );
 		}
 		
 		/**
