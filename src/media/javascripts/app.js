@@ -310,7 +310,7 @@ define([
 		 * Open the topic dialog for the given item.
 		 */
 		TextCritical.open_topic_dialog_for_element = function () {
-			TextCritical.open_topic_dialog(this.dataset['querytitle'], this.dataset['query'], this.dataset['query2']);
+			TextCritical.open_topic_dialog(this.dataset['querytitle'], this.dataset['query'], this.dataset['query2'], this.dataset['query3']);
 		}
 		
 		/**
@@ -320,7 +320,7 @@ define([
 		 * @param search the search to perform
 		 * @param search2 an alternative search to perform (in case the first doesn't return anything)
 		 **/
-		TextCritical.open_topic_dialog = function ( topic, search, search2 ) {
+		TextCritical.open_topic_dialog = function ( topic, search, search2, search3 ) {
 			
 			if(typeof topic_type === "undefined"){
 				var topic_type = null;
@@ -332,6 +332,10 @@ define([
 			
 			if(typeof search2 === "undefined"){
 				var search2 = null;
+			}
+			
+			if(typeof search3 === "undefined"){
+				var search3 = null;
 			}
 			
 			console.info( "Obtaining information about " + topic );
@@ -353,8 +357,14 @@ define([
 			// Submit the AJAX request to display the information
 			var url = "/api/wikipedia_info/" + search;
 			
-			if(search2 !== null){
+			if(search2 !== null && search3 !== null){
+				url = "/api/wikipedia_info/" + search + "/" + search2 + "/" + search3;
+			}
+			else if(search2 !== null){
 				url = "/api/wikipedia_info/" + search +"/" + search2;
+			}
+			else if(search3 !== null){
+				url = "/api/wikipedia_info/" + search +"/" + search3;
 			}
 			
 			$.ajax({
@@ -1638,7 +1648,7 @@ define([
 		 * Setup handlers for the wiki-info links
 		 */
 		$('body').delegate('.wiki-info', 'click',  function(){
-			TextCritical.open_topic_dialog(this.dataset['querytitle'], this.dataset['query'], this.dataset['query2']);
+			TextCritical.open_topic_dialog(this.dataset['querytitle'], this.dataset['query'], this.dataset['query2'], this.dataset['query3']);
 			return false;
 		});
 

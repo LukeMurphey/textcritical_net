@@ -1097,14 +1097,25 @@ def get_wikipedia_info(topic):
     return None
     
 @cache_page(4 * hours)
-def api_wikipedia_info(request, topic=None, topic2=None):
+def api_wikipedia_info(request, topic=None, topic2=None, topic3=None):
+    
+    topics = []
     
     # Get the topic from the arguments
     if topic is None and 'topic' in request.GET:
-        topic = request.GET['topic']
+        topics.append(request.GET['topic'])
+    elif topic is not None:
+        topics.append(topic)
         
     if topic2 is None and 'topic2' in request.GET:
-        topic2 = request.GET['topic2']
+        topics.append(request.GET['topic2'])
+    elif topic2 is not None:
+        topics.append(topic2)
+        
+    if topic3 is None and 'topic3' in request.GET:
+        topics.append(request.GET['topic3'])
+    elif topic3 is not None:
+        topics.append(topic3)
         
     import sys
     sys.path.append("lib")
@@ -1113,25 +1124,28 @@ def api_wikipedia_info(request, topic=None, topic2=None):
     from wikipedia import PageError, DisambiguationError
     
     # See if an article is listed for this search term
-    topic_override = WikiArticle.get_wiki_article(topic)
+    for t in topics:
+        topic_override = WikiArticle.get_wiki_article(t)
     
-    if topic_override is None and topic2 is not None and topic != topic2:
-        topic_override = WikiArticle.get_wiki_article(topic2)
+        if topic_override is not None:
+            break
         
+    # Use the topic from the wiki article list if we got one
     if topic_override is not None:
-        topic = topic_override
+        topics.insert(0, topic_override)
     else:
-        logger.info("Failed to find wiki article for topic=%r or topic2=%r", topic, topic2)
+        logger.info("Failed to find wiki article for topics=%r", ",".join(topics))
     
     # Get the wiki article
-    content = get_wikipedia_info(topic)
+    for t in topics:
+        print t
+        content = get_wikipedia_info(t)
+        
+        if content is not None:
+            return render_api_response(request, content)
     
-    if content is None and topic2 is None:
-        return render_api_response(request, {'topic': topic}, status=404 )
-    if content is None and topic2 is not None:
-        return api_wikipedia_info(request, topic2)
-    else:
-        return render_api_response(request, content )
+    # Couldn't find the article
+    return render_api_response(request, {'topic': topic}, status=404 )
 
 def api_resolve_reference(request, work=None, ref=None):
     
