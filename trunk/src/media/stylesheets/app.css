@@ -645,6 +645,13 @@ textarea.clipboard-copy-text[readonly] {
 @media print {
   .view_read_work .note-tag {
     display: none; } }
+@media (max-width: 1199px) {
+  .visible-large-desktop {
+    display: none; } }
+@media (min-width: 768px) and (max-width: 979px) {
+  #small-message {
+    margin-top: 20px;
+    margin-left: 8px; } }
 /* -----------------------------------------
    jQuery data tables
    ----------------------------------------- */
