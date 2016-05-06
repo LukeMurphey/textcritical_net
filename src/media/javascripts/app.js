@@ -1101,7 +1101,7 @@ define([
 		 * @param message The message to show
 		 */
 		TextCritical.show_small_alert = function ( message ) {
-			$("#small-message  > .message-text").text(message);
+			$("#small-message  > .message-text").html(message);
 			$("#small-message").show();
 			setTimeout(function(){ $("#small-message").slideUp(100)}, 2500 );
 		}
