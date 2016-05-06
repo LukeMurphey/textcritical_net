@@ -103,7 +103,7 @@
 						<li><a class="share-link share-facebook" href="#"><i class="icon icon-facebook"></i>Post on Facebook</a></li>
 						<li><a class="share-link share-twitter" href="#"><i class="icon icon-twitter"></i>Tweet this</a></li>												
 						<li><a class="share-link share-email" href="#"><i class="icon icon-mail-alt"></i>Email this</a></li>
-						<li><a class="share-link share-clipboard" href="#"><i class="icon icon-clipboard"></i>Copy to clipboard</a></li>
+						<li><a class="share-link hidden-phone share-clipboard" href="#"><i class="icon icon-clipboard"></i>Copy to clipboard</a></li>
 			        </ul>
 			    </span>
 			    </span>
@@ -332,14 +332,17 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     
     $(".share-facebook").click(function() {
     	TextCritical.postToFacebook($('h2').text(), $('.verse-container.highlighted .verse:not(.label)').text(), true);
+    	return false;
     });
     
     $(".share-twitter").click(function() {
     	TextCritical.postToTwitter( $('.verse-container.highlighted .verse:not(.label)').text(), true);
+    	return false;
     });
     
     $(".share-email").click(function() {
     	TextCritical.sendAnEmail(document.title, $('.verse-container.highlighted .verse:not(.label)').text(), true);
+    	return false;
     });
     
     $("#download-work").click(function(){
@@ -352,6 +355,7 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     
     $(".show-download-work-dialog").click(function(){
     	$('#download-dialog').modal();
+    	return false;
     });
     
     $(".get-work-info").click(function(){
@@ -361,6 +365,7 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     	var query3 = $('h1').data('author');
     	
     	TextCritical.open_topic_dialog($('h1').data('work-title'), query, query2, query3);
+    	return false;
     });
 	
     TextCritical.highlight_searched_terms();
