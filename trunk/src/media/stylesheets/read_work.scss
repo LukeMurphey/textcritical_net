@@ -219,3 +219,10 @@ textarea.clipboard-copy-text[readonly]{
 		margin-left: 8px;
 	}
 }
+
+@media (max-width: 450px) {
+	#small-message{
+		margin-top: 20px;
+		margin-left: 8px;
+	}
+}
