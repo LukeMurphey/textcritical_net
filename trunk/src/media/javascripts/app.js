@@ -1123,6 +1123,22 @@ define([
 		}
 		
 		/**
+		 * Make a URL that points to the current page but lacks the 
+		 * 
+		 * @param work_url The new URL to use
+		 **/
+		TextCritical.make_shareable_url = function ( ) {
+			
+			// If this is the work page, then don't include arguments
+			if(location.pathname.indexOf("/work/") == 0){
+				return location.protocol + "//" + location.host + location.pathname;
+			}
+			else{
+				return TextCritical.trimTrailingPound(location.href);
+			}
+		}
+		
+		/**
 		 * Get the content associated with the note with the target id.
 		 * 
 		 * @param target The name of the target ID from which the content of the note is to be extracted from
@@ -1558,7 +1574,10 @@ define([
 			
 			// If the link was not defined, then use the current URL
 			if( typeof link === "undefined" || link == null ){
-				var link = location.href;
+				var link = TextCritical.make_shareable_url();
+			}
+			else{
+				link = TextCritical.trimTrailingPound(link);
 			}
 			
 			// If the name was not defined, then use the document title
@@ -1571,7 +1590,7 @@ define([
 			
 			FB.ui({
 		    	  method: 'feed',
-		    	  link: TextCritical.trimTrailingPound(link),
+		    	  link: link,
 		    	  name: name,
 		    	  caption: caption,
 		    	  description: TextCritical.shorten(description, 400, true, "...")

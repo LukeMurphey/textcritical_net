@@ -379,7 +379,7 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     			text = $('.verse-container .verse:not(.label)').text();
     		}
     		
-    		return TextCritical.getTextToShare(null, true) + "\n\n" + document.title + "\n[Source: " + TextCritical.trimTrailingPound(location.href) + "]";
+    		return TextCritical.getTextToShare(null, true) + "\n\n" + document.title + "\n[Source: " + TextCritical.make_shareable_url() + "]";
         }
     });
     
@@ -392,7 +392,7 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     	console.warn("Couldn't copy using API; opening the copy dialog");
     	
     	if(window.getSelection().toString().length == 0){
-    		TextCritical.open_copy_dialog(TextCritical.getTextToShare($('.verse-container.highlighted .verse:not(.label)').text(), true) + "\n\n" + document.title + "\n[Source: " + TextCritical.trimTrailingPound(location.href) + "]");
+    		TextCritical.open_copy_dialog(TextCritical.getTextToShare($('.verse-container.highlighted .verse:not(.label)').text(), true) + "\n\n" + document.title + "\n[Source: " + TextCritical.make_shareable_url() + "]");
     	}
     	else{
         	TextCritical.open_copy_dialog(window.getSelection().toString());
