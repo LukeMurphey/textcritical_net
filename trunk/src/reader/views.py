@@ -463,6 +463,18 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     remaining_chapters = total_chapters - completed_chapters
     progress = ((1.0 * completed_chapters ) / total_chapters) * 100
     
+    # Get the amount of progress (based on chapters within this book)
+    total_chapters_in_book = None
+    completed_chapters_in_book = None
+    remaining_chapters_in_book = None
+    progress_in_book = None
+    
+    if chapter.parent_division is not None:
+        total_chapters_in_book = Division.objects.filter(parent_division=chapter.parent_division, readable_unit=True).count()
+        completed_chapters_in_book = Division.objects.filter(parent_division=chapter.parent_division, readable_unit=True, sequence_number__lte=chapter.sequence_number).count()
+        remaining_chapters_in_book = total_chapters_in_book - completed_chapters_in_book
+        progress_in_book = ((1.0 * completed_chapters_in_book ) / total_chapters_in_book) * 100
+    
     # Get the next and previous chapter number
     previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).order_by('-sequence_number')[:1]
     next_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__gt=chapter.sequence_number).order_by('sequence_number')[:1]
@@ -522,25 +534,30 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
         title = title + verse_to_highlight
     
     response = render_to_response('read_work.html',
-                                 {'title'                : title,
-                                  'work_alias'           : work_alias,
-                                  'warnings'             : warnings,
-                                  'work'                 : work,
-                                  'related_works'        : related_works,
-                                  'verses'               : verses,
-                                  'divisions'            : divisions,
-                                  'chapter'              : chapter,
-                                  'chapters'             : chapters,
-                                  'authors'              : work.authors.filter(meta_author=False),
-                                  'next_chapter'         : next_chapter,
-                                  'previous_chapter'     : previous_chapter,
-                                  'verse_to_highlight'   : verse_to_highlight,
-                                  'total_chapters'       : total_chapters,
-                                  'completed_chapters'   : completed_chapters,
-                                  'remaining_chapters'   : remaining_chapters,
-                                  'chapter_not_found'    : chapter_not_found,
-                                  'verse_not_found'      : verse_not_found,
-                                  'progress'             : progress},
+                                 {'title'                      : title,
+                                  'work_alias'                 : work_alias,
+                                  'warnings'                   : warnings,
+                                  'work'                       : work,
+                                  'related_works'              : related_works,
+                                  'verses'                     : verses,
+                                  'divisions'                  : divisions,
+                                  'chapter'                    : chapter,
+                                  'chapters'                   : chapters,
+                                  'authors'                    : work.authors.filter(meta_author=False),
+                                  'next_chapter'               : next_chapter,
+                                  'previous_chapter'           : previous_chapter,
+                                  'verse_to_highlight'         : verse_to_highlight,
+                                  'total_chapters'             : total_chapters,
+                                  'completed_chapters'         : completed_chapters,
+                                  'remaining_chapters'         : remaining_chapters,
+                                  'chapter_not_found'          : chapter_not_found,
+                                  'verse_not_found'            : verse_not_found,
+                                  'progress'                   : progress,
+                                  'progress_in_book'           : progress_in_book,
+                                  'total_chapters_in_book'     : total_chapters_in_book,
+                                  'completed_chapters_in_book' : completed_chapters_in_book,
+                                  'remaining_chapters_in_book' : remaining_chapters_in_book
+                                  },
                                   context_instance=RequestContext(request))
     
     # If the verse could not be found, set a response code to note that we couldn't get the content that the user wanted so that caching doesn't take place
