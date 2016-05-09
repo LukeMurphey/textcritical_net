@@ -1529,8 +1529,12 @@ define([
 				}
 				
 				// Try to get content of the verse
-				else if($('.verse-container .verse:not(.label)').length > 0){
-					text = $('.verse-container .verse:not(.label)').text();
+				else if($('.verse-container').length > 0){
+					text = $('.verse-container').clone() //clone the element
+				    	.children() //select all the children
+				    	.remove()   //remove all the children
+				    	.end()  //again go back to selected element
+				    	.text();
 				}
 				
 			}
@@ -1538,8 +1542,8 @@ define([
 			// Trim the text
 			text = TextCritical.trim(text);
 				
-			// Remove endlines
-			text = text.replace(/[ ]*\n[ ]*/g, ' ');
+			// Replace endlines and tabs with spaces
+			text = text.replace(/[ ]*(\n|\t)[ ]*/g, ' ');
 			
 			// Remove double-spaces
 			text = text.replace(/ [ ]+/gi, " ")
