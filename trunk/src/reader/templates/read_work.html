@@ -166,7 +166,7 @@
         {% endcomment %}
         {% if total_chapters > 1 %}
         {% load humanize %}
-        {% if total_chapters_in_book != None %}
+        {% if total_chapters_in_book != None and total_chapters_in_book > 1 %}
         <span class="current-place-in-text">
         {{completed_chapters_in_book|ordinal}} of {{total_chapters_in_book}} chapters ({{progress|floatformat:"0"}}% through the book)
         </span>
