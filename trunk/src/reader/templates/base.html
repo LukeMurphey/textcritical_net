@@ -26,9 +26,9 @@
   <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/arthref.css">
   
   {% if USE_MINIFIED|default_if_none:1 %}
-  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.min.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap.min.css">{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.min.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap.min.css">{% endif %}
   {% else %}
-  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap.css">{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap.css">{% endif %}
   {% endif %}
   
   {% if USE_DARK_THEME|default_if_none:1 %}
@@ -39,9 +39,9 @@
   
   {% if include_default_css|default_if_none:1 %}
   {% if USE_MINIFIED|default_if_none:1 %}
-  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap-responsive.min.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap-responsive.min.css">{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap-responsive.min.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap-responsive.min.css">{% endif %}
   {% else %}
-  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap-responsive.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap-responsive.css">{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap-responsive.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap-responsive.css">{% endif %}
   {% endif %}
   {% endif %}
   <script type="application/javascript" src="{{ MEDIA_URL|default:"/media/" }}javascripts/libs/modernizr-2.6.1.min.js"></script>
@@ -69,9 +69,9 @@
   {% block base_content %}{% endblock %}
   
   {% if USE_MINIFIED|default_if_none:1 %}
-  {% if USE_CDN|default_if_none:1 %}<script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.0.6/require.min.js"></script>{% else %}<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/libs/require.js"></script>{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.0.6/require.min.js"></script>{% else %}<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/libs/require.js"></script>{% endif %}
   {% else %}
-  {% if USE_CDN|default_if_none:1 %}<script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.0.6/require.js"></script>{% else %}<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/libs/require.js"></script>{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.0.6/require.js"></script>{% else %}<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/libs/require.js"></script>{% endif %}
   {% endif %}
   {% if USE_MINIFIED|default_if_none:1 %}
   <script src="{{ MEDIA_URL|default:"/media/" }}javascripts/main.min.js"></script>

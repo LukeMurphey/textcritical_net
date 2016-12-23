@@ -2,22 +2,22 @@ require.config({
     baseUrl: "/media/javascripts",
     paths: {
         jquery: [
-            "http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery",
+            "//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery",
             "libs/jquery"
         ],
         
         jqueryui: [
-            "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui",
+            "//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui",
             "libs/jqueryui"
         ],
              
         datatables: [
-            "http://cdnjs.cloudflare.com/ajax/libs/datatables/1.9.3/jquery.dataTables",
+            "//cdnjs.cloudflare.com/ajax/libs/datatables/1.9.3/jquery.dataTables",
             "libs/jquery.dataTables"
         ],
         
         bootstrap: [
-            "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/js/bootstrap",
+            "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/js/bootstrap",
             "libs/bootstrap"
         ],
         
@@ -30,7 +30,7 @@ require.config({
         ],
         
         underscore: [
-            "http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min",
+            "//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min",
             "libs/underscore"
         ],
         
@@ -43,22 +43,22 @@ require.config({
         ],
         
         jasmine: [
-            "http://cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine",
+            "//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine",
             "libs/jasmine"
         ],
         
         jasmine_html: [
-            "http://cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html",
+            "//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html",
             "libs/jasmine-html"
         ],
         
         jquery_tools: [
-            "http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min",
+            "//cdn.jquerytools.org/1.2.7/full/jquery.tools.min",
             "libs/jquery.tools.min"
         ],
         
         facebook: [
-            "http://connect.facebook.net/en_US/all"
+            "//connect.facebook.net/en_US/all"
         ],
         
         flying_focus: [

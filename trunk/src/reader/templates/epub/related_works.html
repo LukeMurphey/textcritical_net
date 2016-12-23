@@ -10,7 +10,7 @@ Below are other versions of this work that may interest you:
 </p>
 <ul>
 {% for related_work in related_works %}
-	<li><a href="http://TextCritical.net{% url "read_work" related_work.title_slug %}">
+	<li><a href="https://TextCritical.net{% url "read_work" related_work.title_slug %}">
 		{{related_work.title}}, {{related_work.language}}
 		{% for editor in related_work.editors.all %}
 			{% if not forloop.first %}, {% endif %}
@@ -30,7 +30,7 @@ If you liked this work, then you may like other works from this author:
 </p>
 <ul>
 {% for related_work in authors_works %}
-	<li><a href="http://TextCritical.net{% url "read_work" related_work.title_slug %}">
+	<li><a href="https://TextCritical.net{% url "read_work" related_work.title_slug %}">
 		{{related_work.title}}, {{related_work.language}}
 		{% for editor in related_work.editors.all %}
 			{% if not forloop.first %}, {% endif %}
@@ -43,7 +43,7 @@ If you liked this work, then you may like other works from this author:
 
 {% else %}
 <p class="add-space-small">
-If you liked this work, then you may like some of the other <a href="http://TextCritical.net{% url "works_index" %}?search={{work.authors.all.0}}">{{authors_works|length}} works from this author</a>.
+If you liked this work, then you may like some of the other <a href="https://TextCritical.net{% url "works_index" %}?search={{work.authors.all.0}}">{{authors_works|length}} works from this author</a>.
 </p>
 
 {% endif %}

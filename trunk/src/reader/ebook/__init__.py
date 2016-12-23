@@ -240,7 +240,7 @@ class ePubExport(object):
         book = EpubBook()
         
         book.setTitle(work.title)
-        book.url = "http://TextCritical.net" + reverse('read_work', kwargs={'title': work.title_slug})
+        book.url = "https://TextCritical.net" + reverse('read_work', kwargs={'title': work.title_slug})
         
         for author in work.authors.all():
             book.addCreator(author.name)

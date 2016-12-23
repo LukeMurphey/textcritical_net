@@ -2,4 +2,4 @@
 
 User-agent: *
 
-Sitemap: http://textcritical.net/sitemap.xml
+Sitemap: https://textcritical.net/sitemap.xml
