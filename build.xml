@@ -26,9 +26,27 @@
           target: get_build_number
          ================================= -->
     <target name="get_build_number">
-        <taskdef name="svn" classpath="lib/svnant.jar;lib/svnClientAdapter.jar;lib/sqljet-1.1.5.jar;lib/antlr-runtime-3.4.jar;lib/sequence-library-1.0.2.jar;lib/jna-3.4.0.jar;lib/svnkit-javahl16-1.7.6.jar;lib/svnkit-1.7.6.jar" classname="org.tigris.subversion.svnant.SvnTask" />
-            	
-        <svn svnkit="true" javahl="false">
+    	
+		<!-- Indicate the location of the ANT dependencies -->
+        <path id="path.svnant">
+            <pathelement location="lib/svnant.jar"/>
+            <pathelement location="lib/svnClientAdapter.jar"/>        	
+        	<pathelement location="lib/sqljet-1.1.10.jar"/>
+        	<pathelement location="lib/antlr-runtime-3.4.jar"/>
+        	<pathelement location="lib/sequence-library-1.0.3.jar"/>
+        	<pathelement location="lib/jna-4.1.0.jar"/>
+        	<pathelement location="lib/svnkit-javahl16-1.8.12.jar"/>
+        	<pathelement location="lib/svnkit-1.8.12.jar"/>
+        </path>
+    	
+    	<!-- Load the ANT libraries -->
+    	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="path.svnant"/>
+	
+    	<!-- Tell SVN to use SVN kit -->
+        <svnSetting javahl="false" svnkit="true" id="svn.settings" />
+    	
+    	<!-- Get the build number -->
+        <svn refid="svn.settings">
             <info target="${value.build.workingcopy.directory}" />
             <wcVersion prefix="svn." path="${value.build.workingcopy.directory}" />
         </svn>
