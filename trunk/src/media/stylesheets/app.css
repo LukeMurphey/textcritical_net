@@ -306,19 +306,19 @@ footer .addthis_toolbox {
 .icon-facebook:before {
   content: '\e800'; }
 
-/* 'î €' */
+/* '' */
 .icon-twitter:before {
   content: '\e801'; }
 
-/* 'î �' */
+/* '' */
 .icon-clipboard:before {
   content: '\e802'; }
 
-/* 'î ‚' */
+/* '' */
 .icon-mail-alt:before {
   content: '\e803'; }
 
-/* 'î ƒ' */
+/* '' */
 html {
   font-size: 100%;
   -webkit-text-size-adjust: 100%;
