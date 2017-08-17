@@ -9,3 +9,4 @@ tmp/*
 src/reader/templates/VERSION.txt
 src/media/stylesheets/*.css
 var/*
+settings.py
