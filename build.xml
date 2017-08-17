@@ -140,9 +140,9 @@
 	<target name="deploy"></target>
 
     <!-- ================================= 
-          target: initialize_database
+          target: init_database
          ================================= -->
-	<target name="initialize_database" description="Initialize the database">
+	<target name="init_database" description="Initialize the database">
 
 		<exec executable="python" dir="src">
 			<arg value="manage.py"/>
@@ -199,9 +199,9 @@
 	</target>
 
     <!-- ================================= 
-          target: run_webserver
+          target: run_server
          ================================= -->
-	<target name="run_webserver" description="Run the internal web-server">
+	<target name="run_server" description="Run the internal web-server">
 		<exec executable="python" dir="src">
 			<arg value="manage.py"/>
 			<arg value="runserver"/>
