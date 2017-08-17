@@ -3,7 +3,6 @@ import os
 import django.conf.global_settings as DEFAULT_SETTINGS
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -136,7 +135,30 @@ WEB_SERVER_ADDRESS = '0.0.0.0'  # Use '127.0.0.1' to serve content to localhost 
 WEB_SERVER_PORT    = 8080
 
 # Set up the template context processors
-TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + ('textcritical.context_processors.global_settings', 'textcritical.context_processors.get_url_name', 'textcritical.context_processors.is_async', 'django.core.context_processors.request')
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(SITE_ROOT, 'templates'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+                'textcritical.context_processors.global_settings',
+                'textcritical.context_processors.get_url_name',
+                'textcritical.context_processors.is_async',
+                'django.core.context_processors.request',
+            ],
+        },
+    },
+]
 
 # Indicates whether the dark bootstrap theme ought to be used
 USE_DARK_THEME = True
@@ -188,10 +210,6 @@ ROOT_URLCONF = 'textcritical.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'textcritical.wsgi.application'
-
-TEMPLATE_DIRS = (
-    os.path.join(SITE_ROOT, 'templates'),
-)
 
 INSTALLED_APPS = (
     'grappelli',
