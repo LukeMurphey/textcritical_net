@@ -153,6 +153,12 @@
 			<arg value="manage.py"/>
 			<arg value="migrate"/>
 		</exec>
+
+		<echo> </echo>
+		<echo> </echo>
+		<echo>You may need to create a super user. Do so with:</echo>
+		<echo>      python manage.py createsuperuser</echo>
+
 	</target>
 
     <!-- ================================= 
@@ -240,6 +246,11 @@
 		</exec>
 		-->
 	</target>
+
+    <!-- ================================= 
+          target: install
+         ================================= -->
+	<target name="install" depends="install_dependencies,init_database" description="Install the dependencies and initialize the database"></target>
 
     <!-- ================================= 
           target: compile_scss
