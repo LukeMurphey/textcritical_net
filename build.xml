@@ -125,9 +125,115 @@
          ================================= -->
 	<target name="verify" description="Verify that the package appears to be valid"></target>
 	
-	<target name="test"></target>
+    <!-- ================================= 
+          target: test
+         ================================= -->
+	<target name="test" description="Verify that the package appears to be valid">
+		<mkdir dir="var/log"/>
+
+		<exec executable="python" dir="src">
+			<arg value="manage.py"/>
+			<arg value="test"/>
+		</exec>
+	</target>
+
 	<target name="deploy"></target>
-	
+
+    <!-- ================================= 
+          target: initialize_database
+         ================================= -->
+	<target name="initialize_database" description="Initialize the database">
+
+		<exec executable="python" dir="src">
+			<arg value="manage.py"/>
+			<arg value="makemigrations"/>
+		</exec>
+
+		<exec executable="python" dir="src">
+			<arg value="manage.py"/>
+			<arg value="migrate"/>
+		</exec>
+	</target>
+
+    <!-- ================================= 
+          target: index_works
+         ================================= -->
+	<target name="index_works" description="Create the search indexes for the works (deleting existing indexes)">
+		<exec executable="python" dir="src">
+			<arg value="manage.py"/>
+			<arg value="make_search_indexes"/>
+			<arg value="-c"/>
+		</exec>
+	</target>
+
+    <!-- ================================= 
+          target: create_ebooks_epub
+         ================================= -->
+	<target name="create_ebooks_epub" description="Create the epubs ebook files">
+		<exec executable="python" dir="src">
+			<arg value="manage.py"/>
+			<arg value="make_epubs"/>
+		</exec>
+	</target>
+
+    <!-- ================================= 
+          target: create_ebooks_epub
+         ================================= -->
+	<target name="create_ebooks_mobi" description="Create the mobi ebook files">
+		<exec executable="python" dir="src">
+			<arg value="manage.py"/>
+			<arg value="make_mobi"/>
+		</exec>
+	</target>
+
+    <!-- ================================= 
+          target: create_ebooks
+         ================================= -->
+	<target name="create_ebooks" depends="create_ebooks_mobi,create_ebooks_epub" description="Create the ebook files (mobi and epub)"></target>
+
+    <!-- ================================= 
+          target: run_webserver
+         ================================= -->
+	<target name="run_webserver" description="Run the internal web-server">
+		<exec executable="python" dir="src">
+			<arg value="manage.py"/>
+			<arg value="runserver"/>
+			<arg value="0.0.0.0:8080"/>
+		</exec>
+	</target>
+
+    <!-- ================================= 
+          target: install_dependencies
+         ================================= -->
+	<target name="install_dependencies" description="Install dependencies">
+
+		<exec executable="pip" dir="src">
+			<arg value="install"/>
+			<arg value="Django==1.8.18"/>
+		</exec>
+
+		<exec executable="pip" dir="src">
+			<arg value="install"/>
+			<arg value="django-grappelli==2.7.3"/>
+		</exec>
+
+		<exec executable="pip" dir="src">
+			<arg value="install"/>
+			<arg value="lxml"/>
+		</exec>
+
+		<exec executable="pip" dir="src">
+			<arg value="install"/>
+			<arg value="Genshi"/>
+		</exec>
+		<!--
+		<exec executable="pip" dir="src">
+			<arg value="install"/>
+			<arg value="Wand"/>
+		</exec>
+		-->
+	</target>
+
     <!-- ================================= 
           target: compile_scss
          ================================= -->
@@ -157,7 +263,6 @@
         <echo message="Done compiling scss files!" />
     </target>
 
-	
     <!-- ================================= 
           target: Check JavaScript
          ================================= -->
