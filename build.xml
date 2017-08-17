@@ -1,4 +1,4 @@
-<project default="package" name="textcritical.com">
+<project default="compile_and_package" name="textcritical.com">
 
     <!--
     Load the properties files, local is loaded first since properties are immutable (cannot be changed
@@ -114,16 +114,19 @@
             whenempty="create"
         />
     </target>
-	
+
+    <!-- ================================= 
+          target: compile_and_package
+         ================================= -->
+    <target name="compile_and_package" depends="get_build_number,compile" description="Compile the application and create the package (sans media)"></target>
+
     <!-- ================================= 
           target: verify
          ================================= -->
 	<target name="verify" description="Verify that the package appears to be valid"></target>
 	
-	
 	<target name="test"></target>
 	<target name="deploy"></target>
-	
 	
     <!-- ================================= 
           target: compile_scss
