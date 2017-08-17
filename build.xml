@@ -1,5 +1,21 @@
 <project default="compile_and_package" name="textcritical.com">
 
+	<!-- Define some things so that we can import things from environment variables -->
+	<property environment="env" />
+	
+	<macrodef name="import_environment_var">
+		<attribute name="property" />
+		<attribute name="variable" />
+		<sequential>
+			<condition property="@{property}" value="${env.@{variable}}">
+				<isset property="env.@{variable}" />
+			</condition>
+		</sequential>
+	</macrodef>
+
+	<!-- Load parameters -->
+	<import_environment_var property="python" variable="PYTHON" />
+
     <!--
     Load the properties files, local is loaded first since properties are immutable (cannot be changed
     by later property files) and we want the local properties to override the default properties
@@ -16,7 +32,13 @@
 	<patternset id="application_js_files">
 	    <include name="src/media/javascripts/app.js" />
 	</patternset>
-	
+
+    <!-- ================================= 
+          target: initialize
+         ================================= -->
+	<target name="initialize">
+	</target>
+
     <!-- ================================= 
           target: compile
          ================================= -->
@@ -131,7 +153,7 @@
 	<target name="test" description="Verify that the package appears to be valid">
 		<mkdir dir="var/log"/>
 
-		<exec failonerror="true" executable="python" dir="src">
+		<exec failonerror="true" executable="${python}" dir="src">
 			<arg value="manage.py"/>
 			<arg value="test"/>
 		</exec>
