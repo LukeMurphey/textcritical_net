@@ -177,7 +177,7 @@
 	</target>
 
     <!-- ================================= 
-          target: create_ebooks_epub
+          target: create_ebooks_mobi
          ================================= -->
 	<target name="create_ebooks_mobi" description="Create the mobi ebook files">
 		<exec executable="python" dir="src">
@@ -190,6 +190,13 @@
           target: create_ebooks
          ================================= -->
 	<target name="create_ebooks" depends="create_ebooks_mobi,create_ebooks_epub" description="Create the ebook files (mobi and epub)"></target>
+
+    <!-- ================================= 
+          target: clear_ebooks
+         ================================= -->
+	<target name="clear_ebooks" description="Clear the ebooks">
+		<delete dir="media/files"/>
+	</target>
 
     <!-- ================================= 
           target: run_webserver
