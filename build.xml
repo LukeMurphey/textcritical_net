@@ -153,6 +153,8 @@
 	<target name="test" description="Verify that the package appears to be valid">
 		<mkdir dir="var/log"/>
 
+		<copy file="src/textcritical/test_settings.py" tofile="src/textcritical/settings.py"/>
+
 		<exec failonerror="true" executable="${python}" dir="src">
 			<arg value="manage.py"/>
 			<arg value="test"/>
@@ -166,12 +168,12 @@
          ================================= -->
 	<target name="init_database" description="Initialize the database">
 
-		<exec executable="python" dir="src">
+		<exec executable="${python}" dir="src">
 			<arg value="manage.py"/>
 			<arg value="makemigrations"/>
 		</exec>
 
-		<exec executable="python" dir="src">
+		<exec executable="${python}" dir="src">
 			<arg value="manage.py"/>
 			<arg value="migrate"/>
 		</exec>
@@ -187,7 +189,7 @@
           target: index_works
          ================================= -->
 	<target name="index_works" description="Create the search indexes for the works (deleting existing indexes)">
-		<exec executable="python" dir="src">
+		<exec executable="${python}" dir="src">
 			<arg value="manage.py"/>
 			<arg value="make_search_indexes"/>
 			<arg value="-c"/>
@@ -198,7 +200,7 @@
           target: create_ebooks_epub
          ================================= -->
 	<target name="create_ebooks_epub" description="Create the epubs ebook files">
-		<exec executable="python" dir="src">
+		<exec executable="${python}" dir="src">
 			<arg value="manage.py"/>
 			<arg value="make_epubs"/>
 		</exec>
@@ -208,7 +210,7 @@
           target: create_ebooks_mobi
          ================================= -->
 	<target name="create_ebooks_mobi" description="Create the mobi ebook files">
-		<exec executable="python" dir="src">
+		<exec executable="${python}" dir="src">
 			<arg value="manage.py"/>
 			<arg value="make_mobi"/>
 		</exec>
@@ -230,7 +232,7 @@
           target: run_server
          ================================= -->
 	<target name="run_server" description="Run the internal web-server">
-		<exec executable="python" dir="src">
+		<exec executable="${python}" dir="src">
 			<arg value="manage.py"/>
 			<arg value="runserver"/>
 			<arg value="0.0.0.0:8080"/>
