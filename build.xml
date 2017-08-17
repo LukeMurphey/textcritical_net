@@ -351,15 +351,85 @@
     <!-- ================================= 
           target: upgrade
          ================================= -->
-	<target name="upgrade" description="Upgrade ">
+	<target name="upgrade" description="Upgrade the existing install of TextCritical" depends="initialize_libraries">
+
+		<tstamp>
+			<format property="TODAY" pattern="yyyyMMdd-HHmmss" locale="en,US" />
+		</tstamp>
+
+		<property name="tempdir" value="${java.io.tmpdir}/${user.name}/textcritical_output" />
+		<property name="install_package" value="var/packages/textcritical_599545f4.zip" />
+		<property name="install_directory" value="/Users/lmurphey/Downloads/webapps/textcritical.com" />
+		<property name="renamed_install_directory" value="/Users/lmurphey/Downloads/webapps/textcritical.com_${TODAY}" />
 
 		<!-- Stop the web-server -->
 
 		<!-- Sleep to let the server stop -->
 
 		<!-- Make a temporary directory -->
+		
 
 		<!-- Unzip the package into the temporary directory -->
+		<unzip src="${install_package}" dest="${tempdir}"/>
+
+		<!-- Copy in the settings file -->
+		<copy file="${install_directory}/textcritical/settings.py" tofile="${tempdir}/textcritical/settings.py" verbose="true" />
+
+		<!-- Move the /var directory over  -->
+		<move file="${install_directory}/var" todir="${tempdir}"/>
+
+		<!-- Move the media/files directory over (this contains the generated epub documents) -->
+		<move file="${install_directory}/media/files" todir="${tempdir}/media"/>
+
+		<!-- Rename the original directory to old_$(date +%Y%m%d%H%M%S -->
+		<move file="${install_directory}" tofile="${renamed_install_directory}"/>
+
+		<!-- Rename the temporary directory back to the original directory name -->
+		<move file="${tempdir}" tofile="${install_directory}"/>
+
+		<!-- Optionally clear the cache (rm /var/cache) -->
+
+		<!-- Restart the web-server -->
+
+		<!-- Check: media/files exists -->
+		<if>
+        	<available file="${install_directory}/media/files"/>
+			<then>
+				<echo>ebook files cache exists</echo>
+			</then>
+			<else>
+				<echo level="warning">ebook files cache does not exists</echo>
+			</else>
+    	</if>
+
+		<!-- Check: settings.py exists -->
+		<if>
+        	<available file="${install_directory}/textcritical/settings.py"/>
+			<then>
+				<echo>settings file exists</echo>
+			</then>
+			<else>
+				<echo level="warning">settings file does not exists</echo>
+			</else>
+    	</if>
+
+		<!-- Check: var/library.sqlite exists -->
+		<if>
+        	<available file="${install_directory}/var/library.sqlite"/>
+			<then>
+				<echo>library database exists</echo>
+			</then>
+			<else>
+				<echo level="warning">library database does not exists</echo>
+			</else>
+    	</if>
+
+
+
+	</target>
+
+	<target name="check_state">
+
 	</target>
 	
 </project>
