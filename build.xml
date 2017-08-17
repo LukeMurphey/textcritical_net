@@ -23,41 +23,80 @@
 	<target name="compile" description="Compile the application" depends="compile_scss,minify_js"></target>
 	
     <!-- ================================= 
+          target: initialize_libraries
+         ================================= -->
+	<target name="initialize_libraries">
+		<taskdef resource="net/sf/antcontrib/antlib.xml">
+		     <classpath>
+		    	<pathelement location="lib/ant-contrib-0.6.jar"/>
+		     </classpath>
+		</taskdef>
+	</target>
+    
+    <!-- ================================= 
           target: get_build_number
          ================================= -->
-    <target name="get_build_number">
-    	
-		<!-- Indicate the location of the ANT dependencies -->
-        <path id="path.svnant">
-            <pathelement location="lib/svnant.jar"/>
-            <pathelement location="lib/svnClientAdapter.jar"/>        	
-        	<pathelement location="lib/sqljet-1.1.10.jar"/>
-        	<pathelement location="lib/antlr-runtime-3.4.jar"/>
-        	<pathelement location="lib/sequence-library-1.0.3.jar"/>
-        	<pathelement location="lib/jna-4.1.0.jar"/>
-        	<pathelement location="lib/svnkit-javahl16-1.8.12.jar"/>
-        	<pathelement location="lib/svnkit-1.8.12.jar"/>
-        </path>
-    	
-    	<!-- Load the ANT libraries -->
-    	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="path.svnant"/>
-	
-    	<!-- Tell SVN to use SVN kit -->
-        <svnSetting javahl="false" svnkit="true" id="svn.settings" />
-    	
-    	<!-- Get the build number -->
-        <svn refid="svn.settings">
-            <info target="${value.build.workingcopy.directory}" />
-            <wcVersion prefix="svn." path="${value.build.workingcopy.directory}" />
-        </svn>
-    </target>
+	<target name="get_build_number" depends="initialize_libraries">
+		
+		<macrodef name="get_build_info">
+			<attribute name="path" default="${user.dir}" />
+			<attribute name="format" default="ct" />
+			<attribute name="outputproperty" />
+			
+			<sequential>
+			    <exec failonerror="true" executable="git" outputproperty="@{outputproperty}"> <!-- Fail on error is set to true in order to prevent a bad build number from being included -->
+					<arg value="log"/>
+			    	<arg value="-1"/>
+					<arg value="--pretty=format:%@{format}"/>
+			    	<arg value="--abbrev-commit"/>
+					<arg value="@{path}"/>
+			    </exec>
+			</sequential>
+			
+		</macrodef>
+		
+		<!-- Determine if this project is using Git and get the build info accordingly -->
+		<if>
+			<available file=".git" type="dir" />
+
+			<!-- Run git to get the revision number and date -->
+			<then>
+				<get_build_info outputproperty="value.build.number" />
+				<get_build_info format="cD" outputproperty="value.build.date" />
+			</then>
+
+			<!-- Generate the revision number and date -->
+			<else>
+				<echo message=".git directory does not exist; build date will be set to the current date" />
+
+				<tstamp>
+					<!--  1492116038 (Thu, 13 Apr 2017 15:40:38 -0500) -->
+					<format property="value.build.date" pattern="E, d MMM YYYY HH:mm:ss Z" unit="hour" />
+				</tstamp>
+
+				<script language="javascript">
+					<![CDATA[
+						property = project.setProperty("value.build.number",Math.floor((new Date()).getTime()/1000));
+					]]>
+			    </script>
+			</else>
+		</if>
+
+		<script language="javascript">
+			<![CDATA[
+				project.setProperty("value.build.number_hex", parseInt(project.getProperty("value.build.number"),10).toString(16));
+			]]>
+		</script>
+
+		<echo>Revision number is: ${value.build.number} (${value.build.date}, ${value.build.number_hex})</echo>
+	</target>
 
     <!-- ================================= 
           target: update_build_info
          ================================= -->
     <target name="update_build_info" depends="get_build_number">
         <propertyfile file="src/VERSION" comment="Build Information File">
-            <entry key="build.number" value="${svn.revision.max}" />
+            <entry key="build.number" value="${value.build.number}" />
             <entry key="build.date" type="date" value="now" pattern="dd.MM.yyyy HH:mm" />
             <entry key="build.version" value="${value.build.version}" />
         </propertyfile>
@@ -67,15 +106,14 @@
           target: package
          ================================= -->
     <target name="package" depends="get_build_number" description="Create the application package (sans media)">
-    	<echo file="src/reader/templates/VERSION.txt" append="false">${value.build.version} (build ${svn.revision.max})</echo>
+    	<echo file="src/reader/templates/VERSION.txt" append="false">${value.build.version} (build ${value.build.number})</echo>
     	<mkdir dir="${value.build.packageoutput.directory}" />
-        <zip destfile="${value.build.packageoutput.directory}/textcritical_${svn.revision.max}.zip"
+        <zip destfile="${value.build.packageoutput.directory}/textcritical_${value.build.number_hex}.zip"
             basedir="src"
             excludes="reader/test/**, reader/tests.py, **/*.pyc, textcritical/settings.py, media/files/**"
             whenempty="create"
         />
     </target>
-	
 	
     <!-- ================================= 
           target: verify
