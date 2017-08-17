@@ -131,7 +131,7 @@
 	<target name="test" description="Verify that the package appears to be valid">
 		<mkdir dir="var/log"/>
 
-		<exec executable="python" dir="src">
+		<exec failonerror="true" executable="python" dir="src">
 			<arg value="manage.py"/>
 			<arg value="test"/>
 		</exec>
@@ -322,6 +322,20 @@
 	    	<mapper refid="minified_js_mapper" />
 	        <targetfile />
 	    </apply>
+	</target>
+
+    <!-- ================================= 
+          target: upgrade
+         ================================= -->
+	<target name="upgrade" description="Upgrade ">
+
+		<!-- Stop the web-server -->
+
+		<!-- Sleep to let the server stop -->
+
+		<!-- Make a temporary directory -->
+
+		<!-- Unzip the package into the temporary directory -->
 	</target>
 	
 </project>
