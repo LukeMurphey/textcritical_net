@@ -1,0 +1,11 @@
+.sass-cache
+local.properties
+.DS_Store
+*.pyc
+*.pyo
+tmp/*
+.vscode/*
+
+src/reader/templates/VERSION.txt
+src/media/stylesheets/*.css
+var/*
