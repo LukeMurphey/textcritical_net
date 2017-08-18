@@ -39,7 +39,17 @@
     }
     
     .bibl{
-        
+        margin-left: 3px;
+        margin-right: 3px;
+        font-weight: bold;
+    }
+
+    .bibl::before {
+        content: "[";
+    }
+
+    .bibl::after {
+        content: "]";
     }
     
     .docauthor{
