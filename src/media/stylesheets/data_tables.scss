@@ -7,6 +7,11 @@ $hover_background_color: #F5F5F5;
     padding-bottom: 12px;
 }
 
+#works_list_filter{
+    float: right;
+    margin-top: 8px;
+}
+
 .paginate_enabled_next, .paginate_enabled_previous, .paginate_disabled_next, .paginate_disabled_previous {
     background-color: #FFFFFF;
     border: 1px solid #DDDDDD;
