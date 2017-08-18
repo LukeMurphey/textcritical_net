@@ -21,7 +21,7 @@ from reader.models import Author, Division, Verse, WordDescription, WordForm, Le
 from reader.views import get_division, convert_to_numbered_division_name, convert_to_lettered_division_name, has_lettered_book_number, has_numbered_book_number
 from reader.contentsearch import WorkIndexer, search_verses, search_stats
 from reader import utils
-from reader.ebook import ePubExport
+#from reader.ebook import ePubExport
 
 from textcritical.context_processors import is_async
 
