@@ -15,6 +15,7 @@
 
 	<!-- Load parameters -->
 	<import_environment_var property="python" variable="PYTHON" />
+	<import_environment_var property="pip" variable="PIP" />
 
     <!--
     Load the properties files, local is loaded first since properties are immutable (cannot be changed
@@ -251,22 +252,22 @@
          ================================= -->
 	<target name="install_dependencies" description="Install dependencies">
 
-		<exec executable="pip" dir="src">
+		<exec executable="${pip}" dir="src">
 			<arg value="install"/>
 			<arg value="Django==1.8.18"/>
 		</exec>
 
-		<exec executable="pip" dir="src">
+		<exec executable="${pip}" dir="src">
 			<arg value="install"/>
 			<arg value="django-grappelli==2.7.3"/>
 		</exec>
 
-		<exec executable="pip" dir="src">
+		<exec executable="${pip}" dir="src">
 			<arg value="install"/>
 			<arg value="lxml"/>
 		</exec>
 
-		<exec executable="pip" dir="src">
+		<exec executable="${pip}" dir="src">
 			<arg value="install"/>
 			<arg value="Genshi"/>
 		</exec>
@@ -384,6 +385,17 @@
          ================================= -->
 	<target name="define_package_library" depends="initialize_libraries,define_package_library_gocd,define_package_library_local">
 		<property name="install_package" value="var/packages/textcritical_599545f4.zip" />
+	</target>
+
+    <!-- ================================= 
+          target: collect_static
+         ================================= -->
+	<target name="collect_static" >
+		<exec executable="${python}" dir="src">
+			<arg value="manage.py"/>
+			<arg value="collectstatic"/>
+			<arg value="--noinput"/>
+		</exec>
 	</target>
 
     <!-- ================================= 
