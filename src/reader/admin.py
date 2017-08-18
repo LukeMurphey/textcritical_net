@@ -1,5 +1,6 @@
 from reader.models import Author, Work, WorkType, Division, Verse, Lemma, WordForm, WordDescription, WikiArticle
 from django.contrib import admin
+from reader.contentsearch import WorkIndexer
 
 class AuthorAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -40,6 +41,13 @@ class DivisionInline(admin.StackedInline):
         }),
     )
 
+def make_search_indexes(modeladmin, request, queryset):
+    for work in queryset:
+        WorkIndexer.delete_work_index(work)
+        WorkIndexer.index_work(work)
+
+make_search_indexes.short_description = "Make search indexes"
+
 class WorkAdmin(admin.ModelAdmin):
     
     #prepopulated_fields = {"title_slug": ("title",)}
@@ -48,7 +56,9 @@ class WorkAdmin(admin.ModelAdmin):
     list_editable = ('work_type',)
     list_filter = ('language', 'work_type', 'authors')
     search_fields = ('title',)
-    
+
+    actions = [make_search_indexes]
+
     fieldsets = (
         (None, {
             'fields': ( ('title', 'title_slug'), 'language', 'work_type', ('authors', 'editors'), 'descriptor', 'date_written'),
