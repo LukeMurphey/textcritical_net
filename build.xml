@@ -229,6 +229,13 @@
 	</target>
 
     <!-- ================================= 
+          target: clear_cache
+         ================================= -->
+	<target name="clear_cache" description="Clear the Django file-system cache">
+		<delete dir="var/cache"/>
+	</target>
+
+    <!-- ================================= 
           target: run_server
          ================================= -->
 	<target name="run_server" description="Run the internal web-server">
@@ -349,17 +356,46 @@
 	</target>
 
     <!-- ================================= 
+          target: define_package_library_local
+         ================================= -->
+	<target name="define_package_library_local" depends="get_build_number,initialize_libraries">
+		<if>
+        	<available file="${install_directory}/media/files"/>
+			<then>
+				${value.build.packageoutput.directory}/textcritical_${value.build.number_hex}.zip
+			</then>
+			<else>
+				<echo level="warning">ebook files cache does not exist</echo>
+			</else>
+    	</if>
+		<property name="install_package" value="${value.build.packageoutput.directory}/textcritical_${value.build.number_hex}.zip" />
+	</target>
+
+    <!-- ================================= 
+          target: define_package_library_gocd
+         ================================= -->
+	<target name="define_package_library_gocd" depends="initialize_libraries">
+		<get src="${GO_SERVER_URL}/web-input/87/mainStage/1/build" dest="var/packages/${PACKAGE_FILE}"/>
+		<property name="install_package" value="${value.build.packageoutput.directory}/textcritical_${value.build.number_hex}.zip" />
+	</target>
+
+    <!-- ================================= 
+          target: define_package_library
+         ================================= -->
+	<target name="define_package_library" depends="initialize_libraries,define_package_library_gocd,define_package_library_local">
+		<property name="install_package" value="var/packages/textcritical_599545f4.zip" />
+	</target>
+
+    <!-- ================================= 
           target: upgrade
          ================================= -->
-	<target name="upgrade" description="Upgrade the existing install of TextCritical" depends="check_state">
+	<target name="upgrade" description="Upgrade the existing install of TextCritical" depends="define_package_library,check_install_state">
 
 		<tstamp>
 			<format property="TODAY" pattern="yyyyMMdd-HHmmss" locale="en,US" />
 		</tstamp>
 
 		<property name="tempdir" value="${java.io.tmpdir}/${user.name}/textcritical_output" />
-
-		<property name="install_package" value="var/packages/textcritical_599545f4.zip" /> <!-- TODO: replace -->
 		<property name="renamed_install_directory" value="${install_directory}_${TODAY}" />
 
 		<!-- Stop the web-server -->
@@ -378,7 +414,7 @@
 		<!-- Move the media/files directory over (this contains the generated epub documents) -->
 		<move file="${install_directory}/media/files" todir="${tempdir}/media"/>
 
-		<!-- Rename the original directory to old_$(date +%Y%m%d%H%M%S -->
+		<!-- Rename the original directory -->
 		<move file="${install_directory}" tofile="${renamed_install_directory}"/>
 
 		<!-- Rename the temporary directory back to the original directory name -->
@@ -389,11 +425,11 @@
 		<!-- Restart the web-server -->
 
 		<!-- Make sure everything looks ok -->
-		<antcall target="check_state" />
+		<antcall target="check_install_state" />
 
 	</target>
 
-	<target name="check_state" depends="initialize_libraries">
+	<target name="check_install_state" depends="initialize_libraries">
 		<!-- Check: media/files exists -->
 		<if>
         	<available file="${install_directory}/media/files"/>
