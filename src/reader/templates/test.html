@@ -113,6 +113,16 @@ require(["jquery", "jasmine", "jasmine_html", "app"], function($) {
 			
 	        expect( search_results["results"].length ).toBeGreaterThan( 0 );
 	       
+		   });
+		
+		// Test search for beta-code with slash
+		// This will ensure that the slash is properly handled by the underlying server if cases
+		// where a reverse proxy server.
+		it("on beta-code content with slashes", function() {
+			search_results = getAsync("/api/search/" + encodeURIComponent('no/mou'));
+			
+	        expect( search_results["results"].length ).toBeGreaterThan( 0 );
+	       
    		});
   		
     });
