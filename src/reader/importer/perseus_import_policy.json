@@ -960,6 +960,17 @@
         }
     },
     {
+        "author" : [ "Herodotus"],
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0,
+            "ignore_notes" : true,
+            "transforms" : {
+            	"update_title_slug" : {}
+            }
+        }
+    },
+    {
         "author" : [ "Aristotle", "Bacchylides", "Demosthenes", "Dinarchus", "Diodorus Siculus", "Diogenes Laertius", "Euclid", "Galen",
                      "Herodotus", "Hesiod", "Hippocrates", "Homer", "Hyperides", "Pausanias", "Pindar", "Plato", "Plutarch", "Strabo", 
                      "Aretaeus", "Xenophon", "Aeschylus", "Andocides", "Apollodorus"],

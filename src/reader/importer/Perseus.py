@@ -72,7 +72,7 @@ class PerseusTextImporter(TextImporter):
     
     def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None,
                        ignore_content_before_first_milestone=False, ignore_undeclared_divs=False, only_last_state_is_non_chunk=False,
-                       only_leaf_divisions_readable=False, division_tags=None, division_min=None):
+                       only_leaf_divisions_readable=False, division_tags=None, division_min=None, ignore_notes=False):
         """
         Constructs a Perseus text importer.
         
@@ -89,6 +89,7 @@ class PerseusTextImporter(TextImporter):
         only_bottom_division_readable -- if true, then only the bottom-most division will be allowed to be readable
         division_tags -- if not none, only division tags within this list will be considered valid
         division_min -- if not none, then only division with a number less than or equal to this value will be recognized
+        ignore_notes -- if true, notes will be ignored
         """
         
         self.overwrite_existing = overwrite_existing
@@ -107,6 +108,7 @@ class PerseusTextImporter(TextImporter):
         self.only_last_state_is_non_chunk = only_last_state_is_non_chunk
         self.only_leaf_divisions_readable = only_leaf_divisions_readable
         self.division_min = division_min
+        self.ignore_notes = ignore_notes
         
         if division_tags is not None:
             self.division_tags = division_tags[:]
