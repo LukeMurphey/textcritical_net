@@ -1138,12 +1138,17 @@ class PerseusTextImporter(TextImporter):
                 # Include:
                 #  1) milestone nodes that are not in the current state set in the XML
                 attach_xml_content = True
-                
+
             elif node.tagName == "list" and "type" in node.attributes.keys() and node.attributes["type"].value == "toc":
                 logger.debug("Skipping attachment of a %s node", node.tagName)
                 attach_xml_content =  False
                 recurse_down_node = False
                 
+            elif node.tagName == "note" and ignore_notes:
+                logger.debug("Skipping attachment of a %s node", node.tagName)
+                attach_xml_content =  False
+                recurse_down_node = False
+
             elif node.tagName == "note" and "type" in node.attributes.keys() and node.attributes["type"].value == "title":
                 logger.debug("Skipping attachment of a %s node", node.tagName)
                 attach_xml_content =  False
