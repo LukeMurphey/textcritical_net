@@ -1,6 +1,12 @@
+import os
+
 from reader.models import Author, Work, WorkType, Division, Verse, Lemma, WordForm, WordDescription, WikiArticle
 from django.contrib import admin
 from reader.contentsearch import WorkIndexer
+from django.conf import settings
+from reader.models import Work
+from reader.ebook import MobiConvert
+from reader.ebook import ePubExport
 
 class AuthorAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -47,6 +53,27 @@ def make_search_indexes(modeladmin, request, queryset):
         WorkIndexer.index_work(work)
 
 make_search_indexes.short_description = "Make search indexes"
+
+def make_ebooks(modeladmin, request, queryset):
+    for work in queryset:
+        # Step 1: create the epub file
+
+        epub_file = work.title_slug + ".epub"
+        epub_file_full_path = os.path.join(settings.GENERATED_FILES_DIR, epub_file)
+                
+        # Delete the existing epub file if necessary
+        if os.path.exists(epub_file_full_path):
+            os.remove(epub_file_full_path)
+        
+        ePubExport.exportWork(work, epub_file_full_path)
+
+        # Step 2: make the mobi file
+        mobi_file = work.title_slug + ".mobi"
+        mobi_file_full_path = os.path.join(settings.GENERATED_FILES_DIR, mobi_file)
+
+        MobiConvert.convertEpub(work, epub_file_full_path, mobi_file_full_path)
+
+make_ebooks.short_description = "Recreate ebook"
 
 class WorkAdmin(admin.ModelAdmin):
     
