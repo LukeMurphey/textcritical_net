@@ -794,12 +794,6 @@
         }
     },
     {
-        "language" : "Greek",
-        "import_parameters" : {
-            "state_set" : 0
-        }
-    },
-    {
         "author" : "Appian",
         "language" : "English",
         "title"    : "The Foreign Wars",
@@ -960,7 +954,7 @@
         }
     },
     {
-        "author" : [ "Herodotus"],
+        "author" : "Herodotus",
         "language" : "Greek",
         "title" : "The Histories",
         "import_parameters" : {
@@ -991,8 +985,10 @@
             "only_leaf_divisions_readable" : true
         }
     },
-	{
-	    "language"  : "Greek",
-        "should_import" : true
-	}
+    {
+        "language" : "Greek",
+        "import_parameters" : {
+            "state_set" : 0
+        }
+    }
 ]
