@@ -30,6 +30,9 @@ class Command(BaseCommand):
         try:
             works = Work.objects.all()
             
+            if not os.path.exists(settings.GENERATED_FILES_DIR):
+                os.makedirs(settings.GENERATED_FILES_DIR)
+
             for work in works:
                 
                 epub_file = work.title_slug + ".epub"

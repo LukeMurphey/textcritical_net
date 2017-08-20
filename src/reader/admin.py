@@ -56,6 +56,11 @@ make_search_indexes.short_description = "Make search indexes"
 
 def make_ebooks(modeladmin, request, queryset):
     for work in queryset:
+
+        # Make the directory if necessary
+        if not os.path.exists(settings.GENERATED_FILES_DIR):
+            os.makedirs(settings.GENERATED_FILES_DIR)
+
         # Step 1: create the epub file
 
         epub_file = work.title_slug + ".epub"
@@ -84,7 +89,7 @@ class WorkAdmin(admin.ModelAdmin):
     list_filter = ('language', 'work_type', 'authors')
     search_fields = ('title',)
 
-    actions = [make_search_indexes]
+    actions = [make_search_indexes, make_ebooks]
 
     fieldsets = (
         (None, {
