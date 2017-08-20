@@ -65,6 +65,12 @@ def import_perseus_file(request):
             else:
                 ignore_undeclared_divs = False
                 
+            # Determine if we are to ignore division markers
+            if 'ignore_notes' in request.POST:
+                ignore_notes = form.cleaned_data['ignore_notes']
+            else:
+                ignore_notes = False
+
             # Handle the division minimum
             if 'division_min' in request.POST and len(form.cleaned_data['division_min']) > 0:
                 division_min = form.cleaned_data['division_min']
@@ -89,7 +95,14 @@ def import_perseus_file(request):
             for chunk in f.chunks():
                 perseus_xml_string = perseus_xml_string + str(chunk)  
                 
-            importer = PerseusTextImporter(state_set=state_set, ignore_division_markers=ignore_divisions, overwrite_existing=overwrite, ignore_content_before_first_milestone=ignore_content_before_milestones, ignore_undeclared_divs=ignore_undeclared_divs, division_min=division_min)
+            importer = PerseusTextImporter(state_set=state_set,
+                                           ignore_division_markers=ignore_divisions,
+                                           overwrite_existing=overwrite,
+                                           ignore_content_before_first_milestone=ignore_content_before_milestones,
+                                           ignore_undeclared_divs=ignore_undeclared_divs,
+                                           division_min=division_min,
+                                           ignore_notes=ignore_notes)
+
             work = importer.import_xml_string(perseus_xml_string)
                 
             messages.add_message(request, messages.INFO, 'Work successfully imported')
