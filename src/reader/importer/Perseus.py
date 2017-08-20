@@ -1144,7 +1144,7 @@ class PerseusTextImporter(TextImporter):
                 attach_xml_content =  False
                 recurse_down_node = False
                 
-            elif node.tagName == "note" and ignore_notes:
+            elif node.tagName == "note" and self.ignore_notes:
                 logger.debug("Skipping attachment of a %s node", node.tagName)
                 attach_xml_content =  False
                 recurse_down_node = False
