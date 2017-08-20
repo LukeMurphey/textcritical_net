@@ -7,6 +7,7 @@ Created on Oct 11, 2012
 import os
 import logging
 import csv
+import pprint
 from time import time
 from xml.dom.minidom import parse
 from reader.importer.Perseus import PerseusTextImporter
@@ -220,10 +221,11 @@ class PerseusBatchImporter(PerseusFileProcessor):
     A batch importer for walking a directory and importing all of the files if they match an import policy.
     """
     
-    def __init__(self, perseus_directory, overwrite_existing=False, book_selection_policy=None, import_even_if_already_existing=True):
+    def __init__(self, perseus_directory, overwrite_existing=False, book_selection_policy=None, import_even_if_already_existing=True, test=False):
         self.perseus_directory = perseus_directory
         self.overwrite_existing = overwrite_existing
         self.book_selection_policy = book_selection_policy
+        self.test = test
         
         self.import_even_if_already_existing = import_even_if_already_existing
     
@@ -254,6 +256,12 @@ class PerseusBatchImporter(PerseusFileProcessor):
         perseus_importer = None
         import_parameters = self.get_processing_parameters(document_xml, file_path, title, author, language, editor)
         
+        if self.test:
+            pp = pprint.PrettyPrinter(indent=4)
+            print "Import policy matched: file_path=%s, title=%s, author=%s, language=%s, editor=%s" % (file_path, title, author, language, editor)
+            pp.pprint(import_parameters)
+            return
+
         # Get the transforms to be executed
         if import_parameters not in [None, True, False] and 'transforms' in import_parameters:
             transforms = import_parameters.get('transforms', None)

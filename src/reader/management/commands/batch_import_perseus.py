@@ -13,7 +13,8 @@ class Command(BaseCommand):
 
     option_list = BaseCommand.option_list + (
         make_option("-d", "--directory", dest="directory", help="The directory containing the files to import"),
-        make_option("-o", "--overwrite", action="store_true", dest="overwrite", default=False, help="Overwrite and replace existing items")
+        make_option("-o", "--overwrite", action="store_true", dest="overwrite", default=False, help="Overwrite and replace existing items"),
+        make_option("-t", "--test", action="store_true", dest="test", help="Output the import parameters for any works that would be imported"),
     )
 
     def handle(self, *args, **options):
@@ -38,7 +39,18 @@ class Command(BaseCommand):
             overwrite = True
         else:
             overwrite = False
-        
+
+        test = options['test']
+
+        if test is None:
+            test = False
+        elif test in [True, False]:
+            pass # Already a boolean
+        elif test.lower() in ["true", "1"]:
+            test = True
+        else:
+            test = False
+
         # Get the path to the import policy accounting for the fact that the command may be run outside of the path where manage.py resides
         import_policy_file = os.path.join( os.path.split(sys.argv[0])[0], "reader", "importer", "perseus_import_policy.json")
         
@@ -46,10 +58,19 @@ class Command(BaseCommand):
         selection_policy.load_policy( import_policy_file )
         
         perseus_batch_importer = PerseusBatchImporter(
-                                                      perseus_directory     = directory,
+                                                      perseus_directory= directory,
                                                       book_selection_policy = selection_policy.should_be_processed,
-                                                      overwrite_existing    = overwrite )
+                                                      overwrite_existing = overwrite,
+                                                      test = test)
         
-        print "Importing files from", directory
+        if test:
+            print "Testing import for files from", directory
+        else:
+            print "Importing files from", directory
+
         perseus_batch_importer.do_import()
-        print "Files from the", directory, "directory successfully imported"
+
+        if test:
+            print "Files from the", directory, "evaluated"
+        else:
+            print "Files from the", directory, "directory successfully imported"
