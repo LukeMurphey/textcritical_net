@@ -184,7 +184,6 @@ class RelatedWork(models.Model):
         
         # If we failed to reject the equivalency of the work, then treat them as equivalent
         return True
-        
     
     @staticmethod
     def make_related_work(first_work, second_work):
@@ -215,22 +214,29 @@ class RelatedWork(models.Model):
             cls.find_related_for_work(first_work, ignore_editors, ignore_divisions, consider_a_match_if_divisions_or_editors_match)
             
     @classmethod
-    def find_related_for_work( cls, first_work, ignore_editors=False, ignore_divisions=False, consider_a_match_if_divisions_or_editors_match=True ):
+    def find_related_for_work( cls, first_work, ignore_editors=False, ignore_divisions=False, consider_a_match_if_divisions_or_editors_match=True, test=False ):
         """
         Automatically discover any other related works and make a reference to the provided work.
         """
-        
+
+        related_works = []
+
         for second_work in Work.objects.all():
-                
+
             if second_work.id != first_work.id and cls.are_works_equivalent(first_work, second_work, ignore_editors, ignore_divisions, consider_a_match_if_divisions_or_editors_match):
-                    
-                # Make the related work instances
-                entries_made = RelatedWork.make_related_work(first_work, second_work)
-                    
-                if entries_made > 0:
-                    logger.info("Made a reference between two works, first_work=%s, second_work=%s" % ( first_work.title_slug, second_work.title_slug) )
-    
-        
+
+                if not test:
+                    # Make the related work instances
+                    entries_made = RelatedWork.make_related_work(first_work, second_work)
+
+                    if entries_made > 0:
+                        logger.info("Made a reference between two works, first_work=%s, second_work=%s" % ( first_work.title_slug, second_work.title_slug) )
+
+                # Keep a record of the related work
+                related_works.append(second_work)
+
+        return related_works
+
 class WorkAlias(models.Model):
     """
     Represents an alias to a work.

@@ -1,6 +1,6 @@
 import os
 
-from reader.models import Author, Work, WorkType, Division, Verse, Lemma, WordForm, WordDescription, WikiArticle
+from reader.models import Author, Work, WorkType, Division, Verse, Lemma, WordForm, WordDescription, WikiArticle, RelatedWork
 from django.contrib import admin
 from reader.contentsearch import WorkIndexer
 from django.conf import settings
@@ -47,6 +47,7 @@ class DivisionInline(admin.StackedInline):
         }),
     )
 
+# A command to make search indexes
 def make_search_indexes(modeladmin, request, queryset):
     for work in queryset:
         WorkIndexer.delete_work_index(work)
@@ -54,6 +55,7 @@ def make_search_indexes(modeladmin, request, queryset):
 
 make_search_indexes.short_description = "Make search indexes"
 
+# A command to make ebooks
 def make_ebooks(modeladmin, request, queryset):
     for work in queryset:
 
@@ -80,6 +82,20 @@ def make_ebooks(modeladmin, request, queryset):
 
 make_ebooks.short_description = "Recreate ebook"
 
+# A command to make references to related works
+def make_related_works(self, request, queryset):
+
+    count_made = 0
+
+    for work in queryset:
+        related_works = RelatedWork.find_related_for_work(work)
+
+        count_made += len(related_works)
+
+    self.message_user(request, "%i work references discovered" % count_made)
+
+make_related_works.short_description = "Auto-link related works"
+
 class WorkAdmin(admin.ModelAdmin):
     
     #prepopulated_fields = {"title_slug": ("title",)}
@@ -89,7 +105,7 @@ class WorkAdmin(admin.ModelAdmin):
     list_filter = ('language', 'work_type', 'authors')
     search_fields = ('title',)
 
-    actions = [make_search_indexes, make_ebooks]
+    actions = [make_search_indexes, make_ebooks, make_related_works]
 
     fieldsets = (
         (None, {
