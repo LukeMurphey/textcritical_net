@@ -46,6 +46,20 @@ Upload a Perseus TEI XML file to import it. The works can be downloaded from <a 
     <p>The file is being uploaded; please wait until the import completes</p>
 </div>
 
+<h2>Import Using the Predefined Policy</h2>
+<form enctype="multipart/form-data" action="{% url "admin_import_perseus_file_policy" %}" method="POST">
+    <table>
+        {% csrf_token %}
+        {{policy_form}}
+        <tr>
+            <td></td>
+            <td><input class="SubmitButton" type="submit" value="Import Now" onclick="return submit_form();" /></td>
+        </tr>
+    </table>
+</form>
+
+<br />
+<h2>Import Using a Manually Defined Policy</h2>
 <form enctype="multipart/form-data" action="{% url "admin_import_perseus_file" %}" method="POST">
     <table>
         {% csrf_token %}

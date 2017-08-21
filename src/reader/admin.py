@@ -43,7 +43,7 @@ class DivisionInline(admin.StackedInline):
     
     fieldsets = (
         (None, {
-            'fields': ( ('descriptor', 'sequence_number'), ('title', 'subtitle'), 'original_content'),
+            'fields': ( ('descriptor', 'sequence_number'), ('title', 'subtitle', 'title_slug'), 'original_content'),
         }),
     )
 

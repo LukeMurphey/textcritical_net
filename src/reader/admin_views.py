@@ -6,15 +6,19 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 
 from datetime import datetime
+from xml.dom.minidom import parseString
+import os
+import tempfile
 
-from reader.forms import ImportPerseusFileForm
+from reader.forms import ImportPerseusFileForm, ImportPerseusFileFormByPolicy
 from reader.importer.Perseus import PerseusTextImporter
+from reader.importer.PerseusBatchImporter import PerseusBatchImporter
+from reader.importer.batch_import import JSONImportPolicy
 
 @staff_member_required
 def import_perseus_file(request):
     
     work = None
-    start_time = datetime.now()
     
     # If this is POST, then check the contents against the form
     if request.method == 'POST':
@@ -113,5 +117,73 @@ def import_perseus_file(request):
     else:
         form = ImportPerseusFileForm()
     
+    policy_form = ImportPerseusFileFormByPolicy()
+
     return render_to_response('admin/reader/import_perseus_file.html', {'form' : form,
+                                                                        'policy_form' : policy_form,
+                                                                        'imported_work' : work}, context_instance=RequestContext(request))
+
+@staff_member_required
+def import_perseus_file_policy(request):
+
+    work = None
+
+    # If this is POST, then check the contents against the form
+    if request.method == 'POST':
+
+        policy_form = ImportPerseusFileFormByPolicy(request.POST, request.FILES)
+
+        # Make sure that the form is valid
+        if policy_form.is_valid():
+
+            # Get the file contents
+            if request.FILES['perseus_file'].multiple_chunks():
+                pass
+
+            f = request.FILES['perseus_file']
+
+            filename = request.FILES['perseus_file'].name
+
+            perseus_xml_string = ''
+
+            for chunk in f.chunks():
+                perseus_xml_string = perseus_xml_string + str(chunk)
+
+            # Save the file
+            filepath = os.path.join(tempfile.gettempdir(), filename)
+            rawfile = open(filepath,"w")
+            rawfile.write(perseus_xml_string)
+            rawfile.close()
+
+            # Get the document XML
+            document_xml = parseString(perseus_xml_string)
+
+            # Get the path to the import policy accounting for the fact that the command may be run outside of the path where manage.py resides
+            import_policy_file = os.path.abspath(os.path.join("reader", "importer", "perseus_import_policy.json"))
+
+            selection_policy = JSONImportPolicy()
+            selection_policy.load_policy(import_policy_file)
+
+            importer = PerseusBatchImporter(None, book_selection_policy=selection_policy.should_be_processed)
+
+            # Get the information we need to get the import policy
+            title = importer.get_title(document_xml)
+            author = importer.get_author(document_xml)
+            language = importer.get_language(document_xml)
+            editor = importer.get_editor(document_xml)
+
+            # Import the work
+            importer.process_file(filepath, document_xml, title, author, language, editor)
+
+            messages.add_message(request, messages.INFO, 'Work successfully imported')
+        else:
+            messages.add_message(request, messages.ERROR, 'Work could not be imported')
+
+    else:
+        policy_form = ImportPerseusFileFormByPolicy()
+
+    form = ImportPerseusFileForm()
+
+    return render_to_response('admin/reader/import_perseus_file.html', {'form' : form,
+                                                                        'policy_form' : policy_form,
                                                                         'imported_work' : work}, context_instance=RequestContext(request))

@@ -9,3 +9,6 @@ class ImportPerseusFileForm(forms.Form):
     ignore_undeclared_divs = forms.BooleanField( required=False, widget=forms.CheckboxInput(attrs={'class':'Checkbox'}), help_text='Ignores divisions that are undeclared.')
     division_min = forms.CharField( required=False, help_text='Enter an integer defining how deep to ignore divisions (use to ignore some deeply nested notes, like "div2")')
     ignore_notes = forms.BooleanField( required=False, widget=forms.CheckboxInput(attrs={'class':'Checkbox'}), help_text='Ignores embedded notes.')
+
+class ImportPerseusFileFormByPolicy(forms.Form):
+    perseus_file = forms.FileField()
