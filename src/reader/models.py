@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.db.models import Q
 from django.template.defaultfilters import slugify
@@ -335,7 +336,7 @@ class Division(models.Model):
 
         super(Division, self).save(*args, **kwargs)
         
-    def get_division_description(self, use_titles=False, verse=None):
+    def get_division_description(self, use_titles=False, verse=None, section_divider=" "):
         
         s = ""
         prior_was_number = False
@@ -358,7 +359,7 @@ class Division(models.Model):
             if s is not None and prior_was_number and is_number:
                 s = "." + s
             else:
-                s = " " + s
+                s = section_divider + s
                 
             prior_was_number = is_number
                 
