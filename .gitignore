@@ -8,5 +8,7 @@ tmp/*
 
 src/reader/templates/VERSION.txt
 src/media/stylesheets/*.css
+src/media/files/*.epub
+src/media/files/*.mobi
 var/*
 settings.py
