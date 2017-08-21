@@ -959,9 +959,47 @@
         "title" : "The Histories",
         "import_parameters" : {
             "state_set" : 0,
-            "ignore_notes" : true,
+            "ignore_notes" : true
+        }
+    },
+    {
+        "author" : "Herodotus",
+        "language" : "Greek",
+        "title" : "The Histories",
+        "import_parameters" : {
+            "state_set" : 0,
+            "ignore_notes" : true
+        }
+    },
+    {
+        "author" : "Galen",
+        "language" : "English",
+        "title" : "On the Natural Faculties",
+        "editor" : "A.J. Brock",
+        "import_parameters" : {
+            "state_set" : 0,
             "transforms" : {
-            	"update_title_slug" : {}
+            	"set_division_title" : {
+            		"existing_division_title_slug" : "on-the-natural-faculties-book-i",
+            		"existing_division_sequence_number" : 1,
+            		"title" : "BOOK ONE"
+                },
+                "update_title_slug" : {}
+            }
+        }
+    },
+    {
+        "author" : "Galen",
+        "language" : "Greek",
+        "title" : "On the Natural Faculties",
+        "editor" : "A.J. Brock",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+            	"set_division_title" : {
+            		"existing_division_sequence_number" : 1,
+            		"title" : "Α"
+                }
             }
         }
     },
