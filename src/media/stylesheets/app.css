@@ -369,6 +369,14 @@ html {
   content: "..."; }
 .view_read_work .quote, .view_read_work .q {
   font-style: italic; }
+.view_read_work .bibl {
+  margin-left: 3px;
+  margin-right: 3px;
+  font-weight: bold; }
+.view_read_work .bibl::before {
+  content: "["; }
+.view_read_work .bibl::after {
+  content: "]"; }
 .view_read_work .docauthor {
   display: block;
   padding-bottom: 16px; }
@@ -661,6 +669,10 @@ textarea.clipboard-copy-text[readonly] {
    ----------------------------------------- */
 #works_list_info {
   padding-bottom: 12px; }
+
+#works_list_filter {
+  float: right;
+  margin-top: 8px; }
 
 .paginate_enabled_next, .paginate_enabled_previous, .paginate_disabled_next, .paginate_disabled_previous {
   background-color: #FFFFFF;

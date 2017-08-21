@@ -31,6 +31,14 @@ sup.note {
   content: "..."; }
 .view_read_work .quote, .view_read_work .q {
   font-style: italic; }
+.view_read_work .bibl {
+  margin-left: 3px;
+  margin-right: 3px;
+  font-weight: bold; }
+.view_read_work .bibl::before {
+  content: "["; }
+.view_read_work .bibl::after {
+  content: "]"; }
 .view_read_work .docauthor {
   display: block;
   padding-bottom: 16px; }
