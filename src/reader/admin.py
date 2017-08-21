@@ -83,7 +83,7 @@ def make_ebooks(modeladmin, request, queryset):
 make_ebooks.short_description = "Recreate ebook"
 
 # A command to make references to related works
-def make_related_works(self, request, queryset):
+def make_related_works(modeladmin, request, queryset):
 
     count_made = 0
 
@@ -92,7 +92,7 @@ def make_related_works(self, request, queryset):
 
         count_made += len(related_works)
 
-    self.message_user(request, "%i work references discovered" % count_made)
+    modeladmin.message_user(request, "%i work references discovered" % count_made)
 
 make_related_works.short_description = "Auto-link related works"
 
