@@ -100,7 +100,7 @@ class PerseusFileProcessor():
         finally:
             document_xml.unlink() 
             del(document_xml)
-        
+
     def process_file(self, file_path, document_xml, title, author, language, editor, **kwargs):
         """
         Process a Perseus file.
@@ -237,7 +237,7 @@ class PerseusBatchImporter(PerseusFileProcessor):
         works = Work.objects.filter( title=title, authors__name=author, language=language)
         
         return works.count() > 0
-    
+
     def process_file(self, file_path, document_xml, title, author, language, editor, **kwargs):
         """
         Determine if the provided file ought to be imported and import it if necessary.
