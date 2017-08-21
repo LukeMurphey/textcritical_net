@@ -158,13 +158,19 @@ def import_perseus_file_policy(request):
             # Get the document XML
             document_xml = parseString(perseus_xml_string)
 
+            # Determine if we ought to overwrite existing works
+            if 'overwrite' in request.POST:
+                overwrite = policy_form.cleaned_data['overwrite']
+            else:
+                overwrite = False
+
             # Get the path to the import policy accounting for the fact that the command may be run outside of the path where manage.py resides
             import_policy_file = os.path.abspath(os.path.join("reader", "importer", "perseus_import_policy.json"))
 
             selection_policy = JSONImportPolicy()
             selection_policy.load_policy(import_policy_file)
 
-            importer = PerseusBatchImporter(None, book_selection_policy=selection_policy.should_be_processed)
+            importer = PerseusBatchImporter(None, book_selection_policy=selection_policy.should_be_processed, overwrite_existing=overwrite, import_even_if_already_existing=False)
 
             # Get the information we need to get the import policy
             title = importer.get_title(document_xml)
@@ -173,9 +179,12 @@ def import_perseus_file_policy(request):
             editor = importer.get_editor(document_xml)
 
             # Import the work
-            importer.process_file(filepath, document_xml, title, author, language, editor)
+            imported = importer.process_file(filepath, document_xml, title, author, language, editor)
 
-            messages.add_message(request, messages.INFO, 'Work successfully imported')
+            if imported:
+                messages.add_message(request, messages.INFO, 'Work successfully imported')
+            else:
+                messages.add_message(request, messages.WARNING, 'Work was not imported (it already exists)')
         else:
             messages.add_message(request, messages.ERROR, 'Work could not be imported')
 
