@@ -325,7 +325,7 @@ class TestImport(TestCase):
         
 class TestShortcuts(TestReader):
     
-    def time_conversion (self):
+    def time_conversion(self):
         import time
         
         start = time.time()
@@ -337,8 +337,7 @@ class TestShortcuts(TestReader):
     
     def test_process_text(self):
         
-        original_content = r"""
-<verse>
+        original_content = r"""<verse>
     <head>*(ikanw=s <num ref="some_ref">d</num> me\n </head>
 </verse>"""
 
@@ -663,7 +662,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         expected = r"*ta/de e)/nestin e)n th=|  tw=n *)iwsh/pou i(storiw=n th=s *)ioudai+kh=s a)rxaiologi/as."
         
-        self.assertEquals( PerseusTextImporter.getText(head.childNodes, False), expected)
+        self.assertEquals(PerseusTextImporter.getText(head.childNodes, False), expected)
         
     def test_get_text_recursive(self):
         
@@ -675,7 +674,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         expected = r"*ta/de e)/nestin e)n th=| b tw=n *)iwsh/pou i(storiw=n th=s *)ioudai+kh=s a)rxaiologi/as."
         
-        self.assertEquals( PerseusTextImporter.getText(head.childNodes, True), expected)
+        self.assertEquals(PerseusTextImporter.getText(head.childNodes, True), expected)
         
     def test_get_states(self):
                                     
@@ -721,7 +720,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         title = PerseusTextImporter.get_title_from_tei_header(tei_header_node)
         
-        self.assertEquals( title, "Conjugalia Praecepta")
+        self.assertEquals(title, "Conjugalia Praecepta")
         
     def test_get_title_sub_nodes(self):
         
@@ -732,7 +731,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         title = PerseusTextImporter.get_title_from_tei_header(tei_header_node)
         
-        self.assertEquals( title, "Works on Socrates")
+        self.assertEquals(title, "Works on Socrates")
         
     def test_get_title_for_processing(self):
         
@@ -743,7 +742,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         title = PerseusTextImporter.get_title_from_tei_header(tei_header_node)
         
-        self.assertEquals( title, "Anabasis")
+        self.assertEquals(title, "Anabasis")
         
     def test_get_title_not_sub(self):
         
@@ -754,7 +753,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         title = PerseusTextImporter.get_title_from_tei_header(tei_header_node)
         
-        self.assertEquals( title, "Galba")
+        self.assertEquals(title, "Galba")
         
     def test_get_author_from_tei_header(self):
         
@@ -765,7 +764,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         author = PerseusTextImporter.get_author_from_tei_header(tei_header_node)
         
-        self.assertEquals( author, "Aristotle")
+        self.assertEquals(author, "Aristotle")
         
     def test_get_editors(self):
         
@@ -774,7 +773,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         editors = PerseusTextImporter.get_editors(book_doc)
         
-        self.assertEquals( editors[0], "J. M. Edmonds")
+        self.assertEquals(editors[0], "J. M. Edmonds")
         
     def test_get_editors_multiple(self):
         
@@ -783,8 +782,8 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         editors = PerseusTextImporter.get_editors(book_doc)
         
-        self.assertEquals( editors[0], "Brooke Foss Westcott")
-        self.assertEquals( editors[1], "Fenton John Anthony Hort")
+        self.assertEquals(editors[0], "Brooke Foss Westcott")
+        self.assertEquals(editors[1], "Fenton John Anthony Hort")
         
     def test_get_editors_multiple_in_single_field(self):
         
@@ -793,8 +792,8 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         editors = PerseusTextImporter.get_editors(book_doc)
         
-        self.assertEquals( editors[0], "Harold Cherniss")
-        self.assertEquals( editors[1], "William C. Helmbold")
+        self.assertEquals(editors[0], "Harold Cherniss")
+        self.assertEquals(editors[1], "William C. Helmbold")
     
     def test_get_author_no_title_stmt(self):
         
@@ -828,7 +827,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         book_xml = self.load_test_resource('plut.cat.ma_gk_portion.xml')
         book_doc = parseString(book_xml)
-        self.assertEquals( PerseusTextImporter.get_author(book_doc), "Plutarch")
+        self.assertEquals(PerseusTextImporter.get_author(book_doc), "Plutarch")
         
     def test_load_bad_chars(self):
         
@@ -856,12 +855,12 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEqual( divisions[0].title, "lines 1-39")
-        self.assertEqual( divisions[1].title, "lines 40-82")
-        self.assertEqual( divisions[2].title, "lines 83-103")
-        self.assertEquals( divisions[3].title, "lines 104-1616")
-        self.assertEquals( divisions[4].title, "lines 1617-1648")
-        self.assertEquals( divisions[5].title, "lines 1649-1672")
+        self.assertEqual(divisions[0].title, "lines 1-39")
+        self.assertEqual(divisions[1].title, "lines 40-82")
+        self.assertEqual(divisions[2].title, "lines 83-103")
+        self.assertEquals(divisions[3].title, "lines 104-1616")
+        self.assertEquals(divisions[4].title, "lines 1617-1648")
+        self.assertEquals(divisions[5].title, "lines 1649-1672")
         
     def test_get_line_count(self):
         
@@ -2160,10 +2159,64 @@ class TestEpubExport(TestReader):
         
         #division_map = ePubExport.DivisionMap(division, None)
         
-        notes = ePubExport.getPerseusNotes(division)
+        notes = ePubExport.getPerseusNotesFromDivisionContent(division)
         
-        self.assertEqual( len(notes), 1 )
-        self.assertEqual( notes[0].text, u'A proverbial expression of uncertain origin for enforced silence; cf. fr. 176, \u201cA key stands guard upon my tongue.\u201d' )
+        self.assertEqual(len(notes), 1)
+        self.assertEqual(notes[0].text, u'A proverbial expression of uncertain origin for enforced silence; cf. fr. 176, \u201cA key stands guard upon my tongue.\u201d')
+
+    def test_get_perseus_notes_from_verses_not_ignoring_notes(self):
+        # See issue #2006 (https://lukemurphey.net/issues/2006)
+        file_name = self.get_test_resource_file_name('aesch.ag_eng.xml')
+
+        importer = PerseusTextImporter(ignore_notes=False)
+        importer.import_file(file_name)
+
+        divisions = Division.objects.filter(work=importer.work).order_by("sequence_number")
+        
+        notes = ePubExport.getPerseusNotesFromVerses(divisions[1])
+
+        self.assertEqual(len(notes), 1)
+        self.assertEqual(notes[0].text, u'A proverbial expression of uncertain origin for enforced silence; cf. fr. 176, A key stands guard upon my tongue.')
+
+    def test_get_perseus_notes_from_verses_ignoring_notes(self):
+        # See issue #2006 (https://lukemurphey.net/issues/2006)
+        file_name = self.get_test_resource_file_name('aesch.ag_eng.xml')
+
+        importer = PerseusTextImporter(ignore_notes=True)
+        importer.import_file(file_name)
+
+        divisions = Division.objects.filter(work=importer.work).order_by("sequence_number")
+        
+        notes = ePubExport.getPerseusNotesFromVerses(divisions[1])
+
+        self.assertEqual(len(notes), 0)
+
+    def test_get_perseus_notes_from_verses_ignoring_notes_subdivisions(self):
+        # See issue #2006 (https://lukemurphey.net/issues/2006)
+        file_name = self.get_test_resource_file_name('hist_eng.xml')
+
+        importer = PerseusTextImporter(ignore_notes=True)
+        importer.import_file(file_name)
+
+        divisions = Division.objects.filter(work=importer.work).order_by("sequence_number")
+        
+        notes = ePubExport.getPerseusNotesFromVerses(divisions[1])
+
+        self.assertEqual(len(notes), 0)
+
+    def test_get_perseus_notes_from_verses_not_ignoring_notes_subdivisions(self):
+        # See issue #2006 (https://lukemurphey.net/issues/2006)
+        file_name = self.get_test_resource_file_name('hist_eng.xml')
+
+        importer = PerseusTextImporter(ignore_notes=False)
+        importer.import_file(file_name)
+
+        divisions = Division.objects.filter(work=importer.work).order_by("sequence_number")
+        
+        notes = ePubExport.getPerseusNotesFromVerses(divisions[0])
+
+        self.assertEqual(len(notes), 2)
+        self.assertEqual(notes[0].text, u'Introduction. The importance and magnitude of the subject.')
         
     def test_split_text_into_lines(self):
         
