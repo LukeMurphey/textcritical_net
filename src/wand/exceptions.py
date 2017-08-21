@@ -18,16 +18,29 @@ class WandException(Exception):
     """All Wand-related exceptions are derived from this class."""
 
 
-class WandWarning(WandException, Warning):
-    """Base class for Wand-related warnings."""
+class BaseWarning(WandException, Warning):
+    """Base class for Wand-related warnings.
+
+    .. versionadded:: 0.4.4
+
+    """
 
 
-class WandError(WandException):
-    """Base class for Wand-related errors."""
+class BaseError(WandException):
+    """Base class for Wand-related errors.
+
+    .. versionadded:: 0.4.4
+
+    """
 
 
-class WandFatalError(WandException):
-    """Base class for Wand-related fatal errors."""
+class BaseFatalError(WandException):
+    """Base class for Wand-related fatal errors.
+
+    .. versionadded:: 0.4.4
+
+    """
+
 
 class WandLibraryVersionError(WandException):
     """Base class for Wand-related ImageMagick version errors.
@@ -90,9 +103,9 @@ DOMAIN_MAP = [
 #: (:class:`list`) The list of (base_class, suffix) pairs (for each code).
 #: It would be zipped with :const:`DOMAIN_MAP` pairs' last element.
 CODE_MAP = [
-    (WandWarning, 'Warning'),
-    (WandError, 'Error'),
-    (WandFatalError, 'FatalError')
+    (BaseWarning, 'Warning'),
+    (BaseError, 'Error'),
+    (BaseFatalError, 'FatalError')
 ]
 
 
@@ -108,4 +121,3 @@ for domain, description, bases, codes in DOMAIN_MAP:
             'wand_error_code': code
         })
 del name, base, suffix
-

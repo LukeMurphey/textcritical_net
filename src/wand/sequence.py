@@ -6,6 +6,7 @@
 """
 import collections
 import contextlib
+import ctypes
 import numbers
 
 from .api import libmagick, library
@@ -114,7 +115,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
         if index < instances_length:
             instance = instances[index]
             if (instance is not None and
-                getattr(instance, 'c_resource', None) is not None):
+                    getattr(instance, 'c_resource', None) is not None):
                 return instance
         else:
             number_to_extend = index - instances_length + 1
@@ -127,6 +128,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
         single_image = libmagick.CloneImages(image, binary(str(index)), exc)
         libmagick.DestroyExceptionInfo(exc)
         single_wand = library.NewMagickWandFromImage(single_image)
+        single_image = libmagick.DestroyImage(single_image)
         library.MagickSetIteratorIndex(wand, tmp_idx)
         instance = SingleImage(single_wand, self.image, image)
         self.instances[index] = instance
@@ -247,12 +249,25 @@ class Sequence(ImageProperty, collections.MutableSequence):
         else:
             self.instances[offset:offset] = null_list
 
+    def _repr_png_(self):
+        library.MagickResetIterator(self.image.wand)
+        repr_wand = library.MagickAppendImages(self.image.wand, 1)
+        length = ctypes.c_size_t()
+        blob_p = library.MagickGetImagesBlob(repr_wand,
+                                             ctypes.byref(length))
+        if blob_p and length.value:
+            blob = ctypes.string_at(blob_p, length.value)
+            library.MagickRelinquishMemory(blob_p)
+            return blob
+        else:
+            return None
+
 
 class SingleImage(BaseImage):
     """Each single image in :class:`~wand.image.Image` container.
     For example, it can be a frame of GIF animation.
 
-    Note that all changes on single images are invinsilble to their
+    Note that all changes on single images are invisible to their
     containers until they are :meth:`~wand.image.BaseImage.close`\ d
     (:meth:`~wand.resource.Resource.destroy`\ ed).
 
