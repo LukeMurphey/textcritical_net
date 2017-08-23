@@ -10,5 +10,6 @@ src/reader/templates/VERSION.txt
 src/media/stylesheets/*.css
 src/media/files/*.epub
 src/media/files/*.mobi
+src/media/static/*
 var/*
 settings.py
