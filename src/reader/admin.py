@@ -53,6 +53,8 @@ def make_search_indexes(modeladmin, request, queryset):
         WorkIndexer.delete_work_index(work)
         WorkIndexer.index_work(work)
 
+    modeladmin.message_user(request, 'Indexes successfully created')
+
 make_search_indexes.short_description = "Make search indexes"
 
 # A command to make ebooks
@@ -79,6 +81,8 @@ def make_ebooks(modeladmin, request, queryset):
         mobi_file_full_path = os.path.join(settings.GENERATED_FILES_DIR, mobi_file)
 
         MobiConvert.convertEpub(work, epub_file_full_path, mobi_file_full_path)
+
+    modeladmin.message_user(request, 'eBooks successfully created')
 
 make_ebooks.short_description = "Recreate ebook"
 
