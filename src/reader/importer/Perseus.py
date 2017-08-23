@@ -677,10 +677,10 @@ class PerseusTextImporter(TextImporter):
         Deletes works that are equivalent to the one we are importing or have imported.
         """
         
-        if self.work.id is not None:
-            equivalent_works = Work.objects.exclude(id=self.work.id).filter( title=self.work.title, language=self.work.language) #, authors=self.work.authors.all() )
+        if self.work is not None and self.work.id is not None:
+            equivalent_works = Work.objects.exclude(id=self.work.id).filter(title=title, language=language) #, authors=self.work.authors.all() )
         else:
-            equivalent_works = Work.objects.filter( title=self.work.title, language=self.work.language) #, authors=self.work.authors.all() )
+            equivalent_works = Work.objects.filter(title=title, language=language) #, authors=self.work.authors.all() )
         
         for work in equivalent_works:
             logger.info("Deleting work so that new copy can replace it, title=%s, work.id=%i", work.title, work.id)
@@ -698,21 +698,23 @@ class PerseusTextImporter(TextImporter):
         # Obtain references to the nodes that contain meta-data about the book
         tei_header = document.getElementsByTagName("teiHeader")[0]
         
-        # Get the title
+        # Get the language and title
+        language = PerseusTextImporter.get_language(tei_header)
         title = PerseusTextImporter.get_title_from_tei_header(tei_header)
-        
+
+        # Delete pre-existing works if they exist
+        if self.overwrite_existing:
+            self.delete_equivalent_works(title=title, language=language)
+
+        # Make the work and set the title and language
+        # Note that we are making the work after deleting equivalent works so that the title slug
+        # can be reused.
         if self.work is None:
             self.make_work(title)
         else:
             self.work.title = title
-        
-        # Get the language
-        language = PerseusTextImporter.get_language(tei_header)
+
         self.work.language = language
-        
-        # Delete pre-existing works if they exist
-        if self.overwrite_existing:
-            self.delete_equivalent_works(title=title, language=language)
         
         # Save the work
         self.work.save()

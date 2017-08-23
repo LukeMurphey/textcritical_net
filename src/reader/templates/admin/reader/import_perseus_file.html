@@ -47,7 +47,7 @@ Upload a Perseus TEI XML file to import it. The works can be downloaded from <a 
 </div>
 
 <h2>Import Using the Predefined Policy</h2>
-<form enctype="multipart/form-data" action="{% url "admin_import_perseus_file_policy" %}" method="POST">
+<form enctype="multipart/form-data" action="{% url "admin_import_perseus_file" %}?by_policy" method="POST">
     <table>
         {% csrf_token %}
         {{policy_form}}
