@@ -1,5 +1,5 @@
 <project default="compile_and_package" name="textcritical.com">
-
+	
 	<!-- Define some things so that we can import things from environment variables -->
 	<property environment="env" />
 	
@@ -13,16 +13,36 @@
 		</sequential>
 	</macrodef>
 
-	<!-- Load parameters -->
-	<import_environment_var property="python" variable="PYTHON" />
-	<import_environment_var property="pip" variable="PIP" />
-
     <!--
     Load the properties files, local is loaded first since properties are immutable (cannot be changed
     by later property files) and we want the local properties to override the default properties
     -->
     <property file="local.properties" />
     <property file="default.properties" />
+
+	<!-- Load parameters relating to the the location of the Python directory -->
+	<import_environment_var property="python_dir" variable="PYTHON_DIR" />
+
+	<!-- Strip the ending slash if needed -->
+    <script language="javascript">
+		var py_dir = project.getProperty("python_dir");
+
+		if(py_dir === null){
+			project.setProperty("python_dir_cleaned", "");
+			project.setProperty("python", "python");
+			project.setProperty("pip", "pip");
+		}
+		else if(py_dir.match(/^.*[/\\]$/)){
+			project.setProperty("python_dir_cleaned", py_dir.slice(0, -1));
+		}
+		else{
+			project.setProperty("python_dir_cleaned", py_dir);
+		}
+    </script>
+	
+	<!-- Finalize the references to Python and PIP -->
+	<property name="python" value="${python_dir_cleaned}/bin/python" />
+	<property name="pip" value="${python_dir_cleaned}/bin/pip" />
 	
 	<!-- Set up JRuby so that SASS can run -->
 	<path id="JRuby">
@@ -271,12 +291,7 @@
 			<arg value="install"/>
 			<arg value="Genshi"/>
 		</exec>
-		<!--
-		<exec executable="pip" dir="src">
-			<arg value="install"/>
-			<arg value="Wand"/>
-		</exec>
-		-->
+
 	</target>
 
     <!-- ================================= 
@@ -357,34 +372,15 @@
 	</target>
 
     <!-- ================================= 
-          target: define_package_library_local
-         ================================= -->
-	<target name="define_package_library_local" depends="get_build_number,initialize_libraries">
-		<if>
-        	<available file="${install_directory}/media/files"/>
-			<then>
-				${value.build.packageoutput.directory}/textcritical_${value.build.number_hex}.zip
-			</then>
-			<else>
-				<echo level="warning">ebook files cache does not exist</echo>
-			</else>
-    	</if>
-		<property name="install_package" value="${value.build.packageoutput.directory}/textcritical_${value.build.number_hex}.zip" />
-	</target>
-
-    <!-- ================================= 
-          target: define_package_library_gocd
-         ================================= -->
-	<target name="define_package_library_gocd" depends="initialize_libraries">
-		<get src="${GO_SERVER_URL}/web-input/87/mainStage/1/build" dest="var/packages/${PACKAGE_FILE}"/>
-		<property name="install_package" value="${value.build.packageoutput.directory}/textcritical_${value.build.number_hex}.zip" />
-	</target>
-
-    <!-- ================================= 
           target: define_package_library
          ================================= -->
-	<target name="define_package_library" depends="initialize_libraries,define_package_library_gocd,define_package_library_local">
-		<property name="install_package" value="var/packages/textcritical_599545f4.zip" />
+	<target name="define_package_library" depends="initialize_libraries">
+
+		<last id="install_package_file">
+			<fileset dir="var/packages/" includes="**/textcritical*.zip" />
+		</last>
+
+		<property name="install_package" value="${toString:install_package_file}" />
 	</target>
 
     <!-- ================================= 
@@ -399,9 +395,13 @@
 	</target>
 
     <!-- ================================= 
-          target: upgrade
+          target: upgrade install directory
          ================================= -->
-	<target name="upgrade" description="Upgrade the existing install of TextCritical" depends="define_package_library,check_install_state">
+	<target name="upgrade_install_directory" depends="define_package_library,check_install_state,collect_static">
+
+		<echo>Deploying package:</echo>
+		<echo>     </echo>
+		<echo>     ${install_package}</echo>
 
 		<tstamp>
 			<format property="TODAY" pattern="yyyyMMdd-HHmmss" locale="en,US" />
@@ -409,10 +409,6 @@
 
 		<property name="tempdir" value="${java.io.tmpdir}/${user.name}/textcritical_output" />
 		<property name="renamed_install_directory" value="${install_directory}_${TODAY}" />
-
-		<!-- Stop the web-server -->
-
-		<!-- Sleep to let the server stop -->
 
 		<!-- Unzip the package into the temporary directory -->
 		<unzip src="${install_package}" dest="${tempdir}"/>
@@ -432,12 +428,15 @@
 		<!-- Rename the temporary directory back to the original directory name -->
 		<move file="${tempdir}" tofile="${install_directory}"/>
 
-		<!-- Optionally clear the cache (rm /var/cache) -->
-
-		<!-- Restart the web-server -->
-
 		<!-- Make sure everything looks ok -->
 		<antcall target="check_install_state" />
+
+	</target>
+
+    <!-- ================================= 
+          target: upgrade
+         ================================= -->
+	<target name="upgrade" description="Upgrade the existing install of TextCritical" depends="upgrade_install_directory">
 
 	</target>
 
