@@ -200,9 +200,11 @@ class WorkIndexer:
     def index_work(cls, work, commit=True, writer=None):
         """
         Indexes all verses within the given work.
-        
+
         Arguments:
         work -- The work that the verse is associated with
+        commit -- Indicates whether the changes should be committed to the persistence
+        writer -- The index writer to write to.
         """
         
         # Record the start time so that we can measure performance
