@@ -892,7 +892,7 @@ def api_convert_query_beta_code(request, search_query):
 
 @cache_page(15 * minutes)
 def api_word_parse(request, word=None):
-    
+
     if word is None or len(word) == 0 and 'word' in request.GET:
         word = request.GET['word']
     

@@ -50,7 +50,7 @@ $primary-color: #149bdf;
 }
 
 .loading-container,
-.loading {
+.loading-animated {
     height: 100px;
     position: relative;
     width: 100px;
@@ -59,7 +59,7 @@ $primary-color: #149bdf;
 
 .loading-container { margin: 40px auto; }
 
-.loading {
+.loading-animated {
     border: 2px solid transparent;
     border-color: transparent $primary-color transparent $primary-color;
     -moz-animation: rotate-loading 1.5s linear 0s infinite normal;
@@ -72,12 +72,12 @@ $primary-color: #149bdf;
     transform-origin: 50% 50%;
 }
 
-.loading-container:hover .loading {
+.loading-container:hover .loading-animated {
     border-color: transparent #E45635 transparent #E45635;
 }
 
-.loading-container:hover .loading,
-.loading-container .loading {
+.loading-container:hover .loading-animated,
+.loading-container .loading-animated {
     -webkit-transition: all 0.5s ease-in-out;
     -moz-transition: all 0.5s ease-in-out;
     -ms-transition: all 0.5s ease-in-out;
