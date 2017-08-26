@@ -26,13 +26,13 @@
   <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/arthref.css">
   
   {% if USE_MINIFIED|default_if_none:1 %}
-  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.min.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap.min.css">{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.min.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/darkly.bootstrap.min.css">{% endif %}
   {% else %}
-  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/bootstrap.css">{% endif %}
+  {% if USE_CDN|default_if_none:1 %}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.css">{% else %}<link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/darkly.bootstrap.css">{% endif %}
   {% endif %}
   
   {% if USE_DARK_THEME|default_if_none:1 %}
-  <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}stylesheets/darkstrap.css">
+
   {% endif %}
   {% endif %}
   {% block links %}{% endblock %}
