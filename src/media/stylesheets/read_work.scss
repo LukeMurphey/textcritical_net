@@ -38,6 +38,16 @@
     &:hover { color: #08C; }
 }
 
+.simple-progress{
+	height: 6px;
+	background: #202020;
+}
+
+.simple-progress > .bar{
+	background-color: #149bdf;
+	height: 6px;
+}
+
 @include keyframes(highlighted){
     0% {
         background: #b94a48;

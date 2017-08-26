@@ -79,6 +79,10 @@ footer .addthis_toolbox {
 .main-content-holder {
   min-height: 150px; }
 
+.current-place-in-text {
+  display: block;
+  height: 22px; }
+
 /* See http://forrst.com/posts/Bootstrap_right_positioned_dropdown-2KB */
 .dropdown-menu.right {
   left: auto;
@@ -445,6 +449,14 @@ html {
   color: #EEE; }
 .verse-link:hover {
   color: #08C; }
+
+.simple-progress {
+  height: 6px;
+  background: #202020; }
+
+.simple-progress > .bar {
+  background-color: #149bdf;
+  height: 6px; }
 
 @-webkit-keyframes highlighted {
   0% {
