@@ -7,9 +7,25 @@ tmp/*
 .vscode/*
 
 src/reader/templates/VERSION.txt
-src/media/stylesheets/*.css
 src/media/files/*.epub
 src/media/files/*.mobi
 src/media/static/*
 var/*
 settings.py
+
+# Ignore the processed CSS files
+src/media/stylesheets/404.css
+src/media/stylesheets/500.css
+src/media/stylesheets/about.css
+src/media/stylesheets/app.css
+src/media/stylesheets/beta_code_converter.css
+src/media/stylesheets/bootstrap_no_epubs.css
+src/media/stylesheets/data_tables.css
+src/media/stylesheets/epub.css
+src/media/stylesheets/fontello-embedded.css
+src/media/stylesheets/home.css
+src/media/stylesheets/perseus.css
+src/media/stylesheets/read_work.css
+src/media/stylesheets/search.css
+src/media/stylesheets/shortcuts.css
+src/media/stylesheets/works_index.css
