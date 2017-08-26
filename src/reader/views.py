@@ -403,7 +403,7 @@ def download_work(request, title=None,):
 @cache_page_if_ajax(12 * months, 'read_work')
 @ajaxify
 def read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
-    
+
     # Some warnings that should be posted to the user
     warnings = []
     
