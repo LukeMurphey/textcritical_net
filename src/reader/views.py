@@ -24,6 +24,7 @@ from reader.shortcuts import string_limiter, uniquefy, ajaxify, cache_page_if_aj
 from reader.utils import get_word_descriptions
 from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
+from reader.bookcover import makeCoverImage
 
 # Try to import the ePubExport but be forgiving if the necessary dependencies do not exist
 try:
@@ -399,7 +400,28 @@ def download_work(request, title=None,):
     response['Content-Disposition'] = 'attachment; filename="%s"' % (ebook_file)
     response['Content-Length'] = os.path.getsize(ebook_file_full_path)
     return response
-    
+
+@cache_page(8 * hours)
+def work_image(request, title=None, **kwargs):
+
+    # Try to get the work
+    work_alias = get_object_or_404(WorkAlias, title_slug=title)
+    work = work_alias.work
+
+    width = None
+
+    if 'width' in request.GET:
+        width = int(request.GET['width'])
+
+    cover_image_full_path = makeCoverImage(work, width=width)
+
+    # Stream the file from the disk
+    wrapper = FileWrapper(file(cover_image_full_path))
+
+    response = HttpResponse(wrapper, content_type='image/png')
+    response['Content-Length'] = os.path.getsize(cover_image_full_path)
+    return response
+
 @cache_page_if_ajax(12 * months, 'read_work')
 @ajaxify
 def read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):

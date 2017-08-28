@@ -25,6 +25,8 @@ urlpatterns = patterns('',
     url(r'^work/(?P<title>.*)/(?P<division_0>.+)/?$', 'reader.views.read_work', name='read_work' ),
     url(r'^work/(?P<title>[^/]*)/?$', 'reader.views.read_work', name='read_work' ),
     
+    url(r'^work_image/(?P<title>[^/]*)/?$', 'reader.views.work_image', name='work_image' ),
+
     url(r'^about/?$', 'reader.views.about', name='about' ),
     url(r'^contact/?$', 'reader.views.contact', name='contact' ),
     url(r'^search/?$', 'reader.views.search', name='search' ),
