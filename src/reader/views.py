@@ -1101,6 +1101,69 @@ def parse_reference_and_get_division_and_verse(regex, escaped_ref, work, divisio
     
     return division, verse_to_highlight, division_0, division_1, division_2, division_3, division_4
 
+def get_work_info(title):
+    
+    # Try to get the work
+    work_alias = get_object_or_404(WorkAlias, title_slug=title)
+    work = work_alias.work
+
+    # Add the work info
+    content = {
+                'title': work.title,
+                'authors': None,
+                'editors': None,
+                'language': work.language,
+                'title_slug': work.title_slug
+              }
+
+    # Add the author info
+    if work.authors.count() > 0:
+        authors = []
+
+        for author in work.authors.all():
+
+            # Get the author
+            authors.append(author.name)
+
+        content['authors'] = authors
+
+    # Add the editor info
+    if work.editors.all().count() > 0:
+        editors = []
+
+        for editor in work.editors.all():
+
+            # Get the editor
+            editors.append(editor.name)
+
+        content['editors'] = editors
+
+    # Get the wikipedia information
+    query = work.title
+
+    query2 = None
+    query3 = None
+
+    if work.authors.all().count() > 0:
+        query2 = work.title + " " + work.authors.all()[:1][0].name
+        query3 = work.authors.all()[:1][0].name
+
+    wiki_content = get_wikipedia_info_multiple(query, query2, query3)
+        
+    content['wiki_info'] = wiki_content
+
+    return content
+
+def api_work_info(request, title):
+
+    content = get_work_info(title)
+
+    if content is not None:
+        return render_api_response(request, content)
+
+    # Couldn't find the work
+    return render_api_response(request, {'work': title}, status=404 )
+
 def get_wikipedia_info(topic):
     import sys
     sys.path.append("lib")
@@ -1134,34 +1197,29 @@ def get_wikipedia_info(topic):
         return None
         
     return None
-    
-@cache_page(4 * hours)
-def api_wikipedia_info(request, topic=None, topic2=None, topic3=None):
+
+def get_wikipedia_info_multiple(topic=None, topic2=None, topic3=None):
     
     topics = []
-    
+
     # Get the topic from the arguments
-    if topic is None and 'topic' in request.GET:
-        topics.append(request.GET['topic'])
-    elif topic is not None:
+    if topic is not None:
         topics.append(topic)
-        
-    if topic2 is None and 'topic2' in request.GET:
-        topics.append(request.GET['topic2'])
-    elif topic2 is not None:
+
+    if topic2 is not None:
         topics.append(topic2)
-        
-    if topic3 is None and 'topic3' in request.GET:
-        topics.append(request.GET['topic3'])
-    elif topic3 is not None:
+
+    if topic3 is not None:
         topics.append(topic3)
-        
+
     import sys
     sys.path.append("lib")
     
     import wikipedia
     from wikipedia import PageError, DisambiguationError
     
+    topic_override = None
+
     # See if an article is listed for this search term
     for t in topics:
         topic_override = WikiArticle.get_wiki_article(t)
@@ -1180,7 +1238,25 @@ def api_wikipedia_info(request, topic=None, topic2=None, topic3=None):
         content = get_wikipedia_info(t)
         
         if content is not None:
-            return render_api_response(request, content)
+            return content
+
+@cache_page(4 * hours)
+def api_wikipedia_info(request, topic=None, topic2=None, topic3=None):
+    
+    # Get the topic from the arguments
+    if topic is None and 'topic' in request.GET:
+        topic = request.GET['topic']
+        
+    if topic2 is None and 'topic2' in request.GET:
+        topic2 = request.GET['topic2']
+        
+    if topic3 is None and 'topic3' in request.GET:
+        topic3 = request.GET['topic3']
+        
+    content = get_wikipedia_info_multiple(topic, topic2, topic3)
+    
+    if content is not None:
+        return render_api_response(request, content)
     
     # Couldn't find the article
     return render_api_response(request, {'topic': topic}, status=404 )

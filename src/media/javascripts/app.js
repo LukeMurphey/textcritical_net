@@ -10,13 +10,14 @@ define([
         'highcharts',
         'libs/text!/media/templates/alert_message.html',
         'libs/text!/media/templates/morphology_dialog.html',
-        'libs/text!/media/templates/work_info_dialog.html',
+		'libs/text!/media/templates/work_info_dialog.html',
+		'libs/text!/media/templates/wiki_info_dialog.html',
         'libs/text!/media/templates/loading_dialog.html',
         'libs/text!/media/templates/search_results.html',
         'libs/text!/media/templates/copy_dialog.html',
         'libs/optional!facebook'
     ],
-    function($, _, highcharts, alert_message_template, morphology_dialog_template, work_info_dialog_template, loading_template, search_results_template, copy_dialog_template) {
+    function($, _, highcharts, alert_message_template, morphology_dialog_template, work_info_dialog_template, wiki_info_dialog_template, loading_template, search_results_template, copy_dialog_template) {
 	
 		/**
 		 * Causes the verses to break onto separate lines. 
@@ -307,39 +308,77 @@ define([
 		}
 		
 		/**
-		 * Open the topic dialog for the given item.
-		 */
-		TextCritical.open_topic_dialog_for_element = function () {
-			TextCritical.open_topic_dialog(this.dataset['querytitle'], this.dataset['query'], this.dataset['query2'], this.dataset['query3']);
-		}
-		
-		/**
-		 * Opens a dialog that shows the information about a topic.
+		 * Get the information about a particular work.
 		 * 
-		 * @param topic the topic (author or work) to get information for
-		 * @param search the search to perform
-		 * @param search2 an alternative search to perform (in case the first doesn't return anything)
-		 **/
-		TextCritical.open_topic_dialog = function ( topic, search, search2, search3 ) {
+		 * @param work the descriptor of the work to get information for
+		 */
+		TextCritical.get_work_info = function(work){
 			
-			console.info( "Obtaining information about " + topic );
+			// Submit the AJAX request to display the information
+			var url = "/api/work_info/" + work;
+
+			var promise = jQuery.Deferred();
+
+			// Perform the request
+			$.ajax({
+				url: url
+			}).done(function (data) {
+
+				data['work'] = work;
+				data['success'] = true;
+
+				console.info("Successfully performed a request for information on the work " + work);
+
+				promise.resolve(data);
+
+			}).error(function (jqXHR, textStatus, errorThrown) {
+
+				data = {
+					'work': work,
+					'success': false
+				}
+
+				// Handle cases where the request succeeded but no information could be found
+				if (jqXHR.status === 404) {
+					console.warn("No information could be obtained for the work " + work);
+				}
+
+				// Handle errors
+				else {
+					console.error("The request on the work failed for " + work);
+				}
+
+				promise.reject(jqXHR, data);
+			});
+
+			return promise;
+		};
+
+		/**
+		 * Opens a dialog that shows the information about a work.
+		 * 
+		 * @param work the topic (author or work) to get information for
+		 **/
+		TextCritical.open_work_info_dialog = function (work, work_title) {
+			
+			console.info( "Obtaining information about " + work );
 		
 			// Trim the topic in case extra space was included
 			search = TextCritical.trim(search);
 		
 			// Reset the content to the loading content
-			$("#popup-dialog-content").html(_.template(loading_template,{ message: "Looking up info for " +  _.escape(topic) + "..." }));
+			$("#popup-dialog-content").html(_.template(loading_template,{ message: "Looking up info for work " +  _.escape(work_title) + "..." }));
 		
 			$("#popup-dialog-extra-options").html("");
 			
 			// Set the title
-			$("#popup-dialog-label").text( _.escape(topic) );
+			$("#popup-dialog-label").text( _.escape(work_title) );
 		
 			// Open the form
 			$("#popup-dialog").modal();
 		
 			// Submit the AJAX request to display the information
-			this.get_wiki_info(topic, search, search2, search3).done(function(data) {
+			this.get_work_info(work).done(function(data) {
 				
 				// Set the link to Wikipedia
 				var extra_options_template = '<a target="_blank" class="external" href="<%= url %>">View on wikipedia</a>';
@@ -358,11 +397,68 @@ define([
 				
 				// Handle errors
 				else{
+					$("#popup-dialog-content").html("<h4>Request failed</h4> The request for information on this work could not be completed");
+				}
+			});
+		}
+
+		/**
+		 * Open the topic dialog for the given item.
+		 */
+		TextCritical.open_topic_dialog_for_element = function () {
+			TextCritical.open_topic_dialog(this.dataset['querytitle'], this.dataset['query'], this.dataset['query2'], this.dataset['query3']);
+		}
+		
+		/**
+		 * Opens a dialog that shows the information about a topic.
+		 * 
+		 * @param topic the topic (author or work) to get information for
+		 * @param search the search to perform
+		 * @param search2 an alternative search to perform (in case the first doesn't return anything)
+		 **/
+		TextCritical.open_topic_dialog = function (topic, search, search2, search3) {
+			
+			console.info( "Obtaining information about " + topic );
+		
+			// Trim the topic in case extra space was included
+			search = TextCritical.trim(search);
+		
+			// Reset the content to the loading content
+			$("#popup-dialog-content").html(_.template(loading_template,{ message: "Looking up info for " +  _.escape(topic) + "..." }));
+		
+			$("#popup-dialog-extra-options").html("");
+			
+			// Set the title
+			$("#popup-dialog-label").text(_.escape(topic));
+		
+			// Open the form
+			$("#popup-dialog").modal();
+		
+			// Submit the AJAX request to display the information
+			this.get_wiki_info(topic, search, search2, search3).done(function(data) {
+				
+				// Set the link to Wikipedia
+				var extra_options_template = '<a target="_blank" class="external" href="<%= url %>">View on wikipedia</a>';
+			
+				$("#popup-dialog-extra-options").html(_.template(extra_options_template,{ url : data.url }));
+				
+				// Render the lemma information
+				$("#popup-dialog-content").html(_.template(wiki_info_dialog_template, data));
+		
+			}).fail( function(jqXHR, data) {
+				
+				// Handle cases where the request succeeded but no information could be found
+				if(jqXHR.status === 404){
+					$("#popup-dialog-content").html(_.template(wiki_info_dialog_template, data));
+				}
+				
+				// Handle errors
+				else{
 					$("#popup-dialog-content").html("<h4>Request failed</h4> The request for information could not be completed");
 				}
 			});
 		}
-		
+
 		/**
 		 * Get the wikipedia information for a particular topic.
 		 * 

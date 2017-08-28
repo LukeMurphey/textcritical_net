@@ -374,12 +374,13 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     });
     
     $(".get-work-info").click(function(){
-    	
+
     	var query = $('h1').data('work-title');
     	var query2 = $('h1').data('work-title') + " " + $('h1').data('author');
     	var query3 = $('h1').data('author');
-    	
-    	TextCritical.open_topic_dialog($('h1').data('work-title'), query, query2, query3);
+
+		TextCritical.open_work_info_dialog($('h1').data('work-title-slug'), $('h1').data('work-title'));
+		
     	return false;
     });
 	

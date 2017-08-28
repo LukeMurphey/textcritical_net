@@ -1,11 +1,42 @@
-<% if ( !success || summary === "undefined" || summary === null ) { %>
+<% if ( !success || wiki_info.summary === "undefined" || wiki_info.summary === null ) { %>
 <h4>Information not found</h4>
-No information could be found on Wikipedia for <%= topic %>.
+No information could be found on the work for <%= work %>.
 <p class="some-margin-top">
-You can try searching <a target="_blank" class="external" href="https://www.google.com/search?q=<%= topic %>">Google</a> or <a target="_blank" class="external" href="https://en.wikipedia.org/wiki/Special:Search?search=<%= topic %>">Wikipedia</a>.
+You can try searching <a target="_blank" class="external" href="https://www.google.com/search?q=<%= work %>">Google</a> or <a target="_blank" class="external" href="https://en.wikipedia.org/wiki/Special:Search?search=<%= work %>">Wikipedia</a>.
 </p>
 <% }
 else {
 %>
-<%= summary.replace(new RegExp('[\\^]([^\n]+)', 'gi'),"<small>$1</small>").replace(new RegExp('\r?\n', 'g'), '<p />') %>
+<div class="work-info">
+    <div class="work-image-holder">
+        <img class="work-image"  src="/work_image/<%= work %>?width=100" />
+    </div>
+    <div class="work-info-holder">
+        <table>
+            <tbody>
+                <tr>
+                    <td><strong>Title</strong></td>
+                    <td><%- title %></td>
+                </tr>
+                <tr>
+                    <td><strong>Language</strong></td>
+                    <td><%- language %></td>
+                </tr>
+                <% if (authors){ %>
+                    <tr>
+                        <td><strong>Author</strong></td>
+                        <td><%- authors.join(", ") %></td>
+                    </tr>
+                    <% } %>
+                <% if (editors){ %>
+                <tr>
+                    <td><strong>Editor</strong></td>
+                    <td><%- editors.join(", ") %></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<%= wiki_info.summary.replace(new RegExp('[\\^]([^\n]+)', 'gi'),"<small>$1</small>").replace(new RegExp('\r?\n', 'g'), '<p />') %>
 <% } %>

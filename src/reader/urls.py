@@ -58,5 +58,7 @@ urlpatterns = patterns('',
     url(r'^api/wikipedia_info/(?P<topic>[^/]*)/?$', 'reader.views.api_wikipedia_info', name='api_wikipedia_info' ),
     url(r'^api/wikipedia_info/(?P<topic>[^/]*)/(?P<topic2>[^/]*)/?$', 'reader.views.api_wikipedia_info', name='api_wikipedia_info_2' ),
     url(r'^api/wikipedia_info/(?P<topic>[^/]*)/(?P<topic2>[^/]*)/(?P<topic3>[^/]*)/?$', 'reader.views.api_wikipedia_info', name='api_wikipedia_info_3' ),
+
+    url(r'^api/work_info/(?P<title>[^/]*)/?$', 'reader.views.api_work_info', name='api_work_info' ),
     
 )

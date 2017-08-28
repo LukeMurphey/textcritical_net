@@ -838,6 +838,19 @@ textarea.clipboard-copy-text[readonly] {
   #small-message {
     margin-top: 20px;
     margin-left: 8px; } }
+.work-info {
+  margin-bottom: 16px; }
+  .work-info .work-image-holder {
+    display: inline-block; }
+  .work-info .work-image {
+    vertical-align: middle;
+    border: 2px solid #565656; }
+  .work-info .work-info-holder {
+    display: inline-block;
+    vertical-align: top; }
+  .work-info .work-info-holder > table {
+    margin-left: 24px; }
+
 /* -----------------------------------------
    jQuery data tables
    ----------------------------------------- */
