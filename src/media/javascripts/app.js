@@ -1834,5 +1834,13 @@ define([
 			return false;
 		});
 
+		/**
+		 * Setup handlers for the work-info links
+		 */
+		$('body').delegate('.work-info', 'click',  function(){
+			TextCritical.open_work_info_dialog(this.dataset['workTitleSlug'], this.dataset['workTitle']);
+			return false;
+		});
+
 }
 );
