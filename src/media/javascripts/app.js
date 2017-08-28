@@ -322,22 +322,6 @@ define([
 		 **/
 		TextCritical.open_topic_dialog = function ( topic, search, search2, search3 ) {
 			
-			if(typeof topic_type === "undefined"){
-				var topic_type = null;
-			}
-			
-			if(typeof search === "undefined"){
-				var search = topic;
-			}
-			
-			if(typeof search2 === "undefined"){
-				var search2 = null;
-			}
-			
-			if(typeof search3 === "undefined"){
-				var search3 = null;
-			}
-			
 			console.info( "Obtaining information about " + topic );
 		
 			// Trim the topic in case extra space was included
@@ -355,6 +339,53 @@ define([
 			$("#popup-dialog").modal();
 		
 			// Submit the AJAX request to display the information
+			this.get_wiki_info(topic, search, search2, search3).done(function(data) {
+				
+				// Set the link to Wikipedia
+				var extra_options_template = '<a target="_blank" class="external" href="<%= url %>">View on wikipedia</a>';
+			
+				$("#popup-dialog-extra-options").html(_.template(extra_options_template,{ url : data.url }));
+				
+				// Render the lemma information
+				$("#popup-dialog-content").html(_.template(work_info_dialog_template, data));
+		
+			}).fail( function(jqXHR, data) {
+				
+				// Handle cases where the request succeeded but no information could be found
+				if(jqXHR.status === 404){
+					$("#popup-dialog-content").html(_.template(work_info_dialog_template, data));
+				}
+				
+				// Handle errors
+				else{
+					$("#popup-dialog-content").html("<h4>Request failed</h4> The request for information could not be completed");
+				}
+			});
+		}
+		
+		/**
+		 * Get the wikipedia information for a particular topic.
+		 * 
+		 * @param topic the topic (author or work) to get information for
+		 * @param search the search to perform
+		 * @param search2 an alternative search to perform (in case the first doesn't return anything)
+		 * @param search3 an alternative search to perform (in case the first and second don't return anything)
+		 */
+		TextCritical.get_wiki_info = function(topic, search, search2, search3){
+
+			if(typeof search === "undefined"){
+				var search = topic;
+			}
+			
+			if(typeof search2 === "undefined"){
+				var search2 = null;
+			}
+			
+			if(typeof search3 === "undefined"){
+				var search3 = null;
+			}
+
+			// Submit the AJAX request to display the information
 			var url = "/api/wikipedia_info/" + search;
 			
 			if(search2 !== null && search3 !== null){
@@ -366,48 +397,44 @@ define([
 			else if(search3 !== null){
 				url = "/api/wikipedia_info/" + search +"/" + search3;
 			}
-			
+
+			var promise = jQuery.Deferred();
+
+			// Perform the request
 			$.ajax({
 				url: url
 			}).done(function(data) {
-				
+
 				data['topic'] = topic;
 				data['success'] = true;
-				
-				// Set the link to Wikipedia
-				var extra_options_template = '<a target="_blank" class="external" href="<%= url %>">View on wikipedia</a>';
-			
-				$("#popup-dialog-extra-options").html(_.template(extra_options_template,{ url : data.url }));
-				
-				// Render the lemma information
-				$("#popup-dialog-content").html(_.template(work_info_dialog_template, data));
-		
-				console.info( "Successfully performed a request for information on " + topic );
-		
+
+				console.info("Successfully performed a request for information on " + topic);
+
+				promise.resolve(data);
+
 			}).error( function(jqXHR, textStatus, errorThrown) {
 				
+				data = {
+					'topic': topic,
+					'success' : false
+				}
+
 				// Handle cases where the request succeeded but no information could be found
 				if(jqXHR.status === 404){
-					
-					data = {
-							'topic': topic,
-							'success' : false
-					}
-					
-					$("#popup-dialog-content").html(_.template(work_info_dialog_template, data));
-					
-					//$("#popup-dialog-content").html( "<h4>No information</h4>No information could be found on Wikipedia for " +  _.escape(topic) + "." );
-					console.warn( "No information could be obtained for " + topic );
+					console.warn("No information could be obtained for " + topic);
 				}
 				
 				// Handle errors
 				else{
-					$("#popup-dialog-content").html( "<h4>Request failed</h4> The request for information could not be completed" );
-					console.error( "The request on the topic failed for " + topic );
+					console.error("The request on the topic failed for " + topic);
 				}
+
+				promise.reject(jqXHR, data);
 			});
+
+			return promise;
 		}
-		
+
 		/**
 		 * Trims the string.
 		 * 
