@@ -1,0 +1,4 @@
+Django==1.8.18
+django-grappelli==2.7.3
+lxml
+Genshi

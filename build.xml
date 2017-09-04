@@ -272,24 +272,12 @@
          ================================= -->
 	<target name="install_dependencies" description="Install dependencies">
 
-		<exec executable="${pip}" dir="src">
-			<arg value="install"/>
-			<arg value="Django==1.8.18"/>
-		</exec>
+		<property name="absolute_path_requirements" location="src/requirements.txt"/>
 
 		<exec executable="${pip}" dir="src">
 			<arg value="install"/>
-			<arg value="django-grappelli==2.7.3"/>
-		</exec>
-
-		<exec executable="${pip}" dir="src">
-			<arg value="install"/>
-			<arg value="lxml"/>
-		</exec>
-
-		<exec executable="${pip}" dir="src">
-			<arg value="install"/>
-			<arg value="Genshi"/>
+			<arg value="-r"/>
+			<arg value="${absolute_path_requirements}"/>
 		</exec>
 
 	</target>
