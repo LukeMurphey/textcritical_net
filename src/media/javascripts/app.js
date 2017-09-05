@@ -180,7 +180,7 @@ define([
 		TextCritical.word_lookup = function () {
 			
 			// Get the work information
-			var work = $("h1[data-work-title-slug]").data("work-title-slug");
+			var work = $(".work-data[data-work-title-slug]").data("work-title-slug");
 			
 			// Get the current division name
 			var division_data = $('#chapter-base-url').data();
@@ -383,7 +383,7 @@ define([
 				// Set the link to Wikipedia
 				var extra_options_template = '<a target="_blank" class="external" href="<%= url %>">View on wikipedia</a>';
 			
-				$("#popup-dialog-extra-options").html(_.template(extra_options_template,{ url : data.url }));
+				$("#popup-dialog-extra-options").html(_.template(extra_options_template,{ url : data.wiki_info.url }));
 				
 				// Render the lemma information
 				$("#popup-dialog-content").html(_.template(work_info_dialog_template, data));
@@ -980,7 +980,7 @@ define([
 		TextCritical.search_this_work = function ( ) {
 			
 			// Get the work that we are to search
-			var work = $("h1[data-work-title-slug]").data("work-title-slug");
+			var work = $(".work-data[data-work-title-slug]").data("work-title-slug");
 			
 			// Make the URL
 			var search_uri = "/search?q=work:" + work;
@@ -1837,7 +1837,7 @@ define([
 		/**
 		 * Setup handlers for the work-info links
 		 */
-		$('body').delegate('.work-info', 'click',  function(){
+		$('body').delegate('.open-work-info', 'click',  function(){
 			TextCritical.open_work_info_dialog(this.dataset['workTitleSlug'], this.dataset['workTitle']);
 			return false;
 		});

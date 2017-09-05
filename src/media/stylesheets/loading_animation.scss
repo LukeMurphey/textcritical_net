@@ -86,16 +86,18 @@ $primary-color: #149bdf;
 }
 
 #loading-text {
+    /*
     -moz-animation: loading-text-opacity 2s linear 0s infinite normal;
     -o-animation: loading-text-opacity 2s linear 0s infinite normal;
     -webkit-animation: loading-text-opacity 2s linear 0s infinite normal;
     animation: loading-text-opacity 2s linear 0s infinite normal;
+    opacity: 0;
+    */
     color: $primary-color;
     font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
     font-size: 10px;
     font-weight: bold;
     margin-top: 45px;
-    opacity: 0;
     position: absolute;
     text-align: center;
     text-transform: uppercase;

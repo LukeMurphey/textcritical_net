@@ -227,6 +227,7 @@ textarea.clipboard-copy-text[readonly]{
 	#small-message{
 		margin-top: 20px;
 		margin-left: 8px;
+		margin-bottom: 0px;
 	}
 }
 
@@ -234,14 +235,37 @@ textarea.clipboard-copy-text[readonly]{
 	#small-message{
 		margin-top: 20px;
 		margin-left: 8px;
+		margin-bottom: 0px;
 	}
 }
 
+/**
+ * This styles the book and chapter indicator (just under the progress bar).
+ **/
+.row.work-and-chapter-info{
+	margin-bottom: 12px;
+	margin-top: 12px;
+	font-size: 17.5px;
+	color: white;
+}
+
+.work-title{
+	text-align: right;
+}
+
+.chapter-title{
+	font-weight: bold;
+}
+
+/**
+ * The CSS below is for the work information modal.
+ **/
 .work-info{
-	margin-bottom:16px;
+	margin-bottom: 16px;
 
 		.work-image-holder{
 			display: inline-block;
+			margin-right: 16px;
 		}
 
 		.work-image{
@@ -252,10 +276,11 @@ textarea.clipboard-copy-text[readonly]{
 		.work-info-holder{
 			display: inline-block;
 			vertical-align: top;
+			padding-left: 6px;
 		}
 
-		.work-info-holder > table{
-			margin-left: 24px;
+		.work-info-holder td:nth-child(2){
+			padding-left: 10px;
 		}
 
 }

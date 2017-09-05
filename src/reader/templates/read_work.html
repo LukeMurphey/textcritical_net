@@ -43,9 +43,8 @@
             <li><a href="{% url "home" %}">Home</a> <span class="divider">/</span></li>
             <li><a href="{% url "works_index" %}">Library</a> <span class="divider">/</span></li>
             <li class="active">{{work.title}}{% if chapter %}: {{chapter.get_division_description}}{% endif %}</li>
-        </ul>
-        <h1 data-work-title-slug="{{work.title_slug}}" data-author="{{authors|join:", "}}" data-work-title="{{work.title}}">{{work.title}}{% if authors|length > 0 %} <small>By {{authors|join:", "}}</small>{% endif %}</h1>
-        
+		</ul>
+		
         {% comment %}
         ##############################
         # Button toolbar
@@ -188,16 +187,32 @@
 		</div>
         {% endif %}
         {% endif %}
-        
+		
+		
+
         {% comment %}
         #############################
         # Chapter division indicator
         ##############################
         {% endcomment %}
-        
-        {% if chapter.parent_division and divisions and divisions|length > 1 %}
-        <h2>{{chapter.get_division_description_titles.title|replace:"βοοκ,Book"}}</h2>
-        {% endif %}
+		
+		<div class="row work-and-chapter-info">
+			<div class="span6 chapter-title"> 
+			{% if chapter.parent_division and divisions and divisions|length > 1 %}
+				{{chapter.get_division_description_titles.title|replace:"βοοκ,Book"}}
+				<!--
+				<span style="
+					margin-right: 16px;
+					">{{chapter.get_division_description_titles.title|replace:"βοοκ,Book"}}</span>
+				-->
+			{% endif %}
+			</div>
+			
+			<div class="work-data work-title span6" data-work-title-slug="{{work.title_slug}}" data-author="{{authors|join:", "}}" data-work-title="{{work.title}}">
+				{{work.title}}
+			</div>
+		</div>
+
         <span class="hide">
         	<span id="divisions">
         		<ul>
@@ -292,7 +307,7 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     function update_chapter_reference(e) {
         if (e.keyCode == 13) {
             var ref = $(this).val();
-            TextCritical.go_to_chapter(ref, $('h1[data-work-title-slug]').attr('data-work-title-slug'));
+            TextCritical.go_to_chapter(ref, $('.work-data[data-work-title-slug]').attr('data-work-title-slug'));
             return true;
         }
     }
@@ -301,7 +316,7 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     
     function go_to_selected_chapter(){
         var ref = $("#chapter").val();
-        TextCritical.go_to_chapter(ref, $('h1[data-work-title-slug]').attr('data-work-title-slug'));
+        TextCritical.go_to_chapter(ref, $('.work-data[[data-work-title-slug]').attr('data-work-title-slug'));
         return true;
     }
     
@@ -309,7 +324,7 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     
     $(".verse-link").click(function() {
     	$("#chapter").val( $(this).attr("data-verse-descriptor") );
-    	document.title = $("h1[data-work-title]").attr("data-work-title") + " " + $(this).attr("data-verse-descriptor");
+    	document.title = $(".work-data[data-work-title]").attr("data-work-title") + " " + $(this).attr("data-verse-descriptor");
     	return TextCritical.scrollToVerse( $(this).attr("data-verse"), $("#chapter-base-url").attr("href") );
     });
     
@@ -375,11 +390,11 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     
     $(".get-work-info").click(function(){
 
-    	var query = $('h1').data('work-title');
-    	var query2 = $('h1').data('work-title') + " " + $('h1').data('author');
-    	var query3 = $('h1').data('author');
+    	var query = $('.work-data').data('work-title');
+    	var query2 = $('.work-data').data('work-title') + " " + $('.work-data').data('author');
+    	var query3 = $('.work-data').data('author');
 
-		TextCritical.open_work_info_dialog($('h1').data('work-title-slug'), $('h1').data('work-title'));
+		TextCritical.open_work_info_dialog($('.work-data').data('work-title-slug'), $('.work-data').data('work-title'));
 		
     	return false;
     });

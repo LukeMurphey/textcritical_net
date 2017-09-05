@@ -13,7 +13,7 @@
 			        <td><%= works[i].language %></td>
 			        <td><%= works[i].author %></td>
 			        <td class="hidden-phone"><%= works[i].editor %></td>
-			        <td class="hidden-phone"><a href="<%= search_url %>?q=work:<%= works[i].title_slug %>">[Search]</a> <a href="#" class="work-info" data-work-title-slug="<%= works[i].title_slug %>" data-work-title="<%= works[i].title %>">[Info]</a></td>
+			        <td class="hidden-phone"><a href="<%= search_url %>?q=work:<%= works[i].title_slug %>">[Search]</a> <a href="#" class="open-work-info" data-work-title-slug="<%= works[i].title_slug %>" data-work-title="<%= works[i].title %>">[Info]</a></td>
 			    </tr>
 		    <% } %>
 		    </tbody>

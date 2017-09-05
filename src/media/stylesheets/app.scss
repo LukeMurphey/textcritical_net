@@ -27,6 +27,14 @@ body > .container{
     background-image: linear-gradient(to top, #EDEDED 0%, #FEFEFE 100%);
 }
 
+.textcritical .navbar-inner{
+	background-image: linear-gradient(rgb(34, 34, 34), rgb(34, 34, 34));
+}
+
+.textcritical .squared-search-query{
+	margin-bottom: 0px;
+}
+
 footer{
     padding-top: 10px;	
 }

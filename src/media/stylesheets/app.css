@@ -23,6 +23,12 @@ body > .container {
   background-image: -webkit-linear-gradient(bottom, #ededed 0%, #fefefe 100%);
   background-image: linear-gradient(to top, #ededed 0%, #fefefe 100%); }
 
+.textcritical .navbar-inner {
+  background-image: linear-gradient(#222222, #222222); }
+
+.textcritical .squared-search-query {
+  margin-bottom: 0px; }
+
 footer {
   padding-top: 10px; }
 
@@ -474,16 +480,18 @@ html {
   transition: all 0.5s ease-in-out; }
 
 #loading-text {
+  /*
   -moz-animation: loading-text-opacity 2s linear 0s infinite normal;
   -o-animation: loading-text-opacity 2s linear 0s infinite normal;
   -webkit-animation: loading-text-opacity 2s linear 0s infinite normal;
   animation: loading-text-opacity 2s linear 0s infinite normal;
+  opacity: 0;
+  */
   color: #149bdf;
   font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
   font-size: 10px;
   font-weight: bold;
   margin-top: 45px;
-  opacity: 0;
   position: absolute;
   text-align: center;
   text-transform: uppercase;
@@ -833,23 +841,45 @@ textarea.clipboard-copy-text[readonly] {
 @media (min-width: 768px) and (max-width: 979px) {
   #small-message {
     margin-top: 20px;
-    margin-left: 8px; } }
+    margin-left: 8px;
+    margin-bottom: 0px; } }
 @media (max-width: 450px) {
   #small-message {
     margin-top: 20px;
-    margin-left: 8px; } }
+    margin-left: 8px;
+    margin-bottom: 0px; } }
+/**
+ * This styles the book and chapter indicator (just under the progress bar).
+ **/
+.row.work-and-chapter-info {
+  margin-bottom: 12px;
+  margin-top: 12px;
+  font-size: 17.5px;
+  color: white; }
+
+.work-title {
+  text-align: right; }
+
+.chapter-title {
+  font-weight: bold; }
+
+/**
+ * The CSS below is for the work information modal.
+ **/
 .work-info {
   margin-bottom: 16px; }
   .work-info .work-image-holder {
-    display: inline-block; }
+    display: inline-block;
+    margin-right: 16px; }
   .work-info .work-image {
     vertical-align: middle;
     border: 2px solid #565656; }
   .work-info .work-info-holder {
     display: inline-block;
-    vertical-align: top; }
-  .work-info .work-info-holder > table {
-    margin-left: 24px; }
+    vertical-align: top;
+    padding-left: 6px; }
+  .work-info .work-info-holder td:nth-child(2) {
+    padding-left: 10px; }
 
 /* -----------------------------------------
    jQuery data tables
