@@ -151,7 +151,7 @@
     <target name="package" depends="get_build_number" description="Create the application package (sans media)">
     	<echo file="src/reader/templates/VERSION.txt" append="false">${value.build.version} (build ${value.build.number})</echo>
     	<mkdir dir="${value.build.packageoutput.directory}" />
-        <zip destfile="${value.build.packageoutput.directory}/textcritical_${value.build.number_hex}.zip"
+        <zip destfile="${value.build.packageoutput.directory}/textcritical.zip"
             basedir="src"
             excludes="reader/test/**, reader/tests.py, **/*.pyc, textcritical/settings.py, media/files/**"
             whenempty="create"
