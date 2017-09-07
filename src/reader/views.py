@@ -401,7 +401,7 @@ def download_work(request, title=None,):
     response['Content-Length'] = os.path.getsize(ebook_file_full_path)
     return response
 
-@cache_page(8 * hours)
+#@cache_page(8 * hours)
 def work_image(request, title=None, **kwargs):
 
     # Try to get the work
