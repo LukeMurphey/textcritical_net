@@ -87,9 +87,20 @@ def makeCoverImage(work, filename=None, width=None):
 
             # Adjust the image height if necessary
             if width is not None:
-                new_height = image.size[1] / (image.size[0]/width)
+
+                # Make the number a float so that the math doesn't result in a division by zero
+                # based on integers losing the value of the decimal points
+                width = width * 1.0
+                new_height = image.size[1] / (image.size[0] / width)
+
+                # Convert the numbers back to integers since wand wants integers
+                width = int(width)
+                new_height = int(new_height)
+
+                # Resize the image
                 image.resize(width, new_height)
 
+            # Save the image to the file
             image.save(filename=filename)
 
     return filename
