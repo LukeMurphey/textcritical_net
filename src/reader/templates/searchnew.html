@@ -18,24 +18,7 @@
 	require(["jquery", "riot", "store", "app", "underscore", "blockui"], function($, riotjs) {
 		
 		$(document).ready(function() {
-			
-			// Execute the search if we already got a search term
-			/*
-			if ( $("#search-term").val().length > 0 && TextCritical.contains_search_words($("#search-term").val()) ){
-				TextCritical.do_search(null, false);
-			}
-			
-			TextCritical.set_caret_at_end( $("#search-term")[0] );
-			
-			$("#search-button").click( TextCritical.do_fresh_search );
-			$("#search-form").submit( TextCritical.do_fresh_search );
-			
-			$(".next-page-link").click( TextCritical.do_search_next );
-			$(".previous-page-link").click( TextCritical.do_search_previous );
-			*/
-			//window.addEventListener('popstate', TextCritical.search_page_popstate );
 			riot = riotjs;
-			//riot.route(location.hash);
 			riotjs.mount('*');
 		});
 	
