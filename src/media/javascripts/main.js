@@ -73,6 +73,10 @@ require.config({
         clipboard: [
             "https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard",
             "libs/clipboard"
+        ],
+
+        riot: [
+            "libs/riot+compiler"
         ]
 
     },
@@ -90,6 +94,9 @@ require.config({
 	    },
     	facebook : {
     		export: 'FB'
+    	},
+    	riot : {
+    		export: 'riot'
     	}
     }
 });

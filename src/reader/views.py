@@ -70,6 +70,12 @@ def contact(request):
                               { 'title' : 'Contact Us'},
                               context_instance=RequestContext(request))
 
+def searchnew(request, query=None):
+    return render_to_response('searchnew.html',
+                              {'title'   : 'Search'
+                               },
+                              context_instance=RequestContext(request)) 
+
 def search(request, query=None):
     
     authors = Author.objects.all().order_by("name")
