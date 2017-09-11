@@ -1,5 +1,5 @@
 <search>
-<form id="search-form">
+<form id="search-form" onsubmit={ search }>
 	<legend>Search</legend>
 	
 	<div class="input-append ">
@@ -44,11 +44,11 @@
 				<h4>Search failed</h4> The search request could not be completed
 			</span>
 
-			<div if={ !search_error && search_results && search_results.results.length == 0 } class="alert alert-block">
+			<div if={ !search_error && search_results && search_results.results && search_results.results.length == 0 } class="alert alert-block">
 				No results were found matching the provided search
 			</div>
 		
-			<span each={ !search_error && search_results.results }>
+			<span each={ !search_error && search_results && search_results.results }>
 				<div class="work-description">
 					<a href="{ url }{ highlight_url }">{ work }, { description }</a>
 				</div>
@@ -177,15 +177,13 @@
 
 <div id="searching" class="hide hidden-phone searching-animation">Searching ...</div>
     <script>
-		// Set default values for the form
-        this.page = 1;
-        this.query = "no/mos";
-		this.ignore_diacritics = false;
-		this.search_related_forms = false;
-
 		// Initialize the arguments
 		this.update_url = this.opts.updateurl === undefined ? false : true;
 		this.run_automatically = this.opts.runautomatically === undefined ? false : true;
+        this.page = parseInt(this.opts.page === undefined ? 1 : this.opts.page, 10);
+        this.query = this.opts.query;
+		this.ignore_diacritics = this.opts.ignorediacritics === undefined ? false : true;
+		this.search_related_forms = this.opts.searchrelated === undefined ? false : true;
 
 		// Initialize the parameters for how the search executes
 		this.highlight_url = "";
@@ -312,7 +310,7 @@
 			// Force the UI to refresh
 			this.update();
 
-			// Make a bar chart of the word frequency
+			// Make bar charts of the word, work and section frequency
 			TextCritical.make_bar_chart( $('#chart-word-frequency'), 'Frequency of matched words', search_results.matched_terms, "No data available on matched terms" );
 			TextCritical.make_bar_chart( $('#chart-work-frequency'), 'Number of matched verses by work', search_results.matched_works, "No data available on matched works" );
 			TextCritical.make_bar_chart( $('#chart-section-frequency'), 'Number of matched verses by section', search_results.matched_sections, "No data available on matched sections" );
@@ -322,15 +320,16 @@
 		 * Show an indicator that the search is progressing.
 		 */
 		showSearchProgress(){
-			$('#searching').show(); // Replace jQuery usage
-			//$('#search-results-content').block({ message: null, overlayCSS: { backgroundColor: '#2f2f2f', opacity: 0.8 } }); 
+			$('#searching').show();
+			$('#search-results-content').block({ message: null, overlayCSS: { backgroundColor: '#2f2f2f', opacity: 0.8 } }); 
 		}
 
 		/*
 		 * Hide the indicator that the search is progressing.
 		 */
 		hideSearchProgress(){
-			$('#searching').hide(); // Replace jQuery usage
+			$('#searching').hide();
+			$('#search-results-content').unblock();
 			$('#search-results-content').show();
 		}
 
@@ -339,9 +338,17 @@
 		 * the work to search).
 		 **/
 		containsSearchWords(query) {
+			if(!query){
+				return false;
+			}
+
 			var split_query = query.match(/([_0-9a-z]+[:][-_0-9a-z]+)|([\w_]+[:]["][-\w ]*["])|([^ :]+)/gi);
 			
-			for( c = 0; c < split_query.length; c++){
+			if(split_query === null){
+				return false;
+			}
+
+			for(c = 0; c < split_query.length; c++){
 				if( split_query[c].search(":") < 0 ){
 					return true;
 				}
@@ -404,9 +411,11 @@
 		 * Do a search against the next page of results.
 		 */
 		searchNextPage(e){
-			this.page += 1;
+			if(this.has_next){
+				this.page += 1;
 
-			this.search(e);
+				this.search(e);
+			}
 		}
 
 		/*
@@ -469,6 +478,8 @@
 				this.update();
 				this.hideSearchProgress();
 			}.bind(this));
+
+			e.preventDefault();
 		}
     </script>
 </search>

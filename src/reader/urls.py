@@ -30,8 +30,6 @@ urlpatterns = patterns('',
     url(r'^about/?$', 'reader.views.about', name='about' ),
     url(r'^contact/?$', 'reader.views.contact', name='contact' ),
     url(r'^search/?$', 'reader.views.search', name='search' ),
-
-    url(r'^searchnew/?$', 'reader.views.searchnew', name='searchnew' ),
     
     url(r'^word_forms/?$', 'reader.views.word_forms', name='word_forms' ),
     url(r'^beta_code_converter/?$', 'reader.views.beta_code_converter', name='beta_code_converter' ),

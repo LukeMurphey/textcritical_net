@@ -70,16 +70,7 @@ def contact(request):
                               { 'title' : 'Contact Us'},
                               context_instance=RequestContext(request))
 
-def searchnew(request, query=None):
-    return render_to_response('searchnew.html',
-                              {'title'   : 'Search'
-                               },
-                              context_instance=RequestContext(request)) 
-
 def search(request, query=None):
-    
-    authors = Author.objects.all().order_by("name")
-    works = Work.objects.all().order_by("title")
     
     if 'q' in request.GET:
         query = request.GET['q']
@@ -100,11 +91,9 @@ def search(request, query=None):
         ignore_diacritics = (request.GET['ignore_diacritics'] == '1')
     else:
         ignore_diacritics = False
-    
+
     return render_to_response('search.html',
                               {'title'   : 'Search',
-                               'authors' : authors,
-                               'works'   : works,
                                'query'   : query,
                                'page'    : page,
                                'search_related_forms' : search_related_forms,
