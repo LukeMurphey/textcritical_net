@@ -12,10 +12,9 @@
           <a class="brand" title="TextCritical.net homepage" href="{% url "home" %}">TextCritical.net</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li><a href="{% url "works_index" %}">Read</a></li>
+              <li><a href="{% url "works_index" %}">Library</a></li>
               <li><a href="{% url "search" %}">Search</a></li>
               <li><a href="{% url "about" %}">About</a></li>
-              <li><a href="{% url "contact" %}">Contact</a></li>
             </ul>
 			<form class="navbar-search pull-right" id="search" action="{% url "works_index" %}" method="get">
 			  <input autocorrect="off" autocomplete="off" data-provide="typeahead" type="text" name="search" class="squared-search-query works-search-query" placeholder="Search Library" value="{{filter|default_if_none:""}}">
@@ -38,116 +37,7 @@
 	  </div>
     
     {% block content %}{% endblock %}
-  
-	    <footer>
-	        <hr>
-	        <div class="pull-left">
-	        &copy; <a href="https://LukeMurphey.net" target="_blank">Luke Murphey</a> 2012-2017
-	        
-	        <p style="margin-top:4px">
-	        	<ul class="footer-links">
-		          <li><a href="https://lukemurphey.net/projects/ancient-text-reader/wiki/Source_Code">Source code</a></li>
-		          <li class="muted">&middot;</li>
-		          <li><a href="https://lukemurphey.net/projects/ancient-text-reader/issues?utf8=%E2%9C%93&set_filter=1&f%5B%5D=status_id&op%5Bstatus_id%5D=o&f%5B%5D=&c%5B%5D=tracker&c%5B%5D=status&c%5B%5D=priority&c%5B%5D=subject&c%5B%5D=updated_on&c%5B%5D=due_date&c%5B%5D=done_ratio&group_by=fixed_version">Issues</a></li>
-		          <li class="muted">&middot;</li>
-		          <li><a href="https://lukemurphey.net/projects/ancient-text-reader/issues/new">Report issue</a></li>
-		        </ul>
-		    </p>
-	        
-	        </div>
-			{% if INCLUDE_SHARING_BUTTONS %}
-	        <div class="pull-right sharing-buttons hidden-phone hide">
-	        
-		       <div id="buttons">
-				  <div class="facebook button">
-				 	<i class="icon">
-				      <i class="icon-facebook"></i>
-				  	</i>
-					<div class="slide">
-						<p>
-					      facebook
-					    </p>
-					</div>
-				  <div class="fb-like" data-href="https://textcritical.net" data-width="225" data-colorscheme="light" data-layout="button_count" data-show-faces="true" data-send="false"></div>
-				  <!-- 
-				  <iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Freference%2Fplugins%2Flike&send=false&layout=button_count&width=80&show_faces=false&font&colorscheme=light&action=like&height=20&appId=568581339861351" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:80px; height:20px;" allowTransparency="true">
-				  </iframe>
-				   -->
-				  </div>
-				  
-				  <div class="twitter button">
-				    <i class="icon">
-				      <i class="icon-twitter">
-				    </i>
-				  </i>
-				  <div class="slide">
-				    <p>
-				      twitter
-				    </p>
-				  </div>
-				  <a href="https://twitter.com/share" class="twitter-share-button">
-				    Tweet
-				  </a>
-				  <script>
-				    !function(d,s,id){
-				      var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
-				      if(!d.getElementById(id)){
-				        js=d.createElement(s);
-				        js.id=id;
-				        js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-				  </script>
-				  </div>
-				  
-				  <div class="google button">
-				    <i class="icon">
-				      <i class="icon-google-plus">
-				    </i>
-				  </i>
-				  <div class="slide">
-				    <p>
-				      google+
-				    </p>
-				  </div>
-				  <!-- Place this tag where you want the +1 button to render. -->
-				  <div class="g-plusone" data-size="medium">
-				  </div>
-				  
-				  <!-- Place this tag after the last +1 button tag. -->
-				  <script type="text/javascript">
-				    (function() {
-				      var po = document.createElement('script');
-				      po.type = 'text/javascript';
-				      po.async = true;
-				      po.src = 'https://apis.google.com/js/plusone.js';
-				      var s = document.getElementsByTagName('script')[0];
-				      s.parentNode.insertBefore(po, s);
-				    }
-				    )();
-				  </script>
-				  </div>
-				  
-				  
-				  <div class="linkedin button">
-				    <i class="icon">
-				      <i class="icon-linkedin">
-				    </i>
-				  </i>
-				  <div class="slide">
-				    <p>
-				      linkedin
-				    </p>
-				  </div>
-				  <script type="IN/Share" data-counter="right"></script>
-				  <script src="//platform.linkedin.com/in.js" type="text/javascript">
-				    lang: en_US
-				  </script>
-				  </div>
-				</div>
-        		
-	        </div>
-	        {% endif %}
-	    </footer>
-    </div>
+
 {% endblock %}
 {% block javascript_base %}
 

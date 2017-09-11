@@ -1,11 +1,6 @@
 {% extends "base_with_nav.html" %}
 {% block content %}
 {% load string_utils %}
-
-        <ul class="breadcrumb">
-            <li><a href="{% url "home" %}">Home</a> <span class="divider">/</span></li>
-            <li class="active">Search</li>
-		</ul>
 		<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/search.tag" type="riot/tag"></script>
 		<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/raw.tag" type="riot/tag"></script>
 		<!--<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/searchresults.tag" type="riot/tag"></script>-->
