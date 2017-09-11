@@ -1,6 +1,7 @@
 {% extends "base_with_nav.html" %}
 
 {% block content %}
+		<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/workindex.tag" type="riot/tag"></script>
         <h1 class="pull-left">Library</h1>
         
 		<div id="async-loading-message" class="ajah-loading">
@@ -10,66 +11,17 @@
 			</div>
 		</div>
         
-        <span id="works_list_container"></span>
+        <workindex readworkurl="/work" searchurl="{% url "search" %}" filter="{{filter|default_if_none:""|escapejs}}"></workindex>
 		
 {% endblock %}
 
 {% block javascript %}
 <script language="javascript">
-require(["jquery", "libs/text!/media/templates/works_list.html", "datatables", "underscore"], function($, works_list_template) {
-		
-	function updateFilter(){
-		textcritical.datatable.fnFilter( $('input.works-search-query').val() );
-	}
-	
-	function updateMainFilter(){
-		$('input.works-search-query').val( $('input[aria-controls="works_list"]').val() );
-	}
-	
-	function setupWorksTable(works){
-		
-		$("#works_list_container").html(_.template(works_list_template,{ works:works,
-																		 USE_DARK_THEME:{{USE_DARK_THEME|default_if_none:1|lower}},
-																		 search_url:"{% url "search" %}",
-																		 read_work_url: "/work"}));
-		
-    	textcritical.datatable = $('#works_list').dataTable( {
-            "bPaginate": true,
-            "bLengthChange": false,
-            "bJQueryUI": false,
-            "bFilter": true,
-            "bSort": true,
-            "bInfo": true,
-            "bAutoWidth": false
-		} );
-		
-		{% if filter %}textcritical.datatable.fnFilter( "{{filter|escapejs}}" );{% endif %}
-		$('input.works-search-query').keyup(_.debounce(updateFilter, 150));
-		$('input.works-search-query').change(_.debounce(updateFilter, 150));
-		$('#search').submit( function() { return false; });
-		
-		$('input[aria-controls="works_list"]').keyup(_.debounce(updateMainFilter, 150));
-		
-		$('#async-loading-message').hide();
-		$('#works_list').fadeIn('slow');
-	}
-	
-    $(document).ready(function() {
-    	
-    	$('.bar'). css('width', '50%');
-    	
-    	$.ajax({
-    		url: "/api/works"
-    	}).done(function(works) {
-    		
-    		$('.bar'). css('width', '100%');
-    		
-    		setTimeout( function() { setupWorksTable(works); }, 500);
-
-    	});
-    	
-
-    } );
+require(["jquery", "riot", "datatables", "underscore"], function($, riotjs) {
+	$(document).ready(function() {
+		riot = riotjs;
+		riotjs.mount('*');
+	});
 });
 </script>
 {% endblock %}
