@@ -422,6 +422,11 @@
 		 * Do a search against the previous page of results.
 		 */
 		searchPreviousPage(e){
+			// Stop if we are already on the first page
+			if(this.page === 1){
+				return;
+			}
+
 			if(this.page <= 1){
 				this.page = 1;
 			}
