@@ -14,7 +14,8 @@ define([
 		'libs/text!/media/templates/wiki_info_dialog.html',
         'libs/text!/media/templates/loading_dialog.html',
         'libs/text!/media/templates/search_results.html',
-        'libs/text!/media/templates/copy_dialog.html',
+		'libs/text!/media/templates/copy_dialog.html',
+		'store',
         'libs/optional!facebook'
     ],
     function($, _, highcharts, alert_message_template, morphology_dialog_template, work_info_dialog_template, wiki_info_dialog_template, loading_template, search_results_template, copy_dialog_template) {
