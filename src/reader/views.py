@@ -113,7 +113,7 @@ def works_index(request):
                              {'title' : 'Works',
                               'filter': search_filter},
                               context_instance=RequestContext(request))
-    
+
 def get_chapter_for_division(division):
     """
     Get the division that contains the next part of readable content.
@@ -123,7 +123,7 @@ def get_chapter_for_division(division):
     
     if len(divisions) > 0:
         return divisions[0]
-    
+
 def get_chapters_list( division, count=9):
     """
     Get the list of chapters for pagination.
@@ -163,7 +163,7 @@ def get_chapters_list( division, count=9):
     final_list.extend(divisions_after)
     
     return final_list
-        
+
 def get_division_and_verse( work, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None ):
     """
     This function gets the division that is associated with the given descriptor set. If the final division descriptor is 
