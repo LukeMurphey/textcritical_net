@@ -63,7 +63,7 @@
     <!-- ================================= 
           target: compile
          ================================= -->
-	<target name="compile" description="Compile the application" depends="compile_scss,minify_js"></target>
+	<target name="compile" description="Compile the application" depends="update_build_info,compile_scss,minify_js"></target>
 	
     <!-- ================================= 
           target: initialize_libraries
@@ -138,18 +138,18 @@
           target: update_build_info
          ================================= -->
     <target name="update_build_info" depends="get_build_number">
-        <propertyfile file="src/VERSION" comment="Build Information File">
-            <entry key="build.number" value="${value.build.number}" />
-            <entry key="build.date" type="date" value="now" pattern="dd.MM.yyyy HH:mm" />
-            <entry key="build.version" value="${value.build.version}" />
-        </propertyfile>
+    	<echo file="src/reader/templates/VERSION.txt" append="false">${value.build.version} (build ${value.build.number})</echo>
+		<echo file="src/reader/templates/VERSION.json" append="false">{
+		"version": "${value.build.version}",
+		"build": "${value.build.number}",
+		"build_date": "${value.build.date}"
+}</echo>
     </target>
 	
     <!-- ================================= 
           target: package
          ================================= -->
-    <target name="package" depends="get_build_number" description="Create the application package (sans media)">
-    	<echo file="src/reader/templates/VERSION.txt" append="false">${value.build.version} (build ${value.build.number})</echo>
+    <target name="package" depends="get_build_number,update_build_info" description="Create the application package (sans media)">
     	<mkdir dir="${value.build.packageoutput.directory}" />
         <zip destfile="${value.build.packageoutput.directory}/textcritical.zip"
             basedir="src"

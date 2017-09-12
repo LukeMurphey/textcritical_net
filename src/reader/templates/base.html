@@ -46,7 +46,7 @@
   {% endif %}
   <script type="application/javascript" src="{{ MEDIA_URL|default:"/media/" }}javascripts/libs/modernizr-2.6.1.min.js"></script>
   {% block style %}{% endblock %}
-  
+  {% include "riot_tags.html" %}   
 </head>
 <body {% if USE_DARK_THEME|default_if_none:1 %}class="textcritical dark view_{{url_name}}"{% endif %}>
   <!--[if lt IE 7]>

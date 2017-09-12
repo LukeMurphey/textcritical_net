@@ -12,7 +12,7 @@ $hover_background_color: #F5F5F5;
     margin-top: 8px;
 }
 
-.paginate_enabled_next, .paginate_enabled_previous, .paginate_disabled_next, .paginate_disabled_previous {
+.paginate_button {
     background-color: #FFFFFF;
     border: 1px solid #DDDDDD;
     border-radius: 15px 15px 15px 15px;
@@ -21,8 +21,13 @@ $hover_background_color: #F5F5F5;
     margin-bottom: 16px;
 }
 
+.dataTables_paginate > span > a{
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
 #works_list_next{
-    float: right;
+    /* float: right; */
     &:after { content: " \2192"; }
 }
 
@@ -31,7 +36,7 @@ $hover_background_color: #F5F5F5;
 	&:before { content: "\2190  "; }
 }
 
-.paginate_enabled_next, .paginate_enabled_previous{
+.paginate_button.disabled{
 	&:hover {
 	   background-color: $hover_background_color;
 	   color: #005580;
@@ -41,7 +46,7 @@ $hover_background_color: #F5F5F5;
 	}
 }
 
-.paginate_disabled_previous, .paginate_disabled_next{
+.paginate_button.disabled{
     color: #999999;
     cursor: default;
     &:hover {
@@ -57,7 +62,7 @@ $hover_background_color: #F5F5F5;
 
 /* The following is necessary to work with darkstrap */
 $hover_background_color_dark: #222222;
-body.dark .paginate_disabled_previous, body.dark .paginate_disabled_next{
+body.dark .paginate_button.disabled{
     border-color: #666;
     background-color: transparent;
     &:hover {
@@ -66,7 +71,7 @@ body.dark .paginate_disabled_previous, body.dark .paginate_disabled_next{
     }
 }
 
-body.dark .paginate_enabled_next, body.dark .paginate_enabled_previous{
+body.dark .paginate_button{
     border-color: #666;
     background-color: transparent;
     &:hover {

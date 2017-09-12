@@ -39,11 +39,6 @@
 	  </div>
 
 		{% load string_utils %}
-        <ul class="breadcrumb">
-            <li><a href="{% url "home" %}">Home</a> <span class="divider">/</span></li>
-            <li><a href="{% url "works_index" %}">Library</a> <span class="divider">/</span></li>
-            <li class="active">{{work.title}}{% if chapter %}: {{chapter.get_division_description}}{% endif %}</li>
-		</ul>
 		
         {% comment %}
         ##############################

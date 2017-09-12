@@ -9,13 +9,13 @@ sitemaps = dict(
 
 urlpatterns = patterns('',
     url(r'^admin/reader/', include('reader.admin_urls')),
-    
+
     url(r'^robots.txt/?$', 'reader.views.robots_txt', name='robots_txt' ),
     url(r'^humans.txt/?$', 'reader.views.humans_txt', name='humans_txt' ),
     url(r'^sitemap.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
+
+    url(r'^/?$', 'reader.views.works_index', name='home' ),
     
-    url(r'^/?$', 'reader.views.home', name='home' ),
-    url(r'^works/?$', 'reader.views.works_index', name='works_index' ),
     url(r'^download/work/(?P<title>.*)/?$', 'reader.views.download_work', name='download_work' ),
     url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>.+)/?$', 'reader.views.read_work', name='read_work' ),
     url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/?$', 'reader.views.read_work', name='read_work' ),
@@ -35,6 +35,9 @@ urlpatterns = patterns('',
     url(r'^beta_code_converter/?$', 'reader.views.beta_code_converter', name='beta_code_converter' ),
     
     url(r'^tests/?$', 'reader.views.tests', name='tests' ),
+
+    # This is now the home page. This is kept around for historical reasons.
+    url(r'^works/?$', 'reader.views.works_index', name='works_index' ),
     
     # API views
     url(r'^api/?$', 'reader.views.api_index', name='api_index' ),
