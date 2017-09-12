@@ -75,10 +75,8 @@
   {% endif %}
   {% if USE_MINIFIED|default_if_none:1 %}
   <script src="{{ MEDIA_URL|default:"/media/" }}javascripts/main.min.js"></script>
-  <!--<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/libs/riot%2Bcompiler.min.js"></script>-->
   {% else %}
   <script src="{{ MEDIA_URL|default:"/media/" }}javascripts/main.js"></script>
-  <!--<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/libs/riot+compiler.js"></script>-->
   {% endif %}
   
   <script language="javascript">
