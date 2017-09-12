@@ -40,8 +40,6 @@
 
 {% endblock %}
 {% block javascript_base %}
-		<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/modaldialog.tag" type="riot/tag"></script>
-		<script src="{{ MEDIA_URL|default:"/media/" }}javascripts/aboutdialog.tag" type="riot/tag"></script>
     <script language="javascript">
     require(["jquery", "riot_require", "bootstrap", "app", "libs/optional!facebook"], function($, riot) {
     	$(document).ready( function() {
