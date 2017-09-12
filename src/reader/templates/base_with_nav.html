@@ -12,7 +12,7 @@
           <a class="brand" title="TextCritical.net homepage" href="{% url "home" %}">TextCritical.net</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li><a href="{% url "works_index" %}">Library</a></li>
+              <li><a class="librarydialog" href="{% url "works_index" %}">Library</a></li>
               <li><a href="{% url "search" %}">Search</a></li>
               <li><a class="aboutdialog" hrefw="{% url "about" %}">About</a></li>
             </ul>
@@ -24,7 +24,7 @@
         </div>
       </div>
     </div>
-    
+	
     <div class="container">
 	  <div id="messages">
 	  	{% for warning in warnings %}
@@ -32,16 +32,17 @@
 			<button type="button" class="close" data-dismiss="alert">&times;</button>
 			<strong>{{warning.0}}:</strong>
 			{{warning.1}}
-		</div>
+			</div>
 	    {% endfor %}
-	  </div>
-    <aboutdialog></aboutdialog>
+		</div>
+		<workindexdialog></workindexdialog>
+		<aboutdialog></aboutdialog>
     {% block content %}{% endblock %}
 
 {% endblock %}
 {% block javascript_base %}
     <script language="javascript">
-    require(["jquery", "riot_require", "bootstrap", "app", "libs/optional!facebook"], function($, riot) {
+    require(["jquery", "riot_require", "bootstrap", "app", "datatables", "libs/optional!facebook"], function($, riot) {
     	$(document).ready( function() {
     		
     		// Configure the typeahead    		
@@ -63,7 +64,19 @@
 
 			var nav = new Nav()
 			
-			// Mount the adbout dialog
+			// Mount the work index dialog tag
+			var tag = riot.mount('workindexdialog', {
+				observable: nav
+			});
+
+			// Wire up the show library to the about link
+			$('.librarydialog').click(function(e){
+				nav.trigger('open-library-modal');
+				e.preventDefault();
+				return false;
+			}.bind(this));
+
+			// Mount the about dialog
 			riot.mount('aboutdialog', {
 				observable: nav,
 				version_info: '{% include "VERSION.txt" %}'
@@ -75,6 +88,8 @@
 				e.preventDefault();
 				return false;
 			}.bind(this));
+
+
     		
 			window.fbAsyncInit = TextCritical.facebookInit();
 			{% if INCLUDE_SHARING_BUTTONS %}

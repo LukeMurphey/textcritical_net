@@ -41,6 +41,9 @@
 			    </tr>
 		    </tbody>
 		</table>
+		<div class="loading-holder">
+			<yield/>
+		</div>
 <script>
     // Initialize the arguments
     this.use_dark_theme = true; //this.opts.usedarktheme === undefined ? true : false;
@@ -49,11 +52,16 @@
     this.filter = this.opts.filter;
     this.display_full_table = this.opts.displayfulltable === undefined ? false : true;
     this.page_length = this.opts.page_length === undefined ? 10 : this.opts.page_length;
+	this.wait_to_render = this.opts.wait_to_render === undefined ? false : true;
+
+	// This is an internal parameter for storing the works
     this.works = [];
 
 	// Run the functions as necessary on mount.
 	this.on('mount', function(){
-		this.getWorks();
+		if(!this.wait_to_render){
+			this.getWorks();
+		}
 	}.bind(this))
 
 	updateFilter(){
@@ -92,15 +100,21 @@
 		$('input[aria-controls="works_list"]').keyup(_.debounce(this.updateMainFilter, 150));
 		
 		$('#async-loading-message').hide();
-		$('#works_list').fadeIn('slow');
+		$('#works_list', this.root).fadeIn('slow');
 	}
 
     getWorks(){
+		var promise = jQuery.Deferred();
+
         $.ajax({
     		url: "/api/works"
     	}).done(function(works) {
     		this.setupWorksTable(works);
+			$('.loading-holder', this.root).hide();
+			promise.resolve();
     	}.bind(this));
+
+		return promise;
     }
 
 </script>
