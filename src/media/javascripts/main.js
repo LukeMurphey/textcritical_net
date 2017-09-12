@@ -12,7 +12,7 @@ require.config({
         ],
              
         datatables: [
-            "//cdnjs.cloudflare.com/ajax/libs/datatables/1.9.3/jquery.dataTables",
+            "//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.16/js/jquery.dataTables",
             "libs/jquery.dataTables"
         ],
         
