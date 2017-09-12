@@ -25,10 +25,6 @@ require.config({
             "libs/store"
         ],
         
-        bootbox: [
-            "libs/bootbox"
-        ],
-        
         underscore: [
             "//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min",
             "libs/underscore"
