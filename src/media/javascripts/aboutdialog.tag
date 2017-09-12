@@ -43,7 +43,7 @@
     <script>
         this.versioninfo = this.opts.version_info;
 
-        riot.mount('modaldialog');
+        //riot.mount('modaldialog');
 
     	// Run the functions as necessary on mount.
         this.on('mount', function(){
