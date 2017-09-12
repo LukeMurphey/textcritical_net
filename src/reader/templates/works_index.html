@@ -17,10 +17,9 @@
 
 {% block javascript %}
 <script language="javascript">
-require(["jquery", "riot", "datatables", "underscore"], function($, riotjs) {
+require(["jquery", "riot_require", "datatables", "underscore"], function($, riot) {
 	$(document).ready(function() {
-		riot = riotjs;
-		riotjs.mount('*');
+		riot.mount('workindex');
 	});
 });
 </script>
