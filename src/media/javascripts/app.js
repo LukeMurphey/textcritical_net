@@ -14,7 +14,8 @@ define([
 		'libs/text!/media/templates/wiki_info_dialog.html',
         'libs/text!/media/templates/loading_dialog.html',
         'libs/text!/media/templates/search_results.html',
-        'libs/text!/media/templates/copy_dialog.html',
+		'libs/text!/media/templates/copy_dialog.html',
+		'store',
         'libs/optional!facebook'
     ],
     function($, _, highcharts, alert_message_template, morphology_dialog_template, work_info_dialog_template, wiki_info_dialog_template, loading_template, search_results_template, copy_dialog_template) {
@@ -630,103 +631,7 @@ define([
 		  		return pattern.test(TextCritical.normalize($(this).text()))
 			}).addClass(div_class);
 		}
-		
-		/**
-		 * Determine if the results has actual words to kick off a search to look for (other than just the parts of the search specifying
-		 * the work to search).
-		 * 
-		 * @param query The query to perform a search on
-		 **/
-		TextCritical.contains_search_words = function ( query ) {
-			
-			var split_query = query.match(/([_0-9a-z]+[:][-_0-9a-z]+)|([\w_]+[:]["][-\w ]*["])|([^ :]+)/gi);
-			
-			for( c = 0; c < split_query.length; c++){
-				if( split_query[c].search(":") < 0 ){
-					return true;
-				}
-			}
-			
-			return false;
-		}
-		
-		/**
-		 * Set the cursor to the end of an input.
-		 * 
-		 * @param elem Set the cursor at the end of the given element
-		 **/
-		TextCritical.set_caret_at_end = function (elem) {
-			
-		    var elemLen = elem.value.length;
-		    
-		    // For IE Only
-		    if (document.selection) {
-		        // Set focus
-		        elem.focus();
-		        // Use IE Ranges
-		        var oSel = document.selection.createRange();
-		        // Reset position to 0 & then set at end
-		        oSel.moveStart('character', -elemLen);
-		        oSel.moveStart('character', elemLen);
-		        oSel.moveEnd('character', 0);
-		        oSel.select();
-		    }
-		    else if (elem.selectionStart || elem.selectionStart == '0') {
-		        // Firefox/Chrome
-		        elem.selectionStart = elemLen;
-		        elem.selectionEnd = elemLen;
-		        elem.focus();
-		    }
-		}
-		
-		/**
-		 * Update the URL according to the word and page specified.
-		 * 
-		 * @param query The search query
-		 * @param page The page number
-		 * @param include_related_forms Whether related forms should be included
-		 * @param ignore_diacritics Whether diacritics should be ignored
-		 */
-		TextCritical.set_search_url = function ( query, page, include_related_forms, ignore_diacritics ) {
-			
-			// Get defaults for the arguments
-			if(typeof include_related_forms === 'undefined'){
-				var include_related_forms = false;
-			}
-			
-			if(typeof ignore_diacritics === 'undefined'){
-				var ignore_diacritics = false;
-			}
-			
-			var params = {};
-			
-			// Add the related forms argument
-			if( related_forms ){
-				params['include_related'] = 1;
-			}
-			
-			// Add the ignore diacritics argument
-			if( ignore_diacritics ){
-				params['ignore_diacritics'] = 1;
-			}
-			
-			// Get the appropriate URL
-			if( page <= 1 || parseInt(page) <= 1 ){
-				params['q'] = query;
-				page = 1;
-			}
-			else{
-				params['q'] = query;
-				params['page'] = page;
-			}
-			
-			// Make the URL
-			var url = document.location.pathname + "?" + $.param(params);
-			
-			// Push the state
-			history.pushState( {query: query, page: page, include_related_forms:include_related_forms, ignore_diacritics:ignore_diacritics}, document.title, url);
-		}
-		
+
 		/**
 		 * Make a bar chart.
 		 * 
@@ -937,20 +842,6 @@ define([
 		}
 		
 		/**
-		 * Do a search, starting from page 1.
-		 **/
-		TextCritical.do_fresh_search = function ( ) {
-			return TextCritical.do_search( 1 );
-		}
-		
-		/**
-		 * Go to the next page in the search results.
-		 **/
-		TextCritical.do_search_next = function ( ) {
-			return TextCritical.change_page( 1 );
-		}
-		
-		/**
 		 * Change to the page in the search results based on the offset provided. An offset of -1 goes back one page, an offset of 1 goes forward one.
 		 * 
 		 * @param offset The amount of change in the page number
@@ -997,33 +888,7 @@ define([
 			document.location = search_uri;
 			return false;
 		}
-		
-		/**
-		 * Go to the previous page in the search results.
-		 **/
-		TextCritical.do_search_previous = function ( ) {
-			return TextCritical.change_page( -1 );
-		}
-		
-		/**
-		 * Update the search results when the user presses the back button.
-		 * 
-		 * @param event The event from the popstate
-		 **/
-		TextCritical.search_page_popstate = function ( event ) {
-			
-			// Ignore events made from replace states
-			if (event.state == null) {
-				return;
-			}
-			  
-			// Update the query if necessary
-			$("#search-term").val( event.state.query );
-			
-			// Invoke the search, but don't update the URL (otherwise users will keep adding a new state and can never get back more than one)
-			TextCritical.do_search( event.state.page, false );
-		}
-		
+
 		/**
 		 * Convert the beta-code to the associated Greek.
 		 **/

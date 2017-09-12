@@ -72,9 +72,6 @@ def contact(request):
 
 def search(request, query=None):
     
-    authors = Author.objects.all().order_by("name")
-    works = Work.objects.all().order_by("title")
-    
     if 'q' in request.GET:
         query = request.GET['q']
     else:
@@ -94,11 +91,9 @@ def search(request, query=None):
         ignore_diacritics = (request.GET['ignore_diacritics'] == '1')
     else:
         ignore_diacritics = False
-    
+
     return render_to_response('search.html',
                               {'title'   : 'Search',
-                               'authors' : authors,
-                               'works'   : works,
                                'query'   : query,
                                'page'    : page,
                                'search_related_forms' : search_related_forms,
@@ -118,7 +113,7 @@ def works_index(request):
                              {'title' : 'Works',
                               'filter': search_filter},
                               context_instance=RequestContext(request))
-    
+
 def get_chapter_for_division(division):
     """
     Get the division that contains the next part of readable content.
@@ -128,7 +123,7 @@ def get_chapter_for_division(division):
     
     if len(divisions) > 0:
         return divisions[0]
-    
+
 def get_chapters_list( division, count=9):
     """
     Get the list of chapters for pagination.
@@ -168,7 +163,7 @@ def get_chapters_list( division, count=9):
     final_list.extend(divisions_after)
     
     return final_list
-        
+
 def get_division_and_verse( work, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None ):
     """
     This function gets the division that is associated with the given descriptor set. If the final division descriptor is 

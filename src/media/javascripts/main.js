@@ -12,7 +12,7 @@ require.config({
         ],
              
         datatables: [
-            "//cdnjs.cloudflare.com/ajax/libs/datatables/1.9.3/jquery.dataTables",
+            "//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.16/js/jquery.dataTables",
             "libs/jquery.dataTables"
         ],
         
@@ -23,10 +23,6 @@ require.config({
         
         store: [
             "libs/store"
-        ],
-        
-        bootbox: [
-            "libs/bootbox"
         ],
         
         underscore: [
@@ -73,6 +69,10 @@ require.config({
         clipboard: [
             "https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard",
             "libs/clipboard"
+        ],
+
+        riot: [
+            "libs/riot+compiler"
         ]
 
     },
@@ -90,6 +90,9 @@ require.config({
 	    },
     	facebook : {
     		export: 'FB'
+    	},
+    	riot : {
+    		export: 'riot'
     	}
     }
 });
