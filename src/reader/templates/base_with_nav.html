@@ -64,7 +64,10 @@
 			var nav = new Nav()
 			
 			// Mount the adbout dialog
-			riot.mount('aboutdialog', {observable: nav});
+			riot.mount('aboutdialog', {
+				observable: nav,
+				version_info: '{% include "VERSION.txt" %}'
+			});
 
 			// Wire up the about dialog to the about link
 			$('.aboutdialog').click(function(e){
