@@ -1,8 +1,6 @@
 <workindexdialog>
-    <div class={ hide: !show, workindexmodal: true, container: false }>
-        <h3 class="popover-title">Library
-            <button type="button" class="close" onclick={ closeDialog } aria-hidden="true">×</button>
-        </h3>
+    <div class={ hide: !show, workindexmodal: true, container: true }>
+        <h3 class="pull-left">Library</h3><button type="button" class="close pull-right" onclick={ closeDialog }>×</button>
         <div class="workindexcontent">
             <workindex page_length=5 wait_to_render readworkurl={ readworkurl } searchurl={ searchurl }>
                 <div class="worksloading">
@@ -13,29 +11,14 @@
     </div>
 
     <style>
-        .workindexmodal{
-            /* width: 700px; */
-            position: fixed;
-            background: #2f2f2f;
-            z-index: 100;
-            /*
-            border-radius: 5px 5px 0 0;
-            border-bottom: 1px solid #ebebeb;
-            */
-            -webkit-border-radius: 5px 5px 0 0;
-            -moz-border-radius: 5px 5px 0 0;
 
-            border: 1px solid rgba(0, 0, 0, 0.5);
-            border: 1px solid #444;
-            -webkit-border-radius: 6px;
-            -moz-border-radius: 6px;
-            border-radius: 6px;
-            -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
-            -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
-            -webkit-background-clip: padding-box;
-            -moz-background-clip: padding;
-            background-clip: padding-box;
+
+        button.close{
+            color: white;
+            font-size: 34px;
+            margin-top: 16px;
+            margin-left: 16px;
+            opacity: .3;
         }
 
         .workindexcontent{
@@ -54,6 +37,7 @@
         // Get the parameters that will be pased down to the workindex tag
         this.searchurl = this.opts.searchurl;
         this.readworkurl = this.opts.readworkurl;
+        this.hidewhenopen = this.opts.hidewhenopen;
 
         // Run the functions as necessary on mount.
         this.on('mount', function(){
@@ -86,6 +70,10 @@
         showDialog(){
             this.show = true;
             this.update();
+
+            if(this.hidewhenopen){
+                $(this.hidewhenopen).hide();
+            }
         }
 
         /*
@@ -94,6 +82,9 @@
         closeDialog(){
             this.show = false;
             this.update();
+            if(this.hidewhenopen){
+                $(this.hidewhenopen).show();
+            }
         }
     </script>
 </workindexdialog>
