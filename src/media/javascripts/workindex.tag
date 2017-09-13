@@ -1,5 +1,5 @@
 <workindex>
-        <table class={table: true, "table-striped": display_full_table, "table-hover": true} class="table table-striped table-hover" id="works_list" >
+        <table class={table: true, "table-striped": display_full_table, "table-hover": true, "fulltable": display_full_table} class="table table-striped table-hover" id="works_list" >
 		    <thead if={ !display_full_table }>
 		        <th>Title</th>
 		        <th></th>
@@ -32,7 +32,10 @@
 		    </tbody>
 		    <tbody if={ display_full_table }>
 			    <tr each={ works }>
+					<!--
 			        <td><i class="hidden-phone icon-book icon-white"></i> <a href="{ read_work_url }/{ title_slug }">{ title }</a> </td>
+					-->
+					<td><img class="work-image " src="/work_image/{ title_slug }?width=30"> <a href="{ read_work_url }/{ title_slug }">{ title }</a> </td>
 			        <td>{ language }</td>
 			        <td>{ author }</td>
 			        <td class="hidden-phone">{ editor }</td>
@@ -46,6 +49,12 @@
 		<div class="loading-holder">
 			<yield/>
 		</div>
+<style>
+	.fulltable .work-image{
+		width:24px;
+		height:32px
+	}
+</style>
 <script>
     // Initialize the arguments
     this.use_dark_theme = true; //this.opts.usedarktheme === undefined ? true : false;
