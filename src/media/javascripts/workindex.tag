@@ -15,7 +15,9 @@
 			    <tr each={ works }>
 			        <td>
                         <div class="pull-left" style='width:42px;height:40px;'>
+							<a href="#" class="open-work-info" data-work-title-slug="{ title_slug }" data-work-title="{ title }">
                             <img class="work-image" src="/work_image/{ title_slug }?width=30">
+							</a>
                         </div>
                         <div>
                             <div><a href="{ read_work_url }/{ title_slug }">{ title }</a></div>
@@ -51,11 +53,12 @@
     this.search_url = this.opts.searchurl;
     this.filter = this.opts.filter;
     this.display_full_table = this.opts.displayfulltable === undefined ? false : true;
-    this.page_length = this.opts.page_length === undefined ? 10 : this.opts.page_length;
+    this.page_length = this.opts.page_length === undefined ? 10 : parseInt(this.opts.page_length, 10);
 	this.wait_to_render = this.opts.wait_to_render === undefined ? false : true;
 
 	// This is an internal parameter for storing the works
     this.works = [];
+	this.datatable = null;
 
 	// Run the functions as necessary on mount.
 	this.on('mount', function(){
@@ -65,7 +68,7 @@
 	}.bind(this))
 
 	updateFilter(){
-		textcritical.datatable.fnFilter($('input.works-search-query').val());
+		this.datatable.fnFilter($('input.works-search-query').val());
 	}
 	
 	updateMainFilter(){
@@ -76,7 +79,7 @@
 		this.works = works;
         this.update();
 
-    	textcritical.datatable = $('#works_list').dataTable( {
+    	this.datatable = $('#works_list').dataTable( {
             "bPaginate": true,
             "bLengthChange": false,
             "bJQueryUI": false,
@@ -89,7 +92,7 @@
 		
         // Filter the table if requested
 		if(this.filter){
-            textcritical.datatable.fnFilter(this.filter);
+            this.datatable.fnFilter(this.filter);
         }
 
         // Wire up the controls
