@@ -12,11 +12,15 @@
                         <td>{ opts.versioninfo }</td>
                     </tr>
                     <tr>
+                        <td><strong>Sources of the works</strong></td>
+                        <td>Available at <a target="_blank" class="external print-append-href" href="https://lukemurphey.net/projects/ancient-text-reader/wiki/Content_Sources">LukeMurphey.net</a></td>
+                    </tr>
+                    <tr>
                         <td><strong>Source Code</strong></td>
                         <td>Available at <a target="_blank" class="external print-append-href" href="https://github.com/LukeMurphey/textcritical_net">Github.com</a></td>
                     </tr>
                     <tr>
-                        <td><strong>Licenses</strong></td>
+                        <td><strong>Components used</strong></td>
                         <td>Available at <a target="_blank" class="external print-append-href" href="https://lukemurphey.net/projects/ancient-text-reader/wiki/Dependencies">LukeMurphey.net</a></td>
                     </tr>
                 </tbody>
