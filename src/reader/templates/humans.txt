@@ -12,5 +12,5 @@ Peter Heslin: p.j.heslin@dur.ac.uk
 {% if version_info %}
 Version: {{ version_info }}{% endif %}
 Standards: HTML5, CSS3
-Components: Modernizr, jQuery, Twitter Bootstrap, Require.js, jQuery DataTables, HTML5 Boilerplate, Underscore.js, Highcharts.js
+Components: Modernizr, jQuery, Twitter Bootstrap, Require.js, jQuery DataTables, HTML5 Boilerplate, Underscore.js, Highcharts.js, riot.js
 Software: Visual Studio Code, Git, SASS
