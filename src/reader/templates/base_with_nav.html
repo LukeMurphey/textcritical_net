@@ -12,7 +12,7 @@
           <a class="brand" title="TextCritical.net homepage" href="{% url "home" %}">TextCritical.net</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li><a class="librarydialog" href="{% url "works_index" %}">Library</a></li>
+              <li><a href="{% url "works_index" %}">Library</a></li>
               <li><a href="{% url "search" %}">Search</a></li>
               <li><a class="aboutdialog" hrefw="{% url "about" %}">About</a></li>
 						</ul>
@@ -62,21 +62,7 @@
 				riot.observable(this);
 			}
 
-			var nav = new Nav()
-
-			{% if request.resolver_match.view_name != 'works_index' and request.resolver_match.view_name != 'home' %}
-			// Mount the work index dialog tag
-			var tag = riot.mount('workindexdialog', {
-				observable: nav
-			});
-
-			// Wire up the show library to the library link
-			$('.librarydialog').click(function(e){
-				nav.trigger('open-library-modal');
-				e.preventDefault();
-				return false;
-			}.bind(this));
-			{% endif %}
+			var nav = new Nav();
 
 			// Mount the about dialog
 			riot.mount('aboutdialog', {
