@@ -334,169 +334,26 @@ html {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%; }
 
-@-moz-keyframes rotate-loading {
+@keyframes spin {
   0% {
-    transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    -moz-transform: rotate(0deg); }
+    transform: rotate(0deg); }
 
   100% {
-    transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -webkit-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    -moz-transform: rotate(360deg); } }
-
-@-o-keyframes rotate-loading {
-  0% {
-    transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    -moz-transform: rotate(0deg); }
-
-  100% {
-    transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -webkit-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    -moz-transform: rotate(360deg); } }
-
-@-webkit-keyframes rotate-loading {
-  0% {
-    transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    -moz-transform: rotate(0deg); }
-
-  100% {
-    transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -webkit-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    -moz-transform: rotate(360deg); } }
-
-@keyframes rotate-loading {
-  0% {
-    transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    -moz-transform: rotate(0deg); }
-
-  100% {
-    transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -webkit-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    -moz-transform: rotate(360deg); } }
-
-@-moz-keyframes loading-text-opacity {
-  0% {
-    opacity: 0; }
-
-  20% {
-    opacity: 0; }
-
-  50% {
-    opacity: 1; }
-
-  100% {
-    opacity: 0; } }
-
-@-o-keyframes loading-text-opacity {
-  0% {
-    opacity: 0; }
-
-  20% {
-    opacity: 0; }
-
-  50% {
-    opacity: 1; }
-
-  100% {
-    opacity: 0; } }
-
-@-webkit-keyframes loading-text-opacity {
-  0% {
-    opacity: 0; }
-
-  20% {
-    opacity: 0; }
-
-  50% {
-    opacity: 1; }
-
-  100% {
-    opacity: 0; } }
-
-@keyframes loading-text-opacity {
-  0% {
-    opacity: 0; }
-
-  20% {
-    opacity: 0; }
-
-  50% {
-    opacity: 1; }
-
-  100% {
-    opacity: 0; } }
-
-.loading-container,
-.loading-animated {
-  height: 100px;
-  position: relative;
-  width: 100px;
-  border-radius: 100%; }
-
-.loading-container {
-  margin: 40px auto; }
+    transform: rotate(360deg); } }
 
 .loading-animated {
-  border: 2px solid transparent;
-  border-color: transparent #149bdf transparent #149bdf;
-  -moz-animation: rotate-loading 1.5s linear 0s infinite normal;
-  -moz-transform-origin: 50% 50%;
-  -o-animation: rotate-loading 1.5s linear 0s infinite normal;
-  -o-transform-origin: 50% 50%;
-  -webkit-animation: rotate-loading 1.5s linear 0s infinite normal;
-  -webkit-transform-origin: 50% 50%;
-  animation: rotate-loading 1.5s linear 0s infinite normal;
-  transform-origin: 50% 50%; }
-
-.loading-container:hover .loading-animated {
-  border-color: transparent #E45635 transparent #E45635; }
-
-.loading-container:hover .loading-animated,
-.loading-container .loading-animated {
-  -webkit-transition: all 0.5s ease-in-out;
-  -moz-transition: all 0.5s ease-in-out;
-  -ms-transition: all 0.5s ease-in-out;
-  -o-transition: all 0.5s ease-in-out;
-  transition: all 0.5s ease-in-out; }
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  border: 0.25rem solid rgba(255, 255, 255, 0.2);
+  border-top-color: white;
+  animation: spin 1s infinite linear;
+  display: inline-block; }
 
 #loading-text {
-  /*
-  -moz-animation: loading-text-opacity 2s linear 0s infinite normal;
-  -o-animation: loading-text-opacity 2s linear 0s infinite normal;
-  -webkit-animation: loading-text-opacity 2s linear 0s infinite normal;
-  animation: loading-text-opacity 2s linear 0s infinite normal;
-  opacity: 0;
-  */
-  color: #149bdf;
-  font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-  font-size: 10px;
-  font-weight: bold;
-  margin-top: 45px;
-  position: absolute;
-  text-align: center;
-  text-transform: uppercase;
-  top: 0;
-  width: 100px; }
+  display: inline-block;
+  vertical-align: top;
+  padding: 6px 0 0 8px; }
 
 /* -----------------------------------------
    Homepage
