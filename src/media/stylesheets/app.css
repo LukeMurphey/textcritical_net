@@ -334,6 +334,7 @@ html {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%; }
 
+/* https://codepen.io/alanshortis/pen/eJLVXr */
 @keyframes spin {
   0% {
     transform: rotate(0deg); }
