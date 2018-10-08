@@ -33,6 +33,9 @@ RUN apt-get update && \
 COPY src /usr/src/app
 COPY var /usr/src/app/var
 
+# Copy over the Docker settings file
+COPY src/textcritical/docker_image_settings.py /usr/src/app/textcritical/settings.py
+
 # EXPOSE port 8080 to allow communication to/from the Django server
 EXPOSE 8080
 
