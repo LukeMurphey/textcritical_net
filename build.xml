@@ -428,6 +428,9 @@
 
 	</target>
 
+    <!-- ================================= 
+          target: check_install_state
+         ================================= -->
 	<target name="check_install_state" depends="initialize_libraries">
 		<!-- Check: media/files exists -->
 		<if>
@@ -461,6 +464,38 @@
 				<echo level="warning">library database does not exist</echo>
 			</else>
     	</if>
+	</target>
+
+    <!-- ================================= 
+          target: docker_build
+         ================================= -->
+	<target name="docker_build" description="Build the docker image">
+		<exec executable="docker">
+			<arg value="build"/>
+			<arg value="-t"/>
+			<arg value="textcritical"/>
+			<arg value="."/>
+		</exec>
+	</target>
+
+    <!-- ================================= 
+          target: docker_run
+         ================================= -->
+	<target name="docker_run" description="Run the docker image">
+		<exec executable="docker">
+			<arg value="run"/>
+			<arg value="--rm"/>
+			<arg value="-d"/>
+			<arg value="-p"/>
+			<arg value="8080:8080/tcp"/>
+			<arg value="textcritical:latest"/>
+		</exec>
+	</target>
+
+    <!-- ================================= 
+          target: docker_build_and_run
+         ================================= -->
+	<target name="docker_build_and_run" description="Build the docker image and then run it" depends="get_build_number,compile,docker_build,docker_run">
 	</target>
 	
 </project>
