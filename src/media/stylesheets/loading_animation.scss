@@ -1,6 +1,6 @@
 /* https://codepen.io/alanshortis/pen/eJLVXr */
 
-$base-line-height: 24px;
+$base-line-height: 36px;
 $white: rgb(255,255,255);
 $off-white: rgba($white, 0.2);
 $spin-duration: 1s;
@@ -22,10 +22,4 @@ $spin-duration: 1s;
     border-top-color: $white;
     animation: spin $spin-duration infinite linear;
     display: inline-block;
-}
-
-#loading-text {
-    display: inline-block;
-    vertical-align: top;
-    padding: 6px 0 0 8px;
 }

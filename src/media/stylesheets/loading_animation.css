@@ -8,14 +8,9 @@
 
 .loading-animated {
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   border: 0.25rem solid rgba(255, 255, 255, 0.2);
   border-top-color: white;
   animation: spin 1s infinite linear;
   display: inline-block; }
-
-#loading-text {
-  display: inline-block;
-  vertical-align: top;
-  padding: 6px 0 0 8px; }
