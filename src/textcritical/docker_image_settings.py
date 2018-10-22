@@ -52,6 +52,9 @@ MEDIA_ROOT = '/usr/src/app/media/'
 
 STATIC_ROOT = '/usr/src/app/media/static/'
 
+# Define the path to the static directory so that the admin page works
+STATIC_URL = '/media/static/'
+
 # Define where the search indexes are
 SEARCH_INDEXES = '/usr/src/app/var/indexes'
 
