@@ -1,5 +1,6 @@
 require.config({
     baseUrl: "/media/javascripts",
+    urlArgs: "v=" + (new Date()).getTime(), // Cache busting argument
     paths: {
         jquery: [
             "//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery",
