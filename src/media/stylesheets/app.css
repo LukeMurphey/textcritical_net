@@ -853,6 +853,13 @@ body.dark .dataTables_filter > label > input {
 .sorting_desc {
   background-image: url("../images/sort_down.png"); }
 
+.work-icon-holder {
+  width: 42px;
+  height: 40px; }
+
+.work-description > div {
+  margin-left: 42px; }
+
 /* Style the options dropdown in the list of works */
 .work-options > a {
   padding: 4px 4px 4px 4px;

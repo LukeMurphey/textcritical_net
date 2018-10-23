@@ -14,12 +14,12 @@
 		    <tbody if={ !display_full_table }>
 			    <tr each={ works }>
 			        <td>
-                        <div class="pull-left" style='width:42px;height:40px;'>
+                        <div class="pull-left work-icon-holder">
 							<a href="{ read_work_url }/{ title_slug }">
                             <img class="work-image" src="/work_image/{ title_slug }?width=30">
 							</a>
                         </div>
-                        <div>
+                        <div class="work-description" >
                             <div><a href="{ read_work_url }/{ title_slug }">{ title }</a></div>
                             <div>in { language } by { author } <span if="{ editor }">(edited by { editor })</span></div>
                         </div>
