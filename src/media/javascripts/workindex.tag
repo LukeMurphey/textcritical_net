@@ -25,8 +25,13 @@
                         </div>
                     </td>
 			        <td class="hidden-phone">
-                        <a href="{ search_url }?q=work:{ title_slug }">[Search]</a>
-                        <a href="#" class="open-work-info" data-work-title-slug="{ title_slug }" data-work-title="{ title }">[Info]</a>
+						<div class="dropdown work-options">
+							<a class="dropdown-toggle" type="button" data-toggle="dropdown">Options<span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="{ search_url }?q=work:{ title_slug }">Search</a></li>
+								<li><a href="#" class="open-work-info" data-work-title-slug="{ title_slug }" data-work-title="{ title }">Info</a></li>
+							</ul>
+						</div>
                     </td>
 			    </tr>
 		    </tbody>
@@ -96,7 +101,11 @@
             "bSort": true,
             "bInfo": true,
             "bAutoWidth": false,
-            "pageLength": this.page_length
+            "pageLength": this.page_length,
+			"aoColumns": [
+				null,                   // Title
+				{ "bSortable": false }  // Actions
+			]
 		} );
 		
         // Filter the table if requested

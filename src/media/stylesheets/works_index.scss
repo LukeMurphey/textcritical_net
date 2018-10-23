@@ -46,3 +46,18 @@
 .sorting_desc{
   background-image: url("../images/sort_down.png");
 }
+
+/* Style the options dropdown in the list of works */
+.work-options > a{
+  padding: 4px 4px 4px 4px;
+  cursor: pointer;
+  color: #c6c6c6;
+}
+
+.work-options > a:hover{
+  color: #c6c6c6;
+}
+
+.work-options> a > .caret{
+  border-top: 4px solid #c6c6c6;
+}
