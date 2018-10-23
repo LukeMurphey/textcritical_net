@@ -497,5 +497,39 @@
          ================================= -->
 	<target name="docker_build_and_run" description="Build the docker image and then run it" depends="get_build_number,compile,docker_build,docker_run">
 	</target>
+
+    <!-- ================================= 
+          target: docker_running_id
+         ================================= -->
+	<target name="docker_running_id" description="Get the ID of the running docker image">
+		<exec executable="docker"
+			outputproperty="docker_id"
+			failonerror="false">
+				<arg value="ps"/>
+				<arg value="-q"/>
+				<arg value="--filter"/>
+				<arg value="ancestor=textcritical:latest"/>
+		</exec>
+
+		<script language="javascript">
+			var docker_id = project.getProperty("docker_id");
+
+			if(docker_id.length > 0){
+				project.setProperty("docker_running", "true");
+			}
+		</script>
+	</target>
+
+    <!-- ================================= 
+          target: docker_stop
+         ================================= -->
+	<target name="docker_stop" description="Stop the docker image" depends="docker_running_id" if="docker_running">
+		<echo message="Running docker ID is: ${docker_id}" />
+
+		<exec executable="docker">
+			<arg value="stop"/>
+			<arg value="${docker_id}"/>
+		</exec>
+	</target>
 	
 </project>
