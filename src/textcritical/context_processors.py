@@ -1,5 +1,7 @@
+import json
 from django.conf import settings
 from django.core.urlresolvers import resolve
+from django.template import loader, TemplateDoesNotExist
 
 def get_setting_or_default( setting, default=None ):
     try:
@@ -35,6 +37,12 @@ def global_settings(request):
     settings_dict['USE_CDN'] = get_setting_or_default("USE_CDN", settings_dict['USE_MINIFIED'])
     settings_dict['GOOGLE_ANALYTICS_ID'] = get_setting_or_default("GOOGLE_ANALYTICS_ID", False)
     settings_dict['INCLUDE_SHARING_BUTTONS'] = get_setting_or_default("INCLUDE_SHARING_BUTTONS", True)
+
+    try:
+        version_info = json.loads(loader.get_template('VERSION.json').render())
+        settings_dict['BUILD_VERSION'] = get_setting_or_default("BUILD_VERSION", version_info['version'])
+    except TemplateDoesNotExist:
+        settings_dict['BUILD_VERSION'] = get_setting_or_default("BUILD_VERSION", "0")
     
     return settings_dict
 
