@@ -470,7 +470,7 @@
           target: docker_build
          ================================= -->
 	<target name="docker_build" description="Build the docker image">
-		<exec executable="docker">
+		<exec executable="docker" failonerror="true">
 			<arg value="build"/>
 			<arg value="-t"/>
 			<arg value="textcritical"/>
@@ -495,7 +495,7 @@
     <!-- ================================= 
           target: docker_build_and_run
          ================================= -->
-	<target name="docker_build_and_run" description="Build the docker image and then run it" depends="get_build_number,compile,docker_build,docker_run">
+	<target name="docker_build_and_run" description="Build the docker image and then run it" depends="get_build_number,compile,docker_stop,docker_build,docker_run">
 	</target>
 
     <!-- ================================= 
