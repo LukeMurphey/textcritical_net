@@ -17,9 +17,6 @@ function findGetParameter(parameterName) {
     return result;
 }
 
-console.log();
-//debugger;
-
 define([
         'jquery',
         'underscore',
@@ -1705,8 +1702,30 @@ define([
 				setTimeout(function(){ $('.sharing-buttons').fadeIn(400, function(){$(".sharing-buttons").removeClass("hide").css("display", "");}); } , 1500);
 			}
 		}
-		
-		
+
+		/**
+		 * Setup handlers for the clear text button.
+		 * 
+		 * Clearable text inputs: https://stackoverflow.com/questions/6258521/clear-icon-inside-input-text
+		 */
+		TextCritical.setupClearText = function(){
+			function log(v){
+				return v?'addClass':'removeClass';
+			}
+
+			$(document).on('input', '.clearable', function(){
+					$(this)[log(this.value)]('x');
+				}).on('mousemove', '.x', function( e ){
+					$(this)[log(this.offsetWidth-18 < e.clientX-this.getBoundingClientRect().left)]('onX');
+				}).on('touchstart click', '.onX', function( ev ){
+					ev.preventDefault();
+					$(this).removeClass('x onX').val('').change();
+				}
+			);
+		}
+
+		TextCritical.setupClearText();
+
 		/**
 		 * Setup handlers for the wiki-info links
 		 */
@@ -1722,6 +1741,5 @@ define([
 			TextCritical.open_work_info_dialog(this.dataset['workTitleSlug'], this.dataset['workTitle']);
 			return false;
 		});
-
 }
 );
