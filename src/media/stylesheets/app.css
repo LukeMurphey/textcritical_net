@@ -950,6 +950,27 @@ input[type='checkbox'] {
 .beta-code-entry {
   margin-top: 4px; }
 
+/* Clearable text inputs: https://stackoverflow.com/questions/6258521/clear-icon-inside-input-text */
+.textcritical .clearable {
+  background-image: url("data:image/gif;base64,R0lGODdhBwAHAJEAAAAAAJKSkv///wAAACH5BAkAAAMALAAAAAAHAAcAAAIMTIams2rIXnLxuDMLADs=");
+  background-repeat: no-repeat;
+  background-position: right -10px center;
+  transition: background-position 0.4s; }
+
+.textcritical .clearable.x {
+  background-position: right 5px center; }
+
+/* (jQ) Show icon */
+.textcritical .clearable.onX {
+  cursor: pointer; }
+
+/* (jQ) hover cursor style */
+.textcritical .clearable::-ms-clear {
+  display: none;
+  width: 0;
+  height: 0; }
+
+/* Remove IE default X */
 .actions_404 {
   margin-top: 10px;
   margin-bottom: 20px; }

@@ -49,7 +49,7 @@
         {% with chapter_description=chapter.get_division_description %}
         <div class="hidden-print control-group {% if verse_not_found %}error{% endif %}">
         	<div class="input-append">
-        		<input autocorrect="off" autocapitalize="off" class="span3" placeholder="Jump to reference..." id="chapter" value="{{chapter_description}}{% if verse_to_highlight %}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse_to_highlight}}{% endif %}" type="text">
+        		<input autocorrect="off" autocapitalize="off" class="span3 clearable" placeholder="Jump to reference..." id="chapter" value="{{chapter_description}}{% if verse_to_highlight %}{% if chapter_description|contains:"." %}.{% else %}:{% endif %}{{verse_to_highlight}}{% endif %}" type="search">
 			    <button class="btn" type="submit" id="change-reference">Go</button>
 			    <button class="hidden-phone show-table-of-contents btn {% if not divisions or divisions|length < 2 %}disabled{% endif %}" data-toggle="button" id="show-table-of-contents">Table of Contents</button>
 			    <button class="hidden-phone search-work btn" type="submit" id="search-work">Search</button>
