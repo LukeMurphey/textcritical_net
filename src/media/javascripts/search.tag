@@ -4,7 +4,7 @@
 	
 	<div class="input-append ">
 
-	 	<input class="span10" ref="searchterm" autocorrect="off" autocapitalize="off" placeholder="Enter the text to search for (e.g. νόμου or no/mou)" type="text" value="{query}"/>
+	 	<input class="span10 clearable" ref="searchterm" autocorrect="off" autocapitalize="off" placeholder="Enter the text to search for (e.g. νόμου or no/mou)" type="text" value="{query}"/>
 	 	<input type="hidden" ref="pagenumber" name="page" value="{page}" />
 	 	
 	 	<button id="search-button" class="btn btn-primary" type="button" onclick={ search }><span class="hidden-phone">Submit </span>Search</button>
@@ -201,6 +201,9 @@
 			if(this.update_url){
 				window.addEventListener('popstate', this.searchPagePopstate.bind(this));
 			}
+
+			// Show the clear button if the search box has text
+			TextCritical.setClearTextButton();
 			
 		}.bind(this))
 
@@ -484,7 +487,9 @@
 				this.hideSearchProgress();
 			}.bind(this));
 
-			e.preventDefault();
+			if(e !== null) {
+				e.preventDefault();
+			}
 		}
     </script>
 </search>

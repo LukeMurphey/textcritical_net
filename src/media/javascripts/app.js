@@ -1302,8 +1302,9 @@ define([
 				    success: function(data){
 				    	console.info("Loading page content with asynchronous request");
 				        $('#main-content').html(data).fadeIn('slow');
-				        $("#async-loading-message").hide();
-				        console.info("Sucessfully loaded page content with asynchronous request");
+						$("#async-loading-message").hide();
+						TextCritical.setClearTextButton();
+				        console.info("Successfully loaded page content with asynchronous request");
 				        
 				    },
 				    error:  function(jqXHR, textStatus, errorThrown){
@@ -1725,6 +1726,17 @@ define([
 		}
 
 		TextCritical.setupClearText();
+
+		/**
+		 * Set the icon to clear text on any inputs that need it
+		 */
+		TextCritical.setClearTextButton = function(){
+			$('.clearable').each(function(){
+				if ($(this).text().trim().length > 0) {
+					$(this).addClass('x');
+				}
+			});
+		}
 
 		/**
 		 * Setup handlers for the wiki-info links
