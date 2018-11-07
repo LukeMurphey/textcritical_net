@@ -1732,7 +1732,7 @@ define([
 		 */
 		TextCritical.setClearTextButton = function(){
 			$('.clearable').each(function(){
-				if ($(this).text().trim().length > 0) {
+				if ($(this).val().trim().length > 0) {
 					$(this).addClass('x');
 				}
 			});
