@@ -21,7 +21,7 @@
                         </div>
                         <div class="work-description" >
                             <div><a href="{ read_work_url }/{ title_slug }">{ title }</a></div>
-                            <div>in { language } by { author } <span if="{ editor }">(edited by { editor })</span></div>
+                            <div>in { language }<span if={ author }> by { author } </span><span if="{ editor }">(edited by { editor })</span></div>
                         </div>
                     </td>
 			        <td class="hidden-phone">
