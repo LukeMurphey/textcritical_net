@@ -1037,7 +1037,10 @@ class PerseusTextImporter(TextImporter):
         return line_number_range
         
     def import_verse_content(self, division, content_node, state_set, import_context = None, parent_node = None, recurse = True):
-        
+        """
+        Cut up the given division into a chunk of verses and import the verses.
+        """
+
         # Setup an import context if this is the first, top level call
         if import_context is None:
             import_context = PerseusTextImporter.ImportContext(PerseusTextImporter.VERSE_TAG_NAME)
@@ -1112,7 +1115,7 @@ class PerseusTextImporter(TextImporter):
                 #    attach_xml_content = False
                 
             # Is a verse marker?
-            elif break_at_this_division or (self.division_min is None and node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node)):
+            elif break_at_this_division or (self.division_min is None and node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node)) or node.tagName in ["entry"]:
                 
                 # Make the verse
                 self.make_verse(import_context, save=False)
