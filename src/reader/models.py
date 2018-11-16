@@ -1,4 +1,40 @@
 # -*- coding: utf-8 -*-
+"""
+The following models are currently included:
+
++-----------------+-----------------------------------------------------------+
+| Model           | Description                                               |
++-----------------+-----------------------------------------------------------+
+| Author          | Identifies the author of a work                           |
+|-----------------|-----------------------------------------------------------|
+| WorkType        | The type of a work (poem, etc.)                           |
+|-----------------|-----------------------------------------------------------|
+| Work            | A description of a work                                   |
+|-----------------|-----------------------------------------------------------|
+| RelatedWork     | The relation between two works                            |
+|-----------------|-----------------------------------------------------------|
+| WorkAlias       | An alias to refer to a work (in case it changes names)    |
+|-----------------|-----------------------------------------------------------|
+| Division        | A division of a work (chapter, etc.)                      |
+|-----------------|-----------------------------------------------------------|
+| Verse           | A verse within the work                                   |
+|-----------------|-----------------------------------------------------------|
+| WorkSource      | A definition of where a work came from                    |
+|-----------------|-----------------------------------------------------------|
+| Lemma           | A root word                                               |
+|-----------------|-----------------------------------------------------------|
+| Case            | A word's case                                             |
+|-----------------|-----------------------------------------------------------|
+| Dialect         | A dialect of a word                                       |
+|-----------------|-----------------------------------------------------------|
+| WordForm        | A form of a particular word (declined version)            |
+|-----------------|-----------------------------------------------------------|
+| WordDescription | The meaning of a particular form of a word                |
+|-----------------|-----------------------------------------------------------|
+| WikiArticle     | The information necessary to look up a topic on Wikipedia |
+|-----------------|-----------------------------------------------------------|
+"""
+
 from django.db import models
 from django.db.models import Q
 from django.template.defaultfilters import slugify
