@@ -176,9 +176,13 @@
 
 		<copy file="src/textcritical/test_settings.py" tofile="src/textcritical/settings.py"/>
 
+		<!-- Arguments passed from the CLI will be used to indicate which test to run (e.g. ant test -Dtest=reader) -->
+		<property name="test" value="" />
+		
 		<exec failonerror="true" executable="${python}" dir="src">
 			<arg value="manage.py"/>
 			<arg value="test"/>
+			<arg line="${test}" />
 		</exec>
 	</target>
 
