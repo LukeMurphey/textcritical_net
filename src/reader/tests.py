@@ -1,5 +1,53 @@
 # -*- coding: utf8 -*-
-
+"""
++-----------------+-------------------------------------------------------------------------------+
+| Test Class                        | What it tests                                               |
++-----------------------------------+-------------------------------------------------------------+
+| TestReader                        | Base class for tests                                        |
+|-----------------------------------|-------------------------------------------------------------|
+| TestGreekLanguageTools            | beta-code conversion and unicode normalization              |
+|-----------------------------------|-------------------------------------------------------------|
+| TestImportContext                 | TextImporter.ImportContext class                            |
+|-----------------------------------|-------------------------------------------------------------|
+| TestBatchImport                   | ImportTransforms class (transforms for batch import)        |
+|-----------------------------------|-------------------------------------------------------------|
+| TestImport                        | TextImporter class                                          |
+|-----------------------------------|-------------------------------------------------------------|
+| TestShortcuts                     | Shortcuts used for content importing                        |
+|-----------------------------------|-------------------------------------------------------------|
+| TestLineNumber                    | LineNumber class                                            |
+|-----------------------------------|-------------------------------------------------------------|
+| TestPerseusBatchImporter          | PerseusBatchImporter class                                  |
+|-----------------------------------|-------------------------------------------------------------|
+| TestPerseusImport                 | PerseusTextImporter class                                   |
+|-----------------------------------|-------------------------------------------------------------|
+| TestPerseusImportLexicon          | Import of a lexicon sourced from Perseus                    |
+|-----------------------------------|-------------------------------------------------------------|
+| TestDivisionModel                 | Division class (a model)                                    |
+|-----------------------------------|-------------------------------------------------------------|
+| TestViews                         | helper functions provided in views                          |
+|-----------------------------------|-------------------------------------------------------------|
+| TestDiogenesLemmaImport           | DiogenesLemmataImporter class                               |
+|-----------------------------------|-------------------------------------------------------------|
+| TestReaderUtils                   | reader.utils helpers                                        |
+|-----------------------------------|-------------------------------------------------------------|
+| TestDiogenesAnalysesImport        | DiogenesAnalysesImporter classes                            |
+|-----------------------------------|-------------------------------------------------------------|
+| TestWorkIndexer                   | Helper class for making search indexers for testing         |
+|-----------------------------------|-------------------------------------------------------------|
+| TestContentSearch                 | Search indexing functionality                               |
+|-----------------------------------|-------------------------------------------------------------|
+| TestUnboundBibleImport            | UnboundBibleTextImporter class                              |
+|-----------------------------------|-------------------------------------------------------------|
+| TestWorkAlias                     | WorkAlias class                                             |
+|-----------------------------------|-------------------------------------------------------------|
+| TestContextProcessors             | The Content Processors included in the reader app           |
+|-----------------------------------|-------------------------------------------------------------|
+| TestEpubExport                    | ePubExport class                                            |
+|-----------------------------------|-------------------------------------------------------------|
+| TestWikiArticle                   | WikiArticle class                                           |
+|-----------------------------------|-------------------------------------------------------------|
+"""
 from django.test import TestCase
 from django.db import IntegrityError
 
@@ -1501,6 +1549,24 @@ semno/teron *)idoumai/an w)no/masan.
         
         self.assertEquals( str(line_count), "9")
         
+class TestPerseusImportLexicon(TestReader):
+    
+    def setUp(self):
+        self.importer = PerseusTextImporter()
+
+    def test_load_lexicon(self):
+        # See #2322, https://lukemurphey.net/issues/2322
+        
+        book_xml = self.load_test_resource('ml.xml')
+        book_doc = parseString(book_xml)
+        self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=self.importer.work)
+        
+        self.assertEquals(divisions.count(), 1) #Should only have imported the section for alpha
+        self.assertEquals(len(Verse.objects.filter(division=divisions[0])), 11)
+
+
 class TestDivisionModel(TestReader):
     
     def setUp(self):
