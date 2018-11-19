@@ -1084,7 +1084,7 @@ class PerseusTextImporter(TextImporter):
                 m = PerseusTextImporter.DIV_PARSE_REGEX.search( node.tagName )
                 
                 if m:
-                    level = int(m.groupdict()['level'] )
+                    level = self.get_level_from_node(node.tagName)
                     
                     # Break verses at the division just under the minimum division break
                     if level == (self.division_min + 1):
@@ -1115,7 +1115,7 @@ class PerseusTextImporter(TextImporter):
                 #    attach_xml_content = False
                 
             # Is a verse marker?
-            elif break_at_this_division or (self.division_min is None and node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node)) or node.tagName in ["entry"]:
+            elif break_at_this_division or (self.division_min is None and node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node)):
                 
                 # Make the verse
                 self.make_verse(import_context, save=False)
@@ -1239,6 +1239,22 @@ class PerseusTextImporter(TextImporter):
                 if result:
                     return result
                 
+    def get_level_from_node(self, tag_name, default_value=None):
+        """
+        Get the level of the node provided.
+
+        Arguments:
+        tag_name -- The name of the tag
+        default_value -- The default value if the level cannot be determined
+        """
+
+        m = PerseusTextImporter.DIV_PARSE_REGEX.search(tag_name)
+
+        if 'level' in m.groupdict():
+            return int(m.groupdict()['level'])
+        else:
+            return default_value 
+
     def import_body_sub_node(self, content_node, state_set, import_context=None, recurse=True, parent_node=None):
         """
         Imports the content from the children of the given node (which ought to be in the body).
@@ -1390,7 +1406,7 @@ class PerseusTextImporter(TextImporter):
             # Handle division nodes
             ###################################
             elif not self.ignore_division_markers and PerseusTextImporter.DIV_PARSE_REGEX.match( node.tagName ) and (self.division_tags is None or node.tagName in self.division_tags) :
-                
+
                 # Get the type of the section
                 division_type = None
                 
@@ -1398,8 +1414,7 @@ class PerseusTextImporter(TextImporter):
                     division_type = node.attributes["type"].value
                 
                 # Get the level from the tag name
-                m = PerseusTextImporter.DIV_PARSE_REGEX.search( node.tagName )
-                level = int(m.groupdict()['level'] )
+                level = self.get_level_from_node(node.tagName)
                 
                 is_in_state_set = False
                 
