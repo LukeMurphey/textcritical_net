@@ -10,6 +10,10 @@
 # If you need to operate the shell, do it this way:
 # 
 #       docker run -it --entrypoint /bin/bash textcritical
+#
+# You can see the app logs using the following command:
+#
+#       tail /usr/src/app/var/log/app.log
 
 FROM python:2-slim
 
