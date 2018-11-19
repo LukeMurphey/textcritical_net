@@ -1030,7 +1030,8 @@
             "transforms" : {
                 "set_meta_data" : {
                     "title_slug" : "lsj"
-                }
+                },
+                "convert_descriptors_from_beta_code": {}
             }
         }
     },

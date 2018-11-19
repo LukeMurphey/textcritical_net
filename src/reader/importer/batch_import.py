@@ -1,6 +1,7 @@
 from reader.models import Division, Verse, Work, RelatedWork, WikiArticle
 from django.template.defaultfilters import slugify
 from django.db import IntegrityError
+from reader.language_tools import Greek
 import logging
 import re
 import os
@@ -250,7 +251,7 @@ class ImportTransforms():
     
     
     @staticmethod
-    def set_division_title( work=None, existing_division_title_slug=None, existing_division_parent_title_slug=None, existing_division_sequence_number=None, title=None, title_slug=None, descriptor=None, **kwargs):
+    def set_division_title(work=None, existing_division_title_slug=None, existing_division_parent_title_slug=None, existing_division_sequence_number=None, title=None, title_slug=None, descriptor=None, **kwargs):
         
         changes = 0
         
@@ -289,7 +290,7 @@ class ImportTransforms():
             division.save()
     
     @staticmethod
-    def set_division_readable( work=None, sequence_number=None, title_slug=None, type=None, descriptor=None, level=None, readable=True):
+    def set_division_readable(work=None, sequence_number=None, title_slug=None, type=None, descriptor=None, level=None, readable=True):
         
         division = Division.objects.filter(work=work)
         
@@ -315,7 +316,7 @@ class ImportTransforms():
         division.save()
     
     @staticmethod
-    def delete_unnecessary_divisions( work=None, **kwargs):
+    def delete_unnecessary_divisions(work=None, **kwargs):
         
         # Sift through the work and delete divisions that:
         #    * have no verses
@@ -347,7 +348,7 @@ class ImportTransforms():
         return len(divisions_to_delete)
     
     @staticmethod
-    def delete_divisions_by_title_slug( work=None, title_slugs=None):
+    def delete_divisions_by_title_slug(work=None, title_slugs=None):
         if title_slugs is None:
             logger.warn("Transform could not be executed because no title_slugs were provided, transform=delete_divisions_by_title_slug")
         else:
@@ -380,9 +381,19 @@ class ImportTransforms():
             second_work = Work.objects.get(title_slug=slug)
             
             RelatedWork.make_related_work(work, second_work)
+
+    @staticmethod
+    def convert_descriptors_from_beta_code(work=None, **kwargs):
+
+        # Get the divisions to delete
+        divisions = Division.objects.filter(work=work)
+        
+        for division in divisions:
+            division.descriptor = division.descriptor.replace('*', '').upper()
+            division.save()
     
     @staticmethod
-    def run_transforms( work, transforms ):
+    def run_transforms(work, transforms):
         
         fxs = dir(ImportTransforms)
         
