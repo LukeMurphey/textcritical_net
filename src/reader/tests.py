@@ -1552,7 +1552,7 @@ semno/teron *)idoumai/an w)no/masan.
 class TestPerseusImportLexicon(TestReader):
     
     def setUp(self):
-        self.importer = PerseusTextImporter()
+        self.importer = PerseusTextImporter(division_tags=["entry", "div0"])
 
     def test_load_lexicon(self):
         # See #2322, https://lukemurphey.net/issues/2322
@@ -1563,9 +1563,8 @@ class TestPerseusImportLexicon(TestReader):
         
         divisions = Division.objects.filter(work=self.importer.work)
         
-        self.assertEquals(divisions.count(), 1) #Should only have imported the section for alpha
-        self.assertEquals(len(Verse.objects.filter(division=divisions[0])), 11)
-
+        self.assertEquals(len(Verse.objects.filter(division=divisions[1])), 1) # Should have 9 entries for the letter alpha
+        self.assertEquals(divisions.count(), 15) # Should have two divisions for the letters and 13 for the entries
 
 class TestDivisionModel(TestReader):
     

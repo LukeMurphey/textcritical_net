@@ -240,19 +240,36 @@ Added to repository.
 <sense level="0" n="0" id="n8.0">properly <foreign lang="greek">a)= ba/le</foreign>, expressing a wish, <trans><tr>O that!</tr></trans> Lat. <foreign lang="la">utinam</foreign>, c. inf., <usg>Anth.</usg></sense>
 </entry>
 
-<entry key="a)barh/s" type="main" id="n9">
-<form><orth extent="full" lang="greek">a)barh/s</orth></form>
-<etym><xr><ref targOrder="U" lang="greek">ba/ros</ref></xr></etym>
-<sense level="0" n="0" id="n9.0"><trans><tr>without weight: not burdensome</tr></trans>, of persons, <usg>NTest.</usg></sense>
-</entry>
-
-<entry key="a)basa/nistos" type="main" id="n10">
-<form><orth extent="full" lang="greek">a)basa/nistos</orth></form>
-<etym><xr><ref targOrder="U" lang="greek">basani/zw</ref></xr></etym>
-<sense level="0" n="0" id="n10.0"><trans><tr>not examined by torture, untortured</tr></trans>; of things, <trans><tr>unexamined</tr></trans>, <usg>Plut.</usg>; adv. <ref targOrder="U" lang="greek">-tws</ref>, <trans><tr>without examination</tr></trans>, <usg>Thuc.</usg></sense>
-</entry>
-
 </div0>
-</body>
-</text>
-</TEI.2>
+<div0 type="alphabetic letter" n="*b">
+<head lang="greek">*B</head>
+<entry key="babai/" type="main" id="n5984">
+<form><orth extent="full" lang="greek">babai/</orth></form>
+<sense level="0" n="0" id="n5984.0">Lat. <foreign lang="la">papae</foreign>! exclamation of surprise, <trans><tr>bless me</tr></trans>! <usg>Eur.</usg>, <usg>Ar.</usg></sense>
+</entry>
+
+<entry key="babu/ka" type="main" id="n5985">
+<form><orth extent="full" lang="greek">babu/ka</orth></form>
+<etym>Lacon. for <foreign lang="greek">ge/fura</foreign>, <usg>Arist.</usg> ap. <usg>Plut.</usg></etym>
+</entry>
+
+<entry key="ba/qron" type="main" id="n6001">
+<form><orth extent="full" lang="greek">ba/qron</orth></form>
+<etym>shortd. from <ref targOrder="U" lang="greek">bath/rion</ref></etym>
+<etym><xr><ref targOrder="U" lang="greek">bai/nw</ref></xr></etym>
+<sense level="0" n="0" id="n6001.0"><trans><tr>that on which anything stands</tr></trans>:</sense>
+<sense level="3" n="1" id="n6001.1"><trans><tr>a base, pedestal</tr></trans>, <usg>Hdt.</usg>, <usg>Aesch.</usg></sense>
+<sense level="3" n="2" id="n6001.2"><trans><tr>a stage</tr> or <tr>scaffold</tr></trans>, <usg>Hdt.</usg></sense>
+<sense level="3" n="3" id="n6001.3">generally <trans><tr>solid ground</tr></trans>, <foreign lang="greek">*salami=nos b.</foreign> <usg>Soph.</usg>; <foreign lang="greek">w)= patrw=ion e(sti/as ba/qron</foreign> i. e. house of my father, <usg>id=Soph.</usg>:&mdash;in pl. <trans><tr>foundations</tr></trans>, <usg>Eur.</usg>; <foreign lang="greek">e)n ba/qrois ei)=nai</foreign> to stand firm, <usg>id=Eur.</usg></sense>
+<sense level="3" n="4" id="n6001.4"><trans><tr>a step</tr></trans>, <usg>Soph.</usg>; <trans><tr>the round of a ladder</tr></trans>, <usg>Eur.</usg></sense>
+<sense level="3" n="5" id="n6001.5"><trans><tr>a bench, seat</tr></trans>, <usg>Soph.</usg>, <usg>Dem.</usg></sense>
+<sense level="3" n="6" id="n6001.6">metaph., <foreign lang="greek">kindu/nou ba/qra</foreign> <trans><tr>the verge</tr></trans> of danger, <usg>Eur.</usg></sense>
+</entry>
+
+<entry key="*ba/ttos" type="main" id="n6214">
+<form><orth extent="full" lang="greek">*ba/ttos</orth></form>
+<etym>Formed from the sound.</etym>
+<sense level="0" n="0" id="n6214.0"><trans><tr>stammerer</tr></trans>, name of a king of Cyrene, <usg>Hdt.</usg></sense>
+</entry>
+</div0>
+</body></text></TEI.2>

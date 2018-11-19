@@ -1024,6 +1024,17 @@
         }
     },
     {
+        "title" : "An Intermediate Greek-English Lexicon",
+        "import_parameters" : {
+            "division_tags" : ["div0", "entry"],
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "lsj"
+                }
+            }
+        }
+    },
+    {
         "language" : "Greek",
         "import_parameters" : {
             "state_set" : 0

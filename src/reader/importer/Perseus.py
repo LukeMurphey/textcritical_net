@@ -1115,7 +1115,7 @@ class PerseusTextImporter(TextImporter):
                 #    attach_xml_content = False
                 
             # Is a verse marker?
-            elif break_at_this_division or (self.division_min is None and node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node)):
+            elif break_at_this_division or (self.division_min is None and node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node)) or node.tagName in ["form"]:
                 
                 # Make the verse
                 self.make_verse(import_context, save=False)
@@ -1239,7 +1239,7 @@ class PerseusTextImporter(TextImporter):
                 if result:
                     return result
                 
-    def get_level_from_node(self, tag_name, default_value=None):
+    def get_level_from_node(self, tag_name, default_value=1):
         """
         Get the level of the node provided.
 
@@ -1250,7 +1250,7 @@ class PerseusTextImporter(TextImporter):
 
         m = PerseusTextImporter.DIV_PARSE_REGEX.search(tag_name)
 
-        if 'level' in m.groupdict():
+        if m is not None and 'level' in m.groupdict():
             return int(m.groupdict()['level'])
         else:
             return default_value 
@@ -1405,7 +1405,9 @@ class PerseusTextImporter(TextImporter):
             ###################################
             # Handle division nodes
             ###################################
-            elif not self.ignore_division_markers and PerseusTextImporter.DIV_PARSE_REGEX.match( node.tagName ) and (self.division_tags is None or node.tagName in self.division_tags) :
+            elif not self.ignore_division_markers and \
+                (self.division_tags is None and PerseusTextImporter.DIV_PARSE_REGEX.match(node.tagName)) \
+                or (self.division_tags is not None and node.tagName in self.division_tags):
 
                 # Get the type of the section
                 division_type = None
