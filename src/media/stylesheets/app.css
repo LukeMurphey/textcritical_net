@@ -440,6 +440,8 @@ html {
 .view_read_work .lemma {
   text-decoration: underline;
   font-weight: bold; }
+.view_read_work .orth {
+  font-weight: bold; }
 
 /* -----------------------------------------
    Read work
