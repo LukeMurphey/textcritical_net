@@ -1453,8 +1453,15 @@ class PerseusTextImporter(TextImporter):
                     # Get the descriptor
                     descriptor = None
                     
+                    # Get the descriptor from the "n" attribute
                     if "n" in node.attributes.keys():
                         descriptor = node.attributes["n"].value
+
+                    # Get the descriptor from the "key" attribute (which is used by lexicons in entry tags, such as LSJ)
+                    elif "key" in node.attributes.keys():
+                        descriptor = node.attributes["key"].value
+                        descriptor = Greek.beta_code_to_unicode(descriptor)
+                        #descriptor = self.process_text(descriptor)
                     
                     original_title = self.getSectionTitle(node)
                     title = self.process_text(original_title)

@@ -1572,6 +1572,9 @@ class TestPerseusImportLexicon(TestReader):
         self.assertEquals(str(divisions[0]), "Α") # Should be Α
         #self.assertEquals(divisions[0].title_slug, "a") # Should be Α
         self.assertEquals(divisions[0].descriptor, "*a")
+        self.assertEquals(divisions[1].descriptor, u"ἀάατος")
+
+        #self.assertEquals(str(divisions[1]), u"ἀάατος")
 
         # Update the descriptors
         ImportTransforms.convert_descriptors_from_beta_code(self.importer.work)
