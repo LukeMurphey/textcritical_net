@@ -393,7 +393,7 @@ class cache_page_if_ajax(object):
                 kwargs_array = []
                 
                 for key in sorted(kwargs.keys()):
-                    kwargs_array.append("%s='%s'" % (key,str(kwargs[key])))
+                    kwargs_array.append("%s='%s'" % (key,kwargs[key].encode("utf-8")))
                     
                 kwargs_str = ",".join(kwargs_array)
                 
