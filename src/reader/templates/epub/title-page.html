@@ -1,11 +1,10 @@
-<html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:py="http://genshi.edgewall.org/">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <!--!
 Copyright (c) 2012, Bin Tan
 This file is distributed under the BSD Licence. See python-epub-builder-license.txt for details.
 -->
 <head>
-  <title>${book.title}</title>
+  <title>{{book.title}}</title>
   <style type="text/css">
 .title, .authors {
   text-align: center;
@@ -16,11 +15,11 @@ span.author {
   </style>
 </head>
 <body>
-  <h1 class="title">${book.title}</h1>
+  <h1 class="title">{{book.title}}</h1>
   <h3 class="authors">
-  <py:for each="creator, _ in book.creators">
-  <span class="author">$creator</span>
-  </py:for>
+  {% for creator, _ in book.creators %}
+  <span class="author">{{creator}}</span>
+  {% endfor %}
   </h3>
 </body>
 </html>

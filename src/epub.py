@@ -157,9 +157,12 @@ class EpubBook:
         assert self.titlePage
         if self.titlePage.html:
             return
-        tmpl = self.loader.load('title-page.html')
-        stream = tmpl.generate(book = self)
-        self.titlePage.html = stream.render('xhtml', doctype = 'xhtml11', drop_xml_decl = False)
+
+        template = loader.get_template('epub/title-page.html')
+        c = Context({"book": self})
+        stream = template.render(c).encode("utf-8")
+
+        self.titlePage.html = stream
         
     def addTitlePage(self, html = ''):
         assert not self.titlePage
