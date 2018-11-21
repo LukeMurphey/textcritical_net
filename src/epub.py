@@ -118,9 +118,9 @@ class EpubBook:
         return item
     
     def addHtmlForImage(self, imageItem):
-        tmpl = self.loader.load('image.html')
-        stream = tmpl.generate(book = self, item = imageItem)
-        html = stream.render('xhtml', doctype = 'xhtml11', drop_xml_decl = False)
+        template = loader.get_template('epub/image.html')
+        c = Context({"book": self, "item": imageItem})
+        html = template.render(c).encode("utf-8")
         return self.addHtml('', '%s.html' % imageItem.destPath, html)
     
     def addHtml(self, srcPath, destPath, html):
@@ -169,9 +169,9 @@ class EpubBook:
     
     def __makeTocPage(self):
         assert self.tocPage
-        tmpl = self.loader.load('toc.html')
-        stream = tmpl.generate(book = self)
-        self.tocPage.html = stream.render('xhtml', doctype = 'xhtml11', drop_xml_decl = False)
+        template = loader.get_template('epub/toc.html')
+        c = Context({"book": self})
+        self.tocPage.html = template.render(c).encode("utf-8")
 
     def addTocPage(self):
         assert not self.tocPage
