@@ -227,9 +227,9 @@ class EpubBook:
     
     def __writeContainerXML(self):
         fout = open(os.path.join(self.rootDir, 'META-INF', 'container.xml'), 'w')
-        tmpl = self.loader.load('container.xml')
-        stream = tmpl.generate()
-        fout.write(stream.render('xml'))
+        template = loader.get_template('epub/container.xml')
+        c = Context({"book": self})
+        fout.write(template.render(c).encode("utf-8"))
         fout.close()
 
     def __writeTocNCX(self):
@@ -243,9 +243,9 @@ class EpubBook:
     
     def __writeContentOPF(self):
         fout = open(os.path.join(self.rootDir, 'OEBPS', 'content.opf'), 'w')
-        tmpl = self.loader.load('content.opf')
-        stream = tmpl.generate(book = self)
-        fout.write(stream.render('xml'))
+        template = loader.get_template('epub/content.opf')
+        c = Context({"book": self})
+        fout.write(template.render(c).encode("utf-8"))
         fout.close()
     
     def __writeItems(self):

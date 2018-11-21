@@ -385,9 +385,10 @@ class ImportTransforms():
     @staticmethod
     def convert_descriptors_from_beta_code(work=None, **kwargs):
 
-        # Get the divisions to delete
+        # Get the divisions
         divisions = Division.objects.filter(work=work)
         
+        # Convert the descriptors
         for division in divisions:
             division.descriptor = Greek.beta_code_to_unicode(division.descriptor)
             division.save()

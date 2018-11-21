@@ -1,0 +1,6 @@
+    <div class="tocEntry-{{node.depth}}">
+      <a href="{{node.href}}">{{node.title}}</a>
+    </div>
+    {% for node in node.children %}
+    {% include "epub/toc_entry.html" %}
+    {% endfor %}
