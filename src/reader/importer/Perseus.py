@@ -130,7 +130,7 @@ class PerseusTextImporter(TextImporter):
         try:
             return self.import_xml_document(doc)
         finally:
-            doc.unlink() 
+            doc.unlink()
             del(doc)
 
     def import_file( self, file_name, encoding='utf-8'):

@@ -389,7 +389,7 @@ class ImportTransforms():
         divisions = Division.objects.filter(work=work)
         
         for division in divisions:
-            division.descriptor = division.descriptor.replace('*', '').upper()
+            division.descriptor = Greek.beta_code_to_unicode(division.descriptor)
             division.save()
     
     @staticmethod

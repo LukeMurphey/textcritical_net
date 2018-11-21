@@ -3,10 +3,10 @@ from epub import EpubBook
 from reader.models import Work, Division, Verse, RelatedWork
 from reader.templatetags.reader_extras import transform_perseus_text, transform_perseus_node, NoteNumber
 from reader.shortcuts import convert_xml_to_html5
+from reader.language_tools.greek import Greek
 
 from django.core.urlresolvers import reverse
-from django.template import Context, Template
-from django.template import loader 
+from django.template import loader, Context
 from django.conf import settings
 
 from wand.drawing import Drawing
@@ -430,12 +430,12 @@ class ePubExport(object):
         if division.title is not None and "lines" in division.title:
             title = division.title
         elif division.descriptor is not None and division.type is not None:
-            title = str(division.type) + " " + str(division.descriptor)
+            title = str(division.type) + " " + division.descriptor.encode("utf-8")
         elif division.descriptor is not None:
             title = str(division.descriptor)
         elif division.sequence_number is not None:
             title = str(division.sequence_number)
-        
+
         # Add the item to the table of contents
         if parent_division is not None:
             toc_node = book.addTocMapNode(epub_division.destPath, title, parent = parent_division.toc_node)
