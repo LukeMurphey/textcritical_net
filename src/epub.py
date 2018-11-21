@@ -10,7 +10,6 @@ import shutil
 import subprocess
 import uuid
 import zipfile
-from genshi.template import TemplateLoader
 from django.template import Context, loader
 from lxml import etree
 
@@ -47,8 +46,6 @@ class EpubItem:
 class EpubBook:
 
     def __init__(self):
-        self.loader = TemplateLoader('templates')
-
         self.rootDir = ''
         self.UUID = uuid.uuid1()
         self.url = None
