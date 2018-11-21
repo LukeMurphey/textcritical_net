@@ -11,6 +11,7 @@ import subprocess
 import uuid
 import zipfile
 from genshi.template import TemplateLoader
+from django.template import Context, loader
 from lxml import etree
 
 class TocMapNode:
@@ -234,9 +235,10 @@ class EpubBook:
     def __writeTocNCX(self):
         self.tocMapRoot.assignPlayOrder()
         fout = open(os.path.join(self.rootDir, 'OEBPS', 'toc.ncx'), 'w')
-        tmpl = self.loader.load('toc.ncx')
-        stream = tmpl.generate(book = self)
-        fout.write(stream.render('xml'))
+
+        template = loader.get_template('epub/toc.ncx')
+        c = Context({"book": self})
+        fout.write(template.render(c).encode("utf-8"))
         fout.close()
     
     def __writeContentOPF(self):
