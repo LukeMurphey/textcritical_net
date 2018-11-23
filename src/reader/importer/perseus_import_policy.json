@@ -1029,7 +1029,7 @@
             "division_tags" : ["div0", "entry"],
             "transforms" : {
                 "set_meta_data" : {
-                    "title_slug" : "lsj"
+                    "title_slug" : "middlelsj"
                 },
                 "convert_descriptors_from_beta_code": {}
             }
