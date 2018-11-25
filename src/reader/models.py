@@ -23,6 +23,8 @@ The following models are currently included:
 |-----------------|-----------------------------------------------------------|
 | Lemma           | A root word                                               |
 |-----------------|-----------------------------------------------------------|
+| LexiconEntry    | An entry in a lexicon (form to definition relationship)   |
+|-----------------|-----------------------------------------------------------|
 | Case            | A word's case                                             |
 |-----------------|-----------------------------------------------------------|
 | Dialect         | A dialect of a word                                       |
@@ -451,8 +453,7 @@ class Division(models.Model):
     
     def get_division_titles(self):
         return self.get_division_indicators(use_titles=True)
-        
-    
+
 class Verse(models.Model):
     """
     Represents a verse within a chapter of a work.
@@ -513,6 +514,15 @@ class Lemma(models.Model):
         self.basic_lexical_form = language_tools.strip_accents( self.lexical_form )
 
         super(Lemma, self).save(*args, **kwargs)
+
+class LexiconEntry(models.Model):
+    """
+    Represents a word
+    """
+    
+    verse = models.ForeignKey(Verse)
+    word = models.ForeignKey(Work)
+    lemma = models.ForeignKey(Lemma)
     
 class Case(models.Model):
     """
