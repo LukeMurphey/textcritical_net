@@ -1,4 +1,4 @@
-from reader.models import Division, Verse, Work, RelatedWork, WikiArticle
+from reader.models import Division, Verse, Work, RelatedWork, WikiArticle, LexiconEntry
 from django.template.defaultfilters import slugify
 from django.db import IntegrityError
 from reader.language_tools import Greek
@@ -392,6 +392,37 @@ class ImportTransforms():
         for division in divisions:
             division.descriptor = Greek.beta_code_to_unicode(division.descriptor)
             division.save()
+
+    @staticmethod
+    def index_lexicon(work=None, **kwargs):
+        # Stop if we have no work to operate on
+        if work is None:
+            return 0
+
+        entries_created = 0
+
+        # Process each verse
+        for verse in Verse.objects.filter(work=work):
+            # Find the entries
+            entries = [] # TODO
+    
+            # Make each entry
+            for entry in entries:
+
+                # Make sure that the entry doesn't already exist
+                exists_already = False # TODO
+
+                # Find the lemma entry
+                lemma = None # TODO
+
+                # Make the entry
+                if not exists_already:
+                    lexicon_entry = LexiconEntry()
+                    lexicon_entry.verse = verse
+                    lexicon_entry.work = verse.work
+                    lexicon_entry.lemma = lemma
+
+        return entries_created
     
     @staticmethod
     def run_transforms(work, transforms):

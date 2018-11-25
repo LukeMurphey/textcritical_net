@@ -59,6 +59,7 @@ from reader.shortcuts import convert_xml_to_html5
 from reader.templatetags.reader_extras import perseus_xml_to_html5
 from reader.importer.batch_import import ImportPolicy, WorkDescriptor, wildcard_to_re, ImportTransforms, JSONImportPolicy
 from reader.importer.Perseus import PerseusTextImporter
+from reader.importer.Lexicon import LexiconImporter
 from reader.importer.PerseusBatchImporter import PerseusBatchImporter
 from reader.importer.unbound_bible import UnboundBibleTextImporter
 from reader.importer import TextImporter, LineNumber
@@ -1578,7 +1579,22 @@ class TestPerseusImportLexicon(TestReader):
 
         # Update the descriptors
         ImportTransforms.convert_descriptors_from_beta_code(self.importer.work)
-        self.assertEquals(divisions[0].descriptor, "A") 
+        self.assertEquals(divisions[0].descriptor, "A")
+
+    def test_find_entries(self):
+        book_xml = self.load_test_resource('ml.xml')
+        book_doc = parseString(book_xml)
+        self.importer.import_xml_document(book_doc)
+
+        divisions = Division.objects.filter(work=self.importer.work)
+        verses = Verse.objects.filter(division=divisions[1])
+
+        verse = verses[:1][0]
+
+        entries = LexiconImporter.findPerseusEntries(verse)
+        
+        self.assertEquals(len(entries), 1)
+        self.assertEquals(entries[0], "a)a/atos")
 
 class TestDivisionModel(TestReader):
     
