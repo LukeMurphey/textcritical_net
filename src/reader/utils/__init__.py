@@ -1,5 +1,5 @@
 from reader import language_tools
-from reader.models import WordDescription
+from reader.models import WordDescription, Lemma
 from reader.shortcuts import uniquefy
 from reader.language_tools import Greek
 
@@ -38,6 +38,29 @@ def get_word_descriptions( word, ignore_diacritics=False ):
     descriptions = uniquefy(descriptions, description_id_fun)
     
     return descriptions
+
+def get_lemma(word, ignore_diacritics=False):
+    """
+    Gets the lemma that matches the given word form.
+    
+    Arguments:
+    word -- The word to return the Lemma instance for
+    ignore_diacritics -- Indicates if diacritical marks should be ignored for the purposes of matching.
+    """
+    
+    # Do a search for the parse
+    word_lookup = language_tools.normalize_unicode(word.lower())
+    word_lookup = Greek.fix_final_sigma(word_lookup)
+    
+    # Do a lookup without the diacritics if requested
+    if ignore_diacritics:
+        word_lookup = language_tools.strip_accents(word_lookup)
+        lemmas = Lemma.objects.filter(basic_lexical_form=word_lookup)
+    
+    else:
+        lemmas = Lemma.objects.filter(lexical_form=word_lookup)
+
+    return lemmas
 
 def get_all_related_forms(word, ignore_diacritics=False ):
     """

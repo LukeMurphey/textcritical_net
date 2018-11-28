@@ -190,8 +190,8 @@ fwnh=s sunegraya/mhn."""
             
             self.assertEqual( beta_original, beta_actual )
             
-        def test_fix_final_sigma(self):
-            self.assertEqual(Greek.fix_final_sigma(u"κόσμοσ"), "κόσμος")
+    def test_fix_final_sigma(self):
+        self.assertEqual(Greek.fix_final_sigma(u"κόσμοσ"), "κόσμος")
             
 class TestImportContext(TestCase):
         
@@ -1579,7 +1579,7 @@ class TestPerseusImportLexicon(TestReader):
 
         # Update the descriptors
         ImportTransforms.convert_descriptors_from_beta_code(self.importer.work)
-        self.assertEquals(divisions[0].descriptor, "A")
+        self.assertEquals(divisions[0].descriptor, u'\u0391')
 
     def test_find_entries(self):
         book_xml = self.load_test_resource('ml.xml')
@@ -1595,6 +1595,12 @@ class TestPerseusImportLexicon(TestReader):
         
         self.assertEquals(len(entries), 1)
         self.assertEquals(entries[0], "a)a/atos")
+
+    def test_find_lemma_for_entry(self):
+        lemma = LexiconImporter.findLemmaForForm(u"ἀάατος")
+        
+        self.assertNotEquals(lemma, None)
+        #self.assertEquals(lemma, u"ἀάατος")
 
 class TestDivisionModel(TestReader):
     
@@ -1706,42 +1712,45 @@ class TestDiogenesLemmaImport(TestReader):
         self.assertEquals(lemma.reference_number, 537850)
 
 class TestReaderUtils(TestReader):
-    
-    @time_function_call
-    def test_get_word_descriptions(self):
-        
+
+    def setUp(self):
         # Get the lemmas so that we can match up the analyses
         DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
         
         # Import the analyses
         DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
         
+    @time_function_call
+    def test_get_word_descriptions(self):
         descriptions = utils.get_word_descriptions(u"ἅβρυνα", False)
         
         self.assertEquals( len(descriptions), 2 )
+
+    @time_function_call
+    def test_get_lemma(self):
+        lemmas = utils.get_lemma(language_tools.greek.Greek.beta_code_to_unicode(u"a(/rpina"))
+        self.assertEquals(len(lemmas), 1)
+
+        lemmas = utils.get_lemma(u"ἅρπινα", False)
+        self.assertEquals(len(lemmas), 1)
+
+        lemmas = utils.get_lemma(u"αρπινα", True)
+        self.assertEquals(len(lemmas), 1)
+
+    @time_function_call
+    def test_get_lemma_no_diacritics(self):
+        lemmas = utils.get_lemma(u"αρπινα", True)
+        
+        self.assertEquals(len(lemmas), 1)
         
     @time_function_call
     def test_get_all_related_forms(self):
-        
-        # Get the lemmas so that we can match up the analyses
-        DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
-        
-        # Import the analyses
-        DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
-        
         forms = utils.get_all_related_forms(u"ἅβραν", False) #a(/bran
         
         self.assertEquals( len(forms), 6 )
         
     @time_function_call
     def test_get_all_related_forms_no_diacritics(self):
-        
-        # Get the lemmas so that we can match up the analyses
-        DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
-        
-        # Import the analyses
-        DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
-        
         forms = utils.get_all_related_forms(u"αβραν", True) #a(/bran
         
         self.assertEquals( len(forms), 6 ) 
