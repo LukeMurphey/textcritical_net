@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('lemma', models.ForeignKey(to='reader.Lemma')),
                 ('verse', models.ForeignKey(to='reader.Verse')),
-                ('word', models.ForeignKey(to='reader.Work')),
+                ('work', models.ForeignKey(to='reader.Work')),
             ],
         ),
     ]

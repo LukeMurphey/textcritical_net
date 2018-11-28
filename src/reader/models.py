@@ -521,7 +521,7 @@ class LexiconEntry(models.Model):
     """
     
     verse = models.ForeignKey(Verse)
-    word = models.ForeignKey(Work)
+    work = models.ForeignKey(Work)
     lemma = models.ForeignKey(Lemma)
     
 class Case(models.Model):
