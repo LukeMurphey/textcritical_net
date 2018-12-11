@@ -124,13 +124,13 @@ def get_chapter_for_division(division):
     if len(divisions) > 0:
         return divisions[0]
 
-def get_chapters_list( division, count=9):
+def get_chapters_list(division, count=9):
     """
     Get the list of chapters for pagination.
     """
     
-    pages_before = math.ceil( (count - 1.0) / 2 )
-    pages_after = math.floor( (count - 1.0) / 2 )
+    pages_before = math.ceil((count - 1.0) / 2)
+    pages_after = math.floor((count - 1.0) / 2)
     
     # Filter down the list to ones within the given work that are readable units
     divisions = Division.objects.filter(work=division.work, readable_unit=True)
@@ -164,7 +164,7 @@ def get_chapters_list( division, count=9):
     
     return final_list
 
-def get_division_and_verse( work, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None ):
+def get_division_and_verse(work, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None):
     """
     This function gets the division that is associated with the given descriptor set. If the final division descriptor is 
     actually a verse indicator, then, return the verse indicator.
@@ -178,23 +178,23 @@ def get_division_and_verse( work, division_0=None, division_1=None, division_2=N
     """
     
     # Assume that the descriptors are for divisions
-    division = get_division( work, division_0, division_1, division_2, division_3 )
+    division = get_division(work, division_0, division_1, division_2, division_3)
     
     if division is not None:
         return division, division_4
     
     # If we couldn't find a division, then let's assume that the last descriptor was for a verse
     if division_3 is not None:
-        return get_division( work, division_0, division_1, division_2 ), division_3
+        return get_division(work, division_0, division_1, division_2), division_3
     
     elif division_2 is not None:
-        return get_division( work, division_0, division_1 ), division_2
+        return get_division(work, division_0, division_1), division_2
     
     elif division_1 is not None:
-        return get_division( work, division_0 ), division_1
+        return get_division(work, division_0), division_1
     
     elif division_0 is not None:
-        return get_division( work ), division_0
+        return get_division(work), division_0
 
 def has_numbered_book_number(division_name):
     
@@ -265,7 +265,7 @@ def convert_to_numbered_division_name(division_name):
     else:
         return division_name
         
-def get_division( work, division_0=None, division_1=None, division_2=None, division_3=None, try_to_match_converting_numbering=True ):
+def get_division(work, division_0=None, division_1=None, division_2=None, division_3=None, try_to_match_converting_numbering=True):
     """
     This function gets the division that is associated with the given descriptor set.
     
@@ -352,14 +352,14 @@ def download_work(request, title=None,):
     
     # Get the filename of the eBook
     ebook_file = work.title_slug + "." + book_format
-    ebook_file_full_path = os.path.join( settings.GENERATED_FILES_DIR, ebook_file)
+    ebook_file_full_path = os.path.join(settings.GENERATED_FILES_DIR, ebook_file)
     
     # If we are using the cached file, then try to make it
     if not use_cached or not os.path.exists(ebook_file_full_path):
         
         # Make the epub. Note that we will need to make the epub even if we need to create a mobi file since mobi's are made from epub's
         if book_format == "mobi":
-            epub_file_full_path = os.path.join( settings.GENERATED_FILES_DIR,  work.title_slug + ".epub" )
+            epub_file_full_path = os.path.join(settings.GENERATED_FILES_DIR,  work.title_slug + ".epub")
         else:
             epub_file_full_path = ebook_file_full_path
         
@@ -435,11 +435,11 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     chapter_not_found = False
     
     if leftovers is not None:
-        warnings.append( ("Section not found", "The place in the text you asked for could not be found (the reference you defined is too deep).") )
+        warnings.append(("Section not found", "The place in the text you asked for could not be found (the reference you defined is too deep)."))
         chapter_not_found = True
     
     elif division is None and division_0 is not None:
-        warnings.append( ("Section not found", "The place in the text you asked for could not be found.") )
+        warnings.append(("Section not found", "The place in the text you asked for could not be found."))
         chapter_not_found = True
     
     # Start the user off at the beginning of the work
@@ -456,7 +456,7 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     
     if chapter_not_found == False and verse_to_highlight is not None:
         if Verse.objects.filter(division=division, indicator=verse_to_highlight).count() == 0:
-            warnings.append( ("Verse not found", "The verse you specified couldn't be found.") )
+            warnings.append(("Verse not found", "The verse you specified couldn't be found."))
             verse_not_found = True
     
     # Get the readable unit
@@ -478,7 +478,7 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
     total_chapters     = Division.objects.filter(work=division.work, readable_unit=True).count()
     completed_chapters = Division.objects.filter(work=division.work, readable_unit=True, sequence_number__lte=chapter.sequence_number).count()
     remaining_chapters = total_chapters - completed_chapters
-    progress = ((1.0 * completed_chapters ) / total_chapters) * 100
+    progress = ((1.0 * completed_chapters) / total_chapters) * 100
     
     # Get the amount of progress (based on chapters within this book)
     total_chapters_in_book = None
@@ -490,7 +490,7 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
         total_chapters_in_book = Division.objects.filter(parent_division=chapter.parent_division, readable_unit=True).count()
         completed_chapters_in_book = Division.objects.filter(parent_division=chapter.parent_division, readable_unit=True, sequence_number__lte=chapter.sequence_number).count()
         remaining_chapters_in_book = total_chapters_in_book - completed_chapters_in_book
-        progress_in_book = ((1.0 * completed_chapters_in_book ) / total_chapters_in_book) * 100
+        progress_in_book = ((1.0 * completed_chapters_in_book) / total_chapters_in_book) * 100
     
     # Get the next and previous chapter number
     previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).order_by('-sequence_number')[:1]
@@ -656,8 +656,8 @@ def api_index(request):
     
     urls = []
     
-    def make_url( url_list, name ):
-        url_list.append( {"path" : reverse(name), "name" : name } )
+    def make_url(url_list, name):
+        url_list.append({"path" : reverse(name), "name" : name })
     
     make_url(urls, "api_index")
     make_url(urls, "api_beta_code_to_unicode")
@@ -682,20 +682,20 @@ def api_works_typeahead_hints(request):
     
     # Get the names of works
     for work in Work.objects.all().values('title', 'title_slug'):
-        hints.append( {
+        hints.append({
                        'desc': work['title'],
                        'url': reverse('read_work', args=[work['title_slug']])
-                       } )
+                       })
         
-    #hints.extend( Work.objects.all().values_list('title', flat=True) )
+    #hints.extend(Work.objects.all().values_list('title', flat=True))
     
     # Get the author names
     for author in uniquefy(Author.objects.all().values_list('name', flat=True)):
-        hints.append( {
+        hints.append({
                        'desc': author,
                        'url': ''
-                       } )
-    #hints.extend( Author.objects.all().values_list('name', flat=True) )
+                       })
+    #hints.extend(Author.objects.all().values_list('name', flat=True))
     
     # Uniquefy the list
     #hints = uniquefy(hints)
@@ -704,7 +704,7 @@ def api_works_typeahead_hints(request):
     return render_api_response(request, hints)
 
 @cache_page(15 * minutes)
-def api_search_stats(request, search_text=None ):
+def api_search_stats(request, search_text=None):
     
     # Get the text to search for
     if search_text is not None and len(search_text) > 0:
@@ -720,7 +720,7 @@ def api_search_stats(request, search_text=None ):
     # Determine if the related forms ought to be included
     if 'related_forms' in request.GET:
         try:
-            include_related_forms = bool( int(request.GET['related_forms']) )
+            include_related_forms = bool(int(request.GET['related_forms']))
         except ValueError:
             include_related_forms = False
     else:
@@ -729,7 +729,7 @@ def api_search_stats(request, search_text=None ):
     # Determine if the diacritics ought to be ignored
     if 'ignore_diacritics' in request.GET:
         try:
-            ignore_diacritics = bool( int(request.GET['ignore_diacritics']) )
+            ignore_diacritics = bool(int(request.GET['ignore_diacritics']))
         except ValueError:
             ignore_diacritics = False
     else:
@@ -741,7 +741,7 @@ def api_search_stats(request, search_text=None ):
     
 
 @cache_page(15 * minutes)
-def api_search(request, search_text=None ):
+def api_search(request, search_text=None):
     
     # Get the text to search for
     if search_text is not None and len(search_text) > 0:
@@ -775,7 +775,7 @@ def api_search(request, search_text=None ):
     # Determine if the related forms ought to be included
     if 'related_forms' in request.GET:
         try:
-            include_related_forms = bool( int(request.GET['related_forms']) )
+            include_related_forms = bool(int(request.GET['related_forms']))
         except ValueError:
             include_related_forms = False
     else:
@@ -784,14 +784,14 @@ def api_search(request, search_text=None ):
     # Determine if the diacritics ought to be ignored
     if 'ignore_diacritics' in request.GET:
         try:
-            ignore_diacritics = bool( int(request.GET['ignore_diacritics']) )
+            ignore_diacritics = bool(int(request.GET['ignore_diacritics']))
         except ValueError:
             ignore_diacritics = False
     else:
         ignore_diacritics = False
     
     # Perform the search
-    search_results = search_verses( search_text, page=page, pagelen=pagelen, include_related_forms=include_related_forms, ignore_diacritics=ignore_diacritics )
+    search_results = search_verses(search_text, page=page, pagelen=pagelen, include_related_forms=include_related_forms, ignore_diacritics=ignore_diacritics)
     
     # This will be were the results are stored
     results_lists = []
@@ -803,16 +803,16 @@ def api_search(request, search_text=None ):
         
         # Build the list of arguments necessary to make the URL
         args = [ result.verse.division.work.title_slug ]
-        args.extend( result.verse.division.get_division_indicators() )
+        args.extend(result.verse.division.get_division_indicators())
         
         # Determine if the last verse is a lone verse. If it is, then don't put the verse in the URL args.
         if Verse.objects.filter(division=result.verse.division).count() > 1:
             division_has_multiple_verses = True
-            args.append( str(result.verse) )
+            args.append(str(result.verse))
         else:
             division_has_multiple_verses = False
         
-        d['url']             = reverse('read_work', args=args )
+        d['url']             = reverse('read_work', args=args)
         d['verse']           = str(result.verse)
         d['division']        = result.verse.division.get_division_description()
         d['work_title_slug'] = result.verse.division.work.title_slug
@@ -836,7 +836,7 @@ def api_search(request, search_text=None ):
         results_lists.append(d)
     
     # Get the search stats
-    stats = search_stats( search_text, include_related_forms=include_related_forms, ignore_diacritics=ignore_diacritics )
+    stats = search_stats(search_text, include_related_forms=include_related_forms, ignore_diacritics=ignore_diacritics)
     
     results_set = {
                    'result_count' : search_results.result_count,
@@ -895,7 +895,7 @@ def api_convert_query_beta_code(request, search_query):
                 new_q = ""
                 
             # Add and convert the field
-            if re.match("\w+", value ):
+            if re.match("\w+", value):
                 # If is just ASCII, then convert it
                 new_q = new_q + Greek.beta_code_to_unicode(value)
             else:
@@ -905,7 +905,7 @@ def api_convert_query_beta_code(request, search_query):
         # Add the query to the list
         new_queries.append(new_q) 
             
-    return render_api_response(request, " ".join(new_queries) )
+    return render_api_response(request, " ".join(new_queries))
 
 @cache_page(15 * minutes)
 def api_word_parse(request, word=None):
@@ -913,17 +913,17 @@ def api_word_parse(request, word=None):
     if word is None or len(word) == 0 and 'word' in request.GET:
         word = request.GET['word']
     
-    word_basic_form = language_tools.strip_accents( normalize_unicode(word) )
+    word_basic_form = language_tools.strip_accents(normalize_unicode(word))
     
     # Do a search for the parse
     ignoring_diacritics = False
     ignoring_numerals = False
-    descriptions = get_word_descriptions( word, False )
+    descriptions = get_word_descriptions(word, False)
     
     # If we couldn't find the word, then try again ignoring diacritical marks
     if len(descriptions) == 0:
         ignoring_diacritics = True
-        descriptions = get_word_descriptions( word, True )
+        descriptions = get_word_descriptions(word, True)
         
     # If we couldn't find the word and it has numbers (indicating a particular parse, then remove the numbers and try again)
     if len(descriptions) == 0 and re.search("[0-9]", word) is not None:
@@ -935,12 +935,12 @@ def api_word_parse(request, word=None):
         
         # Try without ignoring diacritics
         ignoring_diacritics = False
-        descriptions = get_word_descriptions( stripped_word, False )
+        descriptions = get_word_descriptions(stripped_word, False)
         
         # Try with ignoring diacritics
         if len(descriptions) == 0:
             ignoring_diacritics = True
-            descriptions = get_word_descriptions( stripped_word, True )
+            descriptions = get_word_descriptions(stripped_word, True)
     
     # Make the final result to be returned
     results = []
@@ -1043,13 +1043,13 @@ def api_works_list(request, author=None):
     
     for work in works:
         
-        works_json.append( { 
+        works_json.append({ 
                             'title' : work.title,
                             'title_slug' : work.title_slug,
                             'language' : work.language,
                             'author' : ", ".join(work.authors.values_list('name', flat=True)),
                             'editor' : ", ".join(work.editors.values_list('name', flat=True)),
-                            } )
+                            })
     
     return render_api_response(request, works_json)
 
@@ -1077,7 +1077,7 @@ def swap_slugs(divisions_with_spaces, *args):
     for arg in args:
         if arg is not None:
             for d in divisions_with_spaces:
-                arg = arg.replace( slugify(d['descriptor']), d['descriptor'])
+                arg = arg.replace(slugify(d['descriptor']), d['descriptor'])
                 
         results.append(arg)
         
@@ -1157,7 +1157,7 @@ def api_work_info(request, title):
         return render_api_response(request, content)
 
     # Couldn't find the work
-    return render_api_response(request, {'work': title}, status=404 )
+    return render_api_response(request, {'work': title}, status=404)
 
 def get_wikipedia_info(topic):
     import sys
@@ -1254,7 +1254,7 @@ def api_wikipedia_info(request, topic=None, topic2=None, topic3=None):
         return render_api_response(request, content)
     
     # Couldn't find the article
-    return render_api_response(request, {'topic': topic}, status=404 )
+    return render_api_response(request, {'topic': topic}, status=404)
 
 def api_resolve_reference(request, work=None, ref=None):
     
@@ -1289,6 +1289,6 @@ def api_resolve_reference(request, work=None, ref=None):
         
     l = [division_0, division_1, division_2, division_3, division_4]
         
-    args.extend( [x for x in l if x is not None] )
+    args.extend([x for x in l if x is not None])
     
-    return render_api_response(request, { 'url' : reverse('read_work', args=args), 'verse_to_highlight' : verse_to_highlight } )
+    return render_api_response(request, { 'url' : reverse('read_work', args=args), 'verse_to_highlight' : verse_to_highlight })
