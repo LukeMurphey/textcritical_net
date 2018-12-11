@@ -412,11 +412,15 @@ class ImportTransforms():
             # Make each entry
             for entry in entries:
 
-                # Make sure that the entry doesn't already exist
-                exists_already = False # TODO
-
                 # Find the lemma entry
                 lemma = utils.get_lemma(Greek.beta_code_to_unicode(entry))
+
+                # Make sure that the entry doesn't already exist
+                try:
+                    LexiconEntry.objects.get(lemma=lemma, verse=verse)
+                    exists_already = True
+                except LexiconEntry.DoesNotExist:
+                    exists_already = False
 
                 # Make the entry
                 if lemma is None:
