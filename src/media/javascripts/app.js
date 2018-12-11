@@ -208,9 +208,27 @@ define([
 			
 			return false;
 		}
+
+		/**
+		 * Sets the content for the popup dialog.
+		 * 
+		 * @param content the content for the dialog
+		 **/
+		TextCritical.set_dialog_content = function (content) {
+			$("#popup-dialog-content").html(content);
+		}
+
+		/**
+		 * Sets the content for the extra-options section of the popup dialog.
+		 * 
+		 * @param content the content for the extra options section of the dialog
+		 **/
+		TextCritical.set_extra_options = function (content) {
+			$("#popup-dialog-extra-options").html(content);
+		}
 		
 		/**
-		 * Opens a dialog that obtains the morphology of a word.
+		 * Opens a modal dialog.
 		 * 
 		 * @param title the title of the dialog
 		 * @param content the content for the dialog
@@ -226,8 +244,8 @@ define([
 				wide = false;
 			}
 			
-			// Reset the content to the loading content
-			$("#popup-dialog-content").html(content);
+			// Reset the content to the content
+			TextCritical.set_dialog_content(content);
 
 			// Reset the dialog class
 			if(wide){
@@ -240,14 +258,13 @@ define([
 			// Set the link to Google
 			var extra_options_template = 'Look up at <a target="_blank" href="http://www.perseus.tufts.edu/hopper/morph?l=<%= word %>&la=greek">Perseus</a> or <a target="_blank" href="https://www.google.com/search?q=<%= word %>">Google</a>';
 			
-			$("#popup-dialog-extra-options").html(extra_options);
+			TextCritical.set_extra_options(extra_options);
 			
 			// Set the title
 			$("#popup-dialog-label").text(title);
 			
 			// Open the form
 			$("#popup-dialog").modal();
-			
 		}
 		
 		/**
@@ -268,19 +285,13 @@ define([
 			word = TextCritical.trim(word);
 		
 			// Reset the content to the loading content
-			$("#popup-dialog-content").html(_.template(loading_template,{ message: "Looking up morphology for " +  _.escape(word) + "..." }));
+			var content = _.template(loading_template,{ message: "Looking up morphology for " +  _.escape(word) + "..." });
 		
 			// Set the link to Google
 			var extra_options_template = 'Look up at <a target="_blank" href="http://www.perseus.tufts.edu/hopper/morph?l=<%= word %>&la=greek">Perseus</a> or <a target="_blank" href="https://www.google.com/search?q=<%= word %>">Google</a>';
-		
-			$("#popup-dialog-extra-options").html(_.template(extra_options_template,{ word : word }));
-		
-			// Set the title
-			$("#popup-dialog-label").text("Morphology: " +  _.escape(word) );
-		
-			// Open the form
-			$("#popup-dialog").addClass("wide");
-			$("#popup-dialog").modal();
+
+			// Open the dialog
+			TextCritical.open_dialog("Morphology: " +  _.escape(word), content, extra_options_template, true);
 		
 			// Submit the AJAX request to display the information
 			$.ajax({
@@ -288,7 +299,7 @@ define([
 			}).done(function(data) {
 		
 				// Render the lemma information
-				$("#popup-dialog-content").html(_.template(morphology_dialog_template,{parses:data, word: _.escape(word), work: work, division: _.escape(division)}));
+				TextCritical.set_dialog_content(_.template(morphology_dialog_template,{parses:data, word: _.escape(word), work: work, division: _.escape(division)}));
 		
 				// Set the lemmas to be links
 				$("a.lemma").click(TextCritical.word_lookup);
@@ -296,7 +307,7 @@ define([
 				console.info( "Successfully performed a request for the morphology of " + word );
 		
 			}).error( function(jqXHR, textStatus, errorThrown) {
-				$("#popup-dialog-content").html( "<h4>Parse failed</h4> The request to parse could not be completed" );
+				TextCritical.set_dialog_content("<h4>Parse failed</h4> The request to parse could not be completed");
 				console.error( "The request for the morphology failed for " + word );
 			});
 		}
@@ -312,15 +323,8 @@ define([
 			text = TextCritical.trim(text);
 			
 			// Reset the content to the loading content
-			$("#popup-dialog-content").html(_.template(copy_dialog_template,{ text_to_copy: text }));
-			
-			$("#popup-dialog-extra-options").html("");
-		
-			// Set the title
-			$("#popup-dialog-label").text("Copy to clipboard");
-		
-			// Open the form
-			$("#popup-dialog").modal();
+			var content = _.template(copy_dialog_template,{ text_to_copy: text });
+			TextCritical.open_dialog("Copy to clipboard", content);
 			
 			// Select the text
 			setTimeout(function(){
@@ -393,16 +397,10 @@ define([
 			// Trim the topic in case extra space was included
 			search = TextCritical.trim(search);
 		
-			// Reset the content to the loading content
-			$("#popup-dialog-content").html(_.template(loading_template,{ message: "Looking up info for work " +  _.escape(work_title) + "..." }));
-		
-			$("#popup-dialog-extra-options").html("");
-			
-			// Set the title
-			$("#popup-dialog-label").text( _.escape(work_title) );
-		
-			// Open the form
-			$("#popup-dialog").modal();
+			// Open the loading content
+			var content = _.template(loading_template,{ message: "Looking up info for work " +  _.escape(work_title) + "..." });
+
+			TextCritical.open_dialog(_.escape(work_title), content, null, true);
 		
 			// Submit the AJAX request to display the information
 			this.get_work_info(work).done(function(data) {
@@ -410,21 +408,21 @@ define([
 				// Set the link to Wikipedia
 				var extra_options_template = '<a target="_blank" class="external" href="<%= url %>">View on wikipedia</a>';
 			
-				$("#popup-dialog-extra-options").html(_.template(extra_options_template,{ url : data.wiki_info.url }));
+				TextCritical.set_extra_options(_.template(extra_options_template,{ url : data.wiki_info.url }));
 				
 				// Render the lemma information
-				$("#popup-dialog-content").html(_.template(work_info_dialog_template, data));
+				TextCritical.set_dialog_content(_.template(work_info_dialog_template, data));
 		
 			}).fail( function(jqXHR, data) {
 				
 				// Handle cases where the request succeeded but no information could be found
 				if(jqXHR.status === 404){
-					$("#popup-dialog-content").html(_.template(work_info_dialog_template, data));
+					TextCritical.set_dialog_content(_.template(work_info_dialog_template, data));
 				}
 				
 				// Handle errors
 				else{
-					$("#popup-dialog-content").html("<h4>Request failed</h4> The request for information on this work could not be completed");
+					TextCritical.set_dialog_content("<h4>Request failed</h4> The request for information on this work could not be completed");
 				}
 			});
 		}
@@ -442,6 +440,7 @@ define([
 		 * @param topic the topic (author or work) to get information for
 		 * @param search the search to perform
 		 * @param search2 an alternative search to perform (in case the first doesn't return anything)
+		 * @param search3 an alternative search to perform (in case the previous doesn't return anything)
 		 **/
 		TextCritical.open_topic_dialog = function (topic, search, search2, search3) {
 			
@@ -449,17 +448,12 @@ define([
 		
 			// Trim the topic in case extra space was included
 			search = TextCritical.trim(search);
-		
-			// Reset the content to the loading content
-			$("#popup-dialog-content").html(_.template(loading_template,{ message: "Looking up info for " +  _.escape(topic) + "..." }));
-		
-			$("#popup-dialog-extra-options").html("");
-			
-			// Set the title
-			$("#popup-dialog-label").text(_.escape(topic));
-		
-			// Open the form
-			$("#popup-dialog").modal();
+
+			// Generate the content
+			var content = _.template(loading_template,{ message: "Looking up info for " +  _.escape(topic) + "..." });
+
+			// Open the dialog
+			TextCritical.open_dialog(_.escape(topic), content);
 		
 			// Submit the AJAX request to display the information
 			this.get_wiki_info(topic, search, search2, search3).done(function(data) {
@@ -467,21 +461,21 @@ define([
 				// Set the link to Wikipedia
 				var extra_options_template = '<a target="_blank" class="external" href="<%= url %>">View on wikipedia</a>';
 			
-				$("#popup-dialog-extra-options").html(_.template(extra_options_template,{ url : data.url }));
+				TextCritical.set_extra_options(_.template(extra_options_template,{ url : data.url }));
 				
 				// Render the lemma information
-				$("#popup-dialog-content").html(_.template(wiki_info_dialog_template, data));
+				TextCritical.set_dialog_content(_.template(wiki_info_dialog_template, data));
 		
 			}).fail( function(jqXHR, data) {
 				
 				// Handle cases where the request succeeded but no information could be found
 				if(jqXHR.status === 404){
-					$("#popup-dialog-content").html(_.template(wiki_info_dialog_template, data));
+					TextCritical.set_dialog_content(_.template(wiki_info_dialog_template, data));
 				}
 				
 				// Handle errors
 				else{
-					$("#popup-dialog-content").html("<h4>Request failed</h4> The request for information could not be completed");
+					TextCritical.set_dialog_content("<h4>Request failed</h4> The request for information could not be completed");
 				}
 			});
 		}
