@@ -23,6 +23,7 @@ else { %>:
 			<th>Lemma</th>
 			<th>Parse</th>
 			<th>Meaning</th>
+			<th>Liddel and Scott Definition</th>
 		</tr>
 	</thead>
     <tbody>
@@ -32,10 +33,18 @@ else { %>:
 			<td><a href="#" class="lemma"><%= parse.lemma %></td>
 			<td><%= parse.description %></td>
 			<td><%= parse.meaning %></td>
+			<td>
+				<% _.each(parse.lexicon_entries,function(lexicon_entry){ %>
+					<%= lexicon_entry.definition %>
+				<% }); %>
+			</td>
         </tr>
 <% }); %>
     </tbody>
 </table>
+
+
+
 <% } %>
 
 <% if (work && division) { %>

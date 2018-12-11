@@ -17,10 +17,11 @@ import difflib
 import re
 import os
 
-from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork, WikiArticle
+from reader.templatetags.reader_extras import transform_perseus_text
+from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork, WikiArticle, LexiconEntry
 from reader.language_tools.greek import Greek
 from reader import language_tools
-from reader.shortcuts import string_limiter, uniquefy, ajaxify, cache_page_if_ajax
+from reader.shortcuts import string_limiter, uniquefy, ajaxify, cache_page_if_ajax, convert_xml_to_html5
 from reader.utils import get_word_descriptions
 from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
@@ -955,13 +956,43 @@ def api_word_parse(request, word=None):
         entry["ignoring_diacritics"] = ignoring_diacritics
         entry["form"] = d.word_form.form
         
+        language = None
+
         if d.lemma:
             entry["lemma"] = d.lemma.lexical_form
+            language = d.lemma.language
         else:
             entry["lemma"] = None
-            
+
         # Calculate the similarity so that sort the results by similarity
         entry["similarity"] = int(round(difflib.SequenceMatcher(None, entry["lemma"], word_basic_form).ratio() * 100, 0))
+
+        # Add in the lexicon references
+        lexicon_entries = []
+
+        #lemma = LexiconEntry.objects.all()[0].lemma
+        #entries = LexiconEntry.objects.filter(lemma=lemma)
+
+        """
+        for entry in LexiconEntry.objects.filter(lemma=d.lemma).values('work__id', 'work__title', 'verse__original_content', 'lemma__lexical_form'):
+            lexicon_entries.append({
+                'work_id': 
+            })
+        """
+
+        lexicon_entries = []
+
+        text_transformation_fx = lambda text, parent_node, dst_doc: transform_perseus_text(text, parent_node, dst_doc, None)
+
+        for lexicon_entry in LexiconEntry.objects.filter(lemma=d.lemma):
+            lexicon_entries.append({
+                'work_id' : lexicon_entry.work.id,
+                'work_title' : lexicon_entry.work.title,
+                'definition' : convert_xml_to_html5(lexicon_entry.verse.original_content, return_as_str=True, text_transformation_fx=text_transformation_fx),
+                'lemma_lexical_form' : lexicon_entry.lemma.lexical_form
+            })
+        
+        entry['lexicon_entries'] = lexicon_entries
         
         results.append(entry)
         

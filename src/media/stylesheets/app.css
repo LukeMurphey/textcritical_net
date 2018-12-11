@@ -374,6 +374,10 @@ html {
 
   .view_home .main_background h1 {
     font-size: 33.5px; } }
+.modal.wide {
+  width: 750px;
+  margin-left: -375px; }
+
 .view_read_work {
   /* Lexicon support */ }
   .view_read_work .speaker {
@@ -884,6 +888,10 @@ body.dark .dataTables_filter > label > input {
 
 .work-options > a > .caret {
   border-top: 4px solid #c6c6c6; }
+
+.modal.wide {
+  width: 750px;
+  margin-left: -375px; }
 
 /* -----------------------------------------
    Search

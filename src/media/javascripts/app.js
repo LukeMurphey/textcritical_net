@@ -216,14 +216,26 @@ define([
 		 * @param content the content for the dialog
 		 * @param extra_options the content for the extra options section
 		 **/
-		TextCritical.open_dialog = function ( title, content, extra_options ) {
+		TextCritical.open_dialog = function ( title, content, extra_options, wide ) {
 			
 			if ( typeof extra_options == "undefined" || extra_options == null ){
 				extra_options = '';
 			}
+
+			if ( typeof wide == "undefined" || wide == null ){
+				wide = false;
+			}
 			
 			// Reset the content to the loading content
 			$("#popup-dialog-content").html(content);
+
+			// Reset the dialog class
+			if(wide){
+				$("#popup-dialog").addClass("wide");
+			}
+			else{
+				$("#popup-dialog").removeClass("wide");
+			}
 			
 			// Set the link to Google
 			var extra_options_template = 'Look up at <a target="_blank" href="http://www.perseus.tufts.edu/hopper/morph?l=<%= word %>&la=greek">Perseus</a> or <a target="_blank" href="https://www.google.com/search?q=<%= word %>">Google</a>';
@@ -267,6 +279,7 @@ define([
 			$("#popup-dialog-label").text("Morphology: " +  _.escape(word) );
 		
 			// Open the form
+			$("#popup-dialog").addClass("wide");
 			$("#popup-dialog").modal();
 		
 			// Submit the AJAX request to display the information

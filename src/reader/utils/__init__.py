@@ -111,3 +111,19 @@ def get_all_related_forms(word, ignore_diacritics=False):
                 word_forms.append(m.word_form)
     
     return word_forms
+
+def get_lexicon_entries(lemma):
+    """
+    Get the lexicon entries (as Verse instances) for the given lemma.
+
+    Arguments:
+    lemma -- The lemma to get the entries for
+    """
+
+    # Get the matching lexicon entries
+    lexicon_entries = LexiconEntry.objects.filter(lemma=lemma)
+
+    
+
+
+
