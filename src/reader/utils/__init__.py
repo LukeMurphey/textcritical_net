@@ -13,7 +13,7 @@ def description_id_fun(x):
     
     return str(x)
 
-def get_word_descriptions( word, ignore_diacritics=False ):
+def get_word_descriptions(word, ignore_diacritics=False):
     """
     Gets a list of WordDescription instances for the given word form.
     
@@ -23,16 +23,16 @@ def get_word_descriptions( word, ignore_diacritics=False ):
     """
     
     # Do a search for the parse
-    word_lookup = language_tools.normalize_unicode( word.lower() )
+    word_lookup = language_tools.normalize_unicode(word.lower())
     word_lookup = Greek.fix_final_sigma(word_lookup)
     
     # If the lookup for the word failed, try doing a lookup without the diacritics
     if ignore_diacritics:
         word_lookup = language_tools.strip_accents(word_lookup)
-        descriptions = WordDescription.objects.filter( word_form__basic_form=word_lookup )
+        descriptions = WordDescription.objects.filter(word_form__basic_form=word_lookup)
     
     else:
-        descriptions = WordDescription.objects.filter( word_form__form=word_lookup )
+        descriptions = WordDescription.objects.filter(word_form__form=word_lookup)
         
     # Make the list distinct
     descriptions = uniquefy(descriptions, description_id_fun)
@@ -65,7 +65,7 @@ def get_lemma(word, ignore_diacritics=False):
     else:
         return None
 
-def get_all_related_forms(word, ignore_diacritics=False ):
+def get_all_related_forms(word, ignore_diacritics=False):
     """
     Gets a list of WordForm instances that are possibly for the same word as the one provided.
     
@@ -108,6 +108,6 @@ def get_all_related_forms(word, ignore_diacritics=False ):
         
         for m in matching_descs:
             if m.word_form not in word_forms:
-                word_forms.append( m.word_form )
+                word_forms.append(m.word_form)
     
     return word_forms
