@@ -60,7 +60,10 @@ def get_lemma(word, ignore_diacritics=False):
     else:
         lemmas = Lemma.objects.filter(lexical_form=word_lookup)
 
-    return lemmas
+    if len(lemmas) > 0:
+        return lemmas[0]
+    else:
+        return None
 
 def get_all_related_forms(word, ignore_diacritics=False ):
     """

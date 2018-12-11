@@ -1,7 +1,10 @@
 from reader.models import Division, Verse, Work, RelatedWork, WikiArticle, LexiconEntry
 from django.template.defaultfilters import slugify
 from django.db import IntegrityError
-from reader.language_tools import Greek
+from reader.language_tools.greek import Greek
+from reader.importer import Lexicon
+from reader import utils
+
 import logging
 import re
 import os
@@ -402,9 +405,9 @@ class ImportTransforms():
         entries_created = 0
 
         # Process each verse
-        for verse in Verse.objects.filter(work=work):
+        for verse in Verse.objects.filter(division__work=work):
             # Find the entries
-            entries = [] # TODO
+            entries = Lexicon.LexiconImporter.find_perseus_entries(verse)
     
             # Make each entry
             for entry in entries:
@@ -413,14 +416,19 @@ class ImportTransforms():
                 exists_already = False # TODO
 
                 # Find the lemma entry
-                lemma = None # TODO
+                lemma = utils.get_lemma(Greek.beta_code_to_unicode(entry))
 
                 # Make the entry
-                if not exists_already:
+                if lemma is None:
+                    logger.warn("Lemma could not be found, entry=%s", entry)
+                elif not exists_already:
                     lexicon_entry = LexiconEntry()
                     lexicon_entry.verse = verse
-                    lexicon_entry.work = verse.work
+                    lexicon_entry.work = work
                     lexicon_entry.lemma = lemma
+                    lexicon_entry.save()
+
+                    entries_created = entries_created + 1
 
         return entries_created
     

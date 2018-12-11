@@ -3,7 +3,7 @@ from reader.importer.Perseus import PerseusTextImporter
 
 class LexiconImporter():
     @staticmethod
-    def findPerseusEntries(verse):
+    def find_perseus_entries(verse):
         document = parseString(verse.original_content)
         orth_tags = document.getElementsByTagName("orth")
 
