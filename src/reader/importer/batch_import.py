@@ -1,4 +1,4 @@
-from reader.models import Division, Verse, Work, RelatedWork, WikiArticle, LexiconEntry
+from reader.models import Division, Verse, Work, RelatedWork, WikiArticle, LexiconEntry, WorkType
 from django.template.defaultfilters import slugify
 from django.db import IntegrityError
 from reader.language_tools.greek import Greek
@@ -252,7 +252,21 @@ class ImportTransforms():
             
         logger.warning("Unable to allocate a new title slug based on the fields provided")
     
-    
+    @staticmethod
+    def set_work_type(work=None, title=None, **kwargs):
+
+        # Make or get the work-type
+        try:
+            work_type = WorkType.objects.get(title=title)
+        except WorkType.DoesNotExist:
+            work_type = WorkType()
+            work_type.title = title
+            work_type.save()
+
+        # Assign the work type to the work
+        work.work_type = work_type
+        work.save()
+
     @staticmethod
     def set_division_title(work=None, existing_division_title_slug=None, existing_division_parent_title_slug=None, existing_division_sequence_number=None, title=None, title_slug=None, descriptor=None, **kwargs):
         
@@ -287,7 +301,6 @@ class ImportTransforms():
         if descriptor is not None:
             division.descriptor = descriptor
             changes = changes + 1
-        
         
         if changes > 0:
             division.save()

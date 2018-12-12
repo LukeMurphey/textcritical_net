@@ -1031,7 +1031,10 @@
                 "set_meta_data" : {
                     "title_slug" : "middlelsj"
                 },
-                "index_lexicon": {}
+                "index_lexicon": {},
+                "set_work_type": {
+                    "title": "Lexicon"
+                }
             }
         }
     },
