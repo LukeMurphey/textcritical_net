@@ -490,6 +490,9 @@ html {
 .verse-link:hover {
   color: #08C; }
 
+.no_definition_entries {
+  font-style: italic; }
+
 .simple-progress {
   height: 6px;
   background: #202020; }
