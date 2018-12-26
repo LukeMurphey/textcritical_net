@@ -211,6 +211,24 @@
 	</target>
 
     <!-- ================================= 
+          target: migrate_library
+         ================================= -->
+	<target name="migrate_library" description="Migrate changes for the library database">
+
+		<exec executable="${python}" dir="src">
+			<arg value="manage.py"/>
+			<arg value="makemigrations"/>
+		</exec>
+
+		<exec executable="${python}" dir="src">
+			<arg value="manage.py"/>
+			<arg value="migrate"/>
+			<arg value="--database"/>
+			<arg value="library"/>
+		</exec>
+	</target>
+
+    <!-- ================================= 
           target: index_works
          ================================= -->
 	<target name="index_works" description="Create the search indexes for the works (deleting existing indexes)">
