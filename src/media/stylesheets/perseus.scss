@@ -112,5 +112,23 @@
 	.lemma{
 		text-decoration: underline;
     	font-weight: bold;
-	}
+    }
+    
+    /* Lexicon support */
+    .orth{
+        font-weight: bold;
+        font-size: 14pt;
+        display: block;
+    }
+
+    .etym{
+        display: block;
+        margin-top: 12px;
+        font-weight: bold;
+    }
+
+    .sense{
+        display: block;
+        margin-left: 32px;
+    }
 }

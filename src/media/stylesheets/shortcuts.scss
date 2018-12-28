@@ -31,3 +31,8 @@
   -o-animation:#{$name} $timing;
   animation:#{$name} $timing;
 }
+
+.modal.wide {
+  width: 750px;
+  margin-left: -375px;
+}

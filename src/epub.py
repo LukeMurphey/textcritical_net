@@ -10,7 +10,7 @@ import shutil
 import subprocess
 import uuid
 import zipfile
-from genshi.template import TemplateLoader
+from django.template import Context, loader
 from lxml import etree
 
 class TocMapNode:
@@ -46,8 +46,6 @@ class EpubItem:
 class EpubBook:
 
     def __init__(self):
-        self.loader = TemplateLoader('templates')
-
         self.rootDir = ''
         self.UUID = uuid.uuid1()
         self.url = None
@@ -117,9 +115,9 @@ class EpubBook:
         return item
     
     def addHtmlForImage(self, imageItem):
-        tmpl = self.loader.load('image.html')
-        stream = tmpl.generate(book = self, item = imageItem)
-        html = stream.render('xhtml', doctype = 'xhtml11', drop_xml_decl = False)
+        template = loader.get_template('epub/image.html')
+        c = Context({"book": self, "item": imageItem})
+        html = template.render(c).encode("utf-8")
         return self.addHtml('', '%s.html' % imageItem.destPath, html)
     
     def addHtml(self, srcPath, destPath, html):
@@ -156,9 +154,12 @@ class EpubBook:
         assert self.titlePage
         if self.titlePage.html:
             return
-        tmpl = self.loader.load('title-page.html')
-        stream = tmpl.generate(book = self)
-        self.titlePage.html = stream.render('xhtml', doctype = 'xhtml11', drop_xml_decl = False)
+
+        template = loader.get_template('epub/title-page.html')
+        c = Context({"book": self})
+        stream = template.render(c).encode("utf-8")
+
+        self.titlePage.html = stream
         
     def addTitlePage(self, html = ''):
         assert not self.titlePage
@@ -168,9 +169,9 @@ class EpubBook:
     
     def __makeTocPage(self):
         assert self.tocPage
-        tmpl = self.loader.load('toc.html')
-        stream = tmpl.generate(book = self)
-        self.tocPage.html = stream.render('xhtml', doctype = 'xhtml11', drop_xml_decl = False)
+        template = loader.get_template('epub/toc.html')
+        c = Context({"book": self})
+        self.tocPage.html = template.render(c).encode("utf-8")
 
     def addTocPage(self):
         assert not self.tocPage
@@ -226,24 +227,25 @@ class EpubBook:
     
     def __writeContainerXML(self):
         fout = open(os.path.join(self.rootDir, 'META-INF', 'container.xml'), 'w')
-        tmpl = self.loader.load('container.xml')
-        stream = tmpl.generate()
-        fout.write(stream.render('xml'))
+        template = loader.get_template('epub/container.xml')
+        c = Context({"book": self})
+        fout.write(template.render(c).encode("utf-8"))
         fout.close()
 
     def __writeTocNCX(self):
         self.tocMapRoot.assignPlayOrder()
         fout = open(os.path.join(self.rootDir, 'OEBPS', 'toc.ncx'), 'w')
-        tmpl = self.loader.load('toc.ncx')
-        stream = tmpl.generate(book = self)
-        fout.write(stream.render('xml'))
+
+        template = loader.get_template('epub/toc.ncx')
+        c = Context({"book": self})
+        fout.write(template.render(c).encode("utf-8"))
         fout.close()
     
     def __writeContentOPF(self):
         fout = open(os.path.join(self.rootDir, 'OEBPS', 'content.opf'), 'w')
-        tmpl = self.loader.load('content.opf')
-        stream = tmpl.generate(book = self)
-        fout.write(stream.render('xml'))
+        template = loader.get_template('epub/content.opf')
+        c = Context({"book": self})
+        fout.write(template.render(c).encode("utf-8"))
         fout.close()
     
     def __writeItems(self):

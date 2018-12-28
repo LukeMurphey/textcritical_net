@@ -1,5 +1,5 @@
 from reader import language_tools
-from reader.models import WordDescription
+from reader.models import WordDescription, Lemma
 from reader.shortcuts import uniquefy
 from reader.language_tools import Greek
 
@@ -13,7 +13,7 @@ def description_id_fun(x):
     
     return str(x)
 
-def get_word_descriptions( word, ignore_diacritics=False ):
+def get_word_descriptions(word, ignore_diacritics=False):
     """
     Gets a list of WordDescription instances for the given word form.
     
@@ -23,23 +23,49 @@ def get_word_descriptions( word, ignore_diacritics=False ):
     """
     
     # Do a search for the parse
-    word_lookup = language_tools.normalize_unicode( word.lower() )
+    word_lookup = language_tools.normalize_unicode(word.lower())
     word_lookup = Greek.fix_final_sigma(word_lookup)
     
     # If the lookup for the word failed, try doing a lookup without the diacritics
     if ignore_diacritics:
         word_lookup = language_tools.strip_accents(word_lookup)
-        descriptions = WordDescription.objects.filter( word_form__basic_form=word_lookup )
+        descriptions = WordDescription.objects.filter(word_form__basic_form=word_lookup)
     
     else:
-        descriptions = WordDescription.objects.filter( word_form__form=word_lookup )
+        descriptions = WordDescription.objects.filter(word_form__form=word_lookup)
         
     # Make the list distinct
     descriptions = uniquefy(descriptions, description_id_fun)
     
     return descriptions
 
-def get_all_related_forms(word, ignore_diacritics=False ):
+def get_lemma(word, ignore_diacritics=False):
+    """
+    Gets the lemma that matches the given word form.
+    
+    Arguments:
+    word -- The word to return the Lemma instance for
+    ignore_diacritics -- Indicates if diacritical marks should be ignored for the purposes of matching.
+    """
+    
+    # Do a search for the parse
+    word_lookup = language_tools.normalize_unicode(word.lower())
+    word_lookup = Greek.fix_final_sigma(word_lookup)
+    
+    # Do a lookup without the diacritics if requested
+    if ignore_diacritics:
+        word_lookup = language_tools.strip_accents(word_lookup)
+        lemmas = Lemma.objects.filter(basic_lexical_form=word_lookup)
+    
+    else:
+        lemmas = Lemma.objects.filter(lexical_form=word_lookup)
+
+    if len(lemmas) > 0:
+        return lemmas[0]
+    else:
+        return None
+
+def get_all_related_forms(word, ignore_diacritics=False):
     """
     Gets a list of WordForm instances that are possibly for the same word as the one provided.
     
@@ -82,6 +108,22 @@ def get_all_related_forms(word, ignore_diacritics=False ):
         
         for m in matching_descs:
             if m.word_form not in word_forms:
-                word_forms.append( m.word_form )
+                word_forms.append(m.word_form)
     
     return word_forms
+
+def get_lexicon_entries(lemma):
+    """
+    Get the lexicon entries (as Verse instances) for the given lemma.
+
+    Arguments:
+    lemma -- The lemma to get the entries for
+    """
+
+    # Get the matching lexicon entries
+    lexicon_entries = LexiconEntry.objects.filter(lemma=lemma)
+
+    
+
+
+

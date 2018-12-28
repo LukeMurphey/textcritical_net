@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<opf:package xmlns:opf="http://www.idpf.org/2007/opf"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    unique-identifier="bookid" version="2.0">
+  <opf:metadata >
+    {% if book.url %}
+    <dc:identifier id="bookid" opf:scheme="URI">{{book.url}}</dc:identifier>
+    {% else %}
+    <dc:identifier id="bookid">urn:uuid:{{book.UUID}}</dc:identifier>
+    {% endif %}
+    <dc:language>{{book.lang}}</dc:language>
+    <dc:title>{{book.title}}</dc:title>
+    {% for name, role in book.creators %}
+    <dc:creator opf:role="{{role}}">{{name}}</dc:creator>
+    {% endfor %}
+    {% for beginTag, content, endTag in book.getMetaTags %}
+    {{beginTag|safe}}{{content}}{{endTag|safe}}
+    {% endfor %}
+    {% if book.coverImage %}
+    <opf:meta name="cover" content="{{book.coverImage.id}}" />
+    {% endif %}
+  </opf:metadata>
+  <opf:manifest>
+    <opf:item id="ncxtoc" media-type="application/x-dtbncx+xml" href="toc.ncx"/>
+    {% for item in book.getAllItems %}
+    <opf:item id="{{item.id}}" media-type="{{item.mimeType}}" href="{{item.destPath}}"/>
+    {% endfor %}
+  </opf:manifest>
+  <opf:spine toc="ncxtoc">
+    {% for _, item, linear in book.getSpine %}
+    {% if linear %}
+    <opf:itemref idref="{{item.id}}" linear="yes"/>
+    {% else %}
+    <opf:itemref idref="{{item.id}}" linear="no"/>
+    {% endif %}
+    {% endfor %}
+  </opf:spine>
+  {% if book.guide %}
+  <opf:guide>
+    {% for href, title, type in book.getGuide %}
+    <opf:reference href="{{href}}" type="{{type}}" title="{{title}}"/>
+    {% endfor %}
+  </opf:guide>
+  {% endif %}
+</opf:package>

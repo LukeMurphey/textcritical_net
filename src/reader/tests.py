@@ -1,5 +1,53 @@
 # -*- coding: utf8 -*-
-
+"""
++-----------------+-------------------------------------------------------------------------------+
+| Test Class                        | What it tests                                               |
++-----------------------------------+-------------------------------------------------------------+
+| TestReader                        | Base class for tests                                        |
+|-----------------------------------|-------------------------------------------------------------|
+| TestGreekLanguageTools            | beta-code conversion and unicode normalization              |
+|-----------------------------------|-------------------------------------------------------------|
+| TestImportContext                 | TextImporter.ImportContext class                            |
+|-----------------------------------|-------------------------------------------------------------|
+| TestBatchImport                   | ImportTransforms class (transforms for batch import)        |
+|-----------------------------------|-------------------------------------------------------------|
+| TestImport                        | TextImporter class                                          |
+|-----------------------------------|-------------------------------------------------------------|
+| TestShortcuts                     | Shortcuts used for content importing                        |
+|-----------------------------------|-------------------------------------------------------------|
+| TestLineNumber                    | LineNumber class                                            |
+|-----------------------------------|-------------------------------------------------------------|
+| TestPerseusBatchImporter          | PerseusBatchImporter class                                  |
+|-----------------------------------|-------------------------------------------------------------|
+| TestPerseusImport                 | PerseusTextImporter class                                   |
+|-----------------------------------|-------------------------------------------------------------|
+| TestPerseusImportLexicon          | Import of a lexicon sourced from Perseus                    |
+|-----------------------------------|-------------------------------------------------------------|
+| TestDivisionModel                 | Division class (a model)                                    |
+|-----------------------------------|-------------------------------------------------------------|
+| TestViews                         | helper functions provided in views                          |
+|-----------------------------------|-------------------------------------------------------------|
+| TestDiogenesLemmaImport           | DiogenesLemmataImporter class                               |
+|-----------------------------------|-------------------------------------------------------------|
+| TestReaderUtils                   | reader.utils helpers                                        |
+|-----------------------------------|-------------------------------------------------------------|
+| TestDiogenesAnalysesImport        | DiogenesAnalysesImporter classes                            |
+|-----------------------------------|-------------------------------------------------------------|
+| TestWorkIndexer                   | Helper class for making search indexers for testing         |
+|-----------------------------------|-------------------------------------------------------------|
+| TestContentSearch                 | Search indexing functionality                               |
+|-----------------------------------|-------------------------------------------------------------|
+| TestUnboundBibleImport            | UnboundBibleTextImporter class                              |
+|-----------------------------------|-------------------------------------------------------------|
+| TestWorkAlias                     | WorkAlias class                                             |
+|-----------------------------------|-------------------------------------------------------------|
+| TestContextProcessors             | The Content Processors included in the reader app           |
+|-----------------------------------|-------------------------------------------------------------|
+| TestEpubExport                    | ePubExport class                                            |
+|-----------------------------------|-------------------------------------------------------------|
+| TestWikiArticle                   | WikiArticle class                                           |
+|-----------------------------------|-------------------------------------------------------------|
+"""
 from django.test import TestCase
 from django.db import IntegrityError
 
@@ -11,6 +59,7 @@ from reader.shortcuts import convert_xml_to_html5
 from reader.templatetags.reader_extras import perseus_xml_to_html5
 from reader.importer.batch_import import ImportPolicy, WorkDescriptor, wildcard_to_re, ImportTransforms, JSONImportPolicy
 from reader.importer.Perseus import PerseusTextImporter
+from reader.importer.Lexicon import LexiconImporter
 from reader.importer.PerseusBatchImporter import PerseusBatchImporter
 from reader.importer.unbound_bible import UnboundBibleTextImporter
 from reader.importer import TextImporter, LineNumber
@@ -141,8 +190,8 @@ fwnh=s sunegraya/mhn."""
             
             self.assertEqual( beta_original, beta_actual )
             
-        def test_fix_final_sigma(self):
-            self.assertEqual(Greek.fix_final_sigma(u"κόσμοσ"), "κόσμος")
+    def test_fix_final_sigma(self):
+        self.assertEqual(Greek.fix_final_sigma(u"κόσμοσ"), u"κόσμος")
             
 class TestImportContext(TestCase):
         
@@ -1501,6 +1550,52 @@ semno/teron *)idoumai/an w)no/masan.
         
         self.assertEquals( str(line_count), "9")
         
+class TestPerseusImportLexicon(TestReader):
+    """
+    # See #2322, https://lukemurphey.net/issues/2322
+    """
+
+    def setUp(self):
+        self.importer = PerseusTextImporter(division_tags=["entry", "div0"])
+
+    def test_load_lexicon(self):
+        book_xml = self.load_test_resource('ml.xml')
+        book_doc = parseString(book_xml)
+        self.importer.import_xml_document(book_doc)
+        
+        divisions = Division.objects.filter(work=self.importer.work)
+        
+        self.assertEquals(len(Verse.objects.filter(division=divisions[1])), 1) # Should have 9 entries for the letter alpha
+        self.assertEquals(divisions.count(), 15) # Should have two divisions for the letters and 13 for the entries
+
+        # Make sure that the division description got converted from beta-code
+        self.assertEquals(divisions[0].title, u'\u0391') # Should be Α
+        self.assertEquals(str(divisions[0]), "Α") # Should be Α
+        #self.assertEquals(divisions[0].title_slug, "a") # Should be Α
+        self.assertEquals(divisions[0].descriptor, "*a")
+        self.assertEquals(divisions[1].descriptor, u"ἀάατος")
+
+        #self.assertEquals(str(divisions[1]), u"ἀάατος")
+
+        # Update the descriptors
+        ImportTransforms.convert_descriptors_from_beta_code(self.importer.work)
+        self.assertEquals(divisions[0].descriptor, u'\u0391')
+
+    def test_find_entries(self):
+        book_xml = self.load_test_resource('ml.xml')
+        book_doc = parseString(book_xml)
+        self.importer.import_xml_document(book_doc)
+
+        divisions = Division.objects.filter(work=self.importer.work)
+        verses = Verse.objects.filter(division=divisions[1])
+
+        verse = verses[:1][0]
+
+        entries = LexiconImporter.find_perseus_entries(verse)
+        
+        self.assertEquals(len(entries), 1)
+        self.assertEquals(entries[0], "a)a/atos")
+
 class TestDivisionModel(TestReader):
     
     def setUp(self):
@@ -1611,42 +1706,45 @@ class TestDiogenesLemmaImport(TestReader):
         self.assertEquals(lemma.reference_number, 537850)
 
 class TestReaderUtils(TestReader):
-    
-    @time_function_call
-    def test_get_word_descriptions(self):
-        
+
+    def setUp(self):
         # Get the lemmas so that we can match up the analyses
         DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
         
         # Import the analyses
         DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
         
+    @time_function_call
+    def test_get_word_descriptions(self):
         descriptions = utils.get_word_descriptions(u"ἅβρυνα", False)
         
         self.assertEquals( len(descriptions), 2 )
+
+    @time_function_call
+    def test_get_lemma(self):
+        lemma = utils.get_lemma(language_tools.greek.Greek.beta_code_to_unicode(u"a(/rpina"))
+        self.assertNotEquals(lemma, None)
+
+        lemma = utils.get_lemma(u"ἅρπινα", False)
+        self.assertNotEquals(lemma, None)
+
+        lemma = utils.get_lemma(u"αρπινα", True)
+        self.assertNotEquals(lemma, None)
+
+    @time_function_call
+    def test_get_lemma_no_diacritics(self):
+        lemma = utils.get_lemma(u"αρπινα", True)
+        
+        self.assertNotEquals(lemma, None)
         
     @time_function_call
     def test_get_all_related_forms(self):
-        
-        # Get the lemmas so that we can match up the analyses
-        DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
-        
-        # Import the analyses
-        DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
-        
         forms = utils.get_all_related_forms(u"ἅβραν", False) #a(/bran
         
         self.assertEquals( len(forms), 6 )
         
     @time_function_call
     def test_get_all_related_forms_no_diacritics(self):
-        
-        # Get the lemmas so that we can match up the analyses
-        DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
-        
-        # Import the analyses
-        DiogenesAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses2.txt"), return_created_objects=True)
-        
         forms = utils.get_all_related_forms(u"αβραν", True) #a(/bran
         
         self.assertEquals( len(forms), 6 ) 

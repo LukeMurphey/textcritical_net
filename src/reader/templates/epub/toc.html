@@ -1,0 +1,27 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!--!
+Copyright (c) 2012, Bin Tan
+This file is distributed under the BSD Licence. See python-epub-builder-license.txt for details.
+-->
+<head>
+  <title>{{book.title}}</title>
+  <style type="text/css">
+.tocEntry-1 {
+}
+.tocEntry-2 {
+	text-indent: 1em;
+}
+.tocEntry-3 {
+	text-indent: 2em;
+}
+.tocEntry-4 {
+	text-indent: 3em;
+}
+  </style>
+</head>
+<body>
+  {% node in book.getTocMapRoot.children %}
+    {% include "epub/toc_entry.html" %}
+  {% endfor %}
+</body>
+</html>

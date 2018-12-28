@@ -6,4 +6,4 @@ The sources for the works are available at https://lukemurphey.net/projects/anci
 
 The components used are available at [LukeMurphey.net](https://lukemurphey.net/projects/ancient-text-reader/wiki/Dependencies)
 
-![alt text](screenshot_notebook.png "TextCritical.net 2.1 (https://dimmy.club/laptops/surface-book)")
+![alt text](related/screenshot_notebook.png "TextCritical.net 2.1 (https://dimmy.club/laptops/surface-book)")

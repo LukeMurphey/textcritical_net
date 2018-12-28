@@ -10,6 +10,14 @@
 # If you need to operate the shell, do it this way:
 # 
 #       docker run -it --entrypoint /bin/bash textcritical
+#
+# You can see the app logs using the following command:
+#
+#       tail /usr/src/app/var/log/app.log
+#
+# If you run into an issue of not having space, consider pruning. Something like this:
+#
+#       docker system prune
 
 FROM python:2-slim
 

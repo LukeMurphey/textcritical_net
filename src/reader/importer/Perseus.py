@@ -20,6 +20,7 @@ import re
 from reader.importer import TextImporter, LineNumber, LineNumberRange
 from reader.models import Division, Work
 from reader.shortcuts import transform_text
+from reader.language_tools import Greek
 
 from django.db import transaction
 from django.template.defaultfilters import slugify
@@ -29,15 +30,15 @@ import codecs
 logger = logging.getLogger(__name__)
 
 class State():
-    
+
     CHUNK_TYPES = ["card", "chapter"]
-    
+
     def __init__(self, name, section_type, level, chunk=None):
         self.section_type = section_type
         self.name = name
         self.level = level
         self.chunk = chunk
-        
+
     def is_chunk(self):
         if self.chunk == True:
             return True
@@ -47,35 +48,35 @@ class State():
             return True
         else:
             return False
-        
+
     @staticmethod
     def createFromStateNode( state_node, level = None, chunk = None ):
-        
+
         unit_name = state_node.attributes["unit"].value
-            
+
         if state_node.attributes.get("n", None) != None:
             section_type = state_node.attributes["n"].value
         else:
             section_type = None
-            
+
         return State(unit_name, section_type, level, chunk)
-    
+
     def __str__(self):
         return self.name
 
 class PerseusTextImporter(TextImporter):
-    
+
     DIV_PARSE_REGEX = re.compile( r"div(?P<level>[0-9]+)" )
-    
+
     VERSE_TAG_NAME = "verse"
     CHAPTER_TAG_NAME = "chapter"
-    
+
     def __init__(self, overwrite_existing=False, state_set=0, work=None, work_source=None, ignore_division_markers=False, use_line_count_for_divisions=None,
-                       ignore_content_before_first_milestone=False, ignore_undeclared_divs=False, only_last_state_is_non_chunk=False,
-                       only_leaf_divisions_readable=False, division_tags=None, division_min=None, ignore_notes=False):
+                 ignore_content_before_first_milestone=False, ignore_undeclared_divs=False, only_last_state_is_non_chunk=False,
+                 only_leaf_divisions_readable=False, division_tags=None, division_min=None, ignore_notes=False):
         """
         Constructs a Perseus text importer.
-        
+
         Arguments:
         overwrite_existing -- indicates if an existing work ought to be deleted
         state_set -- indicates which state set to use
@@ -91,16 +92,16 @@ class PerseusTextImporter(TextImporter):
         division_min -- if not none, then only division with a number less than or equal to this value will be recognized
         ignore_notes -- if true, notes will be ignored
         """
-        
+
         self.overwrite_existing = overwrite_existing
-        
+
         self.state_set = state_set
-        
+
         if state_set != "*":
             self.state_set = int(self.state_set)
-        
+
         TextImporter.__init__(self, work, work_source)
-        
+
         self.ignore_division_markers = ignore_division_markers
         self.use_line_count_for_divisions = use_line_count_for_divisions
         self.ignore_content_before_first_milestone = ignore_content_before_first_milestone
@@ -109,47 +110,47 @@ class PerseusTextImporter(TextImporter):
         self.only_leaf_divisions_readable = only_leaf_divisions_readable
         self.division_min = division_min
         self.ignore_notes = ignore_notes
-        
+
         if division_tags is not None:
             self.division_tags = division_tags[:]
         else:
             self.division_tags = None
-    
+
     def import_xml_string(self, xml_string ):
         """
         Import the work from the string provided.
-        
+
         Arguments:
         xml_string -- A string representing XML
         state_set -- The state set to use
         """
-        
+
         doc = parseString(xml_string)
-        
+
         try:
             return self.import_xml_document(doc)
         finally:
-            doc.unlink() 
+            doc.unlink()
             del(doc)
-         
+
     def import_file( self, file_name, encoding='utf-8'):
         """
         Import the provided XML file.
-        
+
         Arguments:
         file_name -- The file name of a Perseus XML work
         encoding -- The encoding to use
         """
-        
+
         # Create the source object so that we remember where we got the file
         #self.work_source = WorkSource()
         #self.work_source.source = "Perseus.tufts.edu"
         #self.work_source.resource = os.path.basename(file_name)
-        
+
         # Import the document
         # Read the file into a string
         f = None
-        
+
         try:
             f = codecs.open( file_name, 'r', encoding )
 
@@ -157,172 +158,172 @@ class PerseusTextImporter(TextImporter):
         finally:
             if f:
                 f.close()
-        
+
         file_string = file_string.encode('utf-8')
         doc = parseString(file_string)
-        
+
         try:
             return self.import_xml_document(doc)
         finally:
             doc.unlink()
             del(doc)
-    
+
     def close_division(self, import_context, new_division=None):
         """
         This function is called when a new division is found and the importer is about to move on to a new division.
-        
+
         Arguments:
         import_context -- The import context being used during importation
         new_division -- The new division to be created
         """
-        
+
         """
         if import_context.division is not None and self.use_line_count_for_divisions == True :
-            
+
             if new_division and new_division.descriptor is not None and LineNumber.is_line_number(new_division.descriptor):
                 next_line_number = LineNumber(new_division.descriptor)
                 next_line_number.decrement()
-                    
+
                 import_context.line_number_end = next_line_number
             else:
                 self.update_line_count_info(import_context, reset_start_line_count=False)
-                    
+
             if import_context.line_number_end.number > 0:
                 # Set the division title if we have a division to update
                 import_context.division.title = import_context.get_line_count_title()
-                    
+
                 # Restart the line count for the next division
                 import_context.reset_start_line_count()
         """
-        
+
         # Save the XML content for the previous chapter
         self.save_original_content(import_context)
-    
+
     def make_division(self, import_context, level=1, sequence_number=None, division_type=None, title=None, original_title=None, descriptor=None, state_info=None):
-        
+
         # Get the level from the state info object unless the level was already provided
         if state_info is not None:
             level = state_info.level
-        
+
         elif level is None:
             level = 1
-            
+
         # Create the new division
         new_division = Division()
         new_division.level = level
-        
+
         new_division.type = division_type
         new_division.title = title
         new_division.descriptor = descriptor
         new_division.original_title = original_title
         new_division.work = self.work
-        
+
         if state_info is not None:
             new_division.type = state_info.name
-        
+
         # Save the existing division if one exists
         if import_context.division is not None:
-            
+ 
             # Populate the sequence number from the previous division is available
             if sequence_number is None:
                 sequence_number = import_context.division.sequence_number + 1
-            
+
             # If this level is the at the same level as the current one, then replace the division with the current one
             if level == import_context.division.level:
                 new_division.parent_division = import_context.division.parent_division
-                
+
             # If the new level is higher in value (i.e. lower and nearer to the bottom) than the current one, then shim in the new one at the appropriate level
             elif level <= import_context.division.level:
-                
+
                 same_level_division = import_context.division
                 
                 # Move down the levels until we find one at the same level
                 while same_level_division is not None and level < same_level_division.level:
                     same_level_division = same_level_division.parent_division
-                
+
                 if same_level_division is not None:
                     new_division.parent_division = same_level_division.parent_division
                 else:
                     logger.warn( "Unable to find parent division for level %i" % (level) )
-            
+
             # If the new level is higher than the current one, then add
             else:
                 new_division.parent_division = import_context.division
-                
+
             #else:
             #    logger.warning("Did not make division for level %i in %s" %(level, self.work.title) )
-                
+
         # Make the section 
         else:
-            
+
             # Start the sequence number at 1 if a number was not provided
             if sequence_number is None:
                 sequence_number = 1
-        
+
         # Set the sequence number now that we got it
         new_division.sequence_number = sequence_number
-        
+
         # Update the count of divisions observed at the given level    
         import_context.increment_division_level(level)
-        
+
         # Assign the descriptor if one was not provided
         if descriptor is None:
             new_division.descriptor = import_context.get_division_level_count(level)
-            
+
         # Close the existing division
         self.close_division(import_context, new_division)
-        
+
         # Start the XML document for the new division
         import_context.initialize_xml_doc(PerseusTextImporter.CHAPTER_TAG_NAME)
-            
+
         # Save the newly created section
         if new_division is not None:
             new_division.save()
-        
+
         # Log the creation of a division
         if new_division.parent_division is not None:
             logger.debug( "Successfully created division: descriptor=%s, title=%s, id=%i, level=%i, parent=%s", new_division.descriptor, new_division.original_title, new_division.id, level, str(new_division.parent_division.descriptor) )
         else:
             logger.debug( "Successfully created division: descriptor=%s, title=%s, id=%i, level=%i", new_division.descriptor, new_division.original_title, new_division.id, level )
-        
+
         # Set the created division as the new one
         import_context.divisions.append(new_division)
         import_context.division = new_division
         return new_division
-    
+
     def make_verse(self, import_context=None, save=True, **kwargs):
         """
         This method overrides the TextImporter.make_verse and adds a call to save the original content section
         if necessary.
-        
+
         Arguments:
         save -- Indicates if the content ought to be saved (or whether the save should be deferred)
         import_context -- The context being used for the process of importing.
         """
-        
+
         # Save the XML content for the previous verse
         self.save_original_verse_content(import_context)
-        
+
         if import_context.verse is not None:
             import_context.initialize_xml_doc()
-        
+
         import_context.verse = TextImporter.make_verse(self, import_context.verse, import_context.division, save)
-        
+
         # If we are only to allow edge division nodes as readable units, then make sure divisions with children are not set as readable
         if self.only_leaf_divisions_readable and import_context.division is not None and import_context.division.readable_unit == True:
-            
+
             # If the division has children, make sure readability is set to false
             if Division.objects.filter(parent_division=import_context.division).count() > 0:
                 import_context.division.readable_unit = False
                 import_context.division.save()
-        
+
         return import_context.verse
-    
+
     def save_original_content(self, import_context):
         """
         This function takes the content from the XML node, converts it to a string and saves it in the current
         division as the original content.
-        
+
         Arguments:
         import_context -- The import context being used to import the document
         """
@@ -1037,7 +1038,10 @@ class PerseusTextImporter(TextImporter):
         return line_number_range
         
     def import_verse_content(self, division, content_node, state_set, import_context = None, parent_node = None, recurse = True):
-        
+        """
+        Cut up the given division into a chunk of verses and import the verses.
+        """
+
         # Setup an import context if this is the first, top level call
         if import_context is None:
             import_context = PerseusTextImporter.ImportContext(PerseusTextImporter.VERSE_TAG_NAME)
@@ -1081,7 +1085,7 @@ class PerseusTextImporter(TextImporter):
                 m = PerseusTextImporter.DIV_PARSE_REGEX.search( node.tagName )
                 
                 if m:
-                    level = int(m.groupdict()['level'] )
+                    level = self.get_level_from_node(node.tagName)
                     
                     # Break verses at the division just under the minimum division break
                     if level == (self.division_min + 1):
@@ -1112,7 +1116,7 @@ class PerseusTextImporter(TextImporter):
                 #    attach_xml_content = False
                 
             # Is a verse marker?
-            elif break_at_this_division or (self.division_min is None and node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node)):
+            elif break_at_this_division or (self.division_min is None and node.tagName == "milestone" and self.is_milestone_in_state_set(state_set, node)) or node.tagName in ["form"]:
                 
                 # Make the verse
                 self.make_verse(import_context, save=False)
@@ -1208,7 +1212,13 @@ class PerseusTextImporter(TextImporter):
         head = self.findTagInDivision(div_node, "head")
         
         if head is not None:
-            return self.getText(head.childNodes, True, separator=" ")
+            title_text = self.getText(head.childNodes, True, separator=" ")
+
+            # Convert from beta-code if necessary
+            if head.attributes.get("lang", None) is not None and head.attributes.get("lang", "").value== "greek":
+                return Greek.beta_code_to_unicode(title_text)
+            else:
+                return title_text
         
     def findTagInDivision(self, node, tag_name, depth_limit=5, current_depth=0):
         
@@ -1236,6 +1246,22 @@ class PerseusTextImporter(TextImporter):
                 if result:
                     return result
                 
+    def get_level_from_node(self, tag_name, default_value=1):
+        """
+        Get the level of the node provided.
+
+        Arguments:
+        tag_name -- The name of the tag
+        default_value -- The default value if the level cannot be determined
+        """
+
+        m = PerseusTextImporter.DIV_PARSE_REGEX.search(tag_name)
+
+        if m is not None and 'level' in m.groupdict():
+            return int(m.groupdict()['level'])
+        else:
+            return default_value 
+
     def import_body_sub_node(self, content_node, state_set, import_context=None, recurse=True, parent_node=None):
         """
         Imports the content from the children of the given node (which ought to be in the body).
@@ -1386,8 +1412,10 @@ class PerseusTextImporter(TextImporter):
             ###################################
             # Handle division nodes
             ###################################
-            elif not self.ignore_division_markers and PerseusTextImporter.DIV_PARSE_REGEX.match( node.tagName ) and (self.division_tags is None or node.tagName in self.division_tags) :
-                
+            elif not self.ignore_division_markers and \
+                (self.division_tags is None and PerseusTextImporter.DIV_PARSE_REGEX.match(node.tagName)) \
+                or (self.division_tags is not None and node.tagName in self.division_tags):
+
                 # Get the type of the section
                 division_type = None
                 
@@ -1395,8 +1423,7 @@ class PerseusTextImporter(TextImporter):
                     division_type = node.attributes["type"].value
                 
                 # Get the level from the tag name
-                m = PerseusTextImporter.DIV_PARSE_REGEX.search( node.tagName )
-                level = int(m.groupdict()['level'] )
+                level = self.get_level_from_node(node.tagName)
                 
                 is_in_state_set = False
                 
@@ -1426,8 +1453,15 @@ class PerseusTextImporter(TextImporter):
                     # Get the descriptor
                     descriptor = None
                     
+                    # Get the descriptor from the "n" attribute
                     if "n" in node.attributes.keys():
                         descriptor = node.attributes["n"].value
+
+                    # Get the descriptor from the "key" attribute (which is used by lexicons in entry tags, such as LSJ)
+                    elif "key" in node.attributes.keys():
+                        descriptor = node.attributes["key"].value
+                        descriptor = Greek.beta_code_to_unicode(descriptor)
+                        #descriptor = self.process_text(descriptor)
                     
                     original_title = self.getSectionTitle(node)
                     title = self.process_text(original_title)

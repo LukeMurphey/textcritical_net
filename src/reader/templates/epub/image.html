@@ -1,11 +1,10 @@
-<html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:py="http://genshi.edgewall.org/">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <!--!
 Copyright (c) 2012, Bin Tan
 This file is distributed under the BSD Licence. See python-epub-builder-license.txt for details.
 -->
 <head>
-  <title>${item.destPath}</title>
+  <title>{{item.destPath}}</title>
   <style type="text/css">
 div, img {
 	border: 0;
@@ -15,6 +14,6 @@ div, img {
   </style>
 </head>
 <body>
-  <div><img src="${item.destPath}" alt="${item.destPath}"/></div>
+  <div><img src="{{item.destPath}}" alt="{{item.destPath}}"/></div>
 </body>
 </html>

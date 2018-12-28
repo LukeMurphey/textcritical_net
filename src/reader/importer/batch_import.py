@@ -1,6 +1,10 @@
-from reader.models import Division, Verse, Work, RelatedWork, WikiArticle
+from reader.models import Division, Verse, Work, RelatedWork, WikiArticle, LexiconEntry, WorkType
 from django.template.defaultfilters import slugify
 from django.db import IntegrityError
+from reader.language_tools.greek import Greek
+from reader.importer import Lexicon
+from reader import utils
+
 import logging
 import re
 import os
@@ -248,9 +252,23 @@ class ImportTransforms():
             
         logger.warning("Unable to allocate a new title slug based on the fields provided")
     
-    
     @staticmethod
-    def set_division_title( work=None, existing_division_title_slug=None, existing_division_parent_title_slug=None, existing_division_sequence_number=None, title=None, title_slug=None, descriptor=None, **kwargs):
+    def set_work_type(work=None, title=None, **kwargs):
+
+        # Make or get the work-type
+        try:
+            work_type = WorkType.objects.get(title=title)
+        except WorkType.DoesNotExist:
+            work_type = WorkType()
+            work_type.title = title
+            work_type.save()
+
+        # Assign the work type to the work
+        work.work_type = work_type
+        work.save()
+
+    @staticmethod
+    def set_division_title(work=None, existing_division_title_slug=None, existing_division_parent_title_slug=None, existing_division_sequence_number=None, title=None, title_slug=None, descriptor=None, **kwargs):
         
         changes = 0
         
@@ -284,12 +302,11 @@ class ImportTransforms():
             division.descriptor = descriptor
             changes = changes + 1
         
-        
         if changes > 0:
             division.save()
     
     @staticmethod
-    def set_division_readable( work=None, sequence_number=None, title_slug=None, type=None, descriptor=None, level=None, readable=True):
+    def set_division_readable(work=None, sequence_number=None, title_slug=None, type=None, descriptor=None, level=None, readable=True):
         
         division = Division.objects.filter(work=work)
         
@@ -315,7 +332,7 @@ class ImportTransforms():
         division.save()
     
     @staticmethod
-    def delete_unnecessary_divisions( work=None, **kwargs):
+    def delete_unnecessary_divisions(work=None, **kwargs):
         
         # Sift through the work and delete divisions that:
         #    * have no verses
@@ -347,7 +364,7 @@ class ImportTransforms():
         return len(divisions_to_delete)
     
     @staticmethod
-    def delete_divisions_by_title_slug( work=None, title_slugs=None):
+    def delete_divisions_by_title_slug(work=None, title_slugs=None):
         if title_slugs is None:
             logger.warn("Transform could not be executed because no title_slugs were provided, transform=delete_divisions_by_title_slug")
         else:
@@ -380,9 +397,60 @@ class ImportTransforms():
             second_work = Work.objects.get(title_slug=slug)
             
             RelatedWork.make_related_work(work, second_work)
+
+    @staticmethod
+    def convert_descriptors_from_beta_code(work=None, **kwargs):
+
+        # Get the divisions
+        divisions = Division.objects.filter(work=work)
+        
+        # Convert the descriptors
+        for division in divisions:
+            division.descriptor = Greek.beta_code_to_unicode(division.descriptor)
+            division.save()
+
+    @staticmethod
+    def index_lexicon(work=None, **kwargs):
+        # Stop if we have no work to operate on
+        if work is None:
+            return 0
+
+        entries_created = 0
+
+        # Process each verse
+        for verse in Verse.objects.filter(division__work=work):
+            # Find the entries
+            entries = Lexicon.LexiconImporter.find_perseus_entries(verse)
+    
+            # Make each entry
+            for entry in entries:
+
+                # Find the lemma entry
+                lemma = utils.get_lemma(Greek.beta_code_to_unicode(entry))
+
+                # Make sure that the entry doesn't already exist
+                try:
+                    LexiconEntry.objects.get(lemma=lemma, verse=verse)
+                    exists_already = True
+                except LexiconEntry.DoesNotExist:
+                    exists_already = False
+
+                # Make the entry
+                if lemma is None:
+                    logger.warn("Lemma could not be found, entry=%s", entry)
+                elif not exists_already:
+                    lexicon_entry = LexiconEntry()
+                    lexicon_entry.verse = verse
+                    lexicon_entry.work = work
+                    lexicon_entry.lemma = lemma
+                    lexicon_entry.save()
+
+                    entries_created = entries_created + 1
+
+        return entries_created
     
     @staticmethod
-    def run_transforms( work, transforms ):
+    def run_transforms(work, transforms):
         
         fxs = dir(ImportTransforms)
         

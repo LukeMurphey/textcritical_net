@@ -176,9 +176,13 @@
 
 		<copy file="src/textcritical/test_settings.py" tofile="src/textcritical/settings.py"/>
 
+		<!-- Arguments passed from the CLI will be used to indicate which test to run (e.g. ant test -Dtest=reader) -->
+		<property name="test" value="" />
+		
 		<exec failonerror="true" executable="${python}" dir="src">
 			<arg value="manage.py"/>
 			<arg value="test"/>
+			<arg line="${test}" />
 		</exec>
 	</target>
 
@@ -204,6 +208,24 @@
 		<echo>You may need to create a super user. Do so with:</echo>
 		<echo>      python manage.py createsuperuser</echo>
 
+	</target>
+
+    <!-- ================================= 
+          target: migrate_library
+         ================================= -->
+	<target name="migrate_library" description="Migrate changes for the library database">
+
+		<exec executable="${python}" dir="src">
+			<arg value="manage.py"/>
+			<arg value="makemigrations"/>
+		</exec>
+
+		<exec executable="${python}" dir="src">
+			<arg value="manage.py"/>
+			<arg value="migrate"/>
+			<arg value="--database"/>
+			<arg value="library"/>
+		</exec>
 	</target>
 
     <!-- ================================= 

@@ -1,0 +1,7 @@
+<navPoint id="navPoint-{{node.playOrder}}" playOrder="{{node.playOrder}}">
+    <navLabel><text>{{node.title}}</text></navLabel>
+    <content src="{{node.href}}"/>
+    {% for node in node.children %}
+        {% include "epub/toc_row.html" %}
+    {% endfor %}
+</navPoint>

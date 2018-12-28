@@ -9,72 +9,85 @@ sup.note {
   border-radius: 4px;
   padding: 0px 3px 0px 1px; }
 
-.view_read_work .speaker {
-  font-weight: bold;
-  display: block;
-  margin-top: 12px; }
-.view_read_work .milestone {
-  color: #999999; }
-.view_read_work [data-rend=italics] {
-  font-style: italic; }
-.view_read_work .milestone[data-n].milestone[data-unit]:after {
-  font-size: smaller;
-  margin: 3px;
-  content: "[" attr(data-unit) " " attr(data-n) "]"; }
-.view_read_work .milestone[data-unit=para] {
-  display: block;
-  padding-top: 12px; }
-.view_read_work .l {
-  display: block;
-  margin-left: 24px; }
-.view_read_work .gap {
-  content: "..."; }
-.view_read_work .quote, .view_read_work .q {
-  font-style: italic; }
-.view_read_work .bibl {
-  margin-left: 3px;
-  margin-right: 3px;
-  font-weight: bold; }
-.view_read_work .bibl::before {
-  content: "["; }
-.view_read_work .bibl::after {
-  content: "]"; }
-.view_read_work .docauthor {
-  display: block;
-  padding-bottom: 16px; }
-.view_read_work .label:not(.block) .label {
-  margin-left: 8px;
-  margin-right: 4px; }
-.view_read_work .note-tag {
-  margin-left: 4px;
-  margin-right: 2px;
-  cursor: hand;
-  cursor: pointer; }
-.view_read_work .read-more {
-  margin-top: 16px;
-  display: block; }
-.view_read_work .lb {
-  display: block; }
-.view_read_work .div3 {
-  padding-top: 16px;
-  display: block; }
-.view_read_work .quote > .title {
-  font-weight: bold;
-  display: block; }
-.view_read_work .castlist:before {
-  content: "Cast list: "; }
-.view_read_work .castlist > .castitem:after {
-  content: ", "; }
-.view_read_work .castlist > .castitem:last-child:after {
-  content: ""; }
-.view_read_work .argument {
-  font-style: italic; }
-.view_read_work .p {
-  margin-bottom: 16px;
-  display: block; }
-.view_read_work .lemma {
-  text-decoration: underline;
-  font-weight: bold; }
+.view_read_work {
+  /* Lexicon support */ }
+  .view_read_work .speaker {
+    font-weight: bold;
+    display: block;
+    margin-top: 12px; }
+  .view_read_work .milestone {
+    color: #999999; }
+  .view_read_work [data-rend=italics] {
+    font-style: italic; }
+  .view_read_work .milestone[data-n].milestone[data-unit]:after {
+    font-size: smaller;
+    margin: 3px;
+    content: "[" attr(data-unit) " " attr(data-n) "]"; }
+  .view_read_work .milestone[data-unit=para] {
+    display: block;
+    padding-top: 12px; }
+  .view_read_work .l {
+    display: block;
+    margin-left: 24px; }
+  .view_read_work .gap {
+    content: "..."; }
+  .view_read_work .quote, .view_read_work .q {
+    font-style: italic; }
+  .view_read_work .bibl {
+    margin-left: 3px;
+    margin-right: 3px;
+    font-weight: bold; }
+  .view_read_work .bibl::before {
+    content: "["; }
+  .view_read_work .bibl::after {
+    content: "]"; }
+  .view_read_work .docauthor {
+    display: block;
+    padding-bottom: 16px; }
+  .view_read_work .label:not(.block) .label {
+    margin-left: 8px;
+    margin-right: 4px; }
+  .view_read_work .note-tag {
+    margin-left: 4px;
+    margin-right: 2px;
+    cursor: hand;
+    cursor: pointer; }
+  .view_read_work .read-more {
+    margin-top: 16px;
+    display: block; }
+  .view_read_work .lb {
+    display: block; }
+  .view_read_work .div3 {
+    padding-top: 16px;
+    display: block; }
+  .view_read_work .quote > .title {
+    font-weight: bold;
+    display: block; }
+  .view_read_work .castlist:before {
+    content: "Cast list: "; }
+  .view_read_work .castlist > .castitem:after {
+    content: ", "; }
+  .view_read_work .castlist > .castitem:last-child:after {
+    content: ""; }
+  .view_read_work .argument {
+    font-style: italic; }
+  .view_read_work .p {
+    margin-bottom: 16px;
+    display: block; }
+  .view_read_work .lemma {
+    text-decoration: underline;
+    font-weight: bold; }
+  .view_read_work .orth {
+    font-weight: bold;
+    font-size: 14pt;
+    display: block; }
+  .view_read_work .etym {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold; }
+  .view_read_work .sense {
+    display: block;
+    margin-left: 32px; }
 
 /*
  * The following enables the Open-sans font for the text; this is necessary because some devices don't have a Greek font.

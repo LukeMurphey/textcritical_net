@@ -283,7 +283,7 @@ def transform_perseus_text(text, parent_node, dst_doc, default_language, disable
         return text.encode('utf-8')
     
     # Don't split up the words for English documents since we don't allow morphological lookups on English
-    if language.lower() == "english":
+    if language is None or language.lower() == "english":
         return text.encode('utf-8')
     
     elif disable_wrapping:

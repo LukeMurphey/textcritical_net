@@ -1,0 +1,275 @@
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 PUBLIC "-//TEI P4//DTD Main DTD Driver File//EN" "http://www.tei-c.org/Guidelines/DTD/tei2.dtd" [
+<!ENTITY % TEI.XML "INCLUDE">
+<!ENTITY % PersDict PUBLIC "-//Perseus P4//DTD Perseus Dictionaries//EN" "http://www.perseus.tufts.edu/DTD/1.0/PersDict.dtd" >
+%PersDict;
+]>
+<TEI.2>
+  <teiHeader status="new" type="text">
+  <fileDesc>
+  <titleStmt>
+	<title>An Intermediate Greek-English Lexicon</title>
+	<title type="sub">Machine readable text</title>
+	<author>Henry George Liddell</author>
+	<author>Robert Scott</author>
+  &responsibility;
+  &fund.AnnCPB;
+  </titleStmt>
+	&Perseus.publish;
+  <sourceDesc>
+	<biblStruct>
+	  <monogr>
+	  <author>Liddell and Scott</author>
+	  <title>An Intermediate Greek-English Lexicon</title>
+	  <imprint>
+	  <pubPlace>Oxford</pubPlace>
+	  <publisher>Clarendon Press</publisher>
+	  <date>1889</date>
+	  </imprint>
+	  </monogr>
+	  <idno type="ISBN">0199102066</idno>
+	</biblStruct>
+  </sourceDesc>
+  </fileDesc>
+
+  <encodingDesc>
+  <refsDecl doctype="TEI.2">
+	<state n="chunk" unit="entry"/>
+  </refsDecl>
+  <refsDecl doctype="TEI.2">
+	<state unit="alphabetic letter"/>
+	<state n="chunk" unit="entry"/>
+  </refsDecl>
+  </encodingDesc>
+  
+  <profileDesc>
+  <langUsage>
+	<language id="en">English
+	</language><language id="greek">Greek
+	</language><language id="la">Latin
+	</language><language id="fr">French
+  </language></langUsage>
+  </profileDesc>
+  
+  <revisionDesc>
+  <change><date>28 Jan 1998</date>
+	<respStmt><name>DAS</name><resp>ed.</resp></respStmt>
+	<item>
+$Log: ml.xml,v $
+Revision 1.9  2011-03-31 19:30:35  lcerrato
+minor fixes with english appearing in greek tags, etc.
+
+Revision 1.8  2011-03-29 14:55:13  lcerrato
+removed &lpar; and &rpar; from within Greek tags as these were unbalanced and causing user confusion when looking at the xml text
+
+Revision 1.7  2011-03-24 15:40:44  lcerrato
+continued commenting out exclamation points which were being used to indicate roots and fixed root text to upper case letters as in text, found roots which had not been marked as such
+
+Revision 1.6  2011-03-24 01:59:44  lcerrato
+commented out exclamation points which were being used to indicate roots and fixed root text to upper case letters as in text
+
+Revision 1.5  2011-03-23 21:53:51  lcerrato
+put english words which appear in note tags labeled greek into foreign lang tags (doric, ionic, attic, etc) and commented out stray exclamation points which began 790 greek words in note tags; not sure if the exclamation points serve a purpose or are remnant of other work
+
+Revision 1.4  2011-03-23 16:48:37  lcerrato
+removed failing on lembuf [] text which was breaking up entries and must have been inserted as an error
+
+Revision 1.3  2011-03-23 16:38:02  lcerrato
+fixed typos lampa/so=a kadd|e XXX r(|e/os and incorrect diaresis tagging +i to i/+; also fixed a_privat, a_copul, and a_euphon to include initial alpha but kept these designations in comments in case they are used elsewhere in P
+
+Revision 1.2  2010/07/13 20:51:23  lcerrato
+pryaed for by the people changed to prayed for by the people
+
+Revision 1.1  2009/12/01 18:27:59  rsingh04
+moved more xml files around based on copyright status
+
+Revision 1.9  2009/09/08 20:35:12  lcerrato
+fixed typo
+
+Revision 1.8  2009/07/31 18:40:25  rsingh04
+removed long and short marks from key attribute in entryFree tags so user can access any entry from the jump box without needing to input those marks
+
+Revision 1.7  2009/06/19 17:40:17  rsingh04
+changed D.H. to dh in entry keys
+
+Revision 1.6  2009/05/19 21:05:48  lcerrato
+fixed bad bibls
+
+Revision 1.5  2009/01/21 20:37:09  lcerrato
+fixed 20 obols to seven obols in entry for shekel
+
+Revision 1.4  2004/12/14 19:42:20  packel
+added entry/sense ids; fixed bad empty tags
+
+Revision 1.3  2004/12/03 20:11:37  packel
+corrected some duplicate keys caused by fixing the compound verbs
+
+Revision 1.2  2004/12/02 23:29:11  packel
+added key attributes to compound verb entries
+
+Revision 1.1  2004/11/22 17:07:40  packel
+converted to P4/XML
+	
+Revision 1.20  2004/10/18 18:17:47  packel
+added div0s; changed orth 'a)da/mas,' to a)da/mas
+
+Revision 1.19  2004/10/07 14:18:11  packel
+removed &ast;s in entry keys
+
+Revision 1.18  2004/10/05 21:34:13  packel
+Aligned dictionary entries with the LSJ.
+
+Revision 1.17  2004/09/08 15:49:42  packel
+Changed doctype to TEI P4
+
+Revision 1.16  2004/09/01 15:44:25  packel
+Fixed thirty-odd words that had multiple entries but no number afterward to
+differentiate the entries (e.g., si=gma, si=gma is now si=gma1, si=gma2).
+
+Revision 1.15  2004/06/15 19:31:34  lcerrato
+changed nothwithstanding to notwithstanding
+
+Revision 1.14  2003/02/04 21:21:51  lcerrato
+fixed typo kuma entry swoln to swollen
+
+Revision 1.13  2001/12/05 15:15:58  gcrane
+shifted the lemma for "pa/nth" to be "pa/nth|"
+
+Revision 1.12  2001/04/20 21:58:57  dasmith
+Added funder.
+
+Revision 1.11  2001/04/05 18:26:02  lcerrato
+added trans tags to noeo^ entry where missing
+
+Revision 1.10  2000/10/06 23:20:04  dasmith
+Tagged inflectional info as Greek.
+
+Revision 1.9  2000/10/06 21:44:13  dasmith
+Added author and ISBN to head.
+Use new DTD subset.
+Explicitly tag lemmata and cross references as Greek.
+
+Revision 1.8  2000/03/04 20:25:11  dasmith
+Standardized language IDs.
+Added key attribute to entry.
+
+Revision 1.7  1998/08/24 19:15:31  jrydberg
+finished trans tags and added new prep. defs.
+
+Revision 1.6  1998/08/20 17:12:45  jrydberg
+Included greek words within trans tags where appropriate
+
+Revision 1.5  1998/08/19 20:50:08  jrydberg
+Replaced all "(trans) or (/trans)" with " or "
+
+Revision 1.4  1998/08/19 18:23:58  jrydberg
+Corrected trans tagging for short defs. through a)mfote/rwqen.
+
+Revision 1.3  1998/08/17 20:24:43  jrydberg
+*** empty log message ***
+
+Revision 1.2  1998/08/17 19:38:25  jrydberg
+Updated entry for *)agamemno/neos
+
+Revision 1.1  1998/08/14 15:38:33  textgod
+Added to repository.
+
+</item>
+</change>
+</revisionDesc>
+</teiHeader>
+<text>
+<body>
+<div0 type="alphabetic letter" n="*a">
+<head lang="greek">*A</head>
+<entry key="a)a/atos" type="main" id="n0">
+<form><orth extent="full" lang="greek">a)a/atos</orth></form>
+<etym><foreign lang="greek">a)a/a_tos</foreign> from <foreign lang="greek">a</foreign> privat. <!--a_privat--> <foreign lang="greek">a)a/w.</foreign></etym>
+<sense level="0" n="0" id="n0.0"><foreign lang="greek">a)a/a_tos</foreign>: in <usg>Il.</usg> with penult. long, <trans><tr>not to be injured, inviolable</tr></trans>, <foreign lang="greek">nu=n moi o)/mosson a)a/a_ton *stugo\s u(/dwr</foreign>, because the gods swore their most binding oaths thereby.</sense>
+<etym><foreign lang="greek">a)a/atos</foreign> from <foreign lang="greek">a</foreign> copulat. <!--a_copul-->, <foreign lang="greek">a)a/w.</foreign></etym>
+<sense level="0" n="0" id="n0.1"><foreign lang="greek">a)a/atos</foreign>: in <usg>Od.</usg> with penult. short, <trans><tr>hurtful, perilous, aweful</tr></trans>; <foreign lang="greek">a)/eqlos a)a/atos.</foreign></sense>
+</entry>
+
+<entry key="a)agh/s" type="main" id="n1">
+<form><orth extent="full" lang="greek">a)agh/s</orth></form>
+<etym><xr><ref targOrder="U" lang="greek">a)/gnumi</ref></xr></etym>
+<sense level="0" n="0" id="n1.0"><trans><tr>unbroken, not to be broken, hard, strong</tr></trans>, <usg>Od.</usg>, <usg>Theocr.</usg></sense>
+</entry>
+
+<entry key="a)/aptos" type="main" id="n2">
+<form><orth extent="full" lang="greek">a)/aptos</orth></form>
+<etym><xr><ref targOrder="U" lang="greek">a(/ptomai</ref></xr></etym>
+<sense level="0" n="0" id="n2.0"><trans><tr>not to be touched, resistless, invincible</tr></trans>, <foreign lang="greek">xei=res a)/aptoi</foreign> <usg>Hom.</usg>, <usg>Hes.</usg></sense>
+</entry>
+
+<entry key="a)/atos1" type="main" id="n3">
+<form><orth extent="full" lang="greek">a)/atos</orth></form>
+<etym><foreign lang="greek">a)/w</foreign> C</etym>
+<sense level="0" n="0" id="n3.0"><trans><tr>insatiate</tr></trans>, c. gen., <foreign lang="greek">*)/arhs a)=tos pole/moio</foreign> <usg>Il.</usg></sense>
+</entry>
+
+<entry key="a)a/w" type="main" id="n4">
+<form><orth extent="full" lang="greek">a)a/w</orth></form>
+  <etym>root <!-- ! indicating root --><foreign lang="greek">*a*v</foreign> cf <foreign lang="greek">a)/th,au)a/ta</foreign></etym>
+<etym n="note">The quantities vary: <foreign lang="greek">a_asen, a_a_san</foreign>, part.  <foreign lang="greek">a)asas</foreign>: <foreign lang="greek">a)_asa/mhn, a)_a_sato</foreign>: <foreign lang="greek">a)_asqhn, a)asqh.</foreign></etym>
+<sense level="2" n="I" id="n4.0">properly <trans><tr>to hurt, damage</tr></trans>; then <trans><tr>to mislead, infatuate</tr></trans>, of the effects of wine, sleep, divine judgments, <usg>Od.</usg>; so in Mid., <foreign lang="greek">*)/ath h(\ pa/ntas a)a=tai</foreign> <usg>Il.</usg></sense>
+<sense level="2" n="II" id="n4.1">aor1 mid. and pass., <trans><tr>to act recklessly</tr> or <tr>foolishly</tr></trans>, <foreign lang="greek">a)asa/mhn</foreign> <trans><tr>I was infatuated</tr></trans> <usg>Il.</usg>; <foreign lang="greek">me/g' a)a/sqh</foreign> <usg>id=Il.</usg></sense>
+</entry>
+
+<entry key="a)bake/w" type="main" id="n5">
+<form><orth extent="full" lang="greek">a)bake/w</orth></form>
+<etym>from <ref targOrder="U" lang="greek">a)bakh/s</ref></etym>
+<etym n="note">epic Verb only used in aor1.</etym>
+<sense level="0" n="0" id="n5.0"><trans><tr>to be speechless</tr></trans>, epic Verb only used in aor1, <foreign lang="greek">oi( d' a)ba/khsan pa/ntes</foreign> <usg>Od.</usg></sense>
+</entry>
+
+<entry key="a)bakh/s" type="main" id="n6">
+<form><orth extent="full" lang="greek">a)bakh/s</orth></form>
+<etym><xr><ref targOrder="U" lang="greek">ba/zw</ref></xr></etym>
+<sense level="0" n="0" id="n6.0"><trans><tr>speechless, infantine</tr></trans>, <usg>Sapph.</usg>.</sense>
+</entry>
+
+<entry key="a)ba/kxeutos" type="main" id="n7">
+<form><orth extent="full" lang="greek">a)ba/kxeutos</orth></form>
+<etym><xr><ref targOrder="U" lang="greek">*bakxeu/w</ref></xr></etym>
+<sense level="0" n="0" id="n7.0"><trans><tr>uninitiated in the Bacchic orgies</tr></trans>, generally, <trans><tr>joyless</tr></trans>, <usg>Eur.</usg></sense>
+</entry>
+
+<entry key="a)/bale" type="main" id="n8">
+<form><orth extent="full" lang="greek">a)/bale</orth></form>
+<sense level="0" n="0" id="n8.0">properly <foreign lang="greek">a)= ba/le</foreign>, expressing a wish, <trans><tr>O that!</tr></trans> Lat. <foreign lang="la">utinam</foreign>, c. inf., <usg>Anth.</usg></sense>
+</entry>
+
+</div0>
+<div0 type="alphabetic letter" n="*b">
+<head lang="greek">*B</head>
+<entry key="babai/" type="main" id="n5984">
+<form><orth extent="full" lang="greek">babai/</orth></form>
+<sense level="0" n="0" id="n5984.0">Lat. <foreign lang="la">papae</foreign>! exclamation of surprise, <trans><tr>bless me</tr></trans>! <usg>Eur.</usg>, <usg>Ar.</usg></sense>
+</entry>
+
+<entry key="babu/ka" type="main" id="n5985">
+<form><orth extent="full" lang="greek">babu/ka</orth></form>
+<etym>Lacon. for <foreign lang="greek">ge/fura</foreign>, <usg>Arist.</usg> ap. <usg>Plut.</usg></etym>
+</entry>
+
+<entry key="ba/qron" type="main" id="n6001">
+<form><orth extent="full" lang="greek">ba/qron</orth></form>
+<etym>shortd. from <ref targOrder="U" lang="greek">bath/rion</ref></etym>
+<etym><xr><ref targOrder="U" lang="greek">bai/nw</ref></xr></etym>
+<sense level="0" n="0" id="n6001.0"><trans><tr>that on which anything stands</tr></trans>:</sense>
+<sense level="3" n="1" id="n6001.1"><trans><tr>a base, pedestal</tr></trans>, <usg>Hdt.</usg>, <usg>Aesch.</usg></sense>
+<sense level="3" n="2" id="n6001.2"><trans><tr>a stage</tr> or <tr>scaffold</tr></trans>, <usg>Hdt.</usg></sense>
+<sense level="3" n="3" id="n6001.3">generally <trans><tr>solid ground</tr></trans>, <foreign lang="greek">*salami=nos b.</foreign> <usg>Soph.</usg>; <foreign lang="greek">w)= patrw=ion e(sti/as ba/qron</foreign> i. e. house of my father, <usg>id=Soph.</usg>:&mdash;in pl. <trans><tr>foundations</tr></trans>, <usg>Eur.</usg>; <foreign lang="greek">e)n ba/qrois ei)=nai</foreign> to stand firm, <usg>id=Eur.</usg></sense>
+<sense level="3" n="4" id="n6001.4"><trans><tr>a step</tr></trans>, <usg>Soph.</usg>; <trans><tr>the round of a ladder</tr></trans>, <usg>Eur.</usg></sense>
+<sense level="3" n="5" id="n6001.5"><trans><tr>a bench, seat</tr></trans>, <usg>Soph.</usg>, <usg>Dem.</usg></sense>
+<sense level="3" n="6" id="n6001.6">metaph., <foreign lang="greek">kindu/nou ba/qra</foreign> <trans><tr>the verge</tr></trans> of danger, <usg>Eur.</usg></sense>
+</entry>
+
+<entry key="*ba/ttos" type="main" id="n6214">
+<form><orth extent="full" lang="greek">*ba/ttos</orth></form>
+<etym>Formed from the sound.</etym>
+<sense level="0" n="0" id="n6214.0"><trans><tr>stammerer</tr></trans>, name of a king of Cyrene, <usg>Hdt.</usg></sense>
+</entry>
+</div0>
+</body></text></TEI.2>

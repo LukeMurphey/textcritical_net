@@ -1,3 +1,4 @@
+
 class PreLoadedWorksRouter(object):
     """
     A router that allows the use of works that are stored in a separate database. Loading works from a separate database is important
@@ -27,7 +28,7 @@ class PreLoadedWorksRouter(object):
             return True
         
         return None
-    
+
     def allow_migrate(self, db, app_label, model_name, **hints):
 
         # If this is one of the models for the library database and the reader app then allow the
@@ -43,4 +44,3 @@ class PreLoadedWorksRouter(object):
         # Don't allow other models (like users) to be sync'd to this database
         else:
             return False
-        
