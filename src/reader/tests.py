@@ -1580,6 +1580,10 @@ class TestPerseusImportLexicon(TestReader):
         # Update the descriptors
         ImportTransforms.convert_descriptors_from_beta_code(self.importer.work)
         self.assertEquals(divisions[0].descriptor, u'\u0391')
+        
+        # Ensure that the division has a valid readable string
+        # See https://lukemurphey.net/issues/2355
+        self.assertEquals(str(divisions[1]), u"ἀάατος")
 
     def test_find_entries(self):
         book_xml = self.load_test_resource('ml.xml')
