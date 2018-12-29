@@ -345,9 +345,9 @@ class Division(models.Model):
         if self.title is not None and len(self.title) > 0:
             return self.title
         elif self.descriptor is not None and self.type is not None:
-            return str(self.type) + " " + self.descriptor.encode('utf-8')
+            return self.type + " " + self.descriptor
         elif self.descriptor is not None:
-            return str(self.descriptor)
+            return self.descriptor
         elif self.sequence_number is not None:
             return str(self.sequence_number)
         else:
