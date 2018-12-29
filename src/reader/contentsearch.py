@@ -262,20 +262,20 @@ class WorkIndexer:
         """
         descriptions = []
         
-        descriptions.append(unicode(division.get_division_description(use_titles=False).decode("UTF-8")))
-        descriptions.append(unicode(division.get_division_description(use_titles=True).decode("UTF-8")))
+        descriptions.append(division.get_division_description(use_titles=False).encode("utf-8"))
+        descriptions.append(division.get_division_description(use_titles=True).decode("utf-8").encode("utf-8"))
         
         # Now add in the parent divisions so that they can be searched without having to specifically define the entire hierarchy
         next_division = division.parent_division
         
         # Keep recursing upwards until we hit the top
         while next_division is not None:
-            descriptions.append(unicode(next_division.get_division_description(use_titles=False).decode("UTF-8")))
-            descriptions.append(unicode(next_division.get_division_description(use_titles=True).decode("UTF-8")))
+            descriptions.append(next_division.get_division_description(use_titles=False).encode("utf-8"))
+            descriptions.append(next_division.get_division_description(use_titles=True).decode("utf-8").encode("utf-8"))
             
             next_division = next_division.parent_division
         
-        return ",".join(descriptions)
+        return unicode(",".join(descriptions), "utf-8")
     
     @classmethod
     def replace_empty_string(cls, val):
