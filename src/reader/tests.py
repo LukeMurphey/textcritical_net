@@ -1583,7 +1583,7 @@ class TestPerseusImportLexicon(TestReader):
         
         # Ensure that the division has a valid readable string
         # See https://lukemurphey.net/issues/2355
-        self.assertEquals(str(divisions[1]), u"ἀάατος")
+        self.assertEquals(str(divisions[1]), "main ἈΆΑΤΟΣ")
 
     def test_find_entries(self):
         book_xml = self.load_test_resource('ml.xml')
