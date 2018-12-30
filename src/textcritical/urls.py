@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
 from grappelli import urls as grappelli_urls
+import textcritical.auth_logging
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
