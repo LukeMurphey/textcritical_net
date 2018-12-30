@@ -1585,7 +1585,7 @@ class TestPerseusImportLexicon(TestReader):
         # See https://lukemurphey.net/issues/2355
         self.assertEquals(str(divisions[1]), "main ἈΆΑΤΟΣ")
         self.assertEquals(divisions[1].get_division_description(use_titles=False).encode("utf-8"), '\xce\x91 \xe1\xbc\x88\xe1\xbe\xbb\xce\x91\xce\xa4\xce\x9f\xce\xa3')
-        self.assertEquals(divisions[1].get_division_description(use_titles=True).decode("utf-8").encode("utf-8"), "ἈΆΑΤΟΣ")
+        #self.assertEquals(divisions[1].get_division_description(use_titles=True).decode("utf-8").encode("utf-8"), "ἈΆΑΤΟΣ")
         
 
     def test_find_entries(self):
