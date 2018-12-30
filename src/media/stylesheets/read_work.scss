@@ -221,6 +221,10 @@ textarea.clipboard-copy-text[readonly]{
 
 }
 
+#small-message{
+	margin-bottom: 0;
+}
+
 @media (max-width: 1199px){
   .visible-large-desktop {
     display: none;
@@ -231,7 +235,7 @@ textarea.clipboard-copy-text[readonly]{
 	#small-message{
 		margin-top: 20px;
 		margin-left: 8px;
-		margin-bottom: 0px;
+		margin-bottom: 0;
 	}
 }
 
@@ -239,7 +243,7 @@ textarea.clipboard-copy-text[readonly]{
 	#small-message{
 		margin-top: 20px;
 		margin-left: 8px;
-		margin-bottom: 0px;
+		margin-bottom: 0;
 	}
 }
 

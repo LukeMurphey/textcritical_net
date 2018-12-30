@@ -708,6 +708,9 @@ textarea.clipboard-copy-text[readonly] {
 @media print {
   .view_read_work .note-tag {
     display: none; } }
+#small-message {
+  margin-bottom: 0; }
+
 @media (max-width: 1199px) {
   .visible-large-desktop {
     display: none; } }
@@ -715,12 +718,12 @@ textarea.clipboard-copy-text[readonly] {
   #small-message {
     margin-top: 20px;
     margin-left: 8px;
-    margin-bottom: 0px; } }
+    margin-bottom: 0; } }
 @media (max-width: 450px) {
   #small-message {
     margin-top: 20px;
     margin-left: 8px;
-    margin-bottom: 0px; } }
+    margin-bottom: 0; } }
 /**
  * This styles the book and chapter indicator (just under the progress bar).
  **/
