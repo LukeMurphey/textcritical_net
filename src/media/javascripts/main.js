@@ -63,7 +63,6 @@ require.config({
         ],
         
         highcharts: [
-        	"https://code.highcharts.com/highcharts",
         	"libs/highcharts"
         ],
         
