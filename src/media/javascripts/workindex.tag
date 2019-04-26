@@ -16,7 +16,7 @@
 			        <td>
                         <div class="pull-left work-icon-holder">
 							<a href="{ read_work_url }/{ title_slug }">
-                            <img class="work-image" src="/work_image/{ title_slug }?width=30">
+                            <img class="work-image" data-src="/work_image/{ title_slug }?width=30">
 							</a>
                         </div>
                         <div class="work-description" >
@@ -103,9 +103,14 @@
             "bAutoWidth": false,
             "pageLength": this.page_length,
 			"aoColumns": [
-				null,                   // Title
-				{ "bSortable": false }  // Actions
-			]
+				null, // Title
+				{ "bSortable": false } // Actions
+			],
+			"drawCallback": function(){
+				$("img.work-image").each(function( index ) {
+					$(this).attr("src", $(this).attr("data-src"));
+				});
+			}
 		} );
 		
         // Filter the table if requested

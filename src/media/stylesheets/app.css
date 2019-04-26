@@ -895,6 +895,11 @@ body.dark .dataTables_filter > label > input {
 .work-options > a > .caret {
   border-top: 4px solid #c6c6c6; }
 
+.work-icon-holder > a > .work-image {
+  height: 40px;
+  width: 30px;
+  background-image: url("/media/images/book-cover-small.png"); }
+
 .modal.wide {
   width: 750px;
   margin-left: -375px; }
