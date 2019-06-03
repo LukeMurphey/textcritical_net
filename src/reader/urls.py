@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^humans.txt/?$', views.humans_txt, name='humans_txt' ),
     url(r'^sitemap.xml$', sitemap, {'sitemaps': sitemaps}),
 
-    url(r'^/?$', views.works_index, name='home' ),
+    url(r'^$', views.works_index, name='home' ),
     
     url(r'^download/work/(?P<title>.*)/?$', views.download_work, name='download_work' ),
     url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>.+)/?$', views.read_work, name='read_work' ),
