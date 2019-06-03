@@ -67,7 +67,7 @@
 			// Mount the about dialog
 			riot.mount('aboutdialog', {
 				observable: nav,
-				version_info: '{% include "VERSION.txt" %}'
+				version_info: '{{BUILD_VERSION}}'
 			});
 
 			// Wire up the about dialog to the about link
