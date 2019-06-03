@@ -1,6 +1,6 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
@@ -123,9 +123,9 @@ def import_perseus_file_manual(request):
 
     policy_form = ImportPerseusFileFormByPolicy()
 
-    return render_to_response('admin/reader/import_perseus_file.html', {'form' : form,
-                                                                        'policy_form' : policy_form,
-                                                                        'imported_work' : work}, context_instance=RequestContext(request))
+    return render(request, 'admin/reader/import_perseus_file.html', {'form' : form,
+                                                                     'policy_form' : policy_form,
+                                                                     'imported_work' : work}, RequestContext(request))
 
 def import_perseus_file_policy(request):
 
@@ -200,6 +200,6 @@ def import_perseus_file_policy(request):
 
     form = ImportPerseusFileForm()
 
-    return render_to_response('admin/reader/import_perseus_file.html', {'form' : form,
-                                                                        'policy_form' : policy_form,
-                                                                        'imported_work' : work}, context_instance=RequestContext(request))
+    return render(request, 'admin/reader/import_perseus_file.html', {'form' : form,
+                                                                     'policy_form' : policy_form,
+                                                                     'imported_work' : work}, RequestContext(request))

@@ -7,7 +7,7 @@ from xml.dom.minidom import parseString
 from htmlentitydefs import name2codepoint
 from time import time
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template.context import RequestContext
 from django.core.cache import cache
 
@@ -363,9 +363,9 @@ def ajaxify(fn):
             return fn(*args, **kwargs)
         
         # If the call is a plain GET call, then get it
-        return render_to_response('ajah_redirect.html',
-                                  {'content_url' : request.get_full_path() },
-                                  context_instance=RequestContext(request))
+        return render(request, 'ajah_redirect.html',
+                               {'content_url' : request.get_full_path() },
+                               RequestContext(request))
     
     return ajax_switch
 

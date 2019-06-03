@@ -1,8 +1,8 @@
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, render
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
-from django.core.servers.basehttp import FileWrapper
+from wsgiref.util import FileWrapper
 from django.template.context import RequestContext, Context
 from django.template import loader, TemplateDoesNotExist
 from django.views.decorators.cache import cache_page
@@ -52,24 +52,24 @@ def home(request):
     greek_works_count = Work.objects.filter(language="Greek").count()
     english_works_count = Work.objects.filter(language="English").count()
     
-    return render_to_response('home.html',
-                              {'greek_works_count'   : greek_works_count,
-                               'english_works_count' : english_works_count},
-                              context_instance=RequestContext(request))
+    return render(request, 'home.html',
+                            {'greek_works_count'   : greek_works_count,
+                             'english_works_count' : english_works_count},
+                            RequestContext(request))
 
 @cache_page(8 * hours)
 def about(request):
     
-    return render_to_response('about.html',
-                              { 'title' : 'About TextCritical.net'},
-                              context_instance=RequestContext(request)) 
+    return render(request, 'about.html',
+                            { 'title' : 'About TextCritical.net'},
+                            RequestContext(request)) 
 
 @cache_page(8 * hours)
 def contact(request):
     
-    return render_to_response('contact.html',
-                              { 'title' : 'Contact Us'},
-                              context_instance=RequestContext(request))
+    return render(request, 'contact.html',
+                            { 'title' : 'Contact Us'},
+                            RequestContext(request))
 
 def search(request, query=None):
     
@@ -93,14 +93,14 @@ def search(request, query=None):
     else:
         ignore_diacritics = False
 
-    return render_to_response('search.html',
-                              {'title'   : 'Search',
-                               'query'   : query,
-                               'page'    : page,
-                               'search_related_forms' : search_related_forms,
-                               'ignore_diacritics' : ignore_diacritics
-                               },
-                              context_instance=RequestContext(request)) 
+    return render(request, 'search.html',
+                            {'title'   : 'Search',
+                             'query'   : query,
+                             'page'    : page,
+                             'search_related_forms' : search_related_forms,
+                             'ignore_diacritics' : ignore_diacritics
+                            },
+                            RequestContext(request)) 
 
 @cache_page(2 * hours)
 def works_index(request):
@@ -110,10 +110,10 @@ def works_index(request):
     else:
         search_filter = None
     
-    return render_to_response('works_index.html',
-                             {'title' : 'Works',
-                              'filter': search_filter},
-                              context_instance=RequestContext(request))
+    return render(request, 'works_index.html',
+                            {'title' : 'Works',
+                             'filter': search_filter},
+                            RequestContext(request))
 
 def get_chapter_for_division(division):
     """
@@ -551,32 +551,32 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
             
         title = title + verse_to_highlight
     
-    response = render_to_response('read_work.html',
-                                 {'title'                      : title,
-                                  'work_alias'                 : work_alias,
-                                  'warnings'                   : warnings,
-                                  'work'                       : work,
-                                  'related_works'              : related_works,
-                                  'verses'                     : verses,
-                                  'divisions'                  : divisions,
-                                  'chapter'                    : chapter,
-                                  'chapters'                   : chapters,
-                                  'authors'                    : work.authors.filter(meta_author=False),
-                                  'next_chapter'               : next_chapter,
-                                  'previous_chapter'           : previous_chapter,
-                                  'verse_to_highlight'         : verse_to_highlight,
-                                  'total_chapters'             : total_chapters,
-                                  'completed_chapters'         : completed_chapters,
-                                  'remaining_chapters'         : remaining_chapters,
-                                  'chapter_not_found'          : chapter_not_found,
-                                  'verse_not_found'            : verse_not_found,
-                                  'progress'                   : progress,
-                                  'progress_in_book'           : progress_in_book,
-                                  'total_chapters_in_book'     : total_chapters_in_book,
-                                  'completed_chapters_in_book' : completed_chapters_in_book,
-                                  'remaining_chapters_in_book' : remaining_chapters_in_book
-                                  },
-                                  context_instance=RequestContext(request))
+    response = render(request, 'read_work.html',
+                                {'title'                      : title,
+                                 'work_alias'                 : work_alias,
+                                 'warnings'                   : warnings,
+                                 'work'                       : work,
+                                 'related_works'              : related_works,
+                                 'verses'                     : verses,
+                                 'divisions'                  : divisions,
+                                 'chapter'                    : chapter,
+                                 'chapters'                   : chapters,
+                                 'authors'                    : work.authors.filter(meta_author=False),
+                                 'next_chapter'               : next_chapter,
+                                 'previous_chapter'           : previous_chapter,
+                                 'verse_to_highlight'         : verse_to_highlight,
+                                 'total_chapters'             : total_chapters,
+                                 'completed_chapters'         : completed_chapters,
+                                 'remaining_chapters'         : remaining_chapters,
+                                 'chapter_not_found'          : chapter_not_found,
+                                 'verse_not_found'            : verse_not_found,
+                                 'progress'                   : progress,
+                                 'progress_in_book'           : progress_in_book,
+                                 'total_chapters_in_book'     : total_chapters_in_book,
+                                 'completed_chapters_in_book' : completed_chapters_in_book,
+                                 'remaining_chapters_in_book' : remaining_chapters_in_book
+                                },
+                                RequestContext(request))
     
     # If the verse could not be found, set a response code to note that we couldn't get the content that the user wanted so that caching doesn't take place
     if verse_not_found:
@@ -586,8 +586,8 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
 
 @cache_page(8 * hours)
 def robots_txt(request):
-    return render_to_response('robots.txt',
-                              context_instance=RequestContext(request))
+    return render(request, 'robots.txt',
+                            RequestContext(request))
     
 @cache_page(8 * hours)
 def humans_txt(request):
@@ -598,9 +598,9 @@ def humans_txt(request):
         version_info = None
     
     
-    return render_to_response('humans.txt',
-                              {'version_info': version_info},
-                              context_instance=RequestContext(request))
+    return render(request, 'humans.txt',
+                            {'version_info': version_info},
+                            RequestContext(request))
     
 def not_found_404(request):
     
@@ -610,22 +610,22 @@ def not_found_404(request):
     return HttpResponse(content=template.render(context), content_type='text/html; charset=utf-8', status=404)
 
 def tests(request):
-    return render_to_response('test.html',
-                              {'title'               : 'Tests',
-                               'include_default_css' : 0},
-                              context_instance=RequestContext(request))
+    return render(request, 'test.html',
+                            {'title'               : 'Tests',
+                             'include_default_css' : 0},
+                            RequestContext(request))
     
 @cache_page(8 * hours)
 def beta_code_converter(request):
-    return render_to_response('beta_code_converter.html',
-                              {'title'               : 'Beta-code Converter'},
-                              context_instance=RequestContext(request))
+    return render(request, 'beta_code_converter.html',
+                           {'title': 'Beta-code Converter'},
+                           RequestContext(request))
 
 @cache_page(8 * hours)
 def word_forms(request):
-    return render_to_response('word_forms.html',
-                              {'title'               : 'Word forms'},
-                              context_instance=RequestContext(request))
+    return render(request, 'word_forms.html',
+                            {'title': 'Word forms'},
+                            RequestContext(request))
     
 # -----------------------------------
 # API views are defined below

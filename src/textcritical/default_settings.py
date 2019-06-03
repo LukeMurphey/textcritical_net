@@ -154,7 +154,6 @@ TEMPLATES = [
                 'textcritical.context_processors.global_settings',
                 'textcritical.context_processors.get_url_name',
                 'textcritical.context_processors.is_async',
-                'django.core.context_processors.request',
             ],
         },
     },
