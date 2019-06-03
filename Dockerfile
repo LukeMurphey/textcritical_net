@@ -44,6 +44,16 @@ COPY var /usr/src/app/var
 # Copy over the Docker settings file
 COPY src/textcritical/docker_image_settings.py /usr/src/app/textcritical/settings.py
 
+# Create the directory where the logs will be created
+RUN mkdir -p /usr/src/app/var/log/
+
+# Create a default admin user
+RUN python /usr/src/app/manage.py migrate
+RUN echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'changeme')" | python /usr/src/app/manage.py shell
+
+# Collect the static files
+RUN python /usr/src/app/manage.py collectstatic
+
 # EXPOSE port 8080 to allow communication to/from the Django server
 EXPOSE 8080
 
