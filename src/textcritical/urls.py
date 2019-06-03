@@ -11,7 +11,7 @@ admin.autodiscover()
 urlpatterns = [
     
     # Include the Grappelli app                
-    #(r'^grappelli/', include(grappelli_urls)),
+    url(r'^grappelli/', include(grappelli_urls)),
     
     # Include the reader app
     url(r'^', include('reader.urls')),
