@@ -189,15 +189,6 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'h6zc9!zhi78yj-8ayt8&amp;f-&amp;!(5d@+fvc75!c(i88^@a*hy9+0y'
 
-# List of callables that know how to import templates from various sources.
-"""
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
-)
-"""
-
 MIDDLEWARE_CLASSES = (
     # Uncomment the next line if the hosting web-server doesn't GZIP the responses
     #'django.middleware.gzip.GZipMiddleware',
