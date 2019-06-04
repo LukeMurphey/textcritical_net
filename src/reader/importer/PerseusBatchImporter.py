@@ -146,7 +146,8 @@ class PerseusFileProcessor():
                 # Process each file
                 for f in files:
                     try:
-                        if self.__process_file__( os.path.join( root, f) ):
+                        # Don't process the "__cts__.xml" files since these are just meta-data files included with the https://opengreekandlatin.github.io/First1KGreek/ project
+                        if f != "__cts__.xml" and self.__process_file__( os.path.join( root, f) ):
                             files_processed = files_processed + 1
                             
                     except Exception:
