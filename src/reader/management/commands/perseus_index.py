@@ -1,20 +1,31 @@
 from django.core.management.base import BaseCommand
 
-from reader.importer.PerseusBatchImporter import ImportPolicy, WorkDescriptor, PerseusDataGatherer
+from reader.importer.PerseusBatchImporter import PerseusDataGatherer
+from reader.importer.batch_import import ImportPolicy, WorkDescriptor
 
 import os
 from optparse import make_option
 
 class Command(BaseCommand):
-
     help = "Analyzes Perseus XML documents from a directory and produces a CSV containing an index of the works"
 
-    option_list = BaseCommand.option_list + (
-        make_option("-d", "--directory", dest="directory", help="The directory containing the files to import"),
-        make_option("-o", "--output", dest="output_file", default="perseus_stats.csv", help="The path to write the CSV file to"),
-        make_option("-l", "--language", dest="language", help="The language to restrict results to"),
-        make_option("-a", "--author", dest="author", help="The author to restrict works to"),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument('--directory',
+            dest='directory',
+            help='The directory containing the files to import')
+
+        parser.add_argument('--output',
+            dest='output_file',
+             default="perseus_stats.csv",
+            help='The directory containing the files to import')
+
+        parser.add_argument('--language',
+            dest='language',
+            help='The language to restrict results to')
+
+        parser.add_argument('--author',
+            dest='author',
+            help='The author to restrict works to')
 
     def handle(self, *args, **options):
         
