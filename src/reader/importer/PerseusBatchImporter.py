@@ -175,7 +175,7 @@ class PerseusDataGatherer(PerseusFileProcessor):
         if self.output_file is not None:
             self.output_file_h = open(self.output_file, 'wb')
             self.csv_writer = csv.writer(self.output_file_h)
-            self.csv_writer.writerow( [ "title", "author", "language", "file" ] )
+            self.csv_writer.writerow( [ "title", "author", "language", "file", "editor" ] )
         else:
             self.output_file_h = None
             self.csv_writer = None
