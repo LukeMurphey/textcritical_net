@@ -5,17 +5,25 @@ from reader.importer.batch_import import JSONImportPolicy
 
 import os
 import sys
-from optparse import make_option
 
 class Command(BaseCommand):
-
     help = "Imports all Perseus XML documents from a directory that match the import policy"
 
-    option_list = BaseCommand.option_list + (
-        make_option("-d", "--directory", dest="directory", help="The directory containing the files to import"),
-        make_option("-o", "--overwrite", action="store_true", dest="overwrite", default=False, help="Overwrite and replace existing items"),
-        make_option("-t", "--test", action="store_true", dest="test", help="Output the import parameters for any works that would be imported"),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument('-d', '--directory',
+            dest='directory',
+            help='The directory containing the files to import')
+
+        parser.add_argument('-o', '--overwrite',
+            action="store_true",
+            dest="overwrite",
+            default=False,
+            help="Overwrite and replace existing items")
+
+        parser.add_argument("-t", "--test",
+            action="store_true",
+            dest="test",
+            help="Output the import parameters for any works that would be imported")
 
     def handle(self, *args, **options):
         

@@ -3,16 +3,14 @@ from django.core.management.base import BaseCommand
 from reader.importer.Diogenes import DiogenesLemmataImporter
 
 import os
-from optparse import make_option
 
 class Command(BaseCommand):
 
     help = "Imports Diogenes lemmata"
 
-    option_list = BaseCommand.option_list + (
-        make_option("-f", "--file", dest="filename", help="The file to import"),
-        make_option("-l", "--line_number", dest="line_number", help="The line-number to begin")
-    )
+    def add_arguments(self, parser):
+        parser.add_argument("-f", "--file", dest="filename", help="The file to import")
+        parser.add_argument("-l", "--line_number", dest="line_number", help="The line-number to begin")
 
     def handle(self, *args, **options):
         

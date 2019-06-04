@@ -5,17 +5,14 @@ from reader.models import Work
 from django.db.models import Q
 from django.conf import settings
 
-from optparse import make_option
-
 class Command(BaseCommand):
 
     help = "Creates the indexes necessary for facilitating searches"
 
-    option_list = BaseCommand.option_list + (
-        make_option("-w", "--work", dest="work", help="The work to index"),
-        make_option("-c", "--clear", action="store_true", dest="clear_indexes", default=False, help="Clear the existing indexes before starting"),
-        make_option("-f", "--fresh", action="store_true", dest="fresh_index", default=False, help="Start with a fresh index for the given work before re-indexing it")
-    )
+    def add_arguments(self, parser):
+        parser.add_argument("-w", "--work", dest="work", help="The work to index")
+        parser.add_argument("-c", "--clear", action="store_true", dest="clear_indexes", default=False, help="Clear the existing indexes before starting")
+        parser.add_argument("-f", "--fresh", action="store_true", dest="fresh_index", default=False, help="Start with a fresh index for the given work before re-indexing it")
 
     def handle(self, *args, **options):
         

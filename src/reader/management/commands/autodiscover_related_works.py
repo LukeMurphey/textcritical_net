@@ -4,16 +4,14 @@ from django.db.models import Q
 
 import os
 import sys
-from optparse import make_option
 
 class Command(BaseCommand):
 
     help = "Imports all Perseus XML documents from a directory that match the import policy"
 
-    option_list = BaseCommand.option_list + (
-        make_option("-w", "--work", dest="work", help="The work to look for possible relationships"),
-        make_option("-t", "--test", action="store_true", dest="test", help="Just output "),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument("-w", "--work", dest="work", help="The work to look for possible relationships")
+        parser.add_argument("-t", "--test", action="store_true", dest="test", help="Just output ")
 
     def handle(self, *args, **options):
 

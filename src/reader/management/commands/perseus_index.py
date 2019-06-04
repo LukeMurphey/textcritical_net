@@ -4,26 +4,25 @@ from reader.importer.PerseusBatchImporter import PerseusDataGatherer
 from reader.importer.batch_import import ImportPolicy, WorkDescriptor
 
 import os
-from optparse import make_option
 
 class Command(BaseCommand):
     help = "Analyzes Perseus XML documents from a directory and produces a CSV containing an index of the works"
 
     def add_arguments(self, parser):
-        parser.add_argument('--directory',
+        parser.add_argument('-d', '--directory',
             dest='directory',
             help='The directory containing the files to import')
 
-        parser.add_argument('--output',
+        parser.add_argument('-o', '--output',
             dest='output_file',
-             default="perseus_stats.csv",
+            default="perseus_stats.csv",
             help='The directory containing the files to import')
 
-        parser.add_argument('--language',
+        parser.add_argument('-l', '--language',
             dest='language',
             help='The language to restrict results to')
 
-        parser.add_argument('--author',
+        parser.add_argument('-a', '--author',
             dest='author',
             help='The author to restrict works to')
 

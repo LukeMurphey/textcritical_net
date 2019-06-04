@@ -7,7 +7,6 @@ from reader.ebook import ePubExport
 
 import sys
 import os
-from optparse import make_option
 import traceback
 import logging
 
@@ -18,9 +17,8 @@ class Command(BaseCommand):
 
     help = "Produces an ePub from a work"
 
-    option_list = BaseCommand.option_list + (
-        make_option("-f", "--force", action="store_true", default=False, dest="force", help="Force creation of new works even if they already exist"),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument("-f", "--force", action="store_true", default=False, dest="force", help="Force creation of new works even if they already exist")
 
     def handle(self, *args, **options):
         

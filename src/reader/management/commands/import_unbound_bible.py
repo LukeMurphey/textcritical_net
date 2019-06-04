@@ -5,15 +5,13 @@ from reader.importer.batch_import import JSONImportPolicy
 
 import sys
 import os
-from optparse import make_option
 
 class Command(BaseCommand):
 
     help = "Imports Unbound Bible documents"
 
-    option_list = BaseCommand.option_list + (
-        make_option("-f", "--file", dest="filename", help="The file to import"),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument("-f", "--file", dest="filename", help="The file to import")
 
     def handle(self, *args, **options):
         
