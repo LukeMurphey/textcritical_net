@@ -6,7 +6,7 @@ from reader.shortcuts import convert_xml_to_html5
 from reader.language_tools.greek import Greek
 
 from django.core.urlresolvers import reverse
-from django.template import loader, Context
+from django.template import loader
 from django.conf import settings
 
 from wand.drawing import Drawing
@@ -128,9 +128,10 @@ class ePubExport(object):
     @classmethod
     def addTitlePage(cls, work, book):
         
-        c = Context({"title": work.title,
-                     "work" : work
-                    })
+        c = {
+            "title": work.title,
+            "work" : work
+        }
             
         template = loader.get_template('epub/title.html')
         html = template.render(c).encode("utf-8")
@@ -156,11 +157,12 @@ class ePubExport(object):
         if len(related_works) == 0 and authors_works is None:
             return
             
-        c = Context({"title": "Related Works",
-                     "work" : work,
-                     "related_works" : related_works,
-                     "authors_works" : authors_works
-                    })
+        c = {
+            "title": "Related Works",
+            "work" : work,
+            "related_works" : related_works,
+            "authors_works" : authors_works
+        }
         
         template = loader.get_template('epub/related_works.html')
         html = template.render(c).encode("utf-8")
@@ -174,9 +176,10 @@ class ePubExport(object):
     @classmethod
     def addAboutPage(cls, work, book):
         
-        c = Context({"title": "Information",
-                     "work" : work
-                    })
+        c = {
+            "title": "Information",
+            "work" : work
+        }
         
         template = loader.get_template('epub/about.html')
         html = template.render(c).encode("utf-8")
@@ -195,9 +198,10 @@ class ePubExport(object):
         else:
             source = "Perseus"
         
-        c = Context({"title": "Acknowledgements",
-                     "source" : source
-                    })
+        c = {
+            "title": "Acknowledgements",
+            "source" : source
+        }
         
         template = loader.get_template('epub/acknowledgements.html')
         html = template.render(c).encode("utf-8")
@@ -211,9 +215,10 @@ class ePubExport(object):
     @classmethod
     def addTOCPage(cls, divisions, book):
         
-        c = Context({"title": "Table of Contents",
-                     "divisions" : divisions
-                    })
+        c = {
+            "title": "Table of Contents",
+            "divisions" : divisions
+        }
         
         template = loader.get_template('epub/table_of_contents.html')
         html = template.render(c).encode("utf-8")
@@ -224,9 +229,10 @@ class ePubExport(object):
     @classmethod
     def addCoverPage(cls, work, book):
         
-        c = Context({"title": "Cover",
-                     "work" : work
-                    })        
+        c = {
+            "title": "Cover",
+            "work" : work
+        }
         
         template = loader.get_template('epub/cover.html')
         html = template.render(c).encode("utf-8")
@@ -405,20 +411,22 @@ class ePubExport(object):
         
         if division.readable_unit:
             
-            c = Context({"chapter": division,
-                         "verses" : Verse.objects.filter(division=division).order_by("sequence_number"),
-                         "note_number" : NoteNumber(),
-                         "notes" : notes,
-                         "title" : division.get_division_description()
-                         })
+            c = {
+                "chapter": division,
+                "verses" : Verse.objects.filter(division=division).order_by("sequence_number"),
+                "note_number" : NoteNumber(),
+                "notes" : notes,
+                "title" : division.get_division_description()
+            }
             
             template = loader.get_template('epub/chapter.html')
             html = template.render(c).encode("utf-8")
             
         else:
-            c = Context({"division": division,
-                         "title" : division.get_division_description()
-                         })
+            c = {
+                "division": division,
+                "title" : division.get_division_description()
+            }
             
             template = loader.get_template('epub/section.html')
             html = template.render(c).encode("utf-8")

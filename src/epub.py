@@ -10,7 +10,7 @@ import shutil
 import subprocess
 import uuid
 import zipfile
-from django.template import Context, loader
+from django.template import loader
 from lxml import etree
 
 class TocMapNode:
@@ -116,7 +116,7 @@ class EpubBook:
     
     def addHtmlForImage(self, imageItem):
         template = loader.get_template('epub/image.html')
-        c = Context({"book": self, "item": imageItem})
+        c = {"book": self, "item": imageItem}
         html = template.render(c).encode("utf-8")
         return self.addHtml('', '%s.html' % imageItem.destPath, html)
     
@@ -156,7 +156,7 @@ class EpubBook:
             return
 
         template = loader.get_template('epub/title-page.html')
-        c = Context({"book": self})
+        c = {"book": self}
         stream = template.render(c).encode("utf-8")
 
         self.titlePage.html = stream
@@ -170,7 +170,7 @@ class EpubBook:
     def __makeTocPage(self):
         assert self.tocPage
         template = loader.get_template('epub/toc.html')
-        c = Context({"book": self})
+        c = {"book": self}
         self.tocPage.html = template.render(c).encode("utf-8")
 
     def addTocPage(self):
@@ -228,7 +228,7 @@ class EpubBook:
     def __writeContainerXML(self):
         fout = open(os.path.join(self.rootDir, 'META-INF', 'container.xml'), 'w')
         template = loader.get_template('epub/container.xml')
-        c = Context({"book": self})
+        c = {"book": self}
         fout.write(template.render(c).encode("utf-8"))
         fout.close()
 
@@ -237,14 +237,14 @@ class EpubBook:
         fout = open(os.path.join(self.rootDir, 'OEBPS', 'toc.ncx'), 'w')
 
         template = loader.get_template('epub/toc.ncx')
-        c = Context({"book": self})
+        c = {"book": self}
         fout.write(template.render(c).encode("utf-8"))
         fout.close()
     
     def __writeContentOPF(self):
         fout = open(os.path.join(self.rootDir, 'OEBPS', 'content.opf'), 'w')
         template = loader.get_template('epub/content.opf')
-        c = Context({"book": self})
+        c = {"book": self}
         fout.write(template.render(c).encode("utf-8"))
         fout.close()
     
