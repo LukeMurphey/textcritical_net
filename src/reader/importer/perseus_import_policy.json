@@ -671,6 +671,19 @@
         }
     },
     {
+        "author" : "Lysias",
+        "title"  : "Speeches",
+        "language" : "English",
+        "import_parameters" : {
+            "state_set" : 0,
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "speeches-lysias-crane"
+                }
+            }
+        }
+    },
+    {
         "author" : "Apollonius Rhodius",
         "title"  : [ "Ichneutae", "Argonautica"],
         "language" : "Greek",
