@@ -122,7 +122,4 @@ LOGGING = {
 }
 
 # Set the domain name to the list of allowed host names
-ALLOWED_HOSTS = [
-    '.textcritical.com',
-    '127.0.0.1',
-]
+ALLOWED_HOSTS = ['*']
