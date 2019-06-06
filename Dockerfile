@@ -52,7 +52,7 @@ RUN python /usr/src/app/manage.py migrate
 RUN echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'changeme')" | python /usr/src/app/manage.py shell
 
 # Collect the static files
-RUN python /usr/src/app/manage.py collectstatic
+RUN python /usr/src/app/manage.py collectstatic --noinput
 
 # EXPOSE port 8080 to allow communication to/from the Django server
 EXPOSE 8080
