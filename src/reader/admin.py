@@ -49,6 +49,13 @@ class DivisionInline(admin.StackedInline):
 
 # A command to make search indexes
 def make_search_indexes(modeladmin, request, queryset):
+
+    # Make the directory if necessary
+    if not WorkIndexer.index_dir_exists():
+        os.makedirs(WorkIndexer.get_index_dir())
+
+    WorkIndexer.get_index(create=True)
+
     for work in queryset:
         WorkIndexer.delete_work_index(work)
         WorkIndexer.index_work(work)

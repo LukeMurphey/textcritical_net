@@ -46,6 +46,7 @@ COPY src/textcritical/docker_image_settings.py /usr/src/app/textcritical/setting
 
 # Create the directory where the logs will be created
 RUN mkdir -p /usr/src/app/var/log/
+RUN mkdir -p /usr/src/app/var/indexes
 
 # Create a default admin user
 RUN python /usr/src/app/manage.py migrate
