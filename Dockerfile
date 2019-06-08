@@ -44,9 +44,10 @@ COPY var /usr/src/app/var
 # Copy over the Docker settings file
 COPY src/textcritical/docker_image_settings.py /usr/src/app/textcritical/settings.py
 
-# Create the directory where the logs will be created
+# Create the necessary directories
 RUN mkdir -p /usr/src/app/var/log/
 RUN mkdir -p /usr/src/app/var/indexes
+RUN mkdir -p /usr/src/app/media/files/
 
 # Create a default admin user
 RUN python /usr/src/app/manage.py migrate
