@@ -58,6 +58,9 @@ STATIC_URL = '/media/static/'
 # Define where the search indexes are
 SEARCH_INDEXES = '/usr/src/app/var/indexes'
 
+# Use the kindlegen that has been saved to the /bin directory
+KINDLEGEN = '/bin/kindlegen'
+
 USE_CDN = False
 USE_MINIFIED = False
 INCLUDE_SHARING_BUTTONS = False

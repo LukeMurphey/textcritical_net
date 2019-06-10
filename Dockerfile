@@ -53,6 +53,11 @@ RUN mkdir -p /usr/src/app/media/files/
 RUN python /usr/src/app/manage.py migrate
 RUN echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'changeme')" | python /usr/src/app/manage.py shell
 
+# Install Kindlgen
+RUN apt-get install -y wget
+RUN wget http://kindlegen.s3.amazonaws.com/kindlegen_linux_2.6_i386_v2_9.tar.gz -P /bin
+RUN tar -C /bin -xf /bin/kindlegen_linux_2.6_i386_v2_9.tar.gz
+
 # Collect the static files
 RUN python /usr/src/app/manage.py collectstatic --noinput
 
