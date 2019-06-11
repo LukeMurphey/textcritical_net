@@ -171,7 +171,7 @@ class UnboundBibleTextImporter(TextImporter):
             self.work_source.source = "unbound.biola.edu"
             self.work_source.resource = os.path.basename(file_name)
             self.work_source.work = self.work
-            self.work_source.description = "" # Not used yet
+            self.work_source.description = "Text provided by The Unbound Bible from Biola University. Original version available for viewing and download at http://www.unboundbible.org/."
             self.work_source.save()
                 
         else:

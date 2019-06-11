@@ -16,9 +16,10 @@ from xml.dom import minidom
 from xml.dom.minidom import parseString
 import logging
 import re
+import os
 
 from reader.importer import TextImporter, LineNumber, LineNumberRange
-from reader.models import Division, Work
+from reader.models import Division, Work, WorkSource
 from reader.shortcuts import transform_text
 from reader.language_tools import Greek
 
@@ -143,9 +144,10 @@ class PerseusTextImporter(TextImporter):
         """
 
         # Create the source object so that we remember where we got the file
-        #self.work_source = WorkSource()
-        #self.work_source.source = "Perseus.tufts.edu"
-        #self.work_source.resource = os.path.basename(file_name)
+        self.work_source = WorkSource()
+        self.work_source.source = "perseus.tufts.edu"
+        self.work_source.resource = os.path.basename(file_name)
+        self.work_source.description = "Text provided by Perseus Digital Library. Original version available for viewing and download at http://www.perseus.tufts.edu/hopper/."
 
         # Import the document
         # Read the file into a string
