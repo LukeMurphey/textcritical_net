@@ -42,8 +42,10 @@ else {
                 <% } %>
             </tbody>
         </table>
+        <div class="work-source-statement"><% if (source_description){ %><%- source_description %><% } %></div>
     </div>
 </div>
+<div class="work-wiki-holder">
 <% if ( typeof wiki_info !== 'undefined' && wiki_info.summary !== "undefined" && wiki_info.summary !== null ) { %>
 <%= wiki_info.summary.replace(new RegExp('[\\^]([^\n]+)', 'gi'),"<small>$1</small>").replace(new RegExp('\r?\n', 'g'), '<p />') %>
 <% if (source_description){ %><br /><br /><% } %>
@@ -51,3 +53,4 @@ else {
 <% if (source_description){ %>
     <%- source_description %><% } %>
 <% } %>
+</div>

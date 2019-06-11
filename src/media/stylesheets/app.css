@@ -746,7 +746,8 @@ textarea.clipboard-copy-text[readonly] {
   margin-bottom: 16px; }
   .work-info .work-image-holder {
     display: inline-block;
-    margin-right: 16px; }
+    margin-right: 16px;
+    width: 15%; }
   .work-info .work-image {
     vertical-align: middle;
     border: 2px solid #565656;
@@ -755,9 +756,14 @@ textarea.clipboard-copy-text[readonly] {
   .work-info .work-info-holder {
     display: inline-block;
     vertical-align: top;
-    padding-left: 6px; }
+    padding-left: 6px;
+    width: 80%; }
   .work-info .work-info-holder td:nth-child(2) {
     padding-left: 10px; }
+  .work-info .work-wiki-holder {
+    clear: both; }
+  .work-info .work-source-statement {
+    padding-top: 10px; }
 
 /* -----------------------------------------
    jQuery data tables

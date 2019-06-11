@@ -274,6 +274,8 @@ textarea.clipboard-copy-text[readonly]{
 		.work-image-holder{
 			display: inline-block;
 			margin-right: 16px;
+			width: 15%;
+
 		}
 
 		.work-image{
@@ -287,10 +289,18 @@ textarea.clipboard-copy-text[readonly]{
 			display: inline-block;
 			vertical-align: top;
 			padding-left: 6px;
+			width: 80%;
 		}
 
 		.work-info-holder td:nth-child(2){
 			padding-left: 10px;
 		}
 
+		.work-wiki-holder{
+			clear: both;
+		}
+
+		.work-source-statement{
+			padding-top: 10px;
+		}
 }
