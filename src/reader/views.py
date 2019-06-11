@@ -1175,9 +1175,10 @@ def get_work_info(title):
         query2 = work.title + " " + work.authors.all()[:1][0].name
         query3 = work.authors.all()[:1][0].name
 
-    wiki_content =  get_wikipedia_info_multiple(query, query2, query3)
-        
-    content['wiki_info'] = wiki_content
+    wiki_content = get_wikipedia_info_multiple(query, query2, query3)
+    
+    if wiki_content is not None:
+        content['wiki_info'] = wiki_content
 
     # Get the WorkSource
     try:
@@ -1186,7 +1187,8 @@ def get_work_info(title):
         content['source'] = worksource.source
         content['source_description'] = worksource.description
     except ObjectDoesNotExist:
-        return None
+        content['source'] = None
+        content['source_description'] = None
 
     return content
 

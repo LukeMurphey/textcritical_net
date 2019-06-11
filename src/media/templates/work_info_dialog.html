@@ -34,7 +34,7 @@ else {
                     <td><%- editors.join(", ") %></td>
                 </tr>
                 <% } %>
-                <% if (source){ %>
+                <% if (typeof source !== 'undefined' && source){ %>
                 <tr>
                     <td><strong>Source</strong></td>
                     <td><%- source %></td>
