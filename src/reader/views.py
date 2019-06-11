@@ -9,6 +9,7 @@ from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from django.template.defaultfilters import slugify
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 import json
 import logging
@@ -18,7 +19,7 @@ import re
 import os
 
 from reader.templatetags.reader_extras import transform_perseus_text
-from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork, WikiArticle, LexiconEntry
+from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork, WikiArticle, LexiconEntry, WorkSource
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy, ajaxify, cache_page_if_ajax, convert_xml_to_html5
@@ -1174,9 +1175,18 @@ def get_work_info(title):
         query2 = work.title + " " + work.authors.all()[:1][0].name
         query3 = work.authors.all()[:1][0].name
 
-    wiki_content = get_wikipedia_info_multiple(query, query2, query3)
+    wiki_content =  get_wikipedia_info_multiple(query, query2, query3)
         
     content['wiki_info'] = wiki_content
+
+    # Get the WorkSource
+    try:
+        worksource = WorkSource.objects.get(work=work)
+
+        content['source'] = worksource.source
+        content['source_description'] = worksource.description
+    except ObjectDoesNotExist:
+        return None
 
     return content
 

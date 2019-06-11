@@ -1,4 +1,4 @@
-<% if ( !success || wiki_info.summary === "undefined" || wiki_info.summary === null ) { %>
+<% if ( !success ) { %>
 <h4>Information not found</h4>
 No information could be found on the work for <%= work %>.
 <p class="some-margin-top">
@@ -34,9 +34,20 @@ else {
                     <td><%- editors.join(", ") %></td>
                 </tr>
                 <% } %>
+                <% if (source){ %>
+                <tr>
+                    <td><strong>Source</strong></td>
+                    <td><%- source %></td>
+                </tr>
+                <% } %>
             </tbody>
         </table>
     </div>
 </div>
+<% if ( typeof wiki_info !== 'undefined' && wiki_info.summary !== "undefined" && wiki_info.summary !== null ) { %>
 <%= wiki_info.summary.replace(new RegExp('[\\^]([^\n]+)', 'gi'),"<small>$1</small>").replace(new RegExp('\r?\n', 'g'), '<p />') %>
+<% if (source_description){ %><br /><br /><% } %>
+<% } %>
+<% if (source_description){ %>
+    <%- source_description %><% } %>
 <% } %>

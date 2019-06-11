@@ -408,7 +408,9 @@ define([
 				// Set the link to Wikipedia
 				var extra_options_template = '<a target="_blank" class="external" href="<%= url %>">View on wikipedia</a>';
 			
-				TextCritical.set_extra_options(_.template(extra_options_template,{ url : data.wiki_info.url }));
+				if(data.wiki_info && data.wiki_info.url){
+					TextCritical.set_extra_options(_.template(extra_options_template,{ url : data.wiki_info.url }));
+				}
 				
 				// Render the lemma information
 				TextCritical.set_dialog_content(_.template(work_info_dialog_template, data));
