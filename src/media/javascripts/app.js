@@ -256,8 +256,6 @@ define([
 			}
 			
 			// Set the link to Google
-			var extra_options_template = 'Look up at <a target="_blank" href="http://www.perseus.tufts.edu/hopper/morph?l=<%= word %>&la=greek">Perseus</a> or <a target="_blank" href="https://www.google.com/search?q=<%= word %>">Google</a>';
-			
 			TextCritical.set_extra_options(extra_options);
 			
 			// Set the title
@@ -288,10 +286,11 @@ define([
 			var content = _.template(loading_template,{ message: "Looking up morphology for " +  _.escape(word) + "..." });
 		
 			// Set the link to Google
-			var extra_options_template = 'Look up at <a target="_blank" href="http://www.perseus.tufts.edu/hopper/morph?l=<%= word %>&la=greek">Perseus</a> or <a target="_blank" href="https://www.google.com/search?q=<%= word %>">Google</a>';
+			var extra_options_template = 'Look up at <a target="_blank" href="http://www.perseus.tufts.edu/hopper/morph?l=<%= word %>&la=greek">Perseus</a>, <a target="_blank" href="https://logeion.uchicago.edu/<%= word %>">Logeion</a>, or <a target="_blank" href="https://www.google.com/search?q=<%= word %>">Google</a>';
+			var extra_options = _.template(extra_options_template,{ word: word });
 
 			// Open the dialog
-			TextCritical.open_dialog("Morphology: " +  _.escape(word), content, extra_options_template, true);
+			TextCritical.open_dialog("Morphology: " +  _.escape(word), content, extra_options, true);
 		
 			// Submit the AJAX request to display the information
 			$.ajax({
