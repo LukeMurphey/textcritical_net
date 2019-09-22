@@ -1,4 +1,4 @@
-django>=1.8.19
+django>=1.11
 django-grappelli==2.10.4
 lxml
 Genshi
