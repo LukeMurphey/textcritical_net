@@ -38,7 +38,10 @@ RUN apt-get update && \
              apt-get install -y imagemagick
 
 # Now copy in the textcritical files
+RUN mkdir -p /usr/src/app/
+RUN mkdir -p /usr/src/app/var/
 COPY src /usr/src/app
+# Note: you will need to have this local directory with the files in it
 COPY var /usr/src/app/var
 
 # Copy over the Docker settings file
