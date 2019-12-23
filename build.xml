@@ -495,7 +495,7 @@
 		<exec executable="docker" failonerror="true">
 			<arg value="build"/>
 			<arg value="-t"/>
-			<arg value="textcritical"/>
+			<arg value="${value.docker.username}/${value.docker.name}"/>
 			<arg value="."/>
 		</exec>
 	</target>
@@ -513,7 +513,19 @@
 			<arg value="8080:8080/tcp"/>
 			<arg value="-v"/>
 			<arg value="${install_directory}/var:/db"/>
-			<arg value="textcritical:latest"/>
+			<arg value="${value.docker.name}"/>
+		</exec>
+	</target>
+
+
+    <!-- ================================= 
+          target: docker_push
+         ================================= -->
+	<target name="docker_push" description="Push the docker image">
+		<property name="install_directory" location="."/>
+		<exec executable="docker">
+			<arg value="push"/>
+			<arg value="${value.docker.username}/${value.docker.name}"/>
 		</exec>
 	</target>
 
@@ -533,7 +545,7 @@
 				<arg value="ps"/>
 				<arg value="-q"/>
 				<arg value="--filter"/>
-				<arg value="ancestor=textcritical:latest"/>
+				<arg value="ancestor=${value.docker.username}/${value.docker.name}"/>
 		</exec>
 
 		<script language="javascript">
