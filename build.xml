@@ -504,12 +504,15 @@
           target: docker_run
          ================================= -->
 	<target name="docker_run" description="Run the docker image">
+		<property name="install_directory" location="."/>
 		<exec executable="docker">
 			<arg value="run"/>
 			<arg value="--rm"/>
 			<arg value="-d"/>
 			<arg value="-p"/>
 			<arg value="8080:8080/tcp"/>
+			<arg value="-v"/>
+			<arg value="${install_directory}/var:/db"/>
 			<arg value="textcritical:latest"/>
 		</exec>
 	</target>
