@@ -25,7 +25,7 @@ DATABASES = {
     }
 }
 
-DEBUG = True
+DEBUG = False
 
 INSTALLED_APPS = (
     'grappelli',
@@ -43,6 +43,17 @@ INSTALLED_APPS = (
      'django.contrib.humanize',
      'reader'
 )
+
+if not DEBUG:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': '/cache',
+            'OPTIONS': {
+                'MAX_ENTRIES': '3000'
+            }
+        }
+    }
 
 # Define where the media will be served from.
 MEDIA_URL = '/media/'
