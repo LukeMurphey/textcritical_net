@@ -44,11 +44,6 @@
 	<property name="python" value="${python_dir_cleaned}/bin/python" />
 	<property name="pip" value="${python_dir_cleaned}/bin/pip" />
 	
-	<!-- Set up JRuby so that SASS can run -->
-	<path id="JRuby">
-	    <fileset file="lib/jruby-complete-1.6.7.2.jar"/>
-	</path> 
-	
 	<!-- This patternset matches the custom application Javascript -->
 	<patternset id="application_js_files">
 	    <include name="src/media/javascripts/app.js" />
@@ -315,26 +310,20 @@
     <target name="compile_scss" description="Compile the SCSS files">
     	
         <echo message="Compiling scss files..." />
-    	
-        <property name="filesIn" value="src/media/stylesheets/[^_]*.scss" />
-    	<property name="includes" value="lib/sass_includes" />
-        <property name="fileOutDir" value="src/media/stylesheets" />
-    	
-        <script language="ruby" classpathref="JRuby">
-            <![CDATA[
-                require 'lib/sass-3.2.1/lib/sass'
-                require 'sass/exec'
-    
-                files = Dir.glob($project.getProperty('filesIn'))
-                #Dir.mkdir($project.getProperty('fileOutDir')) unless File.exists?($project.getProperty('fileOutDir'))
-                files.each do 
-                    | file |
-                    puts "     [sass compiler] " + file + " -> " + $project.getProperty('fileOutDir') + "/" + File.basename(file, ".*") + ".css"
-                    opts = Sass::Exec::Sass.new(["--load-path", $project.getProperty('includes'), "--load-path", File.dirname(file), file, File.join($project.getProperty('fileOutDir'), File.basename(file, ".*") + ".css")])
-                    opts.parse
-                end
-            ]]>
-        </script>
+
+		<!-- The mapper to change scss to the css file name -->
+		<mapper id="minified_scss_mapper" type="glob" from="*.scss" to="*.css" />
+
+		<!-- Modify the files -->		
+	    <apply executable="sass" parallel="false">
+	        <fileset dir="." includes="src/media/stylesheets/*.scss">
+	        	<patternset refid="application_js_files" />
+	        </fileset>
+	        <srcfile />
+	    	<mapper refid="minified_scss_mapper" />
+	        <targetfile />
+			 <arg line="--no-source-map"/>
+	    </apply>
         <echo message="Done compiling scss files!" />
     </target>
 
