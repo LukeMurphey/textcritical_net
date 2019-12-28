@@ -154,9 +154,20 @@
     </target>
 
     <!-- ================================= 
+          target: package_static
+         ================================= -->
+    <target name="package_static" depends="get_build_number,update_build_info" description="Create the package with the static">
+    	<mkdir dir="${value.build.packageoutput.directory}" />
+        <zip destfile="${value.build.packageoutput.directory}/textcritical.zip"
+            basedir="src/media"
+            whenempty="create"
+        />
+    </target>
+
+    <!-- ================================= 
           target: compile_and_package
          ================================= -->
-    <target name="compile_and_package" depends="get_build_number,compile,package" description="Compile the application and create the package (sans media)"></target>
+    <target name="compile_and_package" depends="get_build_number,compile,package_static" description="Compile the application and create the package (sans media)"></target>
 
     <!-- ================================= 
           target: verify
