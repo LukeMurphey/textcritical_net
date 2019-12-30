@@ -6,8 +6,6 @@ local.properties
 tmp/*
 .vscode/*
 
-src/reader/templates/VERSION.txt
-src/reader/templates/VERSION.json
 src/media/files/*.epub
 src/media/files/*.mobi
 src/media/static/*
