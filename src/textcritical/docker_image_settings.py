@@ -48,7 +48,7 @@ if not DEBUG:
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-            'LOCATION': '/cache',
+            'LOCATION': '/usr/src/app/var/cache',
             'OPTIONS': {
                 'MAX_ENTRIES': '3000'
             }

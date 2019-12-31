@@ -50,7 +50,7 @@ COPY src/textcritical/docker_image_settings.py /usr/src/app/textcritical/setting
 RUN mkdir -p /usr/src/app/var/log/
 RUN mkdir -p /usr/src/app/var/indexes
 RUN mkdir -p /usr/src/app/media/files/
-RUN mkdir -p /cache/
+RUN mkdir -p /usr/src/app/var/cache
 
 # Install Kindlgen
 RUN apt-get install -y wget
