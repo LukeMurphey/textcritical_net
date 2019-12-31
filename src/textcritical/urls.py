@@ -21,13 +21,12 @@ urlpatterns = [
 
     # Enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-]
 
-if settings.DEBUG:
-    # Serve static files (images, css, javascript, etc.)
-    urlpatterns += [
-        url(r'^media/(?P<path>.*)$', serve, {
-        'document_root': settings.MEDIA_ROOT})]
+    # Serve static files (images, css, javascript, etc.):
+    url(r'^media/(?P<path>.*)$', serve, {
+        'document_root': settings.MEDIA_ROOT
+    }),
+]
     
 handler404 = 'reader.views.not_found_404'
 handler500 = 'reader.views.not_found_404'
