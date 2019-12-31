@@ -43,6 +43,9 @@ def global_settings(request):
         settings_dict['BUILD_VERSION'] = get_setting_or_default("BUILD_VERSION", version_info['version'])
     except TemplateDoesNotExist:
         settings_dict['BUILD_VERSION'] = get_setting_or_default("BUILD_VERSION", "0")
+    except:
+        # Pass through the request anyways.
+        settings_dict['BUILD_VERSION'] = get_setting_or_default("BUILD_VERSION", "-1")
     
     return settings_dict
 
