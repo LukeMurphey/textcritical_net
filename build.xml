@@ -513,7 +513,7 @@
 			<arg value="8080:8080/tcp"/>
 			<arg value="-v"/>
 			<arg value="${install_directory}/var:/db"/>
-			<arg value="${value.docker.name}"/>
+			<arg value="${value.docker.username}/${value.docker.name}"/>
 		</exec>
 	</target>
 
