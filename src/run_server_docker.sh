@@ -2,7 +2,7 @@
 cd /usr/src/app
 mkdir -p /usr/src/app/var/log/
 
-$STATIC_DIR=/static
+STATIC_DIR="/static"
 
 deploy_static() {
     # Ensure that the static directory was declared
@@ -15,7 +15,8 @@ deploy_static() {
         cp -r /usr/src/app/media/static $STATIC_DIR/media
         cp -r /usr/src/app/media/stylesheets $STATIC_DIR/media
         cp -r /usr/src/app/media/templates $STATIC_DIR/media
-        cp /usr/src/app/reader/templates/503.html $STATIC_DIR
+        cp /usr/src/app/reader/templates/503.html $STATIC_DIR/
+        echo "Done copying files to static"
     fi
 }
 
