@@ -156,12 +156,12 @@
     <!-- ================================= 
           target: package_static
          ================================= -->
-    <target name="package_static" depends="get_build_number,update_build_info" description="Create the package with the static">
+    <target name="package_static" depends="get_build_number,update_build_info" description="Create the package with the static package contents">
     	<mkdir dir="${value.build.packageoutput.directory}" />
-        <zip destfile="${value.build.packageoutput.directory}/textcritical.zip"
-            basedir="src/media"
-            whenempty="create"
-        />
+        <zip destfile="${value.build.packageoutput.directory}/textcritical.zip" whenempty="create">
+			<zipfileset dir="src/media" />
+			<zipfileset dir="src/reader/templates/" includes="503.html" />
+		</zip>
     </target>
 
     <!-- ================================= 
