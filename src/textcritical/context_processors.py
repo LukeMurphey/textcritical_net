@@ -1,7 +1,10 @@
 import json
+import logging
 from django.conf import settings
 from django.core.urlresolvers import resolve
 from django.template import loader, TemplateDoesNotExist
+
+logger = logging.getLogger(__name__)
 
 def get_setting_or_default( setting, default=None ):
     try:
@@ -11,7 +14,6 @@ def get_setting_or_default( setting, default=None ):
 
 def add_to_dict( d, name, value ):
     d[name] = value
-
 
 def is_request_async(request):
 
@@ -44,6 +46,7 @@ def global_settings(request):
     except TemplateDoesNotExist:
         settings_dict['BUILD_VERSION'] = get_setting_or_default("BUILD_VERSION", "0")
     except:
+        logger.exception('Unable to determine the version information')
         # Pass through the request anyways.
         settings_dict['BUILD_VERSION'] = get_setting_or_default("BUILD_VERSION", "-1")
     
