@@ -94,7 +94,7 @@ def time_function_call(fx):
         
         diff_string = str( round( diff, 6) ) + " seconds"
         
-        print "%s, duration=%s" % (fx.__name__, diff_string)
+        print("%s, duration=%s" % (fx.__name__, diff_string))
         
         return r
     return wrapper
@@ -382,7 +382,7 @@ class TestShortcuts(TestReader):
         for i in range(0, 10000):
             self.test_process_text()
         
-        print "Completed", time.time() - start
+        print("Completed", time.time() - start)
     
     def test_process_text(self):
         

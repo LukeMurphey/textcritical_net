@@ -35,7 +35,7 @@ class Command(BaseCommand):
                 
                 # Stop if the ePub file to convert from does not exist
                 if not os.path.exists(epub_file_full_path):
-                    print "ePub file does not exist, work=%s" % (work.title_slug)
+                    print("ePub file does not exist, work=%s" % (work.title_slug))
                     return
                 
                 mobi_file = work.title_slug + ".mobi"
@@ -48,10 +48,10 @@ class Command(BaseCommand):
                     
                     if fname is not None:
                         logger.info("Created mobi, filename=%s", fname)
-                        print "Created mobi, filename=%s" % (fname)
+                        print("Created mobi, filename=%s" % (fname))
                     else:
                         logger.warn("Could not create mobi, filename=%s", fname)
-                        print "Could not create mobi, filename=%s" % (fname)
+                        print("Could not create mobi, filename=%s" % (fname))
             
         except Exception:
             traceback.print_exc()

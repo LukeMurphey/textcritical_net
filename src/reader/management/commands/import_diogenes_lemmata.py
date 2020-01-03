@@ -21,7 +21,7 @@ class Command(BaseCommand):
         
         # Validate the arguments
         if filename is None:
-            print "No filename was provided to import"
+            print("No filename was provided to import")
             return
         
         # Get the line number
@@ -30,8 +30,8 @@ class Command(BaseCommand):
         if line_number is not None:
             line_number = int(line_number)
         
-        print "Importing ", filename
+        print("Importing ", filename)
         importer = DiogenesLemmataImporter()
         importer.import_file(filename, start_line_number=line_number)
         
-        print os.path.basename(filename), "successfully imported"
+        print(os.path.basename(filename), "successfully imported")

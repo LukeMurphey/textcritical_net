@@ -37,14 +37,14 @@ class Command(BaseCommand):
         try:
             work = Work.objects.get(Q(title=work_title) | Q(title_slug=work_title))
 
-            print "Looking for works that are related..."
+            print("Looking for works that are related...")
             related_works = RelatedWork.find_related_for_work(work, test=test)
-            print "Done"
+            print("Done")
 
             if test:
-                print "Related works found:"
+                print("Related works found:")
                 number = 1
                 for work in related_works:
-                    print "   ", str(number) + ")", str(work), "(" + work.title_slug + ")" 
+                    print("   ", str(number) + ")", str(work), "(" + work.title_slug + ")")
         except Work.DoesNotExist:
-            print "Work could not be found with the given title"
+            print("Work could not be found with the given title")

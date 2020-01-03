@@ -22,18 +22,18 @@ class Command(BaseCommand):
         
         # Validate the arguments
         if filename is None:
-            print "No filename was provided to import"
+            print("No filename was provided to import")
             return
         
         try:
             if state_set not in [None, "*"]:
                 state_set = int(state_set)
         except ValueError:
-            print "The state_set is invalid"
+            print("The state_set is invalid")
             return
         
-        print "Importing ", os.path.basename(filename)
+        print("Importing ", os.path.basename(filename))
         importer = PerseusTextImporter(state_set=state_set)
         importer.import_file(filename)
         
-        print os.path.basename(filename), "successfully imported"
+        print(os.path.basename(filename), "successfully imported")
