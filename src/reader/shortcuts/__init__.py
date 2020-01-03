@@ -2,9 +2,9 @@ import xml.dom.minidom as minidom
 from reader.language_tools.greek import Greek
 from reader.language_tools import transform_text
 
-from HTMLParser import HTMLParser
+from six.moves.html_parser import HTMLParser
+from six.moves.html_entities import name2codepoint
 from xml.dom.minidom import parseString
-from htmlentitydefs import name2codepoint
 from time import time
 
 from django.shortcuts import render
