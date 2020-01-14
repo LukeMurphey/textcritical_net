@@ -475,10 +475,10 @@ class Verse(models.Model):
     def save(self, *args, **kwargs):
         
         # Normalize the content so that we can do searches by normalizing to the same form of Unicode
-        if isinstance( self.content, str):
-            self.content = language_tools.normalize_unicode( str(self.content, "UTF-8", 'strict') )
+        if not isinstance( self.content, str):
+            self.content = language_tools.normalize_unicode(str(self.content, "UTF-8", 'strict'))
         else:
-            self.content = language_tools.normalize_unicode( self.content )
+            self.content = language_tools.normalize_unicode(self.content)
         
         super(Verse, self).save(*args, **kwargs)
     

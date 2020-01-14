@@ -2267,7 +2267,7 @@ class TestEpubExport(TestReader):
         notes = ePubExport.getPerseusNotesFromDivisionContent(division)
         
         self.assertEqual(len(notes), 1)
-        self.assertEqual(notes[0].text, 'A proverbial expression of uncertain origin for enforced silence; cf. fr. 176, \u201cA key stands guard upon my tongue.\u201d')
+        self.assertEqual(notes[0].text, 'A proverbial expression (of uncertain origin) for enforced silence; cf. fr. 176, “A key stands guard upon my tongue.”')
 
     def test_get_perseus_notes_from_verses_not_ignoring_notes(self):
         # See issue #2006 (https://lukemurphey.net/issues/2006)
@@ -2358,4 +2358,3 @@ class TestWikiArticle(TestReader):
         # Try a lookup that fails
         article = WikiArticle.get_wiki_article(["Tree", "Frogs"])
         self.assertEqual(article, None)
-        
