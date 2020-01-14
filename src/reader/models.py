@@ -470,13 +470,13 @@ class Verse(models.Model):
         if self.indicator is not None and len( self.indicator ) > 0:
             return self.indicator
         else:
-            return unicode(self.sequence_number)
+            return str(self.sequence_number)
         
     def save(self, *args, **kwargs):
         
         # Normalize the content so that we can do searches by normalizing to the same form of Unicode
         if isinstance( self.content, str):
-            self.content = language_tools.normalize_unicode( unicode(self.content, "UTF-8", 'strict') )
+            self.content = language_tools.normalize_unicode( str(self.content, "UTF-8", 'strict') )
         else:
             self.content = language_tools.normalize_unicode( self.content )
         
@@ -503,7 +503,7 @@ class Lemma(models.Model):
     reference_number = models.IntegerField(db_index=True)
     
     def __unicode__(self):
-        return unicode(self.lexical_form)
+        return str(self.lexical_form)
     
     def save(self, *args, **kwargs):
         
@@ -541,7 +541,7 @@ class Case(models.Model):
     name = models.CharField(max_length=30)
     
     def __unicode__(self):
-        return unicode(self.name)
+        return str(self.name)
     
 class Dialect(models.Model):
     """
@@ -551,7 +551,7 @@ class Dialect(models.Model):
     name = models.CharField(max_length=60)
     
     def __unicode__(self):
-        return unicode(self.name)
+        return str(self.name)
     
 class WordForm(models.Model):
     """
@@ -562,7 +562,7 @@ class WordForm(models.Model):
     basic_form = models.CharField(max_length=200, db_index=True)
     
     def __unicode__(self):
-        return unicode(self.form)
+        return str(self.form)
     
     def save(self, *args, **kwargs):
         
@@ -796,7 +796,7 @@ class WordDescription(models.Model):
         if self.comparative:
             pass
         
-        return unicode(" ".join(a).strip().lower())
+        return str(" ".join(a).strip().lower())
 
 class WikiArticle(models.Model):
     """
@@ -807,13 +807,13 @@ class WikiArticle(models.Model):
     article = models.CharField(max_length=200)
     
     def __unicode__(self):
-        return unicode(self.search)
+        return str(self.search)
     
     @classmethod
     def get_wiki_article(cls, terms=None):
         
         # Make sure the terms provided are an array
-        if not isinstance(terms, list) and isinstance(terms, basestring):
+        if not isinstance(terms, list) and isinstance(terms, str):
             
             try:
                 logger.info("Looking for %r", terms)

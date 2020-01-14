@@ -125,25 +125,25 @@ class TestReader(TestCase):
 class TestGreekLanguageTools(TestReader):
     
     def test_strip_accents(self):
-        self.assertEqual( language_tools.normalize_unicode( language_tools.strip_accents( u"θεός" )), u"θεος")
+        self.assertEqual(language_tools.normalize_unicode(language_tools.strip_accents("θεός")), "θεος")
         
     def test_strip_accents_str(self):
-        self.assertEqual( language_tools.normalize_unicode( u"θεός" ), u"θεός")
+        self.assertEqual(language_tools.normalize_unicode("θεός" ), "θεός")
     
     def test_beta_code_conversion(self):
-        self.assertEqual( Greek.beta_code_str_to_unicode("H)/LIOS"), u"ἤλιος")
+        self.assertEqual(Greek.beta_code_str_to_unicode("H)/LIOS"), "ἤλιος")
 
     def test_beta_code_conversion_unicode(self):
-        self.assertEqual( Greek.beta_code_to_unicode(u"H)/LIOS"), u"ἤλιος")
+        self.assertEqual(Greek.beta_code_to_unicode("H)/LIOS"), "ἤλιος")
         
     def test_beta_code_conversion_sigmas(self):
-        self.assertEqual( Greek.beta_code_to_unicode(u"O( KO/SMOS"), u"ὁ κόσμος")
+        self.assertEqual(Greek.beta_code_to_unicode("O( KO/SMOS"), "ὁ κόσμος")
         
     def test_unicode_conversion_to_beta_code(self):
-        self.assertEqual( Greek.unicode_to_beta_code(u"ἤλιος"), u"H)/LIOS")
+        self.assertEqual(Greek.unicode_to_beta_code("ἤλιος"), "H)/LIOS")
         
     def test_unicode_conversion_to_beta_code_str(self):
-        self.assertEqual( Greek.unicode_to_beta_code_str(u"ἤλιος"), "H)/LIOS")
+        self.assertEqual(Greek.unicode_to_beta_code_str("ἤλιος"), "H)/LIOS")
         
     def test_section_of_text(self):
         
@@ -156,7 +156,7 @@ th\\n xw/ran h(\\n nu=n e)/xomen katw/|khse &ast; pentakisxili/wn e)tw=n a)riqmo
 i(stori/an perie/xousan e)k tw=n par' h(mi=n i(erw=n bi/blwn dia\\ th=s *(ellhnikh=s
 fwnh=s sunegraya/mhn."""
 
-        expected_output = u"""Ἱκανῶς μὲν ὑπολαμβάνω καὶ διὰ τῆς περὶ τὴν ἀρχαιολογίαν 
+        expected_output = """Ἱκανῶς μὲν ὑπολαμβάνω καὶ διὰ τῆς περὶ τὴν ἀρχαιολογίαν 
 συγγραφῆς, κράτιστε ἀνδρῶν Ἐπαφρόδιτε, τοῖς ἐντευξομένοις αὐτῇ 
 πεποιηκέναι φανερὸν περὶ τοῦ γένους ἡμῶν τῶν Ἰουδαίων, ὅτι καὶ 
 παλαιότατόν ἐστι καὶ τὴν πρώτην ὑπόστασιν ἔσχεν ἰδίαν, καὶ πῶς 
@@ -171,10 +171,10 @@ fwnh=s sunegraya/mhn."""
     def test_various_beta_code_conversions(self):
         
         TEST_BETA_CODES = [
-                           ('KAI\\', u'καὶ'),
-                           ('KAT)', u'κατʼ'),
+                           ('KAI\\', 'καὶ'),
+                           ('KAT)', 'κατʼ'),
                            ('*KAI E)GE/NETO E)N TW=| TETA/RTOW', None), #Και ἐγένετο ἐν τῷ τετάρτῳ
-                           ('STH/SAI', u'στήσαι'),
+                           ('STH/SAI', 'στήσαι'),
                            
                            # Alternate versions of the acute
                            ('A/E/H/O/I/U/W/', None) #άέήόίύώ
@@ -184,14 +184,14 @@ fwnh=s sunegraya/mhn."""
             greek_actual = Greek.beta_code_to_unicode(beta_original)
             
             if greek_expected is not None:
-                self.assertEqual( greek_expected, greek_actual)
+                self.assertEqual(greek_expected, greek_actual)
             
             beta_actual = Greek.unicode_to_beta_code_str(greek_actual)
             
-            self.assertEqual( beta_original, beta_actual )
+            self.assertEqual(beta_original, beta_actual)
             
     def test_fix_final_sigma(self):
-        self.assertEqual(Greek.fix_final_sigma(u"κόσμοσ"), u"κόσμος")
+        self.assertEqual(Greek.fix_final_sigma("κόσμοσ"), "κόσμος")
             
 class TestImportContext(TestCase):
         
@@ -461,13 +461,13 @@ class TestShortcuts(TestReader):
     def test_process_text_multi_language_transforms(self):
         
         original_content = r"""<verse>koti/nois<note anchored="yes" place="unspecified" resp="ed">
-                  <foreign lang="greek">koti/nois</foreign> MSS.; <foreign lang="greek">kolwnoi=s</foreign>(hills' Bekker, adopting the correction of Coraës.</note>  kai\ pa/gois</verse>""".decode("utf-8")
+                  <foreign lang="greek">koti/nois</foreign> MSS.; <foreign lang="greek">kolwnoi=s</foreign>(hills' Bekker, adopting the correction of Coraës.</note>  kai\ pa/gois</verse>"""
 
         language = "Greek"
-        
+
         actual_result = perseus_xml_to_html5(original_content, language=language)
-        
-        self.assertTrue( '<span class="word">κοτίνοις</span>' in actual_result )
+
+        self.assertIn('<span class="word">κοτίνοις</span>', actual_result)
         
 class TestLineNumber(TestCase):
     

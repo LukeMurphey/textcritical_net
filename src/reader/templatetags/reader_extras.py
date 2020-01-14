@@ -95,11 +95,11 @@ def transform_perseus_xml_to_html5(xml_text, language=None, return_as_str=False)
     # Make the function to perform the transformation
     text_transformation_fx = lambda text, parent_node, dst_doc: transform_perseus_text(text, parent_node, dst_doc, language)
     
-    converted_doc = convert_xml_to_html5( xml_text, language=language, text_transformation_fx=text_transformation_fx, node_transformation_fx=transform_perseus_node )
+    converted_doc = convert_xml_to_html5(xml_text, language=language, text_transformation_fx=text_transformation_fx, node_transformation_fx=transform_perseus_node)
     
     try:
         if return_as_str:
-            return converted_doc.toxml( encoding="utf-8" )
+            return converted_doc.toxml(encoding="utf-8").decode('utf-8')
         else:
             return converted_doc
     finally:
@@ -280,14 +280,14 @@ def transform_perseus_text(text, parent_node, dst_doc, default_language, disable
     
     # Notes are typically in English and thus do not need transformed.
     if parent_node is not None and parent_node.attributes.get('class', None) is not None and 'note' in parent_node.attributes.get('class', '').value.split(' '):#and parent_node.attributes.get('class', None).value == "note":
-        return text.encode('utf-8')
+        return text
     
     # Don't split up the words for English documents since we don't allow morphological lookups on English
     if language is None or language.lower() == "english":
-        return text.encode('utf-8')
+        return text
     
     elif disable_wrapping:
-        return transform_text(text, language, True).encode('utf-8')
+        return transform_text(text, language, True)
            
     else:
        
@@ -300,18 +300,18 @@ def transform_perseus_text(text, parent_node, dst_doc, default_language, disable
             if s in [";", ",", ".", "[", "]", ":"] or len(s.strip()) == 0:
                 txt_node = dst_doc.createTextNode( s )
                 parent_node.appendChild( txt_node )
-            
+
             else:
                 new_node = dst_doc.createElement( "span" )
                 new_node.setAttribute( "class", "word" )
-                
+
                 # Create the text node and append it
                 txt_node = dst_doc.createTextNode( transform_text(s, language, True) )
                 new_node.appendChild(txt_node)
-               
+
                 # Append the node
                 parent_node.appendChild(new_node)
-              
+
 def is_hidden(node):
 
     if node.nodeName == "sup" or node.nodeName == "span":

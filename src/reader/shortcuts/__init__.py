@@ -110,16 +110,16 @@ class HTML5Converter(HTMLParser):
         if self.text_transformation_fx is not None:
             
             # Transform the text
-            transformed_text = self.text_transformation_fx( text=data, parent_node=self.current_node, dst_doc=self.dst_doc )
+            transformed_text = self.text_transformation_fx(text=data, parent_node=self.current_node, dst_doc=self.dst_doc)
             
             # Don't bother appending empty text
             if transformed_text is not None:
-                txt_node = self.dst_doc.createTextNode( transformed_text.decode( "utf-8" ) )
+                txt_node = self.dst_doc.createTextNode(transformed_text)
             else:
                 txt_node = None
             
         else:
-            txt_node = self.dst_doc.createTextNode( data )
+            txt_node = self.dst_doc.createTextNode(data)
 
         # Append the txt node
         if txt_node:
@@ -175,7 +175,7 @@ def convert_xml_to_html5( xml_str, new_root_node_tag_name=None, text_transformat
     
     # Return the result
     if return_as_str:
-        return converter.dst_doc.toxml( encoding="utf-8" ).replace('<?xml version="1.0" encoding="utf-8"?>', "")
+        return converter.dst_doc.toxml(encoding="utf-8").replace('<?xml version="1.0" encoding="utf-8"?>', "")
     else:
         return converter.dst_doc
     
