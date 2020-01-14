@@ -4,3 +4,7 @@ lxml
 Genshi
 six
 wand
+bs4
+Whoosh
+requests
+wikipedia
