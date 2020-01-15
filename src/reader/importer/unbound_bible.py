@@ -74,7 +74,7 @@ class UnboundBibleTextImporter(TextImporter):
         # Make the verse
         verse = self.make_verse(self.current_verse, self.current_chapter_division, save=False)
         verse.indicator = orig_verse + orig_subverse
-        verse.content = language_tools.normalize_unicode( unicode(text.strip(), "UTF-8") )
+        verse.content = language_tools.normalize_unicode(text.strip())
         verse.save()
         
         self.verses_created = self.verses_created + 1
