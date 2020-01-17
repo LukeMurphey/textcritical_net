@@ -114,6 +114,8 @@ class HTML5Converter(HTMLParser):
             
             # Don't bother appending empty text
             if transformed_text is not None:
+                if isinstance(transformed_text, bytes):
+                    transformed_text = transformed_text.decode('utf-8')
                 txt_node = self.dst_doc.createTextNode(transformed_text)
             else:
                 txt_node = None
@@ -175,7 +177,7 @@ def convert_xml_to_html5( xml_str, new_root_node_tag_name=None, text_transformat
     
     # Return the result
     if return_as_str:
-        return converter.dst_doc.toxml(encoding="utf-8").replace('<?xml version="1.0" encoding="utf-8"?>', "")
+        return converter.dst_doc.toxml(encoding="utf-8").decode('utf-8').replace('<?xml version="1.0" encoding="utf-8"?>', "")
     else:
         return converter.dst_doc
     
