@@ -75,7 +75,7 @@ class WorkDescriptor():
         except AttributeError:
             
             # If the filter is actually an array (but not a string which looks like an array), then see if the item is in the list
-            if ( isinstance(field_filter, list) or isinstance(field_filter, tuple) ) and not isinstance(field_filter, basestring):
+            if ( isinstance(field_filter, list) or isinstance(field_filter, tuple) ) and not isinstance(field_filter, str):
                 for i in field_filter:
                     if i == item:
                         return True
@@ -234,7 +234,7 @@ class ImportTransforms():
             else:
                 additional_fields = [ slugify( work.language ) ]
             
-        elif not isinstance(additional_fields, (list, tuple)) or isinstance(additional_fields, basestring):
+        elif not isinstance(additional_fields, (list, tuple)) or isinstance(additional_fields, str):
             additional_fields = [additional_fields]
             
         for f in additional_fields:
@@ -389,7 +389,7 @@ class ImportTransforms():
     def assign_related_work(work=None, title_slug=None, **kwargs):
         
         # If the slug
-        if isinstance(title_slug, basestring):
+        if isinstance(title_slug, str):
             title_slug = [title_slug]
         
         for slug in title_slug:

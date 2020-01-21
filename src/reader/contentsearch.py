@@ -120,7 +120,7 @@ class WorkIndexer:
         with inx.searcher() as searcher:
             
             parser = QueryParser("work", inx.schema)
-            query_str = unicode(work.title_slug)
+            query_str = work.title_slug
             search_query = parser.parse(query_str)
             
             results = searcher.search_page(search_query, 1, 1)
@@ -262,20 +262,20 @@ class WorkIndexer:
         """
         descriptions = []
         
-        descriptions.append(division.get_division_description(use_titles=False).encode("utf-8"))
-        descriptions.append(division.get_division_description(use_titles=True).decode("utf-8").encode("utf-8"))
+        descriptions.append(division.get_division_description(use_titles=False))
+        descriptions.append(division.get_division_description(use_titles=True))
         
         # Now add in the parent divisions so that they can be searched without having to specifically define the entire hierarchy
         next_division = division.parent_division
         
         # Keep recursing upwards until we hit the top
         while next_division is not None:
-            descriptions.append(next_division.get_division_description(use_titles=False).encode("utf-8"))
-            descriptions.append(next_division.get_division_description(use_titles=True).decode("utf-8").encode("utf-8"))
+            descriptions.append(next_division.get_division_description(use_titles=False))
+            descriptions.append(next_division.get_division_description(use_titles=True))
             
             next_division = next_division.parent_division
-        
-        return unicode(",".join(descriptions), "utf-8")
+
+        return ",".join(descriptions)
     
     @classmethod
     def replace_empty_string(cls, val):
@@ -316,9 +316,9 @@ class WorkIndexer:
         
         # Get the author
         if work.authors.count() > 0:
-            author_str = unicode(work.authors.all()[:1][0].name)
+            author_str = work.authors.all()[:1][0].name
         else:
-            author_str = unicode()
+            author_str = ''
         
         # Prepare the content for saving
         if verse.content is not None and len(verse.content) > 0:
@@ -340,7 +340,7 @@ class WorkIndexer:
                                 verse_id      = verse.id,
                                 work_id       = work.title_slug,
                                 section_id    = division.title_slug,
-                                work          = unicode(work.title) + "," + work.title_slug,
+                                work          = work.title + "," + work.title_slug,
                                 section       = cls.get_section_index_text(division),
                                 author        = author_str
                                 )
@@ -608,10 +608,7 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True,
     """ 
     
     logger.info( 'Performing a stats search, limit=%r, include_related_forms=%r, search_query="%s"', limit, include_related_forms, search_text )
-    
-    # Convert the search text to unicode
-    search_text = unicode(search_text)
-    
+
     # Get the index if provided
     if inx is None:
         inx = WorkIndexer.get_index()
@@ -722,9 +719,6 @@ def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_fo
     """
     
     logger.info( 'Performing a search, page=%r, page_len=%r, include_related_forms=%r, search_query="%s"', page, pagelen, include_related_forms, search_text )
-    
-    # Convert the search text to unicode
-    search_text = unicode(search_text)
     
     # Get the index if provided
     if inx is None:

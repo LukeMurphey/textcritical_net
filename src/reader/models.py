@@ -388,7 +388,7 @@ class Division(models.Model):
             if use_titles:
                 title = str(next_division)
             else:
-                title = next_division.descriptor
+                title = str(next_division.descriptor)
             
             # Determine if this is a number
             is_number = re.match("^[0-9]+ ?$", title)
