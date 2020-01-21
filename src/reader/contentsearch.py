@@ -275,7 +275,6 @@ class WorkIndexer:
             
             next_division = next_division.parent_division
 
-        print("section descriptions:", ",".join(descriptions))
         return ",".join(descriptions)
     
     @classmethod
@@ -579,7 +578,6 @@ def replace_work_names_with_titles(list_of_matches_in_works):
         found_work = False
         
         for work in works:
-            print(work.title_slug, work_slug)
             if work.title_slug == work_slug:
                 matched_works[work.title] = count
                 found_work = True

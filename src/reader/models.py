@@ -387,7 +387,6 @@ class Division(models.Model):
             # Get the title that we are going to use
             if use_titles:
                 title = str(next_division)
-                print("title is", title)
             else:
                 title = str(next_division.descriptor)
             
