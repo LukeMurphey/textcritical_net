@@ -194,7 +194,7 @@ class WordDescriptionModel(admin.ModelAdmin):
     model = WordDescription
     
     search_fields = ['meaning', 'description',]
-    list_display = ('word_form', '__unicode__', 'part_of_speech', 'meaning')
+    list_display = ('word_form', '__str__', 'part_of_speech', 'meaning')
     list_filter = ('part_of_speech', 'geog_name', 'voice')
     
     fieldsets = (

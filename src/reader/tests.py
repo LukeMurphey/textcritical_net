@@ -1987,8 +1987,7 @@ class TestContentSearch(TestReader):
         self.assertEquals(len(results.verses), 1)
 
         results = search_verses('section:"Some Division"', self.indexer.get_index())
-        self.assertEquals(len(results.verses), 1)        
-        
+        self.assertEquals(len(results.verses), 1)
         
     def test_index_work(self):
         
