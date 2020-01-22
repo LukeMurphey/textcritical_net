@@ -19,6 +19,7 @@
 #
 #       docker system prune
 
+# See https://hub.docker.com/_/python
 FROM python:3.8-slim
 
 # These are copied from python:2-onbuild (https://github.com/tomologic/docker-python/blob/master/2-onbuild/Dockerfile)
