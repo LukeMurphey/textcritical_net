@@ -34,7 +34,7 @@ class Command(BaseCommand):
         
         # Validate the arguments
         if directory is None:
-            print "No directory was provided to import"
+            print("No directory was provided to import")
             return
         
         overwrite = options['overwrite']
@@ -72,13 +72,13 @@ class Command(BaseCommand):
                                                       test = test)
         
         if test:
-            print "Testing import for files from", directory
+            print("Testing import for files from", directory)
         else:
-            print "Importing files from", directory
+            print("Importing files from", directory)
 
         perseus_batch_importer.do_import()
 
         if test:
-            print "Files from the", directory, "evaluated"
+            print("Files from the", directory, "evaluated")
         else:
-            print "Files from the", directory, "directory successfully imported"
+            print("Files from the", directory, "directory successfully imported")

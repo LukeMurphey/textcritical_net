@@ -32,12 +32,12 @@ class Command(BaseCommand):
         if work_title is None:
             
             if settings.DEBUG:
-                print "ERROR: Debug setting are enabled; this will almost certainly cause the script to run out of memory since database queries will be retained in debug mode."
+                print("ERROR: Debug setting are enabled; this will almost certainly cause the script to run out of memory since database queries will be retained in debug mode.")
                 return
             
-            print "Creating search indexes..."
+            print("Creating search indexes...")
             WorkIndexer.index_all_works()
-            print "Search indexes successfully created"
+            print("Search indexes successfully created")
             
         # Index the provided work
         else:
@@ -49,12 +49,12 @@ class Command(BaseCommand):
                 fresh_index  = options['fresh_index']
                 
                 if fresh_index:
-                    print "Deleting existing index for work..."
+                    print("Deleting existing index for work...")
                     WorkIndexer.delete_work_index(work)
-                    print "Existing index for work successfully deleted"
+                    print("Existing index for work successfully deleted")
                 
-                print "Creating search indexes for work..."
+                print("Creating search indexes for work...")
                 WorkIndexer.index_work(work)
-                print "Search indexes successfully created"
+                print("Search indexes successfully created")
             except Work.DoesNotExist:
-                print "Work could not be found with the given title"
+                print("Work could not be found with the given title")

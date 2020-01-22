@@ -259,7 +259,7 @@ class PerseusBatchImporter(PerseusFileProcessor):
         
         if self.test:
             pp = pprint.PrettyPrinter(indent=4)
-            print "Import policy matched: file_path=%s, title=%s, author=%s, language=%s, editor=%s" % (file_path, title, author, language, editor)
+            print("Import policy matched: file_path=%s, title=%s, author=%s, language=%s, editor=%s" % (file_path, title, author, language, editor))
             pp.pprint(import_parameters)
             return
 

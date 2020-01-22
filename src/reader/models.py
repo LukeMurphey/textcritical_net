@@ -67,7 +67,7 @@ class Author(models.Model):
     # Indicates that the chapter is not a real author but a category (like "unknown" or "various")
     meta_author = models.BooleanField(default=False)
     
-    def __unicode__(self):
+    def __str__(self):
         return self.name
     
     def save(self, *args, **kwargs):
@@ -85,7 +85,7 @@ class WorkType(models.Model):
     
     title = models.CharField(max_length=40)
     
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
 class Work(models.Model):
@@ -106,7 +106,7 @@ class Work(models.Model):
     date_written = models.DateTimeField('date written', blank=True, null=True)
     language     = models.CharField(max_length=200)
     
-    def __unicode__(self):
+    def __str__(self):
         return self.title
     
     def save(self, *args, **kwargs):
@@ -341,7 +341,7 @@ class Division(models.Model):
     parent_division  = models.ForeignKey('self', blank=True, null=True)
     readable_unit    = models.BooleanField(default=False, db_index=True)
     
-    def __unicode__(self):
+    def __str__(self):
         if self.title is not None and len(self.title) > 0:
             return self.title
         elif self.descriptor is not None and self.type is not None:
@@ -388,7 +388,7 @@ class Division(models.Model):
             if use_titles:
                 title = str(next_division)
             else:
-                title = next_division.descriptor
+                title = str(next_division.descriptor)
             
             # Determine if this is a number
             is_number = re.match("^[0-9]+ ?$", title)
@@ -466,19 +466,19 @@ class Verse(models.Model):
     content           = models.TextField()
     original_content  = models.TextField()
     
-    def __unicode__(self):
+    def __str__(self):
         if self.indicator is not None and len( self.indicator ) > 0:
             return self.indicator
         else:
-            return unicode(self.sequence_number)
+            return str(self.sequence_number)
         
     def save(self, *args, **kwargs):
         
         # Normalize the content so that we can do searches by normalizing to the same form of Unicode
-        if isinstance( self.content, str):
-            self.content = language_tools.normalize_unicode( unicode(self.content, "UTF-8", 'strict') )
+        if not isinstance( self.content, str):
+            self.content = language_tools.normalize_unicode(str(self.content, "UTF-8", 'strict'))
         else:
-            self.content = language_tools.normalize_unicode( self.content )
+            self.content = language_tools.normalize_unicode(self.content)
         
         super(Verse, self).save(*args, **kwargs)
     
@@ -502,8 +502,8 @@ class Lemma(models.Model):
     language = models.CharField(max_length=40)
     reference_number = models.IntegerField(db_index=True)
     
-    def __unicode__(self):
-        return unicode(self.lexical_form)
+    def __str__(self):
+        return str(self.lexical_form)
     
     def save(self, *args, **kwargs):
         
@@ -540,8 +540,8 @@ class Case(models.Model):
     
     name = models.CharField(max_length=30)
     
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return str(self.name)
     
 class Dialect(models.Model):
     """
@@ -550,8 +550,8 @@ class Dialect(models.Model):
     
     name = models.CharField(max_length=60)
     
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return str(self.name)
     
 class WordForm(models.Model):
     """
@@ -561,8 +561,8 @@ class WordForm(models.Model):
     form = models.CharField(max_length=200, db_index=True)
     basic_form = models.CharField(max_length=200, db_index=True)
     
-    def __unicode__(self):
-        return unicode(self.form)
+    def __str__(self):
+        return str(self.form)
     
     def save(self, *args, **kwargs):
         
@@ -751,7 +751,7 @@ class WordDescription(models.Model):
         if value:
             a.append( self.shorten(str_value) )
     
-    def __unicode__(self):
+    def __str__(self):
         
         a = []
         
@@ -796,7 +796,7 @@ class WordDescription(models.Model):
         if self.comparative:
             pass
         
-        return unicode(" ".join(a).strip().lower())
+        return str(" ".join(a).strip().lower())
 
 class WikiArticle(models.Model):
     """
@@ -806,14 +806,14 @@ class WikiArticle(models.Model):
     search = models.CharField(max_length=200, db_index=True, unique=True)
     article = models.CharField(max_length=200)
     
-    def __unicode__(self):
-        return unicode(self.search)
+    def __str__(self):
+        return str(self.search)
     
     @classmethod
     def get_wiki_article(cls, terms=None):
         
         # Make sure the terms provided are an array
-        if not isinstance(terms, list) and isinstance(terms, basestring):
+        if not isinstance(terms, list) and isinstance(terms, str):
             
             try:
                 logger.info("Looking for %r", terms)

@@ -22,7 +22,7 @@ class Command(BaseCommand):
         
         # Validate the arguments
         if filename is None:
-            print "No filename was provided to import"
+            print("No filename was provided to import")
             return
         
         # Get the path to the import policy accounting for the fact that the command may be run outside of the path where manage.py resides
@@ -31,8 +31,8 @@ class Command(BaseCommand):
         import_policy = JSONImportPolicy()
         import_policy.load_policy( import_policy_file )
         
-        print "Importing", os.path.basename(filename)
+        print("Importing", os.path.basename(filename))
         importer = UnboundBibleTextImporter(import_policy=import_policy.should_be_processed)
         importer.import_file(filename)
         
-        print os.path.basename(filename), "successfully imported"
+        print(os.path.basename(filename), "successfully imported")

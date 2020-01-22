@@ -1,4 +1,11 @@
-django>=1.11
+django==1.11.27
 django-grappelli==2.10.4
 lxml
 Genshi
+six
+wand
+bs4
+Whoosh
+requests
+wikipedia
+WSGIserver

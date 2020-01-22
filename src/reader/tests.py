@@ -92,9 +92,9 @@ def time_function_call(fx):
         
         diff = time.time() - t
         
-        diff_string = str( round( diff, 6) ) + " seconds"
+        diff_string = str(round(diff, 6)) + " seconds"
         
-        print "%s, duration=%s" % (fx.__name__, diff_string)
+        print("%s, duration=%s" % (fx.__name__, diff_string))
         
         return r
     return wrapper
@@ -116,7 +116,7 @@ class TestReader(TestCase):
         f = None
         
         try:
-            f = open( self.get_test_resource_file_name(file_name), 'r')
+            f = open(self.get_test_resource_file_name(file_name), 'r')
             return f.read()
         finally:
             if f is not None:
@@ -125,25 +125,25 @@ class TestReader(TestCase):
 class TestGreekLanguageTools(TestReader):
     
     def test_strip_accents(self):
-        self.assertEqual( language_tools.normalize_unicode( language_tools.strip_accents( u"θεός" )), u"θεος")
+        self.assertEqual(language_tools.normalize_unicode(language_tools.strip_accents("θεός")), "θεος")
         
     def test_strip_accents_str(self):
-        self.assertEqual( language_tools.normalize_unicode( u"θεός" ), u"θεός")
+        self.assertEqual(language_tools.normalize_unicode("θεός"), "θεός")
     
     def test_beta_code_conversion(self):
-        self.assertEqual( Greek.beta_code_str_to_unicode("H)/LIOS"), u"ἤλιος")
+        self.assertEqual(Greek.beta_code_str_to_unicode("H)/LIOS"), "ἤλιος")
 
     def test_beta_code_conversion_unicode(self):
-        self.assertEqual( Greek.beta_code_to_unicode(u"H)/LIOS"), u"ἤλιος")
+        self.assertEqual(Greek.beta_code_to_unicode("H)/LIOS"), "ἤλιος")
         
     def test_beta_code_conversion_sigmas(self):
-        self.assertEqual( Greek.beta_code_to_unicode(u"O( KO/SMOS"), u"ὁ κόσμος")
+        self.assertEqual(Greek.beta_code_to_unicode("O( KO/SMOS"), "ὁ κόσμος")
         
     def test_unicode_conversion_to_beta_code(self):
-        self.assertEqual( Greek.unicode_to_beta_code(u"ἤλιος"), u"H)/LIOS")
+        self.assertEqual(Greek.unicode_to_beta_code("ἤλιος"), "H)/LIOS")
         
     def test_unicode_conversion_to_beta_code_str(self):
-        self.assertEqual( Greek.unicode_to_beta_code_str(u"ἤλιος"), "H)/LIOS")
+        self.assertEqual(Greek.unicode_to_beta_code_str("ἤλιος"), "H)/LIOS")
         
     def test_section_of_text(self):
         
@@ -156,7 +156,7 @@ th\\n xw/ran h(\\n nu=n e)/xomen katw/|khse &ast; pentakisxili/wn e)tw=n a)riqmo
 i(stori/an perie/xousan e)k tw=n par' h(mi=n i(erw=n bi/blwn dia\\ th=s *(ellhnikh=s
 fwnh=s sunegraya/mhn."""
 
-        expected_output = u"""Ἱκανῶς μὲν ὑπολαμβάνω καὶ διὰ τῆς περὶ τὴν ἀρχαιολογίαν 
+        expected_output = """Ἱκανῶς μὲν ὑπολαμβάνω καὶ διὰ τῆς περὶ τὴν ἀρχαιολογίαν 
 συγγραφῆς, κράτιστε ἀνδρῶν Ἐπαφρόδιτε, τοῖς ἐντευξομένοις αὐτῇ 
 πεποιηκέναι φανερὸν περὶ τοῦ γένους ἡμῶν τῶν Ἰουδαίων, ὅτι καὶ 
 παλαιότατόν ἐστι καὶ τὴν πρώτην ὑπόστασιν ἔσχεν ἰδίαν, καὶ πῶς 
@@ -171,10 +171,10 @@ fwnh=s sunegraya/mhn."""
     def test_various_beta_code_conversions(self):
         
         TEST_BETA_CODES = [
-                           ('KAI\\', u'καὶ'),
-                           ('KAT)', u'κατʼ'),
+                           ('KAI\\', 'καὶ'),
+                           ('KAT)', 'κατʼ'),
                            ('*KAI E)GE/NETO E)N TW=| TETA/RTOW', None), #Και ἐγένετο ἐν τῷ τετάρτῳ
-                           ('STH/SAI', u'στήσαι'),
+                           ('STH/SAI', 'στήσαι'),
                            
                            # Alternate versions of the acute
                            ('A/E/H/O/I/U/W/', None) #άέήόίύώ
@@ -184,24 +184,24 @@ fwnh=s sunegraya/mhn."""
             greek_actual = Greek.beta_code_to_unicode(beta_original)
             
             if greek_expected is not None:
-                self.assertEqual( greek_expected, greek_actual)
+                self.assertEqual(greek_expected, greek_actual)
             
             beta_actual = Greek.unicode_to_beta_code_str(greek_actual)
             
-            self.assertEqual( beta_original, beta_actual )
+            self.assertEqual(beta_original, beta_actual)
             
     def test_fix_final_sigma(self):
-        self.assertEqual(Greek.fix_final_sigma(u"κόσμοσ"), u"κόσμος")
+        self.assertEqual(Greek.fix_final_sigma("κόσμοσ"), "κόσμος")
             
 class TestImportContext(TestCase):
         
     def test_division_level(self):
         context = TextImporter.ImportContext("TestCase")
         
-        self.assertEquals( context.get_division_level_count(2), 0 )
+        self.assertEquals(context.get_division_level_count(2), 0)
         
         context.increment_division_level(2)
-        self.assertEquals( context.get_division_level_count(2), 1 )
+        self.assertEquals(context.get_division_level_count(2), 1)
 
 class TestBatchImport(TestCase):
     
@@ -292,10 +292,10 @@ class TestBatchImport(TestCase):
         division.save()
         
         for i in range(1,5):
-            verse = Verse( title=str(i), sequence_number=i, division=division)
+            verse = Verse(title=str(i), sequence_number=i, division=division)
             verse.save()
         
-        ImportTransforms.set_verse_title( work, existing_verse_sequence_number=3, existing_verse_title_slug="3", descriptor="Intro")
+        ImportTransforms.set_verse_title(work, existing_verse_sequence_number=3, existing_verse_title_slug="3", descriptor="Intro")
         
         self.assertEquals(Verse.objects.get(work=work, sequence_number=3).descriptor, "Intro")
     """
@@ -313,7 +313,7 @@ class TestBatchImport(TestCase):
             division = Division(title=str(i), original_title=str(i), sequence_number=i+100, work=work, level=2, parent_division=parent_division, type="Chapter", descriptor="1", readable_unit=False)
             division.save()
         
-        ImportTransforms.set_division_readable( work, sequence_number=110, title_slug="10", type="Chapter", descriptor="1", level=2)
+        ImportTransforms.set_division_readable(work, sequence_number=110, title_slug="10", type="Chapter", descriptor="1", level=2)
         
         self.assertEquals(Division.objects.get(work=work, sequence_number=110).readable_unit, True)
         
@@ -330,7 +330,7 @@ class TestImport(TestCase):
         self.importer.make_author(name)
         self.importer.make_author(name)
         
-        self.assertEquals( Author.objects.filter(name=name).count(), 1)
+        self.assertEquals(Author.objects.filter(name=name).count(), 1)
         
     def test_copy_node(self):
         
@@ -382,7 +382,7 @@ class TestShortcuts(TestReader):
         for i in range(0, 10000):
             self.test_process_text()
         
-        print "Completed", time.time() - start
+        print("Completed", time.time() - start)
     
     def test_process_text(self):
         
@@ -415,17 +415,17 @@ class TestShortcuts(TestReader):
         
     def test_process_custom_transformation(self):
         
-        def node_transformation_fx( tag, attrs, parent, document ):
+        def node_transformation_fx(tag, attrs, parent, document):
             
             if tag == "num":
                 
-                new_node = document.createElement( "strong" )
+                new_node = document.createElement("strong")
                 
                 i = 0
                 for name, value in attrs:
                     
                     i = i + 1
-                    new_node.setAttribute( "attr" + str(i), name + "_" + value)
+                    new_node.setAttribute("attr" + str(i), name + "_" + value)
                     
                 return new_node
         
@@ -461,13 +461,13 @@ class TestShortcuts(TestReader):
     def test_process_text_multi_language_transforms(self):
         
         original_content = r"""<verse>koti/nois<note anchored="yes" place="unspecified" resp="ed">
-                  <foreign lang="greek">koti/nois</foreign> MSS.; <foreign lang="greek">kolwnoi=s</foreign>(hills' Bekker, adopting the correction of Coraës.</note>  kai\ pa/gois</verse>""".decode("utf-8")
+                  <foreign lang="greek">koti/nois</foreign> MSS.; <foreign lang="greek">kolwnoi=s</foreign>(hills' Bekker, adopting the correction of Coraës.</note>  kai\ pa/gois</verse>"""
 
         language = "Greek"
-        
+
         actual_result = perseus_xml_to_html5(original_content, language=language)
-        
-        self.assertTrue( '<span class="word">κοτίνοις</span>' in actual_result )
+
+        self.assertIn('<span class="word">κοτίνοις</span>', actual_result)
         
 class TestLineNumber(TestCase):
     
@@ -475,17 +475,17 @@ class TestLineNumber(TestCase):
         line_number = LineNumber()
         line_number.set("354a")
         
-        self.assertEquals( line_number.post, "a" )
-        self.assertEquals( line_number.number, 354 )
-        self.assertEquals( str(line_number), "354a" )
+        self.assertEquals(line_number.post, "a")
+        self.assertEquals(line_number.number, 354)
+        self.assertEquals(str(line_number), "354a")
     
     def test_increment(self):
         line_number = LineNumber()
         line_number.set("354a")
         line_number.increment()
         
-        self.assertEquals( line_number.number, 355 )
-        self.assertEquals( str(line_number), "355a" )
+        self.assertEquals(line_number.number, 355)
+        self.assertEquals(str(line_number), "355a")
         
     def test_copy(self):
         line_number = LineNumber()
@@ -495,14 +495,14 @@ class TestLineNumber(TestCase):
         
         line_number.pre = "_"
         
-        self.assertEquals( str(new_line_number), "354a" )
+        self.assertEquals(str(new_line_number), "354a")
         
     def test_str(self):
         
         line_number = LineNumber()
         line_number.set("354a")
         
-        self.assertEquals( str(line_number), "354a" )
+        self.assertEquals(str(line_number), "354a")
         
 class TestPerseusBatchImporter(TestReader):
     
@@ -510,33 +510,33 @@ class TestPerseusBatchImporter(TestReader):
         
         wc_re = wildcard_to_re("*tree*")
         
-        self.assertTrue( wc_re.match("pine tree") is not None )
-        self.assertTrue( wc_re.match("tree bark") is not None )
-        self.assertTrue( wc_re.match("pine tree bark") is not None )
+        self.assertTrue(wc_re.match("pine tree") is not None)
+        self.assertTrue(wc_re.match("tree bark") is not None)
+        self.assertTrue(wc_re.match("pine tree bark") is not None)
         
-        self.assertTrue( wc_re.match("oak") is None )
-        self.assertTrue( wc_re.match("oakland") is None )
-        self.assertTrue( wc_re.match("bark") is None )
+        self.assertTrue(wc_re.match("oak") is None)
+        self.assertTrue(wc_re.match("oakland") is None)
+        self.assertTrue(wc_re.match("bark") is None)
         
     def test_WorkDescriptor(self):
         
         desc = WorkDescriptor(file_name="*gk.xml")
         
-        self.assertFalse( desc.rejects( desc.file_name, "/Users/Luke/Downloads/test_gk.xml" ) )
-        self.assertTrue( desc.rejects( desc.file_name, "/Users/Luke/Downloads/test_eng.xml" ) )
+        self.assertFalse(desc.rejects(desc.file_name, "/Users/Luke/Downloads/test_gk.xml"))
+        self.assertTrue(desc.rejects(desc.file_name, "/Users/Luke/Downloads/test_eng.xml"))
     
     def test_match_array(self):
         
         wd = WorkDescriptor(author="Lucian", title=["Abdicatus", "Anacharsis", "Bis accusatus sive tribunalia", "Cataplus"])
         
-        self.assertTrue( wd.matches( ["Abdicatus", "Anacharsis", "Bis accusatus sive tribunalia", "Cataplus"], "Anacharsis" ) )
-        self.assertTrue( wd.should_be_processed("Lucian", "Anacharsis", "52.gk-xml", "Greek", None) )
+        self.assertTrue(wd.matches(["Abdicatus", "Anacharsis", "Bis accusatus sive tribunalia", "Cataplus"], "Anacharsis"))
+        self.assertTrue(wd.should_be_processed("Lucian", "Anacharsis", "52.gk-xml", "Greek", None))
         
     def test_match_editor(self):
         
         wd = WorkDescriptor(editor="Herbert Weir Smyth, Ph.D.", title="Eumenides")
         
-        self.assertTrue( wd.should_be_processed("Aeschylus", "Eumenides", "52.gk-xml", "Greek", "Herbert Weir Smyth, Ph.D.") )
+        self.assertTrue(wd.should_be_processed("Aeschylus", "Eumenides", "52.gk-xml", "Greek", "Herbert Weir Smyth, Ph.D."))
     
     def test_import(self):
         
@@ -545,11 +545,11 @@ class TestPerseusBatchImporter(TestReader):
         work_descriptor = WorkDescriptor(title="Eumenides")
         
         import_policy = ImportPolicy()
-        import_policy.descriptors.append( work_descriptor )
+        import_policy.descriptors.append(work_descriptor)
         
-        importer = PerseusBatchImporter( perseus_directory=directory, book_selection_policy=import_policy.should_be_processed )
+        importer = PerseusBatchImporter(perseus_directory=directory, book_selection_policy=import_policy.should_be_processed)
         
-        self.assertEqual( importer.do_import(), 1 )
+        self.assertEqual(importer.do_import(), 1)
         
     def test_import_editor_filter(self):
         
@@ -558,11 +558,11 @@ class TestPerseusBatchImporter(TestReader):
         work_descriptor = WorkDescriptor(title="Eumenides", editor="Herbert Weir Smyth, Ph.D.")
         
         import_policy = ImportPolicy()
-        import_policy.descriptors.append( work_descriptor )
+        import_policy.descriptors.append(work_descriptor)
         
-        importer = PerseusBatchImporter( perseus_directory=directory, book_selection_policy=import_policy.should_be_processed )
+        importer = PerseusBatchImporter(perseus_directory=directory, book_selection_policy=import_policy.should_be_processed)
         
-        self.assertEqual( importer.do_import(), 1 )
+        self.assertEqual(importer.do_import(), 1)
         
         
     def test_import_skip_document(self):
@@ -572,28 +572,28 @@ class TestPerseusBatchImporter(TestReader):
         # Make sure the regular descriptor matches
         work_descriptor = WorkDescriptor(author="Plutarch", title="De primo frigido", editor=["Harold Cherniss", "William C. Helmbold"])
         
-        self.assertTrue( work_descriptor.should_be_processed("Plutarch", "De primo frigido", "plut.127_loeb_eng.xml", "Greek", ["Harold Cherniss", "William C. Helmbold"]) )
+        self.assertTrue(work_descriptor.should_be_processed("Plutarch", "De primo frigido", "plut.127_loeb_eng.xml", "Greek", ["Harold Cherniss", "William C. Helmbold"]))
         
         # Make sure the dropping action matches
-        work_descriptor2 = WorkDescriptor(author="Plutarch", title="De primo frigido", editor=["Harold Cherniss", "William C. Helmbold"], should_import=False )
+        work_descriptor2 = WorkDescriptor(author="Plutarch", title="De primo frigido", editor=["Harold Cherniss", "William C. Helmbold"], should_import=False)
         
-        self.assertFalse( work_descriptor2.should_be_processed("Plutarch", "De primo frigido", "plut.127_loeb_eng.xml", "Greek", ["Harold Cherniss", "William C. Helmbold"]) )
+        self.assertFalse(work_descriptor2.should_be_processed("Plutarch", "De primo frigido", "plut.127_loeb_eng.xml", "Greek", ["Harold Cherniss", "William C. Helmbold"]))
         
         # Now run the imports and make sure the correct action occurs when allowing importation
         import_policy = ImportPolicy()
-        import_policy.descriptors.append( work_descriptor )
+        import_policy.descriptors.append(work_descriptor)
         
-        importer = PerseusBatchImporter( perseus_directory=directory, book_selection_policy=import_policy.should_be_processed )
+        importer = PerseusBatchImporter(perseus_directory=directory, book_selection_policy=import_policy.should_be_processed)
         
-        self.assertEqual( importer.do_import(), 1 )
+        self.assertEqual(importer.do_import(), 1)
         
         # Now run the imports and make sure the correct action occurs when dis-allowing importation
         import_policy2 = ImportPolicy()
-        import_policy2.descriptors.append( work_descriptor2 )
+        import_policy2.descriptors.append(work_descriptor2)
         
-        importer = PerseusBatchImporter( perseus_directory=directory, book_selection_policy=import_policy2.should_be_processed )
+        importer = PerseusBatchImporter(perseus_directory=directory, book_selection_policy=import_policy2.should_be_processed)
         
-        self.assertEqual( importer.do_import(), 0 )
+        self.assertEqual(importer.do_import(), 0)
         
     def test_delete_unnecessary_divisions(self):
         
@@ -605,11 +605,11 @@ class TestPerseusBatchImporter(TestReader):
         book_doc = parseString(book_xml)
         work = importer.import_xml_document(book_doc)
         
-        self.assertEqual( Division.objects.filter(work=work).count(), 4)
+        self.assertEqual(Division.objects.filter(work=work).count(), 4)
         
-        self.assertEqual( ImportTransforms.delete_unnecessary_divisions(work=work), 1)
+        self.assertEqual(ImportTransforms.delete_unnecessary_divisions(work=work), 1)
         
-        self.assertEqual( Division.objects.filter(work=work).count(), 3)
+        self.assertEqual(Division.objects.filter(work=work).count(), 3)
         
     def test_delete_divisions_by_title_slug(self):
         
@@ -621,11 +621,11 @@ class TestPerseusBatchImporter(TestReader):
         book_doc = parseString(book_xml)
         work = importer.import_xml_document(book_doc)
         
-        self.assertEqual( Division.objects.filter(work=work).count(), 4)
+        self.assertEqual(Division.objects.filter(work=work).count(), 4)
         
-        self.assertEqual( ImportTransforms.delete_divisions_by_title_slug(work=work, title_slugs=["none"]), 1)
+        self.assertEqual(ImportTransforms.delete_divisions_by_title_slug(work=work, title_slugs=["none"]), 1)
         
-        self.assertEqual( Division.objects.filter(work=work).count(), 3)
+        self.assertEqual(Division.objects.filter(work=work).count(), 3)
         
 class TestPerseusImport(TestReader):
     
@@ -643,7 +643,7 @@ class TestPerseusImport(TestReader):
         book_doc = parseString(book_xml)
         self.importer.import_xml_document(book_doc)
         
-        self.assertEquals( self.importer.get_title_slug("josephi-vita"), ("josephi-vita-1" , True) )
+        self.assertEquals(self.importer.get_title_slug("josephi-vita"), ("josephi-vita-1" , True))
     
     def test_bibl_struct_import(self):
         
@@ -848,7 +848,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         book_xml = self.load_test_resource('aristot.vir_gk.xml')
         book_doc = parseString(book_xml)
-        self.assertEquals( PerseusTextImporter.get_author(book_doc), "Aristotle")
+        self.assertEquals(PerseusTextImporter.get_author(book_doc), "Aristotle")
         
     def test_load_book_descriptorless_milestone(self):
         # See issue #440 (http://lukemurphey.net/issues/440)
@@ -869,8 +869,8 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         divisions = Division.objects.filter(work=self.importer.work).order_by("sequence_number")
         
         self.assertEqual(divisions[0].title, None)
-        self.assertEqual(divisions[0].descriptor, u"1")
-        self.assertEqual(divisions[1].title, u"Καλλίνου")
+        self.assertEqual(divisions[0].descriptor, "1")
+        self.assertEqual(divisions[1].title, "Καλλίνου")
         
     def test_get_author_no_bibl_struct(self):
         
@@ -947,7 +947,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         line_number, _ = self.importer.get_line_count(verse_doc)
         
-        self.assertEquals( str(line_number), "35")
+        self.assertEquals(str(line_number), "35")
         
     def test_get_line_count_trailing_line(self):
         
@@ -986,7 +986,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         line_number, _ = self.importer.get_line_count(verse_doc)
         
-        self.assertEquals( str(line_number), "36")
+        self.assertEquals(str(line_number), "36")
     
     def test_load_book_with_empty_first_milestone(self):
         file_name = self.get_test_resource_file_name('52_gk.xml')
@@ -1033,21 +1033,21 @@ ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/
         
         divisions = Division.objects.filter(work=work).order_by("sequence_number")
         
-        self.assertEquals( divisions.count(), 10)
+        self.assertEquals(divisions.count(), 10)
         
-        #self.assertEquals( divisions[1].title, "lines 1-32")
+        #self.assertEquals(divisions[1].title, "lines 1-32")
         
-        self.assertEquals( divisions[1].title, "lines 1-96")
-        self.assertEquals( divisions[1].title_slug, "lines-1-96")
-        self.assertEquals( divisions[1].descriptor, "1")
+        self.assertEquals(divisions[1].title, "lines 1-96")
+        self.assertEquals(divisions[1].title_slug, "lines-1-96")
+        self.assertEquals(divisions[1].descriptor, "1")
         
         
-        self.assertEquals( divisions[8].title, "Scroll 2")
-        self.assertEquals( divisions[8].descriptor, "2")
+        self.assertEquals(divisions[8].title, "Scroll 2")
+        self.assertEquals(divisions[8].descriptor, "2")
         
-        self.assertEquals( divisions[9].title, "lines 1-15")
-        self.assertEquals( divisions[9].title_slug, "lines-1-15")
-        self.assertEquals( divisions[9].descriptor, "1")
+        self.assertEquals(divisions[9].title, "lines 1-15")
+        self.assertEquals(divisions[9].title_slug, "lines-1-15")
+        self.assertEquals(divisions[9].descriptor, "1")
         
     def test_load_book_with_line_numbers_per_division(self):
         
@@ -1063,34 +1063,34 @@ ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/
         
         divisions = Division.objects.filter(work=work).order_by("sequence_number")
         
-        self.assertEquals( divisions.count(), 5)
+        self.assertEquals(divisions.count(), 5)
         
         # Make sure that the first division has the title declared in the head node
-        self.assertEquals( divisions[0].title, "Scroll 1")
-        self.assertEquals( divisions[0].descriptor, "1")
+        self.assertEquals(divisions[0].title, "Scroll 1")
+        self.assertEquals(divisions[0].descriptor, "1")
         
         # Check the second division
-        self.assertEquals( divisions[1].parent_division.id, divisions[0].id) # Make sure that the second is under the first node
-        self.assertEquals( divisions[1].title, "lines 1-39")
-        self.assertEquals( divisions[1].title_slug, "lines-1-39")
-        self.assertEquals( divisions[1].descriptor, "1")
+        self.assertEquals(divisions[1].parent_division.id, divisions[0].id) # Make sure that the second is under the first node
+        self.assertEquals(divisions[1].title, "lines 1-39")
+        self.assertEquals(divisions[1].title_slug, "lines-1-39")
+        self.assertEquals(divisions[1].descriptor, "1")
         
         # Check the third division
-        self.assertEquals( divisions[2].parent_division.id, divisions[0].id)
-        self.assertEquals( divisions[2].title, "lines 40-45")
-        self.assertEquals( divisions[2].title_slug, "lines-40-45")
-        self.assertEquals( divisions[2].descriptor, "40")
+        self.assertEquals(divisions[2].parent_division.id, divisions[0].id)
+        self.assertEquals(divisions[2].title, "lines 40-45")
+        self.assertEquals(divisions[2].title_slug, "lines-40-45")
+        self.assertEquals(divisions[2].descriptor, "40")
         
         # Check the fourth division
-        self.assertEquals( divisions[3].parent_division, None)
-        self.assertEquals( divisions[3].title, "Scroll 2")
-        self.assertEquals( divisions[3].descriptor, "2")
+        self.assertEquals(divisions[3].parent_division, None)
+        self.assertEquals(divisions[3].title, "Scroll 2")
+        self.assertEquals(divisions[3].descriptor, "2")
         
         # Check the fifth division
-        self.assertEquals( divisions[4].parent_division.id, divisions[3].id)
-        self.assertEquals( divisions[4].title, "lines 1-15")
-        self.assertEquals( divisions[4].title_slug, "lines-1-15")
-        self.assertEquals( divisions[4].descriptor, "1")
+        self.assertEquals(divisions[4].parent_division.id, divisions[3].id)
+        self.assertEquals(divisions[4].title, "lines 1-15")
+        self.assertEquals(divisions[4].title_slug, "lines-1-15")
+        self.assertEquals(divisions[4].descriptor, "1")
         
         
         
@@ -1108,8 +1108,8 @@ ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/
         
         divisions = Division.objects.filter(work=work).order_by("sequence_number")
         
-        self.assertEquals( str(divisions[0]), "Book 1")
-        self.assertEquals( str(divisions[1]), "lines 1-32")
+        self.assertEquals(str(divisions[0]), "Book 1")
+        self.assertEquals(str(divisions[1]), "lines 1-32")
     
     def test_load_book(self):
         
@@ -1126,11 +1126,11 @@ ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/
         verses = Verse.objects.filter(division=divisions[0])
         
         # Make sure the importer is smart enougn not to make duplicate authors
-        self.assertEquals( Author.objects.filter(name="Flavius Josephus").count(), 1)
-        self.assertEquals( divisions.count(), 1)
-        self.assertEquals( verses.count(), 7)
-        self.assertEquals( verses[0].indicator, "1")
-        self.assertEquals( verses[1].indicator, "2")
+        self.assertEquals(Author.objects.filter(name="Flavius Josephus").count(), 1)
+        self.assertEquals(divisions.count(), 1)
+        self.assertEquals(verses.count(), 7)
+        self.assertEquals(verses[0].indicator, "1")
+        self.assertEquals(verses[1].indicator, "2")
         
         # Make sure we slugified the title accordingly
         self.assertEquals(self.importer.work.title_slug, "josephi-vita")
@@ -1141,7 +1141,7 @@ katabebhko/s. w(/sper d' h( par' e(ka/stois a)/llh ti/s e)stin eu)genei/as
 u(po/qesis, ou(/tws par' h(mi=n h( th=s i(erwsu/nhs metousi/a tekmh/rio/n
 e)stin ge/nous lampro/thtos. </p></verse>"""
         
-        self.assertEquals( verses[0].original_content, expected_content)
+        self.assertEquals(verses[0].original_content, expected_content)
     
     def test_load_book_division_name_from_type_field(self):
         
@@ -1157,8 +1157,8 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         divisions = Division.objects.filter(work=self.importer.work)[:1]
         
         # Make sure the division title was set correctly
-        self.assertEquals( divisions[0].title, "Introduction")
-        self.assertEquals( divisions[0].original_title, "intro")
+        self.assertEquals(divisions[0].title, "Introduction")
+        self.assertEquals(divisions[0].original_title, "intro")
     
     def test_load_book_multiple_texts(self):
         """
@@ -1179,13 +1179,13 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         # Make sure no divisions are marked readable if they have no verses
         for division in divisions:
             if division.readable_unit:
-                self.assertGreater( Verse.objects.filter(division=division).count(), 0)
+                self.assertGreater(Verse.objects.filter(division=division).count(), 0)
         
-        self.assertEquals( divisions[0].descriptor, "Library")
+        self.assertEquals(divisions[0].descriptor, "Library")
         
         # 35: 28 sections + 2 text nodes + 3 chapters + 2 div1
-        self.assertEquals( divisions.count(), 35)
-        self.assertEquals( verses.count(), 28)
+        self.assertEquals(divisions.count(), 35)
+        self.assertEquals(verses.count(), 28)
         
     def test_load_book_texts_with_head(self):
         
@@ -1198,12 +1198,12 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         divisions = Division.objects.filter(work=self.importer.work)
         verses = Verse.objects.filter(division__work=self.importer.work)
         
-        self.assertEquals( divisions[0].descriptor, "Reg.")
-        self.assertEquals( divisions[0].original_title, "*e*k *t*h*s *b*a*s*i*l*i*k*h*s.")
+        self.assertEquals(divisions[0].descriptor, "Reg.")
+        self.assertEquals(divisions[0].original_title, "*e*k *t*h*s *b*a*s*i*l*i*k*h*s.")
         
         # 2: 1 text nodes, 0 chapters, 1 div1
-        self.assertEquals( divisions.count(), 2)
-        self.assertEquals( verses.count(), 2)
+        self.assertEquals(divisions.count(), 2)
+        self.assertEquals(verses.count(), 2)
     
     def test_load_book_editors(self):
         
@@ -1216,11 +1216,11 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         book_doc = parseString(book_xml)
         self.importer.import_xml_document(book_doc)
         
-        self.assertEquals( Author.objects.filter(name="Fenton John Anthony Hort").count(), 1)
+        self.assertEquals(Author.objects.filter(name="Fenton John Anthony Hort").count(), 1)
         
-        self.assertEquals( self.importer.work.editors.all().count(), 2 )
-        self.assertEquals( self.importer.work.editors.filter(name="Brooke Foss Westcott").count(), 1 )
-        self.assertEquals( self.importer.work.editors.filter(name="Fenton John Anthony Hort").count(), 1 )
+        self.assertEquals(self.importer.work.editors.all().count(), 2)
+        self.assertEquals(self.importer.work.editors.filter(name="Brooke Foss Westcott").count(), 1)
+        self.assertEquals(self.importer.work.editors.filter(name="Fenton John Anthony Hort").count(), 1)
     
     def test_load_book_alternate_state_set(self):
         self.importer.state_set = 1  #Using Whiston sections as opposed to the defaults
@@ -1230,9 +1230,9 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals( divisions.count(), 2)
-        self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 1)
-        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
+        self.assertEquals(divisions.count(), 2)
+        self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 1)
+        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 1)
         
     def test_load_book_division_descriptors(self):
         self.importer.state_set = 1
@@ -1242,8 +1242,8 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals( divisions.count(), 2)
-        self.assertEquals( divisions[0].descriptor, "1")
+        self.assertEquals(divisions.count(), 2)
+        self.assertEquals(divisions[0].descriptor, "1")
         
     def test_load_book_line_count_division_titles(self):
         self.importer.state_set = 1
@@ -1254,10 +1254,10 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        #self.assertEquals( divisions.count(), 3)
-        #self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 1)
-        self.assertEquals( divisions[1].title, "lines 1-33")
-        self.assertEquals( divisions[2].title, "lines 34-38")
+        #self.assertEquals(divisions.count(), 3)
+        #self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 1)
+        self.assertEquals(divisions[1].title, "lines 1-33")
+        self.assertEquals(divisions[2].title, "lines 34-38")
         
     def test_load_book_empty_sub_divisions(self):
         self.importer.state_set = 0
@@ -1269,10 +1269,10 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals( divisions.count(), 6) # Was 3 before cards are always treated as chunks
-        self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 0)
-        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
-        self.assertEquals( Verse.objects.filter(division=divisions[2]).count(), 0)
+        self.assertEquals(divisions.count(), 6) # Was 3 before cards are always treated as chunks
+        self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 0)
+        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 1)
+        self.assertEquals(Verse.objects.filter(division=divisions[2]).count(), 0)
     
     def test_load_book_no_chunks(self):
         # See bug #446, http://lukemurphey.net/issues/446
@@ -1285,11 +1285,11 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals( divisions[0].original_title, "*k*a*t*a *m*a*q*q*a*i*o*n")
+        self.assertEquals(divisions[0].original_title, "*k*a*t*a *m*a*q*q*a*i*o*n")
         
-        self.assertEquals( divisions.count(), 2)
-        self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 0)
-        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 4)
+        self.assertEquals(divisions.count(), 2)
+        self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 0)
+        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 4)
         
     def test_load_book_xml_processing_instruction(self):
         # See bug #557, http://lukemurphey.net/issues/557
@@ -1311,11 +1311,11 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals( divisions[0].original_title, "*Prooi/mion")
+        self.assertEquals(divisions[0].original_title, "*Prooi/mion")
         
-        self.assertEquals( divisions.count(), 2)
-        self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 5)
-        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 5)
+        self.assertEquals(divisions.count(), 2)
+        self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 5)
+        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 5)
         
     def test_load_book_no_verses2(self):
         # See bug #446, http://lukemurphey.net/issues/446
@@ -1329,9 +1329,9 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals( divisions.count(), 2)
-        self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 0)
-        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
+        self.assertEquals(divisions.count(), 2)
+        self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 0)
+        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 1)
     
     def test_load_book_merged_state_set(self):
         
@@ -1342,9 +1342,9 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals( divisions.count(), 2)
-        self.assertEquals( Verse.objects.filter(division=divisions[0]).count(), 6)
-        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 1)
+        self.assertEquals(divisions.count(), 2)
+        self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 6)
+        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 1)
     
     def test_load_book_ignore_divs_not_in_refsdecl(self):
         
@@ -1353,7 +1353,7 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         file_name = self.get_test_resource_file_name('1_gk.xml')
         self.importer.import_file(file_name)
         
-        divisions = Division.objects.filter( work=self.importer.work )
+        divisions = Division.objects.filter(work=self.importer.work)
         
         # Make sure that the div3 nodes were not treated as chunks
         self.assertEquals(len(divisions), 3) # Would be 5 otherwise
@@ -1368,21 +1368,21 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work).distinct()
         
-        self.assertEquals( divisions[1].descriptor, "pr.")
-        self.assertEquals( Verse.objects.filter(division__work=work).count(), 5)
-        self.assertEquals( Verse.objects.filter(division=divisions[1]).count(), 2)
+        self.assertEquals(divisions[1].descriptor, "pr.")
+        self.assertEquals(Verse.objects.filter(division__work=work).count(), 5)
+        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 2)
         
-        self.assertEquals( divisions.count(), 5)
-        self.assertEquals( divisions[0].type, "Book")
-        self.assertEquals( divisions[0].level, 1)
+        self.assertEquals(divisions.count(), 5)
+        self.assertEquals(divisions[0].type, "Book")
+        self.assertEquals(divisions[0].level, 1)
         
-        self.assertEquals( divisions[1].type, "Whiston chapter")
-        self.assertEquals( divisions[1].level, 2)
+        self.assertEquals(divisions[1].type, "Whiston chapter")
+        self.assertEquals(divisions[1].level, 2)
         
-        self.assertEquals( divisions[0].original_title, r"""*ta/de e)/nestin e)n th=| prw/th| tw=n *)iwsh/pou i(storiw=n
-th=s *)ioudai+kh=s a)rxaiologi/as.""" )
-        self.assertEquals( divisions[2].original_title, r"""*ta/de e)/nestin e)n th=|  b  tw=n *)iwsh/pou i(storiw=n th=s
-*)ioudai+kh=s a)rxaiologi/as.""" )
+        self.assertEquals(divisions[0].original_title, r"""*ta/de e)/nestin e)n th=| prw/th| tw=n *)iwsh/pou i(storiw=n
+th=s *)ioudai+kh=s a)rxaiologi/as.""")
+        self.assertEquals(divisions[2].original_title, r"""*ta/de e)/nestin e)n th=|  b  tw=n *)iwsh/pou i(storiw=n th=s
+*)ioudai+kh=s a)rxaiologi/as.""")
         
         # Make sure that the text from the TOC did not get included
         expected_content = r"""<?xml version="1.0" ?><verse><milestone n="1" unit="section"/><p>*meta\ de\ th\n *)isa/kou teleuth\n oi( pai=des au)tou= merisa/menoi 
@@ -1403,7 +1403,7 @@ th\n xw/ran ou(/tws proshgo/reusen: *(/ellhnes ga\r au)th\n e)pi\ to\
 semno/teron *)idoumai/an w)no/masan.
 </p></verse>"""
         
-        self.assertEquals( Verse.objects.filter(division=divisions[3])[0].original_content, expected_content)
+        self.assertEquals(Verse.objects.filter(division=divisions[3])[0].original_content, expected_content)
         
     
     def test_load_book_break_sections(self):
@@ -1478,9 +1478,9 @@ semno/teron *)idoumai/an w)no/masan.
         </teiHeader>
         """
         
-        tei_node_portion_doc = parseString( tei_node_portion_xml )
+        tei_node_portion_doc = parseString(tei_node_portion_xml)
         
-        self.assertTrue( PerseusTextImporter.use_line_numbers_for_division_titles(tei_node_portion_doc) )
+        self.assertTrue(PerseusTextImporter.use_line_numbers_for_division_titles(tei_node_portion_doc))
         
         
     def test_xml_dont_use_line_numbers(self):
@@ -1495,9 +1495,9 @@ semno/teron *)idoumai/an w)no/masan.
         </teiHeader>
         """
         
-        tei_node_portion_doc = parseString( tei_node_portion_xml )
+        tei_node_portion_doc = parseString(tei_node_portion_xml)
         
-        self.assertFalse( PerseusTextImporter.use_line_numbers_for_division_titles(tei_node_portion_doc) )
+        self.assertFalse(PerseusTextImporter.use_line_numbers_for_division_titles(tei_node_portion_doc))
         
     def test_line_count_update(self):
         
@@ -1510,11 +1510,11 @@ semno/teron *)idoumai/an w)no/masan.
         </verse>
         """
         
-        verse_doc = parseString( verse_xml )
+        verse_doc = parseString(verse_xml)
         
         line_count, _ = PerseusTextImporter.get_line_count(verse_doc)
         
-        self.assertEquals( str(line_count), "4")
+        self.assertEquals(str(line_count), "4")
         
     def test_line_count_update_with_start(self):
         
@@ -1527,11 +1527,11 @@ semno/teron *)idoumai/an w)no/masan.
         </verse>
         """
         
-        verse_doc = parseString( verse_xml)
+        verse_doc = parseString(verse_xml)
         
         line_count, _ = PerseusTextImporter.get_line_count(verse_doc, count = 5)
         
-        self.assertEquals( str(line_count), "9")
+        self.assertEquals(str(line_count), "9")
         
     def test_line_count_update_with_specifier(self):
         
@@ -1544,11 +1544,11 @@ semno/teron *)idoumai/an w)no/masan.
         </verse>
         """
         
-        verse_doc = parseString( verse_xml)
+        verse_doc = parseString(verse_xml)
         
         line_count, _ = PerseusTextImporter.get_line_count(verse_doc)
         
-        self.assertEquals( str(line_count), "9")
+        self.assertEquals(str(line_count), "9")
         
 class TestPerseusImportLexicon(TestReader):
     """
@@ -1569,23 +1569,22 @@ class TestPerseusImportLexicon(TestReader):
         self.assertEquals(divisions.count(), 15) # Should have two divisions for the letters and 13 for the entries
 
         # Make sure that the division description got converted from beta-code
-        self.assertEquals(divisions[0].title, u'\u0391') # Should be Α
+        self.assertEquals(divisions[0].title, '\u0391') # Should be Α
         self.assertEquals(str(divisions[0]), "Α") # Should be Α
         #self.assertEquals(divisions[0].title_slug, "a") # Should be Α
         self.assertEquals(divisions[0].descriptor, "*a")
-        self.assertEquals(divisions[1].descriptor, u"ἀάατος")
+        self.assertEquals(divisions[1].descriptor, "ἀάατος")
 
-        #self.assertEquals(str(divisions[1]), u"ἀάατος")
+        #self.assertEquals(str(divisions[1]), "ἀάατος")
 
         # Update the descriptors
         ImportTransforms.convert_descriptors_from_beta_code(self.importer.work)
-        self.assertEquals(divisions[0].descriptor, u'\u0391')
+        self.assertEquals(divisions[0].descriptor, '\u0391')
         
         # Ensure that the division has a valid readable string
         # See https://lukemurphey.net/issues/2355
         self.assertEquals(str(divisions[1]), "main ἈΆΑΤΟΣ")
-        self.assertEquals(divisions[1].get_division_description(use_titles=False).encode("utf-8"), '\xce\x91 \xe1\xbc\x88\xe1\xbe\xbb\xce\x91\xce\xa4\xce\x9f\xce\xa3')
-        #self.assertEquals(divisions[1].get_division_description(use_titles=True).decode("utf-8").encode("utf-8"), "ἈΆΑΤΟΣ")
+        self.assertEquals(divisions[1].get_division_description(use_titles=False), 'Α ἈΆΑΤΟΣ')
         
 
     def test_find_entries(self):
@@ -1615,7 +1614,7 @@ class TestDivisionModel(TestReader):
         
         division = Division.objects.filter(work=self.importer.work)[1]
         
-        self.assertEquals( division.get_division_indicators(), [u'Matthew', u'1'] )
+        self.assertEquals(division.get_division_indicators(), ['Matthew', '1'])
         
     def test_get_division_description(self):
         
@@ -1624,15 +1623,15 @@ class TestDivisionModel(TestReader):
         
         # Build a description
         division = Division.objects.filter(work=self.importer.work)[1]
-        self.assertEquals( division.get_division_description(), "Matthew 1" )
+        self.assertEquals(division.get_division_description(), "Matthew 1")
         
         # Build a description using the titles
         division = Division.objects.filter(work=self.importer.work)[1]
-        self.assertEquals( division.get_division_description(use_titles=True), "ΚΑΤΑ ΜΑΘΘΑΙΟΝ chapter 1" )
+        self.assertEquals(division.get_division_description(use_titles=True), "ΚΑΤΑ ΜΑΘΘΑΙΟΝ chapter 1")
         
         # Build a description with a verse
         verse = Verse.objects.filter(division=division).order_by("sequence_number")[0]
-        self.assertEquals( division.get_division_description(verse=verse), "Matthew 1:1" )
+        self.assertEquals(division.get_division_description(verse=verse), "Matthew 1:1")
         
 class TestViews(TestReader):
     
@@ -1642,38 +1641,38 @@ class TestViews(TestReader):
         book_xml = self.load_test_resource('nt_gk.xml')
         work = importer.import_xml_string(book_xml)
         
-        division = get_division( work, 'Matthew', '1')
+        division = get_division(work, 'Matthew', '1')
         
-        self.assertEquals( division.descriptor, '1' )
-        self.assertEquals( division.parent_division.descriptor, 'Matthew' )
+        self.assertEquals(division.descriptor, '1')
+        self.assertEquals(division.parent_division.descriptor, 'Matthew')
     
     def test_convert_to_numbered_division_name(self):
-        self.assertEquals(convert_to_numbered_division_name("I Timothy"), '1 Timothy' )
-        self.assertEquals(convert_to_numbered_division_name("II Timothy"), '2 Timothy' )
-        self.assertEquals(convert_to_numbered_division_name("I Corinthians"), '1 Corinthians' )
-        self.assertEquals(convert_to_numbered_division_name("III John"), '3 John' )
-        self.assertEquals(convert_to_numbered_division_name("VII John"), 'VII John' )
-        self.assertEquals(convert_to_numbered_division_name("Mark"), 'Mark' )
+        self.assertEquals(convert_to_numbered_division_name("I Timothy"), '1 Timothy')
+        self.assertEquals(convert_to_numbered_division_name("II Timothy"), '2 Timothy')
+        self.assertEquals(convert_to_numbered_division_name("I Corinthians"), '1 Corinthians')
+        self.assertEquals(convert_to_numbered_division_name("III John"), '3 John')
+        self.assertEquals(convert_to_numbered_division_name("VII John"), 'VII John')
+        self.assertEquals(convert_to_numbered_division_name("Mark"), 'Mark')
     
     def test_convert_to_lettered_division_name(self):
-        self.assertEquals(convert_to_lettered_division_name("1 Timothy"), 'I Timothy' )
-        self.assertEquals(convert_to_lettered_division_name("2 Timothy"), 'II Timothy' )
-        self.assertEquals(convert_to_lettered_division_name("3 John"), 'III John' )
-        self.assertEquals(convert_to_numbered_division_name("9 John"), '9 John' )
-        self.assertEquals(convert_to_lettered_division_name("Mark"), 'Mark' )
+        self.assertEquals(convert_to_lettered_division_name("1 Timothy"), 'I Timothy')
+        self.assertEquals(convert_to_lettered_division_name("2 Timothy"), 'II Timothy')
+        self.assertEquals(convert_to_lettered_division_name("3 John"), 'III John')
+        self.assertEquals(convert_to_numbered_division_name("9 John"), '9 John')
+        self.assertEquals(convert_to_lettered_division_name("Mark"), 'Mark')
         
     def test_has_lettered_book_number(self):
-        self.assertEquals(has_lettered_book_number("I Timothy"), True )
-        self.assertEquals(has_lettered_book_number("II Timothy"), True )
-        self.assertEquals(has_lettered_book_number("I Corinthians"), True )
-        self.assertEquals(has_lettered_book_number("III John"), True )
-        self.assertEquals(has_lettered_book_number("Mark"), False )
+        self.assertEquals(has_lettered_book_number("I Timothy"), True)
+        self.assertEquals(has_lettered_book_number("II Timothy"), True)
+        self.assertEquals(has_lettered_book_number("I Corinthians"), True)
+        self.assertEquals(has_lettered_book_number("III John"), True)
+        self.assertEquals(has_lettered_book_number("Mark"), False)
     
     def test_has_numbered_book_number(self):
-        self.assertEquals(has_numbered_book_number("1 Timothy"), True )
-        self.assertEquals(has_numbered_book_number("2 Timothy"), True )
-        self.assertEquals(has_numbered_book_number("3 John"), True )
-        self.assertEquals(has_numbered_book_number("Mark"), False )
+        self.assertEquals(has_numbered_book_number("1 Timothy"), True)
+        self.assertEquals(has_numbered_book_number("2 Timothy"), True)
+        self.assertEquals(has_numbered_book_number("3 John"), True)
+        self.assertEquals(has_numbered_book_number("Mark"), False)
         
                 
 class TestDiogenesLemmaImport(TestReader):    
@@ -1700,11 +1699,11 @@ class TestDiogenesLemmaImport(TestReader):
         
         lemmas = DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
         
-        self.assertEquals( len(lemmas), 95)
+        self.assertEquals(len(lemmas), 95)
     
     def test_parse(self):
         
-        f = open( self.get_test_resource_file_name("greek-lemmata.txt"), 'r')
+        f = open(self.get_test_resource_file_name("greek-lemmata.txt"), 'r')
         s = f.readline()
         
         lemma = DiogenesLemmataImporter.parse_lemma(s)
@@ -1723,38 +1722,38 @@ class TestReaderUtils(TestReader):
         
     @time_function_call
     def test_get_word_descriptions(self):
-        descriptions = utils.get_word_descriptions(u"ἅβρυνα", False)
+        descriptions = utils.get_word_descriptions("ἅβρυνα", False)
         
-        self.assertEquals( len(descriptions), 2 )
+        self.assertEquals(len(descriptions), 2)
 
     @time_function_call
     def test_get_lemma(self):
-        lemma = utils.get_lemma(language_tools.greek.Greek.beta_code_to_unicode(u"a(/rpina"))
+        lemma = utils.get_lemma(language_tools.greek.Greek.beta_code_to_unicode("a(/rpina"))
         self.assertNotEquals(lemma, None)
 
-        lemma = utils.get_lemma(u"ἅρπινα", False)
+        lemma = utils.get_lemma("ἅρπινα", False)
         self.assertNotEquals(lemma, None)
 
-        lemma = utils.get_lemma(u"αρπινα", True)
+        lemma = utils.get_lemma("αρπινα", True)
         self.assertNotEquals(lemma, None)
 
     @time_function_call
     def test_get_lemma_no_diacritics(self):
-        lemma = utils.get_lemma(u"αρπινα", True)
+        lemma = utils.get_lemma("αρπινα", True)
         
         self.assertNotEquals(lemma, None)
         
     @time_function_call
     def test_get_all_related_forms(self):
-        forms = utils.get_all_related_forms(u"ἅβραν", False) #a(/bran
+        forms = utils.get_all_related_forms("ἅβραν", False) #a(/bran
         
-        self.assertEquals( len(forms), 6 )
+        self.assertEquals(len(forms), 6)
         
     @time_function_call
     def test_get_all_related_forms_no_diacritics(self):
-        forms = utils.get_all_related_forms(u"αβραν", True) #a(/bran
+        forms = utils.get_all_related_forms("αβραν", True) #a(/bran
         
-        self.assertEquals( len(forms), 6 ) 
+        self.assertEquals(len(forms), 6) 
 
 class TestDiogenesAnalysesImport(TestReader):
     
@@ -1769,7 +1768,7 @@ class TestDiogenesAnalysesImport(TestReader):
         
         # See if the analyses match up with the lemmas
         # Find the word description and make sure the lemma matches
-        descriptions = WordDescription.objects.filter(meaning="favourite slave" )
+        descriptions = WordDescription.objects.filter(meaning="favourite slave")
         
         self.assertEqual(descriptions[0].lemma.reference_number, 537850)
         self.assertEqual(descriptions[0].meaning, "favourite slave")
@@ -1796,7 +1795,7 @@ class TestDiogenesAnalysesImport(TestReader):
         # See if the analyses match up with the lemmas
         # Find the word description and make sure the lemma matches
         
-        descriptions = WordDescription.objects.filter(word_form__form=Greek.beta_code_str_to_unicode("a(/bra") )
+        descriptions = WordDescription.objects.filter(word_form__form=Greek.beta_code_str_to_unicode("a(/bra"))
         
         self.assertEqual(descriptions[0].lemma.reference_number, 537850)
         self.assertEqual(descriptions[0].meaning, "favourite slave")
@@ -1828,9 +1827,9 @@ class TestDiogenesAnalysesImport(TestReader):
         
         description = DiogenesAnalysesImporter.import_analysis_entry("537850 9 a_)ghko/ti,a)ga/w\t \tperf part act masc/neut dat sg (attic doric ionic aeolic)}" , word_form)
         
-        self.assertTrue( description.masculine )
-        self.assertTrue( description.neuter )
-        self.assertFalse( description.feminine )
+        self.assertTrue(description.masculine)
+        self.assertTrue(description.neuter)
+        self.assertFalse(description.feminine)
         
     def test_handle_no_match(self):
         
@@ -1841,20 +1840,20 @@ class TestDiogenesAnalysesImport(TestReader):
         
         #full_entry = "e)pamfie/sasqai\t{31475848 9 e)pamfi+e/sasqai,e)pi/,a)mfi/-e(/zomai\tseat oneself\taor inf mid (attic epic doric ionic aeolic parad_form prose)}[40532015][6238652]{6264700 9 e)pi/-a)mfia/zw\tciothe\taor inf mid}[40532015]{6365952 9 e)pi/-a)mfie/nnumi\tput round\taor inf mid (attic)}[40532015]"
         
-        word_description = DiogenesAnalysesImporter.import_analysis_entry( "e)pamfie/sasqai\t{31475848 9 e)pamfi+e/sasqai,e)pi/,a)mfi/-e(/zomai\tseat oneself\taor inf mid (attic epic doric ionic aeolic parad_form prose)}[40532015][6238652]", word_form)
+        word_description = DiogenesAnalysesImporter.import_analysis_entry("e)pamfie/sasqai\t{31475848 9 e)pamfi+e/sasqai,e)pi/,a)mfi/-e(/zomai\tseat oneself\taor inf mid (attic epic doric ionic aeolic parad_form prose)}[40532015][6238652]", word_form)
         
         self.assertNotEqual(word_description, None)
         
     def test_parse_no_match(self):
         
         word_form = WordForm()
-        word_form.form = unicode("test_parse_no_match", "UTF-8")
+        word_form.form = "test_parse_no_match"
         word_form.save()
         
         desc = "Wont match regex"
         
         # Make sure this does not trigger an exception
-        self.assertEquals( DiogenesAnalysesImporter.import_analysis_entry(desc, word_form), None )
+        self.assertEquals(DiogenesAnalysesImporter.import_analysis_entry(desc, word_form), None)
     
     
 class TestWorkIndexer(WorkIndexer):
@@ -1865,7 +1864,7 @@ class TestWorkIndexer(WorkIndexer):
     
     @classmethod
     def delete_index(cls):
-        shutil.rmtree( cls.get_index_dir(), ignore_errors=True )
+        shutil.rmtree(cls.get_index_dir(), ignore_errors=True)
     
 class TestContentSearch(TestReader):
     
@@ -1918,77 +1917,76 @@ class TestContentSearch(TestReader):
         self.indexer.get_index(create=True)
         self.indexer.index_verse(verse, commit=True)
         
-        results = search_verses( "amet", self.indexer.get_index() )
+        results = search_verses("amet", self.indexer.get_index())
         
-        self.assertEquals( len(results.verses), 1 )
+        self.assertEquals(len(results.verses), 1)
         
     def test_search_verse_no_diacritic(self):
         
         # Make a work
-        verse, division, work = self.make_work(u"ἐξ ἔργων νόμου οὐ δικαιωθήσεται πᾶσα σὰρξ")
+        verse, division, work = self.make_work("ἐξ ἔργων νόμου οὐ δικαιωθήσεται πᾶσα σὰρξ")
         
         self.indexer.get_index(create=True)
         self.indexer.index_verse(verse, commit=True)
         
-        results = search_verses( u"no_diacritics:νομου", self.indexer.get_index() )
+        results = search_verses("no_diacritics:νομου", self.indexer.get_index())
         
-        self.assertEquals( len(results.verses), 1 )
+        self.assertEquals(len(results.verses), 1)
         
     def test_search_verse_beta_code(self):
         
         # Make a work
-        verse, division, work = self.make_work( u"ἐξ ἔργων νόμου οὐ δικαιωθήσεται πᾶσα σὰρξ" )
+        verse, division, work = self.make_work("ἐξ ἔργων νόμου οὐ δικαιωθήσεται πᾶσα σὰρξ")
         
         self.indexer.get_index(create=True)
         self.indexer.index_verse(verse, commit=True)
         
-        results = search_verses( u'NO/MOU', self.indexer.get_index() )
+        results = search_verses('NO/MOU', self.indexer.get_index())
         
-        self.assertEquals( len(results.verses), 1 )
+        self.assertEquals(len(results.verses), 1)
         
     def test_search_verse_beta_code_no_diacritics(self):
         
         # Make a work
-        verse, division, work = self.make_work(u"ἐξ ἔργων νομου οὐ δικαιωθήσεται πᾶσα σὰρξ")
+        verse, division, work = self.make_work("ἐξ ἔργων νομου οὐ δικαιωθήσεται πᾶσα σὰρξ")
         
         self.indexer.get_index(create=True)
         self.indexer.index_verse(verse, commit=True)
         
-        results = search_verses( u"NOMOU", self.indexer.get_index() )
+        results = search_verses("NOMOU", self.indexer.get_index())
         
-        self.assertEquals( len(results.verses), 1 )
+        self.assertEquals(len(results.verses), 1)
     
     def test_search_verse_work_by_slug(self):
         
         # Make a work
-        verse, division, work = self.make_work(work_title="New Testament", work_title_slug=u"test_search_verse_work_by_slug")
+        verse, division, work = self.make_work(work_title="New Testament", work_title_slug="test_search_verse_work_by_slug")
         
         self.indexer.get_index(create=True)
         self.indexer.index_verse(verse, commit=True)
         
-        results = search_verses( u"work_id:test_search_verse_work_by_slug", self.indexer.get_index() )
-        self.assertEquals( len(results.verses), 1 )
+        results = search_verses("work_id:test_search_verse_work_by_slug", self.indexer.get_index())
+        self.assertEquals(len(results.verses), 1)
         
-        results = search_verses( u"work:test_search_verse_work_by_slug", self.indexer.get_index() )
-        self.assertEquals( len(results.verses), 1 )
+        results = search_verses("work:test_search_verse_work_by_slug", self.indexer.get_index())
+        self.assertEquals(len(results.verses), 1)
 
-        results = search_verses( u'work:"New Testament"', self.indexer.get_index() )
-        self.assertEquals( len(results.verses), 1 )
+        results = search_verses('work:"New Testament"', self.indexer.get_index())
+        self.assertEquals(len(results.verses), 1)
         
     def test_search_division_by_slug(self):
         
         # Make a work
-        verse, division, work = self.make_work(division_title="Some Division", division_descriptor=u"division_descriptor")
+        verse, division, work = self.make_work(division_title="Some Division", division_descriptor="division_descriptor")
         
         self.indexer.get_index(create=True)
         self.indexer.index_verse(verse, commit=True)
         
-        results = search_verses( u"section:division_descriptor", self.indexer.get_index() )
-        self.assertEquals( len(results.verses), 1 )
+        results = search_verses("section:division_descriptor", self.indexer.get_index())
+        self.assertEquals(len(results.verses), 1)
 
-        results = search_verses( u'section:"Some Division"', self.indexer.get_index() )
-        self.assertEquals( len(results.verses), 1 )        
-        
+        results = search_verses('section:"Some Division"', self.indexer.get_index())
+        self.assertEquals(len(results.verses), 1)
         
     def test_index_work(self):
         
@@ -1998,9 +1996,9 @@ class TestContentSearch(TestReader):
         self.indexer.get_index(create=True)
         self.indexer.index_work(work)
         
-        results = search_verses( "amet", self.indexer.get_index() )
+        results = search_verses("amet", self.indexer.get_index())
         
-        self.assertEquals( len(results.verses), 1 )
+        self.assertEquals(len(results.verses), 1)
         
     def test_index_division(self):
         
@@ -2010,51 +2008,51 @@ class TestContentSearch(TestReader):
         self.indexer.get_index(create=True)
         self.indexer.index_division(division)
         
-        results = search_verses( "amet", self.indexer.get_index() )
+        results = search_verses("amet", self.indexer.get_index())
         
-        self.assertEquals( len(results.verses), 1 )
+        self.assertEquals(len(results.verses), 1)
         
     def test_matched_terms(self):
         
         # Make a work
-        verse, division, work = self.make_work(u"οὐ νοεῖτε ὅτι πᾶν τὸ εἰσπορευόμενον εις τὸ στόμα εἰς τὴν κοιλίαν χωρεῖ καὶ εἰς ἀφεδρῶνα ἐκβάλλεται;")
+        verse, division, work = self.make_work("οὐ νοεῖτε ὅτι πᾶν τὸ εἰσπορευόμενον εις τὸ στόμα εἰς τὴν κοιλίαν χωρεῖ καὶ εἰς ἀφεδρῶνα ἐκβάλλεται;")
         
         self.indexer.get_index(create=True)
         self.indexer.index_division(division)
         
-        results = search_verses( u"no_diacritics:εις τὸ", self.indexer.get_index() )
+        results = search_verses("no_diacritics:εις τὸ", self.indexer.get_index())
         
-        self.assertEquals( len(results.verses), 1 )
+        self.assertEquals(len(results.verses), 1)
             
-        self.assertEquals( len(results.matched_terms), 1 )
+        self.assertEquals(len(results.matched_terms), 1)
         
     def test_search_stats(self):
         
         # Make a work
-        verse, division, work = self.make_work(u"οὐ νοεῖτε ὅτι πᾶν τὸ εἰσπορευόμενον εἰς τὸ στόμα εἰς τὴν κοιλίαν χωρεῖ καὶ εἰς ἀφεδρῶνα ἐκβάλλεται;")
+        verse, division, work = self.make_work("οὐ νοεῖτε ὅτι πᾶν τὸ εἰσπορευόμενον εἰς τὸ στόμα εἰς τὴν κοιλίαν χωρεῖ καὶ εἰς ἀφεδρῶνα ἐκβάλλεται;")
         
         self.indexer.get_index(create=True)
         self.indexer.index_verse(verse, commit=True)
         
-        results = search_stats( u"εἰς OR τὸ", self.indexer.get_index() )
+        results = search_stats("εἰς OR τὸ", self.indexer.get_index())
         
-        self.assertEquals( results['matches'], 5 )
-        self.assertEquals( results['matched_terms'][u"εἰς"], 3 )
-        self.assertEquals( results['matched_terms'][u"τὸ"], 2 )
+        self.assertEquals(results['matches'], 5)
+        self.assertEquals(results['matched_terms']["εἰς"], 3)
+        self.assertEquals(results['matched_terms']["τὸ"], 2)
         
     def test_search_stats_no_diacritics(self):
         
         # Make a work
-        verse, division, work = self.make_work(u"οὐ νοεῖτε ὅτι πᾶν τὸ εἰσπορευόμενον εἰς τὸ στόμα εἰς τὴν κοιλίαν χωρεῖ καὶ εἰς ἀφεδρῶνα ἐκβάλλεται;")
+        verse, division, work = self.make_work("οὐ νοεῖτε ὅτι πᾶν τὸ εἰσπορευόμενον εἰς τὸ στόμα εἰς τὴν κοιλίαν χωρεῖ καὶ εἰς ἀφεδρῶνα ἐκβάλλεται;")
         
         self.indexer.get_index(create=True)
         self.indexer.index_verse(verse, commit=True)
         
-        results = search_stats( u"εἰς OR no_diacritics:το", self.indexer.get_index() )
+        results = search_stats("εἰς OR no_diacritics:το", self.indexer.get_index())
         
-        self.assertEquals( results['matches'], 5 )
-        self.assertEquals( results['matched_terms'][u"εἰς"], 3 )
-        self.assertEquals( results['matched_terms'][u"το"], 2 )
+        self.assertEquals(results['matches'], 5)
+        self.assertEquals(results['matched_terms']["εἰς"], 3)
+        self.assertEquals(results['matched_terms']["το"], 2)
         
 class TestUnboundBibleImport(TestReader):
     
@@ -2068,70 +2066,70 @@ class TestUnboundBibleImport(TestReader):
         
         self.importer.work = work
         
-        self.importer.import_file( self.get_test_resource_file_name("lxx_a_accents_utf8.txt") )
+        self.importer.import_file(self.get_test_resource_file_name("lxx_a_accents_utf8.txt"))
         
         genesis   = Division.objects.filter(work=work)[0]
         chapter_1 = Division.objects.filter(work=work)[1]
         chapter_2 = Division.objects.filter(work=work)[2]
         chapter_3 = Division.objects.filter(work=work)[3]
         
-        self.assertEquals( Division.objects.filter(work=work).count(), 4)
+        self.assertEquals(Division.objects.filter(work=work).count(), 4)
         
-        self.assertEquals( Verse.objects.count(), 65)
+        self.assertEquals(Verse.objects.count(), 65)
         
-        self.assertEquals( Verse.objects.filter(indicator="1")[0].content, language_tools.normalize_unicode(u"ἐν ἀρχῇ ἐποίησεν ὁ θεὸς τὸν οὐρανὸν καὶ τὴν γῆν") )
-        self.assertEquals( Verse.objects.filter(division=chapter_1).count(), 31)
-        self.assertEquals( Verse.objects.filter(division=chapter_2).count(), 25)
-        self.assertEquals( Verse.objects.filter(division=chapter_3).count(), 9)
+        self.assertEquals(Verse.objects.filter(indicator="1")[0].content, language_tools.normalize_unicode("ἐν ἀρχῇ ἐποίησεν ὁ θεὸς τὸν οὐρανὸν καὶ τὴν γῆν"))
+        self.assertEquals(Verse.objects.filter(division=chapter_1).count(), 31)
+        self.assertEquals(Verse.objects.filter(division=chapter_2).count(), 25)
+        self.assertEquals(Verse.objects.filter(division=chapter_3).count(), 9)
         
-        self.assertEquals( genesis.title, "Genesis" )
-        self.assertEquals( genesis.title_slug, "genesis" )
+        self.assertEquals(genesis.title, "Genesis")
+        self.assertEquals(genesis.title_slug, "genesis")
         
         # Make sure the sequence numbers increase
         num = 0
         
         for book in Division.objects.filter(readable_unit=False).order_by('sequence_number'):
             num = num + 1
-            self.assertEquals( book.sequence_number, num, str(book) + " does not have the expected sequence number (%i versus expected %i)" % (book.sequence_number, num) )
+            self.assertEquals(book.sequence_number, num, str(book) + " does not have the expected sequence number (%i versus expected %i)" % (book.sequence_number, num))
             
             for chapter in Division.objects.filter(parent_division=book).order_by('sequence_number'):
                 num = num + 1
-                self.assertEquals( chapter.sequence_number, num, str(chapter) + " does not have the expected sequence number (%i versus expected %i)" % (chapter.sequence_number, num) )
+                self.assertEquals(chapter.sequence_number, num, str(chapter) + " does not have the expected sequence number (%i versus expected %i)" % (chapter.sequence_number, num))
         
     def test_import_file_work_not_precreated(self):
         
-        self.importer.import_file( self.get_test_resource_file_name("lxx_a_accents_utf8.txt") )
+        self.importer.import_file(self.get_test_resource_file_name("lxx_a_accents_utf8.txt"))
         
-        self.assertEquals( self.importer.work.title, "Greek OT: LXX")
+        self.assertEquals(self.importer.work.title, "Greek OT: LXX")
         
     def test_import_file_with_policy(self):
         
         import_policy_file = self.get_test_resource_file_name("unbound_bible_import_policy.json")
         
         import_policy = JSONImportPolicy()
-        import_policy.load_policy( import_policy_file )
+        import_policy.load_policy(import_policy_file)
         
         self.importer.import_policy = import_policy.should_be_processed 
-        self.importer.import_file( self.get_test_resource_file_name("lxx_a_accents_utf8.txt") )
+        self.importer.import_file(self.get_test_resource_file_name("lxx_a_accents_utf8.txt"))
         
-        self.assertEquals( self.importer.work.title, "Septuagint (LXX)")
-        self.assertEquals( self.importer.work.language, "Greek")
+        self.assertEquals(self.importer.work.title, "Septuagint (LXX)")
+        self.assertEquals(self.importer.work.language, "Greek")
         
     def test_load_book_names(self):
         
-        book_names = self.importer.load_book_names( self.get_test_resource_file_name("book_names.txt") )
+        book_names = self.importer.load_book_names(self.get_test_resource_file_name("book_names.txt"))
         
         self.assertEquals(book_names["01O"], "Genesis")
         
     def test_find_and_load_book_names_same_dir(self):
         
-        book_names = self.importer.find_and_load_book_names( self.get_test_resource_file_name("lxx_a_accents_utf8.txt") )
+        book_names = self.importer.find_and_load_book_names(self.get_test_resource_file_name("lxx_a_accents_utf8.txt"))
         
         self.assertEquals(book_names["01O"], "Genesis")
         
     def test_find_and_load_book_names_constructor_arg(self):
         
-        self.importer = UnboundBibleTextImporter(book_names_file=self.get_test_resource_file_name("book_names.txt") )
+        self.importer = UnboundBibleTextImporter(book_names_file=self.get_test_resource_file_name("book_names.txt"))
         
         book_names = self.importer.find_and_load_book_names()
         
@@ -2141,13 +2139,13 @@ class TestUnboundBibleImport(TestReader):
         
         name = self.importer.get_name_from_comment("#name\tGreek NT: Westcott/Hort, UBS4 variants")
         
-        self.assertEquals( name, "Greek NT: Westcott/Hort, UBS4 variants")
+        self.assertEquals(name, "Greek NT: Westcott/Hort, UBS4 variants")
         
     def test_get_name_from_comment_truncated(self):
         
         name = self.importer.get_name_from_comment("#name\tGreek OT: LXX [A] Accented")
         
-        self.assertEquals( name, "Greek OT: LXX")
+        self.assertEquals(name, "Greek OT: LXX")
         
 class TestWorkAlias(TestReader):
     
@@ -2158,7 +2156,7 @@ class TestWorkAlias(TestReader):
         # Modify the slug so that the automatically created alias (happens when a work is saved) won't match
         work.title_slug = work.title_slug + "-makes-it-unique"
         
-        work_alias = WorkAlias.populate_alias_from_work( work )
+        work_alias = WorkAlias.populate_alias_from_work(work)
         
         self.assertNotEqual(work_alias, None)
         self.assertEqual(WorkAlias.objects.filter(work=work, title_slug=work.title_slug).count(), 1)
@@ -2167,7 +2165,7 @@ class TestWorkAlias(TestReader):
         work = Work(title="Test make alias", title_slug="test-make-alias")
         work.save()
         
-        work_alias = WorkAlias.populate_alias_from_work( work )
+        work_alias = WorkAlias.populate_alias_from_work(work)
         
         # Make sure that the alias was made automatically
         self.assertEqual(work_alias, None)
@@ -2179,7 +2177,7 @@ class TestWorkAlias(TestReader):
         work.save()
         
         # Make sure the alias exists
-        work_alias = WorkAlias.populate_alias_from_work( work )
+        work_alias = WorkAlias.populate_alias_from_work(work)
         self.assertEqual(work_alias, None)
         
         work.title_slug = "test-make-alias-new"
@@ -2188,7 +2186,7 @@ class TestWorkAlias(TestReader):
         work2 = Work(title="Test make alias", title_slug="test_make_alias_detect_overlap")
         
         def populate():
-            WorkAlias.populate_alias_from_work( work2 )
+            WorkAlias.populate_alias_from_work(work2)
         
         self.assertRaises(Exception, populate)
     
@@ -2200,8 +2198,8 @@ class TestWorkAlias(TestReader):
         # Modify the slug so that the automatically created alias (happens when a work is saved) won't match
         work.title_slug = work.title_slug + "-makes-it-unique"
         
-        self.assertNotEqual( WorkAlias.populate_alias_from_work( work ), None )
-        self.assertEqual( WorkAlias.populate_alias_from_work( work ), None )
+        self.assertNotEqual(WorkAlias.populate_alias_from_work(work), None)
+        self.assertEqual(WorkAlias.populate_alias_from_work(work), None)
     
     def test_populate_aliases(self):
         work = Work(title="Test_make_alias_ignore_overlap", title_slug="test_make_alias_ignore_overlap")
@@ -2215,7 +2213,7 @@ class TestWorkAlias(TestReader):
         WorkAlias.objects.filter(title_slug="test_make_alias_ignore_overlap2").delete()
         
         # Now see if populate_from_existing re-creates them
-        self.assertEquals( WorkAlias.populate_from_existing(), 2)
+        self.assertEquals(WorkAlias.populate_from_existing(), 2)
         
 
 class TestContextProcessors(TestCase):
@@ -2236,12 +2234,12 @@ class TestContextProcessors(TestCase):
     
     def test_is_async(self):
         
-        self.assertEqual( is_async(TestContextProcessors.Request(False))['is_async'], False, "Failed to correctly identify non-AJAX request")
-        self.assertEqual( is_async(TestContextProcessors.Request(True))['is_async'], True, "Failed to correctly identify AJAX request")
-        self.assertEqual( is_async(TestContextProcessors.Request(False, {'async' : None}))['is_async'], True, "Failed to correctly identify async request based on parameter")
-        self.assertEqual( is_async(TestContextProcessors.Request(False, {'async' : '1'}))['is_async'], True, "Failed to correctly identify async request based on parameter")
-        self.assertEqual( is_async(TestContextProcessors.Request(False, {'async' : '0'}))['is_async'], False, "Failed to correctly identify non-async request based on parameter")
-        self.assertEqual( is_async(TestContextProcessors.Request(True, {'async' : '1'}))['is_async'], True, "Failed to correctly identify AJAX request (along with parameter)")
+        self.assertEqual(is_async(TestContextProcessors.Request(False))['is_async'], False, "Failed to correctly identify non-AJAX request")
+        self.assertEqual(is_async(TestContextProcessors.Request(True))['is_async'], True, "Failed to correctly identify AJAX request")
+        self.assertEqual(is_async(TestContextProcessors.Request(False, {'async' : None}))['is_async'], True, "Failed to correctly identify async request based on parameter")
+        self.assertEqual(is_async(TestContextProcessors.Request(False, {'async' : '1'}))['is_async'], True, "Failed to correctly identify async request based on parameter")
+        self.assertEqual(is_async(TestContextProcessors.Request(False, {'async' : '0'}))['is_async'], False, "Failed to correctly identify non-async request based on parameter")
+        self.assertEqual(is_async(TestContextProcessors.Request(True, {'async' : '1'}))['is_async'], True, "Failed to correctly identify AJAX request (along with parameter)")
         
         
 class TestEpubExport(TestReader):
@@ -2267,7 +2265,7 @@ class TestEpubExport(TestReader):
         notes = ePubExport.getPerseusNotesFromDivisionContent(division)
         
         self.assertEqual(len(notes), 1)
-        self.assertEqual(notes[0].text, u'A proverbial expression of uncertain origin for enforced silence; cf. fr. 176, \u201cA key stands guard upon my tongue.\u201d')
+        self.assertEqual(notes[0].text, 'A proverbial expression (of uncertain origin) for enforced silence; cf. fr. 176, “A key stands guard upon my tongue.”')
 
     def test_get_perseus_notes_from_verses_not_ignoring_notes(self):
         # See issue #2006 (https://lukemurphey.net/issues/2006)
@@ -2281,7 +2279,7 @@ class TestEpubExport(TestReader):
         notes = ePubExport.getPerseusNotesFromVerses(divisions[1])
 
         self.assertEqual(len(notes), 1)
-        self.assertEqual(notes[0].text, u'A proverbial expression of uncertain origin for enforced silence; cf. fr. 176, A key stands guard upon my tongue.')
+        self.assertEqual(notes[0].text, 'A proverbial expression of uncertain origin for enforced silence; cf. fr. 176, A key stands guard upon my tongue.')
 
     def test_get_perseus_notes_from_verses_ignoring_notes(self):
         # See issue #2006 (https://lukemurphey.net/issues/2006)
@@ -2321,7 +2319,7 @@ class TestEpubExport(TestReader):
         notes = ePubExport.getPerseusNotesFromVerses(divisions[0])
 
         self.assertEqual(len(notes), 2)
-        self.assertEqual(notes[0].text, u'Introduction. The importance and magnitude of the subject.')
+        self.assertEqual(notes[0].text, 'Introduction. The importance and magnitude of the subject.')
         
     def test_split_text_into_lines(self):
         
@@ -2358,4 +2356,3 @@ class TestWikiArticle(TestReader):
         # Try a lookup that fails
         article = WikiArticle.get_wiki_article(["Tree", "Frogs"])
         self.assertEqual(article, None)
-        
