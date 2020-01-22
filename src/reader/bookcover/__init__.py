@@ -66,7 +66,7 @@ def makeCoverImage(work, filename=None, width=None):
                 draw.font_size = title_font_size
                 draw.fill_color = white
                 draw.text_alignment = 'center'
-                draw.text(image.width / 2, 250, title)
+                draw.text(round(image.width / 2), 250, title)
                 draw.text_antialias = True
                 draw.text_interword_spacing = 10
                 draw(image)
@@ -81,7 +81,7 @@ def makeCoverImage(work, filename=None, width=None):
                     draw.font_size = 36
                     draw.fill_color = yellow
                     draw.text_alignment = 'center'
-                    draw.text(image.width / 2, 500, authors)
+                    draw.text(round(image.width / 2), 500, authors)
                     draw.text_kerning = 140.0
                     draw(image)
 
