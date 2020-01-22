@@ -19,7 +19,7 @@
 #
 #       docker system prune
 
-FROM python:2-slim
+FROM python:3.8-slim
 
 # These are copied from python:2-onbuild (https://github.com/tomologic/docker-python/blob/master/2-onbuild/Dockerfile)
 RUN mkdir -p /usr/src/app
