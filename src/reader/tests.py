@@ -1953,7 +1953,7 @@ class TestContentSearch(TestReader):
         self.indexer.get_index(create=True)
         self.indexer.index_verse(verse, commit=True)
         
-        results = search_verses("NOMO", self.indexer.get_index())
+        results = search_verses("NOMOU", self.indexer.get_index())
         
         self.assertEquals(len(results.verses), 1)
     
