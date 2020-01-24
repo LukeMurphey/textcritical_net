@@ -410,7 +410,7 @@ class cache_page_if_ajax(object):
                     key = fn.__name__ + "(" + args_str + kwargs_str + ")"
                 
                 # Hash the key so that it works with memcache
-                key_hashed = hashlib.sha224(key).hexdigest()
+                key_hashed = hashlib.sha224(key.encode('utf-8')).hexdigest()
                 
                 # Try to get the cached entry
                 cached = cache.get(key_hashed)

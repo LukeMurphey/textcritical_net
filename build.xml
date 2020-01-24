@@ -177,7 +177,7 @@
     <!-- ================================= 
           target: test
          ================================= -->
-	<target name="test" description="Verify that the package appears to be valid">
+	<target name="test" description="Verify that the package appears to be valid" depends="install_dependencies">
 		<mkdir dir="var/log"/>
 
 		<copy file="src/textcritical/test_settings.py" tofile="src/textcritical/settings.py"/>
@@ -517,6 +517,20 @@
 		</exec>
 	</target>
 
+    <!-- ================================= 
+          target: docker_test
+         ================================= -->
+	<target name="docker_test" description="Run the tests in the docker image"  depends="docker_running_id">
+		<echo>Docker: ${docker_id}</echo>
+		<exec executable="docker">
+			<arg value="exec"/>
+			<arg value="-it"/>
+			<arg value="${docker_id}"/>
+			<arg value="python"/>
+			<arg value="manage.py"/>
+			<arg value="test"/>
+		</exec>
+	</target>
 
     <!-- ================================= 
           target: docker_push

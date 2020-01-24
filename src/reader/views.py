@@ -391,7 +391,7 @@ def download_work(request, title=None,):
                 raise Http404('eBook file not found')
     
     # Stream the file from the disk
-    wrapper = FileWrapper(file(ebook_file_full_path))
+    wrapper = FileWrapper(open(ebook_file_full_path, 'rb'))
     
     response = HttpResponse(wrapper, content_type=mime_types[book_format])
     response['Content-Disposition'] = 'attachment; filename="%s"' % (ebook_file)
@@ -413,7 +413,7 @@ def work_image(request, title=None, **kwargs):
     cover_image_full_path = makeCoverImage(work, width=width)
 
     # Stream the file from the disk
-    wrapper = FileWrapper(file(cover_image_full_path))
+    wrapper = FileWrapper(open(cover_image_full_path, 'rb'))
 
     response = HttpResponse(wrapper, content_type='image/png')
     response['Content-Length'] = os.path.getsize(cover_image_full_path)
