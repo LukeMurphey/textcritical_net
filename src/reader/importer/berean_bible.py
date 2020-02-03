@@ -64,7 +64,7 @@ class BereanBibleImporter(TextImporter):
         self.work_source.source = "bereanbible.com"
         self.work_source.resource = os.path.basename(file_name)
         self.work_source.work = self.work
-        self.work_source.description = "The Holy Bible, Berean Bible, Copyright ©2016-2020 by Bible Hub. All Rights Reserved Worldwide.	Free Licensing for use in Websites, Apps, Software, and Audio: http://berean.bible/licensing.htm"
+        self.work_source.description = "The Holy Bible, Berean Study Bible, BSB\nCopyright ©2016, 2018 by Bible Hub\nUsed by Permission. All Rights Reserved Worldwide.\n\nhttps://bereanbible.com/"
         self.work_source.save()
         
         # Initialize a couple more things...
