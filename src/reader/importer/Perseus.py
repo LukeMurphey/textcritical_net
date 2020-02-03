@@ -51,7 +51,7 @@ class State():
             return False
 
     @staticmethod
-    def createFromStateNode( state_node, level = None, chunk = None ):
+    def createFromStateNode(state_node, level = None, chunk = None):
 
         unit_name = state_node.attributes["unit"].value
 
@@ -67,7 +67,7 @@ class State():
 
 class PerseusTextImporter(TextImporter):
 
-    DIV_PARSE_REGEX = re.compile( r"div(?P<level>[0-9]+)" )
+    DIV_PARSE_REGEX = re.compile(r"div(?P<level>[0-9]+)")
 
     VERSE_TAG_NAME = "verse"
     CHAPTER_TAG_NAME = "chapter"
@@ -134,7 +134,7 @@ class PerseusTextImporter(TextImporter):
             doc.unlink()
             del(doc)
 
-    def import_file( self, file_name, encoding='utf-8'):
+    def import_file(self, file_name, encoding='utf-8'):
         """
         Import the provided XML file.
 
@@ -154,7 +154,7 @@ class PerseusTextImporter(TextImporter):
         f = None
 
         try:
-            f = codecs.open( file_name, 'r', encoding )
+            f = codecs.open(file_name, 'r', encoding)
 
             file_string = f.read()
         finally:
@@ -201,6 +201,9 @@ class PerseusTextImporter(TextImporter):
         # Save the XML content for the previous chapter
         self.save_original_content(import_context)
 
+    def does_division_exist(self, division):
+        return True
+
     def make_division(self, import_context, level=1, sequence_number=None, division_type=None, title=None, original_title=None, descriptor=None, state_info=None):
 
         # Get the level from the state info object unless the level was already provided
@@ -246,7 +249,7 @@ class PerseusTextImporter(TextImporter):
                 if same_level_division is not None:
                     new_division.parent_division = same_level_division.parent_division
                 else:
-                    logger.warn( "Unable to find parent division for level %i" % (level) )
+                    logger.warn("Unable to find parent division for level %i" % (level))
 
             # If the new level is higher than the current one, then add
             else:
@@ -284,9 +287,9 @@ class PerseusTextImporter(TextImporter):
 
         # Log the creation of a division
         if new_division.parent_division is not None:
-            logger.debug( "Successfully created division: descriptor=%s, title=%s, id=%i, level=%i, parent=%s", new_division.descriptor, new_division.original_title, new_division.id, level, str(new_division.parent_division.descriptor) )
+            logger.debug("Successfully created division: descriptor=%s, title=%s, id=%i, level=%i, parent=%s", new_division.descriptor, new_division.original_title, new_division.id, level, str(new_division.parent_division.descriptor))
         else:
-            logger.debug( "Successfully created division: descriptor=%s, title=%s, id=%i, level=%i", new_division.descriptor, new_division.original_title, new_division.id, level )
+            logger.debug("Successfully created division: descriptor=%s, title=%s, id=%i, level=%i", new_division.descriptor, new_division.original_title, new_division.id, level)
 
         # Set the created division as the new one
         import_context.divisions.append(new_division)
@@ -350,7 +353,7 @@ class PerseusTextImporter(TextImporter):
             import_context.verse.save()
         
     @staticmethod
-    def getStates( refs_decl ):
+    def getStates(refs_decl):
         """
         Get the set of state descriptors from the given refsDecl node.
         
@@ -364,13 +367,13 @@ class PerseusTextImporter(TextImporter):
         i = 1
         
         for state_node in state_nodes:
-            states.append( State.createFromStateNode(state_node, i) )
+            states.append(State.createFromStateNode(state_node, i))
             i = i + 1
 
         return states
         
     @staticmethod
-    def getStateSets( doc, merge_all=False ):
+    def getStateSets(doc, merge_all=False):
         """
         Get the names of types of sections used in the document.
         
@@ -390,7 +393,7 @@ class PerseusTextImporter(TextImporter):
             state_sets = []
             
             for ref in refs:
-                state_sets.append( PerseusTextImporter.getStates(ref) )
+                state_sets.append(PerseusTextImporter.getStates(ref))
                 
             return state_sets
     
@@ -411,7 +414,7 @@ class PerseusTextImporter(TextImporter):
             if node.nodeType == node.TEXT_NODE:
                 rc.append(node.data)
             elif recurse:
-                rc.append( PerseusTextImporter.getText(node.childNodes, True) )
+                rc.append(PerseusTextImporter.getText(node.childNodes, True))
         
         return separator.join(rc)
     
@@ -448,7 +451,7 @@ class PerseusTextImporter(TextImporter):
             return None
     
     @staticmethod
-    def get_editors( tei_document ):
+    def get_editors(tei_document):
         """
         Get the editors from the TEI document.
         
@@ -477,17 +480,17 @@ class PerseusTextImporter(TextImporter):
                 
                 if len(editors_and) > 1:
                     for e in editors_and:
-                        editors.append( e.strip() )
+                        editors.append(e.strip())
                         
                 else:
-                    editors.append( editor )
+                    editors.append(editor)
         else:
             return None
         
         return editors
     
     @staticmethod
-    def get_author( tei_document ):
+    def get_author(tei_document):
         """
         Get the author from the TEI document.
         
@@ -540,7 +543,7 @@ class PerseusTextImporter(TextImporter):
         """
         
         title_node = bibl_struct.getElementsByTagName("title")[0]
-        return PerseusTextImporter.process_title( PerseusTextImporter.getText(title_node.childNodes) )
+        return PerseusTextImporter.process_title(PerseusTextImporter.getText(title_node.childNodes))
         
     @staticmethod
     def use_line_numbers_for_division_titles(tei_header_node):
@@ -592,11 +595,11 @@ class PerseusTextImporter(TextImporter):
         
         for node in tei_header_node.getElementsByTagName("title"):
             if "type" in node.attributes.keys() and node.attributes["type"].value != "sub":
-                return PerseusTextImporter.process_title( PerseusTextImporter.getText(node.childNodes, recurse=True) )
+                return PerseusTextImporter.process_title(PerseusTextImporter.getText(node.childNodes, recurse=True))
             elif "type" in node.attributes.keys() and node.attributes["type"].value == "sub":
                 pass # Don't include sub-titles
             else:
-                return PerseusTextImporter.process_title( PerseusTextImporter.getText(node.childNodes, recurse=True) )
+                return PerseusTextImporter.process_title(PerseusTextImporter.getText(node.childNodes, recurse=True))
         
     
     def import_info_from_bibl_struct(self, bibl_struct_node):
@@ -822,7 +825,7 @@ class PerseusTextImporter(TextImporter):
                     previous_line_number_range = None
                 
                 # If this is for a division title containing a line number, then set the start number for the current division and set the previous division accordingly
-                if division.type in ["card"] and division.descriptor is not None and LineNumber.is_line_number( str(division.descriptor) ):
+                if division.type in ["card"] and division.descriptor is not None and LineNumber.is_line_number(str(division.descriptor)):
                     
                     # Set the start of the current line number
                     # We want this value to override whatever we already determined
@@ -890,7 +893,7 @@ class PerseusTextImporter(TextImporter):
             root_node = division_doc.getElementsByTagName(PerseusTextImporter.CHAPTER_TAG_NAME)[0]
             
             try:
-                return self.import_verse_content( division, root_node, state_set)
+                return self.import_verse_content(division, root_node, state_set)
         
             finally:
                 division_doc.unlink()
@@ -941,11 +944,11 @@ class PerseusTextImporter(TextImporter):
             
             # Log if the value is not was is expected. This may indicate that a line element was not found that should have been.
             if new_line_number.number in [0, 1]:
-                logger.warning("A line element indicated that the line numbering is restarting, line_number=%s, expected_line_number=%r" % ( str(new_line_number), line_number) )
+                logger.warning("A line element indicated that the line numbering is restarting, line_number=%s, expected_line_number=%r" % (str(new_line_number), line_number))
                 numbering_reset = True
             
             if new_line_number is not None and str(new_line_number) != line_number:
-                logger.warning("A line element indicated the current line number and it did not match the expected value, line_number=%s, expected_line_number=%r" % ( str(new_line_number), str(line_number)) )
+                logger.warning("A line element indicated the current line number and it did not match the expected value, line_number=%s, expected_line_number=%r" % (str(new_line_number), str(line_number)))
         
             # Update the line number
             if new_line_number is not None:
@@ -998,11 +1001,11 @@ class PerseusTextImporter(TextImporter):
                     new_line_number = LineNumber(value=new_line_count)
                     
                     if new_line_number.number in [0, 1]:
-                        logger.warning("A line element indicated that the line numbering is restarting, line_number=%s, expected_line_number=%r" % ( str(count), new_line_count) )
+                        logger.warning("A line element indicated that the line numbering is restarting, line_number=%s, expected_line_number=%r" % (str(count), new_line_count))
                         restart_numbering_at_one = True
                         
                     elif str(new_line_number) != line_number:
-                        logger.warning("A line element indicated the current line number and it did not match the expected value, line_number=%s, expected_line_number=%r" % ( str(count), new_line_count) )
+                        logger.warning("A line element indicated the current line number and it did not match the expected value, line_number=%s, expected_line_number=%r" % (str(count), new_line_count))
                 
                     # Update the line number
                     line_number = new_line_number
@@ -1084,7 +1087,7 @@ class PerseusTextImporter(TextImporter):
             break_at_this_division = False
             
             if self.division_min is not None and node.nodeType != node.TEXT_NODE:
-                m = PerseusTextImporter.DIV_PARSE_REGEX.search( node.tagName )
+                m = PerseusTextImporter.DIV_PARSE_REGEX.search(node.tagName )
                 
                 if m:
                     level = self.get_level_from_node(node.tagName)
@@ -1242,7 +1245,7 @@ class PerseusTextImporter(TextImporter):
                 pass #This is in a different division, so skip it
             
             else:
-                result = self.findTagInDivision( child, tag_name, depth_limit, current_depth + 1)
+                result = self.findTagInDivision(child, tag_name, depth_limit, current_depth + 1)
                 
                 # Stop if we found a result
                 if result:
@@ -1380,7 +1383,7 @@ class PerseusTextImporter(TextImporter):
                 
                 # Make the division
                 self.make_division(import_context=import_context, descriptor=descriptor, state_info=self.get_state_for_milestone(state_set, node), division_type=division_type, level=10)
-                logger.debug("Making division %s (since it is a chunk) of %s" % ( str(import_context.division.sequence_number), self.work.title))
+                logger.debug("Making division %s (since it is a chunk) of %s" % (str(import_context.division.sequence_number), self.work.title))
                 
                 # Start adding the content to the new division
                 new_division_node = import_context.current_node

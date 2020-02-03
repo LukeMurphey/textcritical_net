@@ -1,0 +1,18 @@
+[
+    {
+        "file_name" : "bsb.txt",
+        "title" : "Berean Study Bible",
+        "import_parameters" : {
+            "transforms" : {
+                "set_meta_data" : {
+                    "title_slug" : "bsb",
+                    "title"      : "Bible (Berean Study Bible)",
+                    "language"   : "English"
+                },
+                "assign_related_work" : {
+                	"title_slug" : ["bsb", "berean-bible"]
+                }
+        	}
+        }
+    }
+]

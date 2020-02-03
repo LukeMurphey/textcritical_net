@@ -29,6 +29,8 @@
 |-----------------------------------|-------------------------------------------------------------|
 | TestDiogenesLemmaImport           | DiogenesLemmataImporter class                               |
 |-----------------------------------|-------------------------------------------------------------|
+| TestBereanBibleImport             | BereanBible class                                           |
+|-----------------------------------|-------------------------------------------------------------|
 | TestReaderUtils                   | reader.utils helpers                                        |
 |-----------------------------------|-------------------------------------------------------------|
 | TestDiogenesAnalysesImport        | DiogenesAnalysesImporter classes                            |
@@ -59,6 +61,7 @@ from reader.shortcuts import convert_xml_to_html5
 from reader.templatetags.reader_extras import perseus_xml_to_html5
 from reader.importer.batch_import import ImportPolicy, WorkDescriptor, wildcard_to_re, ImportTransforms, JSONImportPolicy
 from reader.importer.Perseus import PerseusTextImporter
+from reader.importer.BereanBible import BereanBibleImporter
 from reader.importer.Lexicon import LexiconImporter
 from reader.importer.PerseusBatchImporter import PerseusBatchImporter
 from reader.importer.unbound_bible import UnboundBibleTextImporter
@@ -910,6 +913,23 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         self.assertEquals(divisions[3].title, "lines 104-1616")
         self.assertEquals(divisions[4].title, "lines 1617-1648")
         self.assertEquals(divisions[5].title, "lines 1649-1672")
+
+    def test_load_book_with_multiple_divisions_with_same_id(self):
+        # See https://lukemurphey.net/issues/2537
+        # This checks the logic that 
+        file_name = self.get_test_resource_file_name('overriding_div.xml')
+        self.importer.state_set = "*"
+        self.importer.ignore_division_markers = False
+        
+        self.importer.import_file(file_name)
+        
+        work = self.importer.work
+        
+        divisions = Division.objects.filter(work=work)
+        
+        self.assertEqual(divisions[1].descriptor, "1")
+        self.assertEqual(divisions[2].descriptor, "2")
+        # self.assertEqual(divisions[3].descriptor, "2a")
         
     def test_get_line_count(self):
         
@@ -1710,6 +1730,29 @@ class TestDiogenesLemmaImport(TestReader):
         
         self.assertEquals(lemma.lexical_form, Greek.beta_code_str_to_unicode("a(/bra"))
         self.assertEquals(lemma.reference_number, 537850)
+
+class TestBereanBibleImport(TestCase):
+
+    def test_parse_line(self):
+        book, chapter, verse, text = BereanBibleImporter.parse_line("2 Thessalonians 3:9	Not that we lack this right, but we wanted to offer ourselves as an example for you to imitate.")
+
+        self.assertEqual(book, "2 Thessalonians")
+        self.assertEqual(chapter, "3")
+        self.assertEqual(verse, "9")
+        self.assertEqual(text, "Not that we lack this right, but we wanted to offer ourselves as an example for you to imitate.")
+
+    def test_parse_line_invalid(self):
+        line = "The Holy Bible, Berean Bible, Copyright ©2016-2020 by Bible Hub. All Rights Reserved Worldwide.	"
+        book, chapter, verse, text = BereanBibleImporter.parse_line(line)
+
+        self.assertEqual(book, None)
+        self.assertEqual(chapter, None)
+        self.assertEqual(verse, None)
+        self.assertEqual(text, line)
+
+    def test_import(self):
+        # BereanBibleImporter.import_file(self.get_test_resource_file_name("greek-lemmata-no-match.txt"), return_created_objects=True)
+        pass
 
 class TestReaderUtils(TestReader):
 
