@@ -3,11 +3,10 @@ import re
 import os
 from time import time
 
-from reader.importer import TextImporter
+from reader import language_tools
 from reader.importer import TextImporter, LineNumber, LineNumberRange
 from reader.models import Division, Work, WorkSource
 from reader.shortcuts import transform_text
-from reader.language_tools import Greek
 
 from django.db import transaction
 from django.template.defaultfilters import slugify
@@ -49,13 +48,14 @@ class BereanBibleImporter(TextImporter):
             objects = 0
 
         # Create the work
-        self.work = Work()
-        self.work.title = "Berean Bible"
-        self.work.title_slug, slug_was_already_taken = self.get_title_slug(self.work.title)
-        self.work.save()
+        if self.work is None:
+            self.work = Work()
+            self.work.title = "Berean Bible"
+            self.work.title_slug, slug_was_already_taken = self.get_title_slug(self.work.title)
+            self.work.save()
 
-        if slug_was_already_taken:
-            raise Exception("Work appears to already exist")
+            if slug_was_already_taken:
+                raise Exception("Work appears to already exist")
         
         # Make the work source
         self.work_source = WorkSource()
@@ -74,7 +74,7 @@ class BereanBibleImporter(TextImporter):
         try:
             
             # Open the file
-            f = open(file_name, 'r')
+            f = open(file_name, encoding="iso-8859-1")
             
             # Process each line
             for line in f:
@@ -88,11 +88,11 @@ class BereanBibleImporter(TextImporter):
                 
                 else:
                     # Import the line
-                    obj = cls.import_line(line, line_number, **kwargs)
+                    obj = self.import_line(line)
                     
                     if return_created_objects:
                         if obj is not None:
-                            objects.append( obj )
+                            objects.append(obj)
                     else:
                         objects = objects + 1
         finally:
@@ -104,7 +104,11 @@ class BereanBibleImporter(TextImporter):
         return objects
 
     def import_line(self, line):
-        book, chapter, verse, text = self.parse_line(line)
+        book, chapter, verse_number, text = self.parse_line(line)
+
+        if book is None:
+            return
+            # Skip this line
 
         made_book = False
 
@@ -123,11 +127,12 @@ class BereanBibleImporter(TextImporter):
             self.current_chapter_division.title = chapter
             self.current_chapter_division.level = 2
             self.current_chapter_division.type = "Chapter"
+            self.current_chapter_division.parent_division = self.current_book_division
             self.current_chapter_division.save()
 
         # Make the verse
         verse = self.make_verse(self.current_verse, self.current_chapter_division, save=False)
-        verse.indicator = verse
+        verse.indicator = verse_number
         verse.content = language_tools.normalize_unicode(text.strip())
         verse.save()
         

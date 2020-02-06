@@ -61,7 +61,7 @@ from reader.shortcuts import convert_xml_to_html5
 from reader.templatetags.reader_extras import perseus_xml_to_html5
 from reader.importer.batch_import import ImportPolicy, WorkDescriptor, wildcard_to_re, ImportTransforms, JSONImportPolicy
 from reader.importer.Perseus import PerseusTextImporter
-from reader.importer.BereanBible import BereanBibleImporter
+from reader.importer.berean_bible import BereanBibleImporter
 from reader.importer.Lexicon import LexiconImporter
 from reader.importer.PerseusBatchImporter import PerseusBatchImporter
 from reader.importer.unbound_bible import UnboundBibleTextImporter
@@ -1731,7 +1731,7 @@ class TestDiogenesLemmaImport(TestReader):
         self.assertEquals(lemma.lexical_form, Greek.beta_code_str_to_unicode("a(/bra"))
         self.assertEquals(lemma.reference_number, 537850)
 
-class TestBereanBibleImport(TestCase):
+class TestBereanBibleImport(TestReader):
 
     def test_parse_line(self):
         book, chapter, verse, text = BereanBibleImporter.parse_line("2 Thessalonians 3:9	Not that we lack this right, but we wanted to offer ourselves as an example for you to imitate.")
@@ -1751,8 +1751,35 @@ class TestBereanBibleImport(TestCase):
         self.assertEqual(text, line)
 
     def test_import(self):
-        # BereanBibleImporter.import_file(self.get_test_resource_file_name("greek-lemmata-no-match.txt"), return_created_objects=True)
-        pass
+        work = Work(title="BSB", title_slug="bsb")
+        work.save()
+
+        importer = BereanBibleImporter(work=work)
+        importer.import_file(self.get_test_resource_file_name("berean_study_bible.txt"))
+
+        # Verify the division count
+        self.assertEqual(len(Division.objects.filter(work=work)), 7)
+
+        # Verify the books (3)
+        self.assertEqual(len(Division.objects.filter(work=work, level=1)), 3)
+
+        # Verify the chapters (4)
+        self.assertEqual(len(Division.objects.filter(work=work, readable_unit=True)), 4)
+
+        # Verify the verses
+        genesis = Division.objects.filter(work=work, level=1, descriptor="Genesis")[0]
+        self.assertEqual(genesis.descriptor, 'Genesis')
+
+        # Get chapter 1 of Genesis
+        genesis_1 = Division.objects.filter(work=work, parent_division=genesis, level=2, descriptor="1")[0]
+        self.assertEqual(genesis_1.descriptor, '1')
+
+        # Get the verses of Genesis 1
+        genesis_verses = Verse.objects.filter(division=genesis_1)
+        self.assertEqual(len(genesis_verses), 5)
+
+        self.assertEqual(genesis_verses[0].content, 'In the beginning God created the heavens and the earth.')
+        
 
 class TestReaderUtils(TestReader):
 
