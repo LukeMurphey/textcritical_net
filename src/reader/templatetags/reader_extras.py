@@ -56,8 +56,8 @@ def unbound_text_to_html5(text, language=None):
         
         # Don't wrap punctuation in a word node
         if s in [";", ",", ".", "[", "]", ":"] or len(s.strip()) == 0:
-            txt_node = converted_doc.createTextNode( s )
-            verse_node.appendChild( txt_node )
+            txt_node = converted_doc.createTextNode(s)
+            verse_node.appendChild(txt_node)
         
         else:
             word_node = converted_doc.createElement( "span" )
@@ -65,9 +65,9 @@ def unbound_text_to_html5(text, language=None):
             
             # Create the text node and append it
             if language is None or language.lower() == "greek":
-                txt_node = converted_doc.createTextNode( s )
+                txt_node = converted_doc.createTextNode(s)
             else:
-                txt_node = converted_doc.createTextNode( transform_text(s, language).decode( "utf-8" ) )
+                txt_node = converted_doc.createTextNode(transform_text(s, language))
             
             word_node.appendChild(txt_node)
            
