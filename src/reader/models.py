@@ -131,32 +131,32 @@ class RelatedWork(models.Model):
         unique_together = ("work", "related_work")
     
     @staticmethod
-    def are_divisions_identical( first_work, second_work ):
+    def are_divisions_identical(first_work, second_work):
         """
         Determine if the divisions in the given works appear to be identical.
         """
         
         # Get a list of the divisions
-        divisions_first_work = Division.objects.filter( work = first_work ).order_by( "sequence_number" )
-        divisions_second_work = Division.objects.filter( work = second_work ).order_by( "sequence_number" )
+        divisions_first_work = Division.objects.filter(work = first_work).order_by("sequence_number")
+        divisions_second_work = Division.objects.filter(work = second_work).order_by("sequence_number")
         
         # Make sure the divisions are consistent
         if divisions_first_work.count() != divisions_second_work.count():
-            logger.info("Division counts are different, these works are not identical, first_work=%s, second_work=%s",  first_work.title_slug, second_work.title_slug )
+            logger.info("Division counts are different, these works are not identical, first_work=%s, second_work=%s",  first_work.title_slug, second_work.title_slug)
             return False
         
         # Compare the divisions
-        for i in range(0, divisions_first_work.count() ):
+        for i in range(0, divisions_first_work.count()):
             
             # Compare the divisions
             if divisions_first_work[i].descriptor != divisions_second_work[i].descriptor:
-                logger.info("Division counts are different, these works are not identical, first_work=%s, division_first_work=%s, second_work=%s, division_second_work=%s", divisions_first_work[i].work.title_slug, divisions_first_work[i].title_slug, divisions_second_work[i].work.title_slug, divisions_second_work[i].title_slug )
+                logger.info("Division counts are different, these works are not identical, first_work=%s, division_first_work=%s, second_work=%s, division_second_work=%s", divisions_first_work[i].work.title_slug, divisions_first_work[i].title_slug, divisions_second_work[i].work.title_slug, divisions_second_work[i].title_slug)
                 return False
             
         return True
     
     @classmethod
-    def are_works_equivalent( cls, first_work, second_work, ignore_editors=False, ignore_divisions=False, consider_a_match_if_divisions_or_editors_match=True ):
+    def are_works_equivalent(cls, first_work, second_work, ignore_editors=False, ignore_divisions=False, consider_a_match_if_divisions_or_editors_match=True):
         """
         Determine if these works appear to be identical.
         """
@@ -169,12 +169,12 @@ class RelatedWork(models.Model):
         second_work_authors = second_work.authors.all().order_by("name")
         
         if first_work_authors.count() != second_work_authors.count():
-            logger.info("Works are not identical, author counts are different, first_work=%s, second_work=%s" % ( first_work.title_slug, second_work.title_slug) )
+            logger.info("Works are not identical, author counts are different, first_work=%s, second_work=%s" % (first_work.title_slug, second_work.title_slug))
             return False
         
-        for i in range(0, first_work_authors.count() ):
+        for i in range(0, first_work_authors.count()):
             if first_work_authors[i].name != second_work_authors[i].name:
-                logger.info("Works are not identical, author is different, first_work=%s, second_work=%s, first_work_author=%s, second_work_author=%s" % ( first_work.title_slug, second_work.title_slug, first_work_authors[i].name, second_work_authors[i].name) )
+                logger.info("Works are not identical, author is different, first_work=%s, second_work=%s, first_work_author=%s, second_work_author=%s" % (first_work.title_slug, second_work.title_slug, first_work_authors[i].name, second_work_authors[i].name))
                 return False
         
         # Compare the editors
@@ -190,9 +190,9 @@ class RelatedWork(models.Model):
             
             # If the count is the same, then check the values
             if editors_match is None:
-                for i in range(0, first_work_editors.count() ):
+                for i in range(0, first_work_editors.count()):
                     if first_work_editors[i].name != second_work_editors[i].name:
-                        logger.info("Works are not identical, editor is different, first_work=%s, second_work=%s, first_work_editor=%s, second_work_editor=%s" % ( first_work.title_slug, second_work.title_slug, first_work_editors[i].name, second_work_editors[i].name) )
+                        logger.info("Works are not identical, editor is different, first_work=%s, second_work=%s, first_work_editor=%s, second_work_editor=%s" % (first_work.title_slug, second_work.title_slug, first_work_editors[i].name, second_work_editors[i].name))
                         editors_match = False
                 
                 editors_match = True
@@ -201,16 +201,16 @@ class RelatedWork(models.Model):
         divisions_match = None
         
         if not ignore_divisions or consider_a_match_if_divisions_or_editors_match:
-            divisions_match = cls.are_divisions_identical( first_work, second_work )
+            divisions_match = cls.are_divisions_identical(first_work, second_work)
         
         # If we are considering this a match if the editors or divisions match, then evaluate accordingly
         if consider_a_match_if_divisions_or_editors_match:
             
             if editors_match or divisions_match:
-                logger.info("Works are identical since editors or divisions match, first_work=%s, second_work=%s", first_work.title_slug, second_work.title_slug )
+                logger.info("Works are identical since editors or divisions match, first_work=%s, second_work=%s", first_work.title_slug, second_work.title_slug)
                 return True
             else:
-                logger.info("Works are not identical, since the neither the divisions nor the editors matched, first_work=%s, second_work=%s", first_work.title_slug, second_work.title_slug )
+                logger.info("Works are not identical, since the neither the divisions nor the editors matched, first_work=%s, second_work=%s", first_work.title_slug, second_work.title_slug)
                 return False   
              
         # Stop if the divisions don't match but should
@@ -244,7 +244,7 @@ class RelatedWork(models.Model):
         return entries_made
     
     @classmethod
-    def autodiscover( cls, ignore_editors=False, ignore_divisions=False, consider_a_match_if_divisions_or_editors_match=True ):
+    def autodiscover(cls, ignore_editors=False, ignore_divisions=False, consider_a_match_if_divisions_or_editors_match=True):
         """
         Automatically discover related works and make references to them.
         """
@@ -253,7 +253,7 @@ class RelatedWork(models.Model):
             cls.find_related_for_work(first_work, ignore_editors, ignore_divisions, consider_a_match_if_divisions_or_editors_match)
             
     @classmethod
-    def find_related_for_work( cls, first_work, ignore_editors=False, ignore_divisions=False, consider_a_match_if_divisions_or_editors_match=True, test=False ):
+    def find_related_for_work(cls, first_work, ignore_editors=False, ignore_divisions=False, consider_a_match_if_divisions_or_editors_match=True, test=False):
         """
         Automatically discover any other related works and make a reference to the provided work.
         """
@@ -269,7 +269,7 @@ class RelatedWork(models.Model):
                     entries_made = RelatedWork.make_related_work(first_work, second_work)
 
                     if entries_made > 0:
-                        logger.info("Made a reference between two works, first_work=%s, second_work=%s" % ( first_work.title_slug, second_work.title_slug) )
+                        logger.info("Made a reference between two works, first_work=%s, second_work=%s" % (first_work.title_slug, second_work.title_slug))
 
                 # Keep a record of the related work
                 related_works.append(second_work)
@@ -298,7 +298,7 @@ class WorkAlias(models.Model):
         return items_created
     
     @staticmethod
-    def populate_alias_from_work( work ):
+    def populate_alias_from_work(work):
         
         # If the title_slug is empty, then just ignore this for now
         if work.title_slug is None or len(work.title_slug) == 0:
@@ -313,7 +313,7 @@ class WorkAlias(models.Model):
             raise Exception("Alias already exists for another work")
                 
         # Otherwise, make the new entry
-        work_alias = WorkAlias( title_slug=work.title_slug, work=work )
+        work_alias = WorkAlias(title_slug=work.title_slug, work=work)
         work_alias.save()
         
         return work_alias
@@ -356,11 +356,11 @@ class Division(models.Model):
     def get_slug_title(self):
         
         if self.original_title is not None:
-            return slugify( re.sub("[)'(+*=|/\\\\]", "", self.original_title) )
+            return slugify(re.sub("[)'(+*=|/\\\\]", "", self.original_title))
         elif self.descriptor is not None:
-            return slugify( self.descriptor )
+            return slugify(self.descriptor)
         else:
-            return slugify( self.sequence_number )
+            return slugify(self.sequence_number)
         
     def update_title_slug(self):
         self.title_slug = self.get_slug_title()
@@ -442,7 +442,7 @@ class Division(models.Model):
             
             # Insert the descriptor at position zero, since the highest level will be at the lowest ID
             if use_titles:
-                descriptors.insert(0, str(next_division) )
+                descriptors.insert(0, str(next_division))
             else:
                 descriptors.insert(0, next_division.descriptor)
             
@@ -467,7 +467,7 @@ class Verse(models.Model):
     original_content  = models.TextField()
     
     def __str__(self):
-        if self.indicator is not None and len( self.indicator ) > 0:
+        if self.indicator is not None and len(self.indicator) > 0:
             return self.indicator
         else:
             return str(self.sequence_number)
@@ -475,7 +475,7 @@ class Verse(models.Model):
     def save(self, *args, **kwargs):
         
         # Normalize the content so that we can do searches by normalizing to the same form of Unicode
-        if not isinstance( self.content, str):
+        if not isinstance(self.content, str):
             self.content = language_tools.normalize_unicode(str(self.content, "UTF-8", 'strict'))
         else:
             self.content = language_tools.normalize_unicode(self.content)
@@ -508,10 +508,10 @@ class Lemma(models.Model):
     def save(self, *args, **kwargs):
         
         # Normalize the form to NFKC so that we can do queries reliably
-        self.lexical_form = language_tools.normalize_unicode( self.lexical_form )
+        self.lexical_form = language_tools.normalize_unicode(self.lexical_form)
         
         # Save the basic form
-        self.basic_lexical_form = language_tools.strip_accents( self.lexical_form )
+        self.basic_lexical_form = language_tools.strip_accents(self.lexical_form)
 
         super(Lemma, self).save(*args, **kwargs)
 
@@ -570,7 +570,7 @@ class WordForm(models.Model):
         self.form = language_tools.normalize_unicode(self.form)
         
         # Save the basic form
-        self.basic_form = language_tools.strip_accents( self.form )
+        self.basic_form = language_tools.strip_accents(self.form)
 
         super(WordForm, self).save(*args, **kwargs)
     
@@ -698,9 +698,9 @@ class WordDescription(models.Model):
     
     lemma          = models.ForeignKey(Lemma)
     word_form      = models.ForeignKey(WordForm)
-    description    = models.CharField( max_length=50, default="", null=True)
+    description    = models.CharField(max_length=50, default="", null=True)
     
-    meaning        = models.CharField( max_length=200, default="", null=True)
+    meaning        = models.CharField(max_length=200, default="", null=True)
     
     # This class replaces some well-known terms with shorter versions
     SHORTENERS = {
@@ -744,12 +744,12 @@ class WordDescription(models.Model):
     
     def append_if_not_none(self, a, entry):
         if entry is not None:
-            a.append( self.shorten(entry) )
+            a.append(self.shorten(entry))
             
     def append_if_true(self, a, value, str_value):
         
         if value:
-            a.append( self.shorten(str_value) )
+            a.append(self.shorten(str_value))
     
     def __str__(self):
         
@@ -758,7 +758,7 @@ class WordDescription(models.Model):
         self.append_if_not_none(a, self.tense)
         self.append_if_true(a, self.participle, "participle")
         self.append_if_true(a, self.infinitive, "infinitive")
-        self.append_if_not_none(a, self.get_voice_display() )
+        self.append_if_not_none(a, self.get_voice_display())
 
         # Add the genders
         genders = []
@@ -772,7 +772,7 @@ class WordDescription(models.Model):
         if self.neuter:
             genders.append("nuet")
             
-        self.append_if_not_none(a, "/".join(genders) )
+        self.append_if_not_none(a, "/".join(genders))
         
         # Add the cases
         cases = []
@@ -780,12 +780,12 @@ class WordDescription(models.Model):
         for c in self.cases.all():
             cases.append(c.name)
             
-        self.append_if_not_none(a, "/".join(cases) )
+        self.append_if_not_none(a, "/".join(cases))
         
         self.append_if_not_none(a, self.mood)
         
-        self.append_if_not_none(a, self.get_person_display() )
-        self.append_if_not_none(a, self.get_number_display() )
+        self.append_if_not_none(a, self.get_person_display())
+        self.append_if_not_none(a, self.get_number_display())
         
         self.append_if_true(a, self.part_of_speech == WordDescription.ADVERB, "adverbial")
         self.append_if_true(a, self.indeclinable, "indeclinable")
