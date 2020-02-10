@@ -57,15 +57,15 @@ class BereanBibleImporter(TextImporter):
             if slug_was_already_taken:
                 raise Exception("Work appears to already exist")
         
-        # Make the work source
-        self.work_source = WorkSource()
-        
-        # Save the source of the document
-        self.work_source.source = "bereanbible.com"
-        self.work_source.resource = os.path.basename(file_name)
-        self.work_source.work = self.work
-        self.work_source.description = "The Holy Bible, Berean Study Bible, BSB\nCopyright ©2016, 2018 by Bible Hub\nUsed by Permission. All Rights Reserved Worldwide.\n\nhttps://bereanbible.com/"
-        self.work_source.save()
+            # Make the work source
+            self.work_source = WorkSource()
+            
+            # Save the source of the document
+            self.work_source.source = "bereanbible.com"
+            self.work_source.resource = os.path.basename(file_name)
+            self.work_source.work = self.work
+            self.work_source.description = "The Holy Bible, Berean Study Bible, BSB\nCopyright ©2016, 2018 by Bible Hub\nUsed by Permission. All Rights Reserved Worldwide.\n\nhttps://bereanbible.com/"
+            self.work_source.save()
         
         # Initialize a couple more things...
         f = None # The file handle
