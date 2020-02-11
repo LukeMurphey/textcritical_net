@@ -1,13 +1,13 @@
 import os
 import re
 from xml.dom.minidom import Document
+from xml.dom import minidom
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.template.defaultfilters import slugify
 
 from reader.models import Author, Work, WorkSource, Verse, Division
-from xml.dom import minidom
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -233,7 +233,7 @@ class TextImporter():
             self.work_source = work_source
         else:
             self.work_source = WorkSource()
-    
+
     @staticmethod
     def copy_node(src_node, dst_doc, dst_node, copy_attributes=True, copy_children=False, concatenate_child_text_nodes=True, handle_inappropriate_text_node_children=True):
         """
