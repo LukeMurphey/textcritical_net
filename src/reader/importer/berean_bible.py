@@ -148,7 +148,7 @@ class BereanBibleImporter(TextImporter):
 
         if book is None:
             return
-            # Skip this line
+            # Skip this line, this is likely the license line at the top of the import file
 
         made_book = False
 
@@ -181,7 +181,8 @@ class BereanBibleImporter(TextImporter):
 
     @classmethod
     def parse_line(cls, line):
-        r = re.compile('([a-zA-Z0-9 ]+)([0-9]+)([:]([0-9])*)?\t(.*)')
+        # See https://regex101.com/r/BTJRLp/1
+        r = re.compile('(([0-9] )?[a-zA-Z ]+)([0-9]+)([:]([0-9]+))?\t(.*)')
 
         match = r.match(line)
 
@@ -189,9 +190,9 @@ class BereanBibleImporter(TextImporter):
             groups = match.groups()
 
             book = groups[0].strip()
-            chapter = groups[1]
-            verse = groups[3]
-            text = groups[4]
+            chapter = groups[2]
+            verse = groups[4]
+            text = groups[5]
 
             return book, chapter, verse, text
 

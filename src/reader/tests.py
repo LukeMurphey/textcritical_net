@@ -1741,6 +1741,14 @@ class TestBereanBibleImport(TestReader):
         self.assertEqual(verse, "9")
         self.assertEqual(text, "Not that we lack this right, but we wanted to offer ourselves as an example for you to imitate.")
 
+    def test_parse_line_large_chapter_num(self):
+        book, chapter, verse, text = BereanBibleImporter.parse_line("Genesis 43:17	The man did as Joseph had commanded and took the brothers to Joseph's house.")
+
+        self.assertEqual(book, "Genesis")
+        self.assertEqual(chapter, "43")
+        self.assertEqual(verse, "17")
+        self.assertEqual(text, "The man did as Joseph had commanded and took the brothers to Joseph's house.")
+
     def test_parse_line_invalid(self):
         line = "The Holy Bible, Berean Bible, Copyright ©2016-2020 by Bible Hub. All Rights Reserved Worldwide.	"
         book, chapter, verse, text = BereanBibleImporter.parse_line(line)
