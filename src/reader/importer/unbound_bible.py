@@ -48,7 +48,7 @@ class UnboundBibleTextImporter(TextImporter):
         
         # If this is for a different book, then make a new division
         if orig_book_index != self.current_book_index:
-            self.current_book_division = self.make_division( self.book_names[orig_book_index], self.current_division, save=False)
+            self.current_book_division = self.make_division(self.book_names[orig_book_index], self.current_division, save=False)
             self.current_book_division.title = self.book_names[orig_book_index]
             self.current_book_division.level = 1
             self.current_book_division.type = "Book"
@@ -62,7 +62,7 @@ class UnboundBibleTextImporter(TextImporter):
             
         # If this is for a different chapter, then make a new division
         if orig_chapter != self.current_chapter:
-            self.current_chapter_division = self.make_division( orig_chapter, self.current_division, save=False)
+            self.current_chapter_division = self.make_division(orig_chapter, self.current_division, save=False)
             self.current_chapter_division.level = 2
             self.current_chapter_division.type = "Chapter"
             self.current_chapter_division.parent_division = self.current_book_division

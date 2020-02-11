@@ -283,7 +283,7 @@ def get_division(work, division_0=None, division_1=None, division_2=None, divisi
     # Filter down the list to the division within the given work
     divisions = Division.objects.filter(work=work)
     
-    # Get the division if we got three levels deep of descriptors ("1.2.3")
+    # Get the division if we got four levels deep of descriptors ("1.2.3.4")
     if division_0 is not None and division_1 is not None and division_2 is not None and division_3 is not None:
         
         divisions = divisions.filter(parent_division__parent_division__parent_division__parent_division=None,
@@ -311,7 +311,6 @@ def get_division(work, division_0=None, division_1=None, division_2=None, divisi
     elif division_0 is not None:
         divisions = divisions.filter(parent_division=None,
                                      descriptor__iexact=division_0)
-        
     
     # Only grab one
     divisions = divisions[:1]
