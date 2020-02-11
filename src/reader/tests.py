@@ -56,7 +56,8 @@ from django.db import IntegrityError
 from xml.dom.minidom import parseString
 import unicodedata
 import os
-import sys 
+import sys
+from tempfile import NamedTemporaryFile
 from reader.shortcuts import convert_xml_to_html5
 from reader.templatetags.reader_extras import perseus_xml_to_html5
 from reader.importer.batch_import import ImportPolicy, WorkDescriptor, wildcard_to_re, ImportTransforms, JSONImportPolicy
@@ -2431,6 +2432,30 @@ class TestEpubExport(TestReader):
         
         lines = ePubExport.splitTextIntoMultipleLines("Alcibiades 1, Alcibiades 2, Hipparchus, Lovers, Theages, Charmides, Laches, Lysis", 24)
         self.assertEqual(lines, "Alcibiades 1, Alcibiades\n2, Hipparchus, Lovers,\nTheages, Charmides,\nLaches, Lysis")
+
+    def test_export_work(self):
+        # Make a work
+        work = Work()
+        work.title = 'test case'
+        work.language = "english"
+        work.save()
+        
+        division = Division()
+        division.work = work
+        division.sequence_number = 1
+        division.level = 1
+        division.save()
+
+        content = ' some content goes here'
+        verse = Verse(division=division, indicator="1", sequence_number=1, content=content)
+        verse.save()
+
+        # Make the place to export the file
+        epub_file = NamedTemporaryFile(delete=False)
+        epub_file.close()
+
+        # Export it
+        ePubExport.exportWork(work, epub_file.name)
         
 class TestWikiArticle(TestReader):
     

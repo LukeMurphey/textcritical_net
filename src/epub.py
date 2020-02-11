@@ -226,7 +226,7 @@ class EpubBook:
             pass
     
     def __writeContainerXML(self):
-        fout = open(os.path.join(self.rootDir, 'META-INF', 'container.xml'), 'w')
+        fout = open(os.path.join(self.rootDir, 'META-INF', 'container.xml'), 'wb')
         template = loader.get_template('epub/container.xml')
         c = {"book": self}
         fout.write(template.render(c).encode("utf-8"))
@@ -234,7 +234,7 @@ class EpubBook:
 
     def __writeTocNCX(self):
         self.tocMapRoot.assignPlayOrder()
-        fout = open(os.path.join(self.rootDir, 'OEBPS', 'toc.ncx'), 'w')
+        fout = open(os.path.join(self.rootDir, 'OEBPS', 'toc.ncx'), 'wb')
 
         template = loader.get_template('epub/toc.ncx')
         c = {"book": self}
@@ -242,7 +242,7 @@ class EpubBook:
         fout.close()
     
     def __writeContentOPF(self):
-        fout = open(os.path.join(self.rootDir, 'OEBPS', 'content.opf'), 'w')
+        fout = open(os.path.join(self.rootDir, 'OEBPS', 'content.opf'), 'wb')
         template = loader.get_template('epub/content.opf')
         c = {"book": self}
         fout.write(template.render(c).encode("utf-8"))
@@ -252,7 +252,7 @@ class EpubBook:
         for item in self.getAllItems():
             #print item.id, item.destPath
             if item.html:
-                fout = open(os.path.join(self.rootDir, 'OEBPS', item.destPath), 'w')
+                fout = open(os.path.join(self.rootDir, 'OEBPS', item.destPath), 'wb')
                 fout.write(item.html)
                 fout.close()
             else:
