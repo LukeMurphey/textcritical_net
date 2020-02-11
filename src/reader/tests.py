@@ -1795,6 +1795,9 @@ class TestBereanBibleImport(TestReader):
         # Get chapter 1 of Genesis
         genesis_1 = Division.objects.filter(work=work, parent_division=genesis, level=2, descriptor="1")[0]
         self.assertEqual(genesis_1.descriptor, '1')
+        self.assertEqual(genesis_1.sequence_number, 2)
+        self.assertEqual(genesis_1.get_division_description(), 'Genesis 1')
+        self.assertEqual(genesis_1.get_division_description_titles(), 'Genesis Chapter 1')
 
         # Get the verses of Genesis 1
         genesis_verses = Verse.objects.filter(division=genesis_1)

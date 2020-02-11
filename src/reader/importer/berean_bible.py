@@ -30,6 +30,7 @@ class BereanBibleImporter(TextImporter):
         self.verses_created = 0
         self.work = None
         self.work_source = None
+        self.current_division = None
         
         self.import_policy = import_policy
         
@@ -154,21 +155,27 @@ class BereanBibleImporter(TextImporter):
 
         # Create the book if necessary (if None or for a different book)
         if self.current_book_division is None or self.current_book_division.descriptor != book:
-            self.current_book_division = self.make_division(book, self.current_book_division, save=False)
+            self.current_book_division = self.make_division(book, self.current_division, save=False)
             self.current_book_division.title = book
             self.current_book_division.level = 1
             self.current_book_division.type = "Book"
             self.current_book_division.save()
+
+            self.current_chapter_division = None
+            self.current_chapter = None
+            self.current_division = self.current_book_division
+
             made_book = True
 
         # Create the chapter if necessary
         if self.current_chapter_division is None or self.current_chapter_division.descriptor != chapter or made_book:
-            self.current_chapter_division = self.make_division(chapter, self.current_chapter_division, save=False)
-            self.current_chapter_division.title = chapter
+            self.current_chapter_division = self.make_division(chapter, self.current_division, save=False)
             self.current_chapter_division.level = 2
             self.current_chapter_division.type = "Chapter"
             self.current_chapter_division.parent_division = self.current_book_division
             self.current_chapter_division.save()
+
+            self.current_division = self.current_chapter_division
 
         # Make the verse
         verse = self.make_verse(self.current_verse, self.current_chapter_division, save=False)
