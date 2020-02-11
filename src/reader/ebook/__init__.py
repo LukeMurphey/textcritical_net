@@ -438,7 +438,7 @@ class ePubExport(object):
         if division.title is not None and "lines" in division.title:
             title = division.title
         elif division.descriptor is not None and division.type is not None:
-            title = str(division.type) + " " + division.descriptor.encode("utf-8")
+            title = str(division.type) + " " + division.descriptor
         elif division.descriptor is not None:
             title = str(division.descriptor)
         elif division.sequence_number is not None:
