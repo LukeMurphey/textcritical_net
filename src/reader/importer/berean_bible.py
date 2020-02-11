@@ -2,11 +2,13 @@ import logging
 import re
 import os
 from time import time
+from copy import copy
 
 from reader import language_tools
 from reader.importer import TextImporter, LineNumber, LineNumberRange
 from reader.models import Division, Work, WorkSource
 from reader.shortcuts import transform_text
+from reader.importer.batch_import import ImportTransforms
 
 from django.db import transaction
 from django.template.defaultfilters import slugify
@@ -33,6 +35,40 @@ class BereanBibleImporter(TextImporter):
         
         TextImporter.__init__(self, work, work_source)
 
+    def get_processing_parameters(self, file_path, title ):
+        """
+        Get the processing parameters associated with the given work.
+        """
+        
+        logger.debug("Analyzing %s to determine if it ought to be imported" % (title))
+        
+        return self.import_policy( title=title, file_path=file_path )
+
+    def execute_import_policy_actions(self, work, file_name, title):
+
+        if self.import_policy is not None:
+            # Get the import parameters
+            import_parameters = self.get_processing_parameters(os.path.basename(file_name), title)
+
+            # Get the transforms to be executed
+            if import_parameters not in [None, True, False] and 'transforms' in import_parameters:
+                transforms = import_parameters.get('transforms', None)
+                
+                # Create a copy since we are going to delete items from this one
+                import_parameters = copy(import_parameters)
+                
+                # Delete the transforms because the importer constructor doesn't take this argument
+                del import_parameters['transforms']
+            else:
+                transforms = None
+            
+            # Run the transforms
+            if transforms is not None:
+                logger.debug("Running transforms")
+                ImportTransforms.run_transforms(work, transforms)
+            else:
+                logger.debug("No transforms found")
+
     @transaction.atomic
     def import_file(self, file_name, return_created_objects=False, start_line_number=None, **kwargs):
         
@@ -50,7 +86,7 @@ class BereanBibleImporter(TextImporter):
         # Create the work
         if self.work is None:
             self.work = Work()
-            self.work.title = "Berean Bible"
+            self.work.title = "Berean Study Bible"
             self.work.title_slug, slug_was_already_taken = self.get_title_slug(self.work.title)
             self.work.save()
 
@@ -99,6 +135,10 @@ class BereanBibleImporter(TextImporter):
             if f is not None:
                 f.close()
     
+        # Execute import policy actions
+        self.execute_import_policy_actions(self.work, file_name, self.work.title)
+
+        # Log that we are done
         logger.info("Import complete, duration=%i", time() - start_time )
 
         return objects

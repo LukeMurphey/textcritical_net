@@ -1751,11 +1751,25 @@ class TestBereanBibleImport(TestReader):
         self.assertEqual(text, line)
 
     def test_import(self):
-        work = Work(title="BSB", title_slug="bsb")
+        # Make the base work
+        work = Work(title="Berean Study Bible", title_slug="bsb")
         work.save()
 
-        importer = BereanBibleImporter(work=work)
-        importer.import_file(self.get_test_resource_file_name("berean_study_bible.txt"))
+        Work(title_slug="asv").save()
+        Work(title_slug="lxx").save()
+        Work(title_slug="new-testament").save()
+
+        # Get the path to the import policy accounting for the fact that the command may be run outside of the path where manage.py resides
+        import_policy_file = os.path.join("reader", "importer", "berean_bible_import_policy.json")
+        
+        import_policy = JSONImportPolicy()
+        import_policy.load_policy(import_policy_file)
+
+        # Make sure the policy got loaded
+        self.assertEqual(len(import_policy.descriptors), 1)
+
+        importer = BereanBibleImporter(work=work, import_policy=import_policy.should_be_processed)
+        importer.import_file(self.get_test_resource_file_name("bsb.txt"))
 
         # Verify the division count
         self.assertEqual(len(Division.objects.filter(work=work)), 7)
@@ -1779,6 +1793,12 @@ class TestBereanBibleImport(TestReader):
         self.assertEqual(len(genesis_verses), 5)
 
         self.assertEqual(genesis_verses[0].content, 'In the beginning God created the heavens and the earth.')
+
+        # Make sure that import policy worked
+        print("\n\nAAAAAA Work slug is:", work.title_slug)
+        updated_work = Work.objects.get(title_slug=work.title_slug)
+
+        self.assertEqual(updated_work.language, 'English')
         
 
 class TestReaderUtils(TestReader):

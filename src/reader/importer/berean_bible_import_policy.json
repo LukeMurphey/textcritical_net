@@ -1,6 +1,5 @@
 [
     {
-        "file_name" : "bsb.txt",
         "title" : "Berean Study Bible",
         "import_parameters" : {
             "transforms" : {
@@ -10,7 +9,7 @@
                     "language"   : "English"
                 },
                 "assign_related_work" : {
-                	"title_slug" : ["bsb", "berean-bible"]
+                	"title_slug" : ["lxx", "new-testament", "asv"]
                 }
         	}
         }
