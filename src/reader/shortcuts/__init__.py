@@ -228,11 +228,11 @@ def convert_xml_to_html5_minidom( xml_str, new_root_node_tag_name=None, text_tra
     
     # Return the result
     if return_as_str:
-        return dst_doc.toxml( encoding="utf-8" )
+        return dst_doc.toxml(encoding="utf-8")
     else:
         return dst_doc
     
-def add_xml_as_html( src_doc, src_node, dst_doc, parent_dst_node, language, text_transformation_fx = None, allow_closing_in_start_tag=False ):
+def add_xml_as_html(src_doc, src_node, dst_doc, parent_dst_node, language, text_transformation_fx = None, allow_closing_in_start_tag=False):
     new_dst_node = None
     
     # Handle the text node
@@ -240,12 +240,12 @@ def add_xml_as_html( src_doc, src_node, dst_doc, parent_dst_node, language, text
         
         # Transform the content if a transform function is provided
         if text_transformation_fx is not None:
-            content = text_transformation_fx( text=src_node.data, parent_node=src_node.parentNode ).decode( "utf-8" )
+            content = text_transformation_fx(text=src_node.data, parent_node=src_node.parentNode).decode("utf-8")
         else:
             content = src_node.data
             
         # Create the text node
-        new_dst_node = dst_doc.createTextNode( content )
+        new_dst_node = dst_doc.createTextNode(content)
         parent_dst_node.appendChild(new_dst_node)
         
     # Handle the comment node (skip it)
