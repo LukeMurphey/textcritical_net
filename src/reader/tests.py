@@ -1795,7 +1795,6 @@ class TestBereanBibleImport(TestReader):
         self.assertEqual(genesis_verses[0].content, 'In the beginning God created the heavens and the earth.')
 
         # Make sure that import policy worked
-        print("\n\nAAAAAA Work slug is:", work.title_slug)
         updated_work = Work.objects.get(title_slug=work.title_slug)
 
         self.assertEqual(updated_work.language, 'English')
