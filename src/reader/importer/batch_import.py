@@ -164,12 +164,12 @@ class JSONImportPolicy(ImportPolicy):
         fh.close()
         
         # Load the file into JSON
-        policy_entries = json.loads( file_string )
+        policy_entries = json.loads(file_string)
         
         descriptors = []
         
         for entry in policy_entries:
-            descriptors.append( WorkDescriptor(**entry) )
+            descriptors.append(WorkDescriptor(**entry))
             
         # Save the descriptors
         self.descriptors = descriptors
