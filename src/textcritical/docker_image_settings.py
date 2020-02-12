@@ -85,6 +85,28 @@ LOGGING = {
             'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
         },
     },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler'
+        },
+    },
+    'loggers': {
+        '': {  # 'catch all' loggers by referencing it with the empty string
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
+
+"""
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -134,6 +156,7 @@ LOGGING = {
         },
     }
 }
+"""
 
 # Set the domain name to the list of allowed host names
 ALLOWED_HOSTS = ['*']
