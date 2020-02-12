@@ -391,9 +391,9 @@ class VerseSearchResults:
             # Get the verse so that the highlighting can be done
             verse = Verse.objects.get(id=r['verse_id'])
             
-            highlights = self.get_highlights( r, verse )
+            highlights = self.get_highlights(r, verse)
             
-            self.verses.append( VerseSearchResult(verse, highlights ) )
+            self.verses.append(VerseSearchResult(verse, highlights))
         
         if use_estimated_length:
             self.result_count = results.results.estimated_length()
@@ -704,7 +704,7 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True,
     
     return stats
 
-def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_forms=True, ignore_diacritics=False ):
+def search_verses(search_text, inx=None, page=1, pagelen=20, include_related_forms=True, ignore_diacritics=False):
     """
     Search all verses for those with the given text.
     
@@ -717,7 +717,7 @@ def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_fo
     ignore_diacritics -- Search ignoring dia-critical marks by default
     """
     
-    logger.info( 'Performing a search, page=%r, page_len=%r, include_related_forms=%r, search_query="%s"', page, pagelen, include_related_forms, search_text )
+    logger.info('Performing a search, page=%r, page_len=%r, include_related_forms=%r, search_query="%s"', page, pagelen, include_related_forms, search_text)
     
     # Get the index if provided
     if inx is None:
@@ -744,7 +744,7 @@ def search_verses( search_text, inx=None, page=1, pagelen=20, include_related_fo
         logger.debug('Search query parsed, default_search_field="%s", raw_query="%s"', default_search_field, search_query)
         
         # Get the search result
-        search_results = VerseSearchResults( searcher.search_page(search_query, page, pagelen, terms=True, sortedby="verse_id"), page, pagelen)
+        search_results = VerseSearchResults(searcher.search_page(search_query, page, pagelen, terms=True, sortedby="verse_id"), page, pagelen)
             
     return search_results
 
