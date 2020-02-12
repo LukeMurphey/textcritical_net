@@ -125,7 +125,7 @@ def perseus_xml_to_epub_html5(value, arg=None):
         note_number = 1
         language = arg
     
-    return transform_perseus_xml_to_epub_html5(value, language, True, note_number_start=note_number).replace('<?xml version="1.0" encoding="utf-8"?>', "")
+    return transform_perseus_xml_to_epub_html5(value, language, True, note_number_start=note_number).decode('utf-8').replace('<?xml version="1.0" encoding="utf-8"?>', "")
         
 def transform_perseus_xml_to_epub_html5(xml_text, language=None, return_as_str=False, note_number_start=1):
     """
@@ -137,11 +137,11 @@ def transform_perseus_xml_to_epub_html5(xml_text, language=None, return_as_str=F
     next_note_number = NoteNumber(note_number_start)
     transform_node = lambda tag, attrs, parent, dst_doc: transform_perseus_node(tag, attrs, parent, dst_doc, False, False, next_note_number)
     
-    converted_doc = convert_xml_to_html5( xml_text, language=language, text_transformation_fx=text_transformation_fx, node_transformation_fx=transform_node )
+    converted_doc = convert_xml_to_html5(xml_text, language=language, text_transformation_fx=text_transformation_fx, node_transformation_fx=transform_node)
     
     try:
         if return_as_str:
-            return converted_doc.toxml( encoding="utf-8" )
+            return converted_doc.toxml(encoding="utf-8")
         else:
             return converted_doc
     finally:
