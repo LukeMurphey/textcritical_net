@@ -1,6 +1,12 @@
 from django import template
 register = template.Library()
- 
+
+def makestring(s):
+    if isinstance(s, str):
+        return s
+    else:
+        return str(s)
+
 @register.filter()
 def contains(value, arg):
     """
@@ -15,7 +21,7 @@ def contains(value, arg):
     if value is None:
         return False
     
-    return arg in value
+    return arg in makestring(value)
 
 @register.filter()
 def startswith(value, arg):
@@ -31,7 +37,7 @@ def startswith(value, arg):
     if value is None:
         return False
     
-    return value.startswith(arg)
+    return makestring(value).startswith(arg)
 
 @register.filter()
 def endswith(value, arg):
@@ -47,7 +53,7 @@ def endswith(value, arg):
     if value is None:
         return False
     
-    return value.endswith(arg)
+    return makestring(value).endswith(arg)
 
 @register.filter()
 def addspaceifnotempty(obj):
@@ -55,7 +61,7 @@ def addspaceifnotempty(obj):
     Usage:
     {{query|addspaceifnotempty}}
     """
-    
+    obj = makestring(obj)
     if obj is not None and not obj.endswith(" "):
         return obj + " "
     else:
@@ -69,7 +75,7 @@ def remove(value, arg):
     """
     
     if value is not None:
-        return value.replace(arg, "")
+        return makestring(value).replace(arg, "")
     else:
         return value
     
@@ -86,6 +92,6 @@ def replace(value, arg):
         
         replace_this = split_s[0]
         put_in_this = split_s[1]
-        return value.replace(replace_this, put_in_this)
+        return makestring(value).replace(replace_this, put_in_this)
     else:
         return value

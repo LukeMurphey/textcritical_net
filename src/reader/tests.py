@@ -2456,6 +2456,20 @@ class TestEpubExport(TestReader):
 
         # Export it
         ePubExport.exportWork(work, epub_file.name)
+
+    def test_export_perseus_work(self):
+        # Import a Perseus work
+        file_name = self.get_test_resource_file_name('hist_eng.xml')
+
+        importer = PerseusTextImporter(ignore_notes=False)
+        importer.import_file(file_name)
+
+        # Make the place to export the file
+        epub_file = NamedTemporaryFile(delete=False)
+        epub_file.close()
+
+        # Export it
+        ePubExport.exportWork(importer.work, epub_file.name)
         
 class TestWikiArticle(TestReader):
     

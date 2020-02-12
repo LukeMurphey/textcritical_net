@@ -85,7 +85,7 @@ class EpubBook:
         for metaName, metaValue, metaAttr in self.metaInfo:
             beginTag = '<dc:%s' % metaName
             if metaAttr:
-                for attrName, attrValue in metaAttr.iteritems():
+                for attrName, attrValue in metaAttr.items():
                     beginTag += ' opf:%s="%s"' % (attrName, attrValue)
             beginTag += '>'
             endTag = '</dc:%s>' % metaName
