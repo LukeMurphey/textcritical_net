@@ -5,7 +5,7 @@
             "transforms" : {
                 "set_meta_data" : {
                     "title_slug" : "berean-bible",
-                    "title"      : "Bible (Berean Study Bible)",
+                    "title"      : "Berean Study Bible",
                     "language"   : "English"
                 },
                 "assign_related_work" : {
