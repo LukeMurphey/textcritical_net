@@ -414,12 +414,12 @@ class VerseSearchResults:
                 
                 # Include terms matched 
                 if term[0] == "content":
-                    temp_matched_terms[term[1]] = len(term_matches)
+                    temp_matched_terms[term[1].decode('utf-8')] = len(term_matches)
                     self.match_count += len(term_matches)
                     
                 # Include terms matched that matched without diacritics
                 if term[0] == "no_diacritics":
-                    temp_matched_terms_no_diacritics[term[1]] = len(term_matches)
+                    temp_matched_terms_no_diacritics[term[1].decode('utf-8')] = len(term_matches)
                     
                 # Include section matches
                 if term[0] == "section":
@@ -433,7 +433,6 @@ class VerseSearchResults:
         self.matched_terms = OrderedDict(sorted(temp_matched_terms.items(), key=lambda x: x[1], reverse=True))
         self.matched_terms_no_diacritics = OrderedDict(sorted(temp_matched_terms.items(), key=lambda x: x[1], reverse=True))
         self.matched_sections = OrderedDict(sorted(temp_matched_sections.items(), key=lambda x: x[1], reverse=True))
-        #self.matched_works = OrderedDict(sorted(temp_matched_works.items(), key=lambda x: x[1], reverse=True)) 
         
         # De-reference the name of the works
         self.matched_works = replace_work_names_with_titles(temp_matched_works)
