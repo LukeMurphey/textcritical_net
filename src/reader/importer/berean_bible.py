@@ -7,7 +7,6 @@ from copy import copy
 from reader import language_tools
 from reader.importer import TextImporter, LineNumber, LineNumberRange
 from reader.models import Division, Work, WorkSource
-from reader.shortcuts import transform_text
 from reader.importer.batch_import import ImportTransforms
 
 from django.db import transaction
