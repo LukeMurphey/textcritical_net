@@ -2021,6 +2021,8 @@ class TestContentSearch(TestReader):
         results = search_verses("amet", self.indexer.get_index())
         
         self.assertEquals(len(results.verses), 1)
+        self.assertEquals(results.matched_terms.get('amet', -1), 1)
+        self.assertEquals(results.matched_terms_no_diacritics.get('amet', -1), 1)
         
     def test_search_verse_no_diacritic(self):
         
@@ -2126,6 +2128,7 @@ class TestContentSearch(TestReader):
         self.assertEquals(len(results.verses), 1)
         self.assertEquals(len(results.matched_terms), 1)
         self.assertEquals(results.matched_terms.get('τὸ', -1), 1)
+        self.assertEquals(results.matched_terms_no_diacritics.get('τὸ', -1), 1)
         
     def test_search_stats(self):
         
