@@ -739,7 +739,6 @@ def api_search_stats(request, search_text=None):
     stats = search_stats(search_text, include_related_forms=include_related_forms, ignore_diacritics=ignore_diacritics)
     
     return render_api_response(request, stats)
-    
 
 @cache_page(15 * minutes)
 def api_search(request, search_text=None):
