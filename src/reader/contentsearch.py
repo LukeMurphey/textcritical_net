@@ -4,6 +4,7 @@ from whoosh.filedb.filestore import FileStorage
 from whoosh.fields import Schema, NUMERIC, TEXT
 from whoosh.analysis import SimpleAnalyzer, LowercaseFilter, RegexTokenizer
 from whoosh.query import Variations
+import whoosh.index as index
 import re
 
 from django.conf import settings
@@ -78,12 +79,12 @@ class WorkIndexer:
         return os.path.exists( cls.get_index_dir() )
         
     @classmethod
-    def get_index(cls, create=False):
+    def get_index(cls, create=None):
         """
         Get a Whoosh index.
         
         Arguments:
-        create -- If true, the index files be initialized
+        create -- If true, the index files be initialized. If none, the function will attempt to initialize the indexes
         """
         
         # Get a reference to the indexes path
@@ -93,15 +94,18 @@ class WorkIndexer:
         if create and not os.path.exists(index_dir):
             logger.info("Creating the index directories")
             os.makedirs(index_dir)
+
+            # The index didn't exist so we can safely assume that an index needs to be created
+            create = True
         
         # Make the storage object with a reference to the indexes directory
-        storage = FileStorage( index_dir )
+        storage = FileStorage(index_dir)
         
         # Get a reference to the schema
         schema = cls.get_schema()
         
         # Create the verses index
-        if create:
+        if create or not index.exists_in(index_dir):
             inx = storage.create_index(schema)
         
         # Open the index
@@ -210,14 +214,17 @@ class WorkIndexer:
         # Record the start time so that we can measure performance
         start_time = time()
         
+        # If we got no writer, then use the standard one
         if writer is None:
             writer = cls.get_writer()
             
             commit = True
         
+        # Index eacn division in the work
         for division in Division.objects.filter(work=work):
             cls.index_division(division, commit=False, writer=writer)
         
+        # Commit the changes if necessary
         if commit and writer is not None:
             writer.commit()
             
@@ -414,20 +421,20 @@ class VerseSearchResults:
                 
                 # Include terms matched 
                 if term[0] == "content":
-                    temp_matched_terms[term[1].decode('utf-8')] = len(term_matches)
+                    temp_matched_terms[bytes_to_str(term[1])] = len(term_matches)
                     self.match_count += len(term_matches)
                     
                 # Include terms matched that matched without diacritics
                 if term[0] == "no_diacritics":
-                    temp_matched_terms_no_diacritics[term[1].decode('utf-8')] = len(term_matches)
+                    temp_matched_terms_no_diacritics[bytes_to_str(term[1])] = len(term_matches)
                     
                 # Include section matches
                 if term[0] == "section":
-                    temp_matched_sections[term[1]] = len(term_matches)
+                    temp_matched_sections[bytes_to_str(term[1])] = len(term_matches)
                     
                 # Include work matches
                 if term[0] == "work":
-                    temp_matched_works[term[1]] = len(term_matches)
+                    temp_matched_works[bytes_to_str(term[1])] = len(term_matches)
                     
         # Sort the dictionaries
         self.matched_terms = OrderedDict(sorted(temp_matched_terms.items(), key=lambda x: x[1], reverse=True))
@@ -591,8 +598,13 @@ def replace_work_names_with_titles(list_of_matches_in_works):
     
     return matched_works
     
+def bytes_to_str(bytes_or_str):
+    if isinstance(bytes_or_str, bytes):
+        return bytes_or_str.decode('utf-8')
+    else:
+        return bytes_or_str
     
-def search_stats( search_text, inx=None, limit=2000, include_related_forms=True, ignore_diacritics=False ):
+def search_stats(search_text, inx=None, limit=2000, include_related_forms=True, ignore_diacritics=False):
     """
     Search verses for those with the given text and provide high-level stats about the usage of this term. This function is necessary because Whoosh
     term matching stats indicate the number of verses that contain the given term, not the count of absolute count of the term.
@@ -643,10 +655,10 @@ def search_stats( search_text, inx=None, limit=2000, include_related_forms=True,
         if results.results.has_matched_terms():
             for term, term_matches in results.results.termdocs.items():
                 if term[0] == "content":
-                    matched_terms[term[1].decode('utf-8')] = 0
+                    matched_terms[bytes_to_str(term[1])] = 0
                     
                 if term[0] == "no_diacritics":
-                    matched_terms[term[1].decode('utf-8')] = 0
+                    matched_terms[bytes_to_str(term[1])] = 0
         
         results_count = 0
                       

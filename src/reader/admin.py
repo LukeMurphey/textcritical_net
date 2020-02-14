@@ -54,7 +54,7 @@ def make_search_indexes(modeladmin, request, queryset):
     if not WorkIndexer.index_dir_exists():
         os.makedirs(WorkIndexer.get_index_dir())
 
-    WorkIndexer.get_index(create=True)
+    WorkIndexer.get_index()
 
     for work in queryset:
         WorkIndexer.delete_work_index(work)
