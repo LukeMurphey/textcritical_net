@@ -588,6 +588,7 @@ def read_work(request, author=None, language=None, title=None, division_0=None, 
 @cache_page(8 * hours)
 def robots_txt(request):
     return render(request, 'robots.txt',
+                            {},
                             RequestContext(request))
     
 @cache_page(8 * hours)
