@@ -10,6 +10,7 @@ from django.core.cache import cache
 from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from functools import cmp_to_key
 
 import json
 import logging
@@ -999,7 +1000,7 @@ def api_word_parse(request, word=None):
     def word_compare(x, y):
         return y["similarity"] - x["similarity"]
     
-    results = sorted(results, cmp=word_compare)
+    results = sorted(results, key=cmp_to_key(word_compare))
     
     # Return the response
     return render_api_response(request, results)
