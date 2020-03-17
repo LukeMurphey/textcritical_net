@@ -26,7 +26,7 @@ class WorksSitemap(Sitemap):
     priority = 0.5
 
     def items(self):
-        return Work.objects.all()
+        return Work.objects.all().order_by('title')
 
     def location(self, work):
         return reverse('read_work', kwargs={'title': work.title_slug})
