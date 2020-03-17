@@ -87,7 +87,8 @@ class BereanBibleImporter(TextImporter):
         if self.work is None:
             self.work = Work()
             self.work.title = "Berean Study Bible"
-            self.work.title_slug, slug_was_already_taken = self.get_title_slug(self.work.title)
+            self.work.language = "English"
+            self.work.title_slug, slug_was_already_taken = self.get_title_slug("Berean Study Bible")
             self.work.save()
 
             if slug_was_already_taken:

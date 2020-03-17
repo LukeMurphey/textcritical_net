@@ -3,14 +3,17 @@
         "title" : "Berean Study Bible",
         "import_parameters" : {
             "transforms" : {
-                "set_meta_data" : {
-                    "title_slug" : "berean-bible",
-                    "title"      : "Berean Study Bible",
-                    "language"   : "English"
-                },
                 "assign_related_work" : {
                 	"title_slug" : ["lxx", "new-testament", "asv"]
-                }
+                },
+    			"set_division_title": [
+	    			{
+	    				"existing_division_title_slug" : "psalm",
+	    				"title_slug"                   : "psalms",
+	    				"title"                        : "Psalms",
+	    				"descriptor"                   : "Psalms"
+	    			}
+    			]
         	}
         }
     }
