@@ -1781,13 +1781,13 @@ class TestBereanBibleImport(TestReader):
         importer.import_file(self.get_test_resource_file_name("bsb.txt"))
 
         # Verify the division count
-        self.assertEqual(len(Division.objects.filter(work=work)), 7)
+        self.assertEqual(len(Division.objects.filter(work=work)), 9)
 
         # Verify the books (3)
-        self.assertEqual(len(Division.objects.filter(work=work, level=1)), 3)
+        self.assertEqual(len(Division.objects.filter(work=work, level=1)), 4)
 
         # Verify the chapters (4)
-        self.assertEqual(len(Division.objects.filter(work=work, readable_unit=True)), 4)
+        self.assertEqual(len(Division.objects.filter(work=work, readable_unit=True)), 5)
 
         # Verify the verses
         genesis = Division.objects.filter(work=work, level=1, descriptor="Genesis")[0]
@@ -1808,9 +1808,8 @@ class TestBereanBibleImport(TestReader):
 
         # Make sure that import policy worked
         updated_work = Work.objects.get(title_slug=work.title_slug)
-
-        self.assertEqual(updated_work.language, 'English')
-        
+        psalm = Division.objects.filter(work=work, level=1, descriptor="Psalms")[0]
+        self.assertEqual(psalm.title, 'Psalms')
 
 class TestReaderUtils(TestReader):
 
