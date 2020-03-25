@@ -1805,6 +1805,8 @@ class TestBereanBibleImport(TestReader):
         self.assertEqual(len(genesis_verses), 5)
 
         self.assertEqual(genesis_verses[0].content, 'In the beginning God created the heavens and the earth.')
+        # https://lukemurphey.net/issues/2616
+        self.assertEqual(genesis_verses[2].content, 'And God said, “Let there be light,” and there was light.')
 
         # Make sure that import policy worked
         updated_work = Work.objects.get(title_slug=work.title_slug)

@@ -111,7 +111,7 @@ class BereanBibleImporter(TextImporter):
         try:
             
             # Open the file
-            f = open(file_name, encoding="iso-8859-1")
+            f = open(file_name, encoding="cp1252", errors="surrogateescape")
             
             # Process each line
             for line in f:
@@ -126,12 +126,13 @@ class BereanBibleImporter(TextImporter):
                 else:
                     # Import the line
                     obj = self.import_line(line)
-                    
+                
                     if return_created_objects:
                         if obj is not None:
                             objects.append(obj)
                     else:
                         objects = objects + 1
+
         finally:
             if f is not None:
                 f.close()
