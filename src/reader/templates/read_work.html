@@ -311,7 +311,7 @@ require(["jquery", "clipboard", "store", "app", "underscore", "bootstrap", "libs
     
     function go_to_selected_chapter(){
         var ref = $("#chapter").val();
-        TextCritical.go_to_chapter(ref, $('.work-data[[data-work-title-slug]').attr('data-work-title-slug'));
+        TextCritical.go_to_chapter(ref, $('.work-data[data-work-title-slug]').attr('data-work-title-slug'));
         return true;
     }
     
