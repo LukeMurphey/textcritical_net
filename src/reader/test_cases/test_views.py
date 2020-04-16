@@ -1,7 +1,7 @@
 from . import TestReader
 from reader.models import Division, Verse
 from reader.importer.Perseus import PerseusTextImporter
-from reader.views import get_division, convert_to_numbered_division_name, convert_to_lettered_division_name, has_lettered_book_number, has_numbered_book_number
+from reader.utils.work_helpers import get_division, convert_to_numbered_division_name, convert_to_lettered_division_name, has_lettered_book_number, has_numbered_book_number
 
 class TestViews(TestReader):
     
