@@ -427,8 +427,10 @@ def division_to_json(division):
     if division:
         if division.parent_division:
             full_title = division.get_division_description_titles().replace("βοοκ", "Book")
+            parent_division = division_to_json(division.parent_division)
         else:
             full_title = division.title
+            parent_division = None
         
         return {
             'sequence_number': division.sequence_number,
@@ -439,9 +441,10 @@ def division_to_json(division):
             'descriptor': division.descriptor,
             'type': division.type,
             'level': division.level,
-            'description': division.get_division_description()
+            'description': division.get_division_description(),
+            'parent_division': parent_division,
         }
-    
+
     return None
 
 def author_to_json(author):
