@@ -9,3 +9,4 @@ Whoosh
 requests
 wikipedia
 WSGIserver
+django-cors-headers 
