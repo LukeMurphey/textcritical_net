@@ -59,6 +59,14 @@ urlpatterns = [
     url(r'^api/resolve_reference/?$', views.api_resolve_reference, name='api_resolve_reference' ),
     
     url(r'^api/works_typeahead_hints/?$', views.api_works_typeahead_hints, name='api_works_typeahead_hints' ),
+
+    url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>.+)/?$', views.api_read_work, name='api_read_work' ),
+    url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/?$', views.api_read_work, name='api_read_work' ),
+    url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/?$', views.api_read_work, name='api_read_work' ),
+    url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/?$', views.api_read_work, name='api_read_work' ),
+    url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/?$', views.api_read_work, name='api_read_work' ),
+    url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/?$', views.api_read_work, name='api_read_work' ),
+    url(r'^api/work/(?P<title>[^/]*)/?$', views.api_read_work, name='api_read_work' ),
     
     url(r'^api/wikipedia_info/(?P<topic>[^/]*)/?$', views.api_wikipedia_info, name='api_wikipedia_info' ),
     url(r'^api/wikipedia_info/(?P<topic>[^/]*)/(?P<topic2>[^/]*)/?$', views.api_wikipedia_info, name='api_wikipedia_info_2' ),

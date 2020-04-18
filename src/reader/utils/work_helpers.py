@@ -1,6 +1,7 @@
 import math
 import re
 from django.shortcuts import get_object_or_404, render
+from django.template import loader
 from reader.models import Division, WorkAlias, Verse, RelatedWork
 from django.http import Http404
 
@@ -214,8 +215,7 @@ def get_division(work, division_0=None, division_1=None, division_2=None, divisi
         
         return None # We couldn't find a matching division, perhaps one doesn't exist with the given set of descriptors?
     
-
-def get_work_page_info(author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
+def get_work_page_info(author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, to_json=False, **kwargs):
     """
     This will get dictionary full of information that can be used to render information about a work.
 
@@ -351,7 +351,8 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
             
         title = title + verse_to_highlight
     
-    data = {'title'                      : title,
+    data = {
+            'title'                      : title,
             'work_alias'                 : work_alias,
             'warnings'                   : warnings,
             'work'                       : work,
@@ -376,4 +377,62 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
             'remaining_chapters_in_book' : remaining_chapters_in_book
         }
 
+    if to_json:
+        
+        # Convert the verses to an HTML blob
+        template = loader.get_template('work_verses.html')
+        content = template.render(data)
+
+        data = {
+                'title'                      : title,
+                'work_alias'                 : {
+                    'title_slug': work_alias.title_slug
+                },
+                'work'                       : work_to_json(work),
+                'authors'                    : [author_to_json(w) for w in work.authors.filter(meta_author=False)],
+                'related_works'              : [work_to_json(w) for w in related_works] ,
+                'verse_not_found'            : verse_not_found,
+                'warnings'                   : warnings,
+                'total_chapters'             : total_chapters,
+                'progress_in_book'           : progress_in_book,
+                'completed_chapters_in_book' : completed_chapters_in_book,
+                'remaining_chapters_in_book' : remaining_chapters_in_book,
+                'progress'                   : progress,
+                'chapter'                    : division_to_json(chapter),
+                'divisions'                  : [division_to_json(d) for d in divisions],
+                'divisions'                  : [division_to_json(d) for d in divisions],
+                'next_chapter'               : division_to_json(next_chapter),
+                'previous_chapter'           : division_to_json(previous_chapter),
+                'content'                    : content
+        }
+
     return data
+
+def work_to_json(work):
+    return {
+        'copyright': work.copyright,
+        'title': work.title,
+        'title_slug': work.title_slug,
+        'language': work.language
+    }
+
+def division_to_json(division):
+    return {
+        'sequence_number': division.sequence_number,
+        'title': division.title,
+        'title_slug': division.title_slug,
+        'subtitle': division.subtitle,
+        'descriptor': division.descriptor,
+        'type': division.type,
+        'level': division.level,
+        'description': division.get_division_description()
+    }
+
+def author_to_json(author):
+    return {
+        'name': author.name,
+        'name_slug': author.name_slug,
+        'first_name': author.first_name,
+        'last_name': author.last_name,
+        'description': author.description
+    }
