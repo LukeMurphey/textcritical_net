@@ -400,7 +400,6 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
                 'progress'                   : progress,
                 'chapter'                    : division_to_json(chapter),
                 'divisions'                  : [division_to_json(d) for d in divisions],
-                'divisions'                  : [division_to_json(d) for d in divisions],
                 'next_chapter'               : division_to_json(next_chapter),
                 'previous_chapter'           : division_to_json(previous_chapter),
                 'content'                    : content
@@ -409,30 +408,50 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
     return data
 
 def work_to_json(work):
-    return {
-        'copyright': work.copyright,
-        'title': work.title,
-        'title_slug': work.title_slug,
-        'language': work.language
-    }
+    if work:
+        return {
+            'copyright': work.copyright,
+            'title': work.title,
+            'title_slug': work.title_slug,
+            'language': work.language
+        }
+    else:
+        return {
+            'copyright': None,
+            'title': None,
+            'title_slug': None,
+            'language': None
+        }
 
 def division_to_json(division):
-    return {
-        'sequence_number': division.sequence_number,
-        'title': division.title,
-        'title_slug': division.title_slug,
-        'subtitle': division.subtitle,
-        'descriptor': division.descriptor,
-        'type': division.type,
-        'level': division.level,
-        'description': division.get_division_description()
-    }
+    if division:
+        if division.parent_division:
+            full_title = division.get_division_description_titles().replace("βοοκ", "Book")
+        else:
+            full_title = division.title
+        
+        return {
+            'sequence_number': division.sequence_number,
+            'title': division.title,
+            'full_title' : full_title,
+            'title_slug': division.title_slug,
+            'subtitle': division.subtitle,
+            'descriptor': division.descriptor,
+            'type': division.type,
+            'level': division.level,
+            'description': division.get_division_description()
+        }
+    
+    return None
 
 def author_to_json(author):
-    return {
-        'name': author.name,
-        'name_slug': author.name_slug,
-        'first_name': author.first_name,
-        'last_name': author.last_name,
-        'description': author.description
-    }
+    if author:
+        return {
+            'name': author.name,
+            'name_slug': author.name_slug,
+            'first_name': author.first_name,
+            'last_name': author.last_name,
+            'description': author.description
+        }
+    
+    return None
