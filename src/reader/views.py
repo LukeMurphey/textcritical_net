@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render
+from django.urls import NoReverseMatch
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
@@ -1129,5 +1130,24 @@ def api_resolve_reference(request, work=None, ref=None):
     l = [division_0, division_1, division_2, division_3, division_4]
         
     args.extend([x for x in l if x is not None])
+
+    # Get the full reference of the divisions
+    divisions = [x for x in l if x is not None]
+
+    # Drop the last division ID since this is the verse if one was found
+    if verse_to_highlight:
+        divisions = divisions[:-1]
+
+    # Make the response
+    try:
+        response_code = 200
+        data = {
+            'url' : reverse('read_work', args=args),
+            'verse_to_highlight' : verse_to_highlight,
+            'divisions': divisions
+        }
+    except NoReverseMatch:
+        response_code = 404
+        data = {}
     
-    return render_api_response(request, { 'url' : reverse('read_work', args=args), 'verse_to_highlight' : verse_to_highlight })
+    return render_api_response(request, data, response_code)

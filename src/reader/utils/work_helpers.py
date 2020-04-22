@@ -423,6 +423,16 @@ def work_to_json(work):
             'language': None
         }
 
+def get_division_hierarchy(division):
+    ids = []
+    current_division = division
+
+    while current_division is not None:
+        ids.insert(0, current_division.descriptor) 
+        current_division = current_division.parent_division
+
+    return ids
+
 def division_to_json(division):
     if division:
         if division.parent_division:
@@ -443,6 +453,7 @@ def division_to_json(division):
             'level': division.level,
             'description': division.get_division_description(),
             'parent_division': parent_division,
+            'full_descriptor': "/".join(get_division_hierarchy(division)),
         }
 
     return None
