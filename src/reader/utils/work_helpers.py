@@ -399,7 +399,7 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
                 'remaining_chapters_in_book' : remaining_chapters_in_book,
                 'progress'                   : progress,
                 'chapter'                    : division_to_json(chapter),
-                'divisions'                  : [division_to_json(d) for d in divisions],
+                'divisions'                  : divisions_to_json(divisions),
                 'next_chapter'               : division_to_json(next_chapter),
                 'previous_chapter'           : division_to_json(previous_chapter),
                 'content'                    : content
@@ -433,6 +433,11 @@ def get_division_hierarchy(division):
 
     return ids
 
+def divisions_to_json(divisions):
+    if divisions:
+        return [division_to_json(d) for d in divisions]
+
+    return []
 def division_to_json(division):
     if division:
         if division.parent_division:
