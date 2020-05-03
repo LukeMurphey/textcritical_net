@@ -50,6 +50,21 @@ days    = 24 * hours
 months  = 30 * days
 years   = 365.25 * days
 
+#@cache_page(2 * hours)
+def single_page_app(request):
+    """
+    index_file_full_path = os.path.join(settings.MEDIA_ROOT, 'dist/index.html')
+    wrapper = FileWrapper(open(index_file_full_path, 'rb'))
+    
+    response = HttpResponse(wrapper, content_type='text/html; charset=UTF-8')
+    response['Content-Length'] = os.path.getsize(index_file_full_path)
+    return response
+    """
+
+    return render(request, 'spa.html',
+                            {},
+                            RequestContext(request))
+
 @cache_page(8 * hours)
 def home(request):
     greek_works_count = Work.objects.filter(language="Greek").count()
@@ -189,7 +204,7 @@ def download_work(request, title=None,):
     response['Content-Length'] = os.path.getsize(ebook_file_full_path)
     return response
 
-#@cache_page(8 * hours)
+@cache_page(8 * hours)
 def work_image(request, title=None, **kwargs):
 
     # Try to get the work
@@ -201,14 +216,20 @@ def work_image(request, title=None, **kwargs):
     if 'width' in request.GET:
         width = int(request.GET['width'])
 
-    cover_image_full_path = makeCoverImage(work, width=width)
+    try:
+        cover_image_full_path = makeCoverImage(work, width=width)
 
-    # Stream the file from the disk
-    wrapper = FileWrapper(open(cover_image_full_path, 'rb'))
+        # Stream the file from the disk
+        wrapper = FileWrapper(open(cover_image_full_path, 'rb'))
 
-    response = HttpResponse(wrapper, content_type='image/png')
-    response['Content-Length'] = os.path.getsize(cover_image_full_path)
-    return response
+        response = HttpResponse(wrapper, content_type='image/png')
+        response['Content-Length'] = os.path.getsize(cover_image_full_path)
+        return response
+    except Exception as e:
+        logger.exception("Failed to create the work image, work=%r", work.title_slug)
+        response = HttpResponse("Image could not be created.")
+        response.status_code = 500
+        return response
 
 @cache_page_if_ajax(12 * months, 'read_work')
 @ajaxify
@@ -867,6 +888,10 @@ def api_works_list(request, author=None):
 def api_read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
     data = get_work_page_info(author, language, title, division_0, division_1, division_2, division_3, division_4, leftovers, to_json=True)
     
+    # Return a 404 if the work could not be found
+    if data is None:
+        return render_api_response(request, [], status=404)
+
     # If the verse could not be found, set a response code to note that we couldn't get the content that the user wanted so that caching doesn't take place
     status_code = 200
     if data['verse_not_found']:

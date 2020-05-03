@@ -227,7 +227,11 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
     warnings = []
     
     # Try to get the work
-    work_alias = get_object_or_404(WorkAlias, title_slug=title)
+    try:
+        work_alias = WorkAlias.objects.get(title_slug=title)
+    except WorkAlias.DoesNotExist as e:
+        return None
+
     work = work_alias.work
     
     # Get the chapter

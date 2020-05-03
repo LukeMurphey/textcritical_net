@@ -16,30 +16,41 @@ urlpatterns = [
     url(r'^humans.txt/?$', views.humans_txt, name='humans_txt' ),
     url(r'^sitemap.xml$', sitemap, {'sitemaps': sitemaps}),
 
-    url(r'^$', views.works_index, name='home' ),
+    # This is the new single-page-app
+    url(r'^$', views.single_page_app, name='home' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>.+)/?$', views.single_page_app, name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/?$', views.single_page_app, name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/?$', views.single_page_app, name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/?$', views.single_page_app, name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/?$', views.single_page_app, name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/?$', views.single_page_app, name='read_work' ),
+    url(r'^work/(?P<title>[^/]*)/?$', views.single_page_app, name='read_work' ),
+
+    # url(r'^$', views.works_index, name='home' ),
     
     url(r'^download/work/(?P<title>.*)/?$', views.download_work, name='download_work' ),
-    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>.+)/?$', views.read_work, name='read_work' ),
-    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/?$', views.read_work, name='read_work' ),
-    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/?$', views.read_work, name='read_work' ),
-    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/?$', views.read_work, name='read_work' ),
-    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/?$', views.read_work, name='read_work' ),
-    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/?$', views.read_work, name='read_work' ),
-    url(r'^work/(?P<title>[^/]*)/?$', views.read_work, name='read_work' ),
+
+    #url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>.+)/?$', views.read_work, name='read_work' ),
+    #url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/?$', views.read_work, name='read_work' ),
+    #url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/?$', views.read_work, name='read_work' ),
+    #url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/?$', views.read_work, name='read_work' ),
+    #url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/?$', views.read_work, name='read_work' ),
+    #url(r'^work/(?P<title>.*)/(?P<division_0>.+)/?$', views.read_work, name='read_work' ),
+    #url(r'^work/(?P<title>[^/]*)/?$', views.read_work, name='read_work' ),
     
     url(r'^work_image/(?P<title>[^/]*)/?$', views.work_image, name='work_image' ),
 
-    url(r'^about/?$', views.about, name='about' ),
-    url(r'^contact/?$', views.contact, name='contact' ),
-    url(r'^search/?$', views.search, name='search' ),
+    #url(r'^about/?$', views.about, name='about' ),
+    #url(r'^contact/?$', views.contact, name='contact' ),
+    #url(r'^search/?$', views.search, name='search' ),
     
-    url(r'^word_forms/?$', views.word_forms, name='word_forms' ),
-    url(r'^beta_code_converter/?$', views.beta_code_converter, name='beta_code_converter' ),
+    #url(r'^word_forms/?$', views.word_forms, name='word_forms' ),
+    #url(r'^beta_code_converter/?$', views.beta_code_converter, name='beta_code_converter' ),
     
     url(r'^tests/?$', views.tests, name='tests' ),
 
     # This is now the home page. This is kept around for historical reasons.
-    url(r'^works/?$', views.works_index, name='works_index' ),
+    #url(r'^works/?$', views.works_index, name='works_index' ),
     
     # API views
     url(r'^api/?$', views.api_index, name='api_index' ),
