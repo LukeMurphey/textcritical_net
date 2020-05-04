@@ -479,6 +479,15 @@ def api_index(request):
     
     return render_api_response(request, urls)
 
+def api_version_info(request):
+    
+    try:
+        version_info = json.loads(loader.get_template('VERSION.json').render())
+    except TemplateDoesNotExist:
+        version_info = {}
+    
+    return render_api_response(request, version_info)
+
 @cache_page(1 * hours)
 def api_works_typeahead_hints(request):
     

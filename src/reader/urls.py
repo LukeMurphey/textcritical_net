@@ -56,6 +56,7 @@ urlpatterns = [
     url(r'^api/?$', views.api_index, name='api_index' ),
     url(r'^api/betacode_to_unicode/(?P<text>[^/]*)/?$', views.api_beta_code_to_unicode, name='api_beta_code_to_unicode' ),
     url(r'^api/unicode_to_betacode/(?P<text>[^/]*)/?$', views.api_unicode_to_betacode, name='api_unicode_to_betacode' ),
+    url(r'^api/version_info/?$', views.api_version_info, name='api_version_info' ),
     
     url(r'^api/works/?$', views.api_works_list, name='api_works_list' ),
     url(r'^api/word_parse_beta_code/(?P<word>[^/]*)/?$', views.api_word_parse_beta_code, name='api_word_parse_beta_code' ),
