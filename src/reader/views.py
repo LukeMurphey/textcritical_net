@@ -50,43 +50,9 @@ days    = 24 * hours
 months  = 30 * days
 years   = 365.25 * days
 
-#@cache_page(2 * hours)
 def single_page_app(request):
-    """
-    index_file_full_path = os.path.join(settings.MEDIA_ROOT, 'dist/index.html')
-    wrapper = FileWrapper(open(index_file_full_path, 'rb'))
-    
-    response = HttpResponse(wrapper, content_type='text/html; charset=UTF-8')
-    response['Content-Length'] = os.path.getsize(index_file_full_path)
-    return response
-    """
-
     return render(request, 'spa.html',
                             {},
-                            RequestContext(request))
-
-@cache_page(8 * hours)
-def home(request):
-    greek_works_count = Work.objects.filter(language="Greek").count()
-    english_works_count = Work.objects.filter(language="English").count()
-    
-    return render(request, 'home.html',
-                            {'greek_works_count'   : greek_works_count,
-                             'english_works_count' : english_works_count},
-                            RequestContext(request))
-
-@cache_page(8 * hours)
-def about(request):
-    
-    return render(request, 'about.html',
-                            { 'title' : 'About TextCritical.net'},
-                            RequestContext(request)) 
-
-@cache_page(8 * hours)
-def contact(request):
-    
-    return render(request, 'contact.html',
-                            { 'title' : 'Contact Us'},
                             RequestContext(request))
 
 def search(request, query=None):
@@ -231,172 +197,6 @@ def work_image(request, title=None, **kwargs):
         response.status_code = 500
         return response
 
-@cache_page_if_ajax(12 * months, 'read_work')
-@ajaxify
-def read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
-
-    # Some warnings that should be posted to the user
-    warnings = []
-    
-    # Try to get the work
-    work_alias = get_object_or_404(WorkAlias, title_slug=title)
-    work = work_alias.work
-    
-    # Get the chapter
-    division, verse_to_highlight = get_division_and_verse(work, division_0, division_1, division_2, division_3, division_4)
-    
-    # Note a warning if were unable to find the given chapter
-    chapter_not_found = False
-    
-    if leftovers is not None:
-        warnings.append(("Section not found", "The place in the text you asked for could not be found (the reference you defined is too deep)."))
-        chapter_not_found = True
-    
-    elif division is None and division_0 is not None:
-        warnings.append(("Section not found", "The place in the text you asked for could not be found."))
-        chapter_not_found = True
-    
-    # Start the user off at the beginning of the work
-    if division is None:
-        division = Division.objects.filter(work=work).order_by("sequence_number")[:1]
-        
-        if len(division) == 0:
-            raise Http404('Division could not be found.')
-        else:
-            division = division[0]
-            
-    # Make sure the verse exists
-    verse_not_found = False
-    
-    if chapter_not_found == False and verse_to_highlight is not None:
-        if Verse.objects.filter(division=division, indicator=verse_to_highlight).count() == 0:
-            warnings.append(("Verse not found", "The verse you specified couldn't be found."))
-            verse_not_found = True
-    
-    # Get the readable unit
-    chapter = get_chapter_for_division(division)
-    
-    # Get the verses to display
-    verses = Verse.objects.filter(division=chapter).all()
-    
-    # Get the divisions that ought to be included in the table of contents
-    divisions = Division.objects.filter(work=work, readable_unit=False)
-    
-    if len(divisions) == 0:
-        divisions = None
-    
-    # Get the list of chapters for pagination
-    chapters = get_chapters_list(chapter)
-    
-    # Get the amount of progress (based on chapters)
-    total_chapters     = Division.objects.filter(work=division.work, readable_unit=True).count()
-    completed_chapters = Division.objects.filter(work=division.work, readable_unit=True, sequence_number__lte=chapter.sequence_number).count()
-    remaining_chapters = total_chapters - completed_chapters
-    progress = ((1.0 * completed_chapters) / total_chapters) * 100
-    
-    # Get the amount of progress (based on chapters within this book)
-    total_chapters_in_book = None
-    completed_chapters_in_book = None
-    remaining_chapters_in_book = None
-    progress_in_book = None
-    
-    if chapter.parent_division is not None:
-        total_chapters_in_book = Division.objects.filter(parent_division=chapter.parent_division, readable_unit=True).count()
-        completed_chapters_in_book = Division.objects.filter(parent_division=chapter.parent_division, readable_unit=True, sequence_number__lte=chapter.sequence_number).count()
-        remaining_chapters_in_book = total_chapters_in_book - completed_chapters_in_book
-        progress_in_book = ((1.0 * completed_chapters_in_book) / total_chapters_in_book) * 100
-    
-    # Get the next and previous chapter number
-    previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).order_by('-sequence_number')[:1]
-    next_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__gt=chapter.sequence_number).order_by('sequence_number')[:1]
-    
-    if len(previous_chapter) > 0:
-        previous_chapter = previous_chapter[0]
-    else:
-        previous_chapter = None
-        
-    if len(next_chapter) > 0:
-        next_chapter = next_chapter[0]
-    else:
-        next_chapter = None
-    
-    # Get related works
-    related_works_tmp = RelatedWork.objects.filter(work=work)#.values_list('related_work__title_slug', flat=True)
-    related_works = []
-    
-    # Filter out entries for related works that do not have the related section
-    for r in related_works_tmp:
-        
-        # Make up the list of chapter division descriptors
-        args = []
-        
-        next_division = chapter
-    
-        while next_division is not None:
-            args.insert(0, next_division.descriptor)
-            next_division = next_division.parent_division
-            
-        # Insert the first argument (the related work)
-        args.insert(0, r.related_work)
-        
-        # Try to get the related division
-        related_work_division = get_division(*args)
-        
-        # If we got a match, then the link to the related work should function.
-        if related_work_division is not None:
-            related_works.append(r.related_work)
-            
-    
-    # Make the chapter title
-    title = work.title
-    
-    # Add the chapter
-    chapter_description = chapter.get_division_description()
-    title = title + " " + chapter_description
-    
-    # Add the verse
-    if verse_to_highlight:
-        
-        if chapter_description.find(".") >= 0:
-            title = title + "."
-        else:
-            title = title + ":"
-            
-        title = title + verse_to_highlight
-    
-    response = render(request, 'read_work.html',
-                                {'title'                      : title,
-                                 'work_alias'                 : work_alias,
-                                 'warnings'                   : warnings,
-                                 'work'                       : work,
-                                 'related_works'              : related_works,
-                                 'verses'                     : verses,
-                                 'divisions'                  : divisions,
-                                 'chapter'                    : chapter,
-                                 'chapters'                   : chapters,
-                                 'authors'                    : work.authors.filter(meta_author=False),
-                                 'next_chapter'               : next_chapter,
-                                 'previous_chapter'           : previous_chapter,
-                                 'verse_to_highlight'         : verse_to_highlight,
-                                 'total_chapters'             : total_chapters,
-                                 'completed_chapters'         : completed_chapters,
-                                 'remaining_chapters'         : remaining_chapters,
-                                 'chapter_not_found'          : chapter_not_found,
-                                 'verse_not_found'            : verse_not_found,
-                                 'progress'                   : progress,
-                                 'progress_in_book'           : progress_in_book,
-                                 'total_chapters_in_book'     : total_chapters_in_book,
-                                 'completed_chapters_in_book' : completed_chapters_in_book,
-                                 'remaining_chapters_in_book' : remaining_chapters_in_book
-                                },
-                                RequestContext(request))
-    
-    # If the verse could not be found, set a response code to note that we couldn't get the content that the user wanted so that caching doesn't take place
-    if verse_not_found:
-        response.status_code = 210
-        
-    return response
-
 @cache_page(8 * hours)
 def robots_txt(request):
     return render(request, 'robots.txt',
@@ -480,6 +280,18 @@ def api_version_info(request):
         version_info = {}
     
     return render_api_response(request, version_info)
+
+@cache_page(8 * hours)
+def api_works_stats(request):
+    greek_works_count = Work.objects.filter(language="Greek").count()
+    english_works_count = Work.objects.filter(language="English").count()
+
+    stats = {
+        'greek_works_count' : greek_works_count,
+        'english_works_count' : english_works_count
+    }
+
+    return render_api_response(request, stats)
 
 @cache_page(1 * hours)
 def api_works_typeahead_hints(request):

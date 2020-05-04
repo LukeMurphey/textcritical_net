@@ -15,6 +15,8 @@ urlpatterns = [
     # Javascript file which will do the REST calls.
     #
     # These don't need to be served by the Django backend since they just offer a static file.
+    # BTW: some of these routes are called out specifically just so the backend can create URLs
+    # for them. This is why I don't just route everything to the single_page_app view.
     # ----------------------------------
     url(r'^$', views.single_page_app, name='home' ),
     url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>.+)/?$', views.single_page_app, name='read_work' ),
@@ -53,6 +55,7 @@ urlpatterns = [
     url(r'^api/unicode_to_betacode/(?P<text>[^/]*)/?$', views.api_unicode_to_betacode, name='api_unicode_to_betacode' ),
     url(r'^api/version_info/?$', views.api_version_info, name='api_version_info' ),
     
+    url(r'^api/works_stats/?$', views.api_works_stats, name='api_works_stats' ),
     url(r'^api/works/?$', views.api_works_list, name='api_works_list' ),
     url(r'^api/word_parse_beta_code/(?P<word>[^/]*)/?$', views.api_word_parse_beta_code, name='api_word_parse_beta_code' ),
     url(r'^api/word_parse/(?P<word>[^/]*)/?$', views.api_word_parse, name='api_word_parse' ),
