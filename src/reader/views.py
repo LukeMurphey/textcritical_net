@@ -233,7 +233,7 @@ def word_forms(request):
     return render(request, 'word_forms.html',
                             {'title': 'Word forms'},
                             RequestContext(request))
-    
+
 # -----------------------------------
 # API views are defined below
 # -----------------------------------
@@ -699,6 +699,7 @@ def api_works_list(request, author=None):
     
     return render_api_response(request, works_json)
 
+@cache_page(12 * months)
 def api_read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
     data = get_work_page_info(author, language, title, division_0, division_1, division_2, division_3, division_4, leftovers, to_json=True)
     
