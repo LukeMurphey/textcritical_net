@@ -417,17 +417,10 @@ def humans_txt(request):
                             RequestContext(request))
     
 def not_found_404(request):
-    
     template = loader.get_template('404.html')
     context = {'title': 'Not Found'}
         
     return HttpResponse(content=template.render(context), content_type='text/html; charset=utf-8', status=404)
-
-def tests(request):
-    return render(request, 'test.html',
-                            {'title'               : 'Tests',
-                             'include_default_css' : 0},
-                            RequestContext(request))
     
 @cache_page(8 * hours)
 def beta_code_converter(request):
