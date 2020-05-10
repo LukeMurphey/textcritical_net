@@ -445,14 +445,19 @@ def divisions_to_json(divisions):
 def division_to_json(division):
     if division:
         if division.parent_division:
-            full_title = division.get_division_description_titles().replace("βοοκ", "Book")
+            full_title = division.get_division_description_titles()
             parent_division = division_to_json(division.parent_division)
         else:
             full_title = division.title
             parent_division = None
-        
+
+        # Replace the Greek words in the title
+        if full_title:
+            full_title = full_title.replace("βοοκ", "book")
+
         return {
             'sequence_number': division.sequence_number,
+            'label': str(division).replace("βοοκ", "book").capitalize(),
             'title': division.title,
             'full_title' : full_title,
             'title_slug': division.title_slug,
