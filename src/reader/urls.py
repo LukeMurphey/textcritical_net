@@ -10,42 +10,52 @@ sitemaps = dict(
                 )
 
 urlpatterns = [
+    # ----------------------------------
+    # The following URLs are handled by the single-page app React app and just provide a
+    # Javascript file which will do the REST calls.
+    #
+    # These don't need to be served by the Django backend since they just offer a static file.
+    # BTW: some of these routes are called out specifically just so the backend can create URLs
+    # for them. This is why I don't just route everything to the single_page_app view.
+    # ----------------------------------
+    url(r'^$', views.single_page_app, name='home' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>.+)/?$', views.single_page_app, name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/?$', views.single_page_app, name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/?$', views.single_page_app, name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/?$', views.single_page_app, name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/?$', views.single_page_app, name='read_work' ),
+    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/?$', views.single_page_app, name='read_work' ),
+    url(r'^work/(?P<title>[^/]*)/?$', views.single_page_app, name='read_work' ),
+
+    # url(r'^$', views.works_index, name='home' ),
+
+    #url(r'^search/?$', views.search, name='search' ),
+    
+    #url(r'^word_forms/?$', views.word_forms, name='word_forms' ),
+    #url(r'^beta_code_converter/?$', views.beta_code_converter, name='beta_code_converter' ),
+
+    # This is now the home page. This is kept around for historical reasons.
+    #url(r'^works/?$', views.works_index, name='works_index' ),
+    
+    # ----------------------------------
+    # The following endpoints are those that are served by the backend and static file serving won't fulfill it
+    # ----------------------------------
     url(r'^admin/reader/', include('reader.admin_urls')),
 
     url(r'^robots.txt/?$', views.robots_txt, name='robots_txt' ),
     url(r'^humans.txt/?$', views.humans_txt, name='humans_txt' ),
     url(r'^sitemap.xml$', sitemap, {'sitemaps': sitemaps}),
 
-    url(r'^$', views.works_index, name='home' ),
-    
     url(r'^download/work/(?P<title>.*)/?$', views.download_work, name='download_work' ),
-    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>.+)/?$', views.read_work, name='read_work' ),
-    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/?$', views.read_work, name='read_work' ),
-    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/?$', views.read_work, name='read_work' ),
-    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/?$', views.read_work, name='read_work' ),
-    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/?$', views.read_work, name='read_work' ),
-    url(r'^work/(?P<title>.*)/(?P<division_0>.+)/?$', views.read_work, name='read_work' ),
-    url(r'^work/(?P<title>[^/]*)/?$', views.read_work, name='read_work' ),
-    
     url(r'^work_image/(?P<title>[^/]*)/?$', views.work_image, name='work_image' ),
 
-    url(r'^about/?$', views.about, name='about' ),
-    url(r'^contact/?$', views.contact, name='contact' ),
-    url(r'^search/?$', views.search, name='search' ),
-    
-    url(r'^word_forms/?$', views.word_forms, name='word_forms' ),
-    url(r'^beta_code_converter/?$', views.beta_code_converter, name='beta_code_converter' ),
-    
-    url(r'^tests/?$', views.tests, name='tests' ),
-
-    # This is now the home page. This is kept around for historical reasons.
-    url(r'^works/?$', views.works_index, name='works_index' ),
-    
     # API views
     url(r'^api/?$', views.api_index, name='api_index' ),
     url(r'^api/betacode_to_unicode/(?P<text>[^/]*)/?$', views.api_beta_code_to_unicode, name='api_beta_code_to_unicode' ),
     url(r'^api/unicode_to_betacode/(?P<text>[^/]*)/?$', views.api_unicode_to_betacode, name='api_unicode_to_betacode' ),
+    url(r'^api/version_info/?$', views.api_version_info, name='api_version_info' ),
     
+    url(r'^api/works_stats/?$', views.api_works_stats, name='api_works_stats' ),
     url(r'^api/works/?$', views.api_works_list, name='api_works_list' ),
     url(r'^api/word_parse_beta_code/(?P<word>[^/]*)/?$', views.api_word_parse_beta_code, name='api_word_parse_beta_code' ),
     url(r'^api/word_parse/(?P<word>[^/]*)/?$', views.api_word_parse, name='api_word_parse' ),
@@ -59,6 +69,14 @@ urlpatterns = [
     url(r'^api/resolve_reference/?$', views.api_resolve_reference, name='api_resolve_reference' ),
     
     url(r'^api/works_typeahead_hints/?$', views.api_works_typeahead_hints, name='api_works_typeahead_hints' ),
+
+    url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>.+)/?$', views.api_read_work, name='api_read_work' ),
+    url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/?$', views.api_read_work, name='api_read_work' ),
+    url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/?$', views.api_read_work, name='api_read_work' ),
+    url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/?$', views.api_read_work, name='api_read_work' ),
+    url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/?$', views.api_read_work, name='api_read_work' ),
+    url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/?$', views.api_read_work, name='api_read_work' ),
+    url(r'^api/work/(?P<title>[^/]*)/?$', views.api_read_work, name='api_read_work' ),
     
     url(r'^api/wikipedia_info/(?P<topic>[^/]*)/?$', views.api_wikipedia_info, name='api_wikipedia_info' ),
     url(r'^api/wikipedia_info/(?P<topic>[^/]*)/(?P<topic2>[^/]*)/?$', views.api_wikipedia_info, name='api_wikipedia_info_2' ),

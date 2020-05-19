@@ -1,5 +1,5 @@
 from reader import language_tools
-from reader.models import WordDescription, Lemma
+from reader.models import WordDescription, Lemma, LexiconEntry
 from reader.shortcuts import uniquefy
 from reader.language_tools import Greek
 
@@ -122,8 +122,3 @@ def get_lexicon_entries(lemma):
 
     # Get the matching lexicon entries
     lexicon_entries = LexiconEntry.objects.filter(lemma=lemma)
-
-    
-
-
-

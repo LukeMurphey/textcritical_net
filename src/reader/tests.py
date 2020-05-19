@@ -50,4 +50,3 @@
 | TestWikiArticle                   | WikiArticle class                                           |
 |-----------------------------------|-------------------------------------------------------------|
 """
-from django.test import TestCase

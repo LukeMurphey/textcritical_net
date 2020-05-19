@@ -41,7 +41,8 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
      'django.contrib.admindocs',
      'django.contrib.humanize',
-     'reader'
+     'reader',
+     'corsheaders',
 )
 
 if not DEBUG:
@@ -138,3 +139,6 @@ LOGGING = {
 
 # Set the domain name to the list of allowed host names
 ALLOWED_HOSTS = ['*']
+
+# Set CORS origin so that API requests can be performed from browers
+# CORS_ORIGIN_ALLOW_ALL = True

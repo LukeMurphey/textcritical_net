@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,shrink-to-fit=no"
+    />
+    <title>TextCritical.net</title>
+    <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}dist/semantic.cosmo.css" />
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" href="{{ MEDIA_URL|default:"/media/" }}images/favicon.ico" />
+    <link rel="apple-touch-icon" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="57x57" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-144x144-precomposed.png">
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script src="{{ MEDIA_URL|default:"/media/" }}dist/app.bundle.js?v={{BUILD_VERSION}}"></script>
+  </body>
+</html>
