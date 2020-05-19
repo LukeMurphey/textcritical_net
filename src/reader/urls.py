@@ -38,11 +38,16 @@ urlpatterns = [
     url(r'^humans.txt/?$', views.humans_txt, name='humans_txt' ),
     url(r'^sitemap.xml$', sitemap, {'sitemaps': sitemaps}),
 
-    url(r'^download/work/(?P<title>.*)/?$', views.download_work, name='download_work' ),
-    url(r'^work_image/(?P<title>[^/]*)/?$', views.work_image, name='work_image' ),
+    # The following two links have been moved to be under /api but are kept here for historical reasons
+    url(r'^download/work/(?P<title>.*)/?$', views.download_work, name='legacy_download_work' ),
+    url(r'^work_image/(?P<title>[^/]*)/?$', views.work_image, name='legacy_work_image' ),
 
     # API views
     url(r'^api/?$', views.api_index, name='api_index' ),
+
+    url(r'^api/download/work/(?P<title>.*)/?$', views.download_work, name='download_work' ),
+    url(r'^api/work_image/(?P<title>[^/]*)/?$', views.work_image, name='work_image' ),
+
     url(r'^api/betacode_to_unicode/(?P<text>[^/]*)/?$', views.api_beta_code_to_unicode, name='api_beta_code_to_unicode' ),
     url(r'^api/unicode_to_betacode/(?P<text>[^/]*)/?$', views.api_unicode_to_betacode, name='api_unicode_to_betacode' ),
     url(r'^api/version_info/?$', views.api_version_info, name='api_version_info' ),
