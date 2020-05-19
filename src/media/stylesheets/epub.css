@@ -1,162 +1,163 @@
 .add-space {
-  margin-top: 64px; }
-
-.add-space-small {
-  margin-top: 16px; }
-
-sup.note {
-  font-weight: bold;
-  border-radius: 4px;
-  padding: 0px 3px 0px 1px; }
-
-.view_read_work {
-  /* Lexicon support */ }
-  .view_read_work .speaker {
+    margin-top: 64px; }
+  
+  .add-space-small {
+    margin-top: 16px; }
+  
+  sup.note {
     font-weight: bold;
+    border-radius: 4px;
+    padding: 0px 3px 0px 1px; }
+  
+  .view_read_work {
+    /* Lexicon support */ }
+    .view_read_work .speaker {
+      font-weight: bold;
+      display: block;
+      margin-top: 12px; }
+    .view_read_work .milestone {
+      color: #999999; }
+    .view_read_work [data-rend=italics] {
+      font-style: italic; }
+    .view_read_work .milestone[data-n].milestone[data-unit]:after {
+      font-size: smaller;
+      margin: 3px;
+      content: "[" attr(data-unit) " " attr(data-n) "]"; }
+    .view_read_work .milestone[data-unit=para] {
+      display: block;
+      padding-top: 12px; }
+    .view_read_work .l {
+      display: block;
+      margin-left: 24px; }
+    .view_read_work .gap {
+      content: "..."; }
+    .view_read_work .quote, .view_read_work .q {
+      font-style: italic; }
+    .view_read_work .bibl {
+      margin-left: 3px;
+      margin-right: 3px;
+      font-weight: bold; }
+    .view_read_work .bibl::before {
+      content: "["; }
+    .view_read_work .bibl::after {
+      content: "]"; }
+    .view_read_work .docauthor {
+      display: block;
+      padding-bottom: 16px; }
+    .view_read_work .label:not(.block) .label {
+      margin-left: 8px;
+      margin-right: 4px; }
+    .view_read_work .note-tag {
+      margin-left: 4px;
+      margin-right: 2px;
+      cursor: hand;
+      cursor: pointer; }
+    .view_read_work .read-more {
+      margin-top: 16px;
+      display: block; }
+    .view_read_work .lb {
+      display: block; }
+    .view_read_work .div3 {
+      padding-top: 16px;
+      display: block; }
+    .view_read_work .quote > .title {
+      font-weight: bold;
+      display: block; }
+    .view_read_work .castlist:before {
+      content: "Cast list: "; }
+    .view_read_work .castlist > .castitem:after {
+      content: ", "; }
+    .view_read_work .castlist > .castitem:last-child:after {
+      content: ""; }
+    .view_read_work .argument {
+      font-style: italic; }
+    .view_read_work .p {
+      margin-bottom: 16px;
+      display: block; }
+    .view_read_work .lemma {
+      text-decoration: underline;
+      font-weight: bold; }
+    .view_read_work .orth {
+      font-weight: bold;
+      font-size: 14pt;
+      display: block; }
+    .view_read_work .etym {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold; }
+    .view_read_work .sense {
+      display: block;
+      margin-left: 32px; }
+  
+  /*
+   * The following enables the Open-sans font for the text; this is necessary because some devices don't have a Greek font.
+   */
+  @font-face {
+    font-family: OpenSans;
+    font-weight: normal;
+    font-style: normal;
+    src: url(OpenSans-Regular.ttf); }
+  
+  @font-face {
+    font-family: OpenSansItalic;
+    font-weight: normal;
+    font-style: italic;
+    src: url(OpenSans-Italic.ttf); }
+  
+  @font-face {
+    font-family: OpenSansBold;
+    font-weight: normal;
+    font-style: italic;
+    src: url(OpenSans-Bold.ttf); }
+  
+  .verse-container {
+    font-family: "OpenSans", sans-serif;
+    color: #333333; }
+  
+  .verse-container em, .verse-container i {
+    font-family: "OpenSansItalic", sans-serif; }
+  
+  .verse-container .label {
+    font-family: "OpenSansBold", sans-serif; }
+  
+  /*
+   * The CSS below is basically content to fill in what Bootstrap would have styled if it was available.
+   */
+  .label {
     display: block;
-    margin-top: 12px; }
-  .view_read_work .milestone {
-    color: #999999; }
-  .view_read_work [data-rend=italics] {
-    font-style: italic; }
-  .view_read_work .milestone[data-n].milestone[data-unit]:after {
-    font-size: smaller;
-    margin: 3px;
-    content: "[" attr(data-unit) " " attr(data-n) "]"; }
-  .view_read_work .milestone[data-unit=para] {
-    display: block;
-    padding-top: 12px; }
-  .view_read_work .l {
-    display: block;
-    margin-left: 24px; }
-  .view_read_work .gap {
-    content: "..."; }
-  .view_read_work .quote, .view_read_work .q {
-    font-style: italic; }
-  .view_read_work .bibl {
-    margin-left: 3px;
-    margin-right: 3px;
-    font-weight: bold; }
-  .view_read_work .bibl::before {
-    content: "["; }
-  .view_read_work .bibl::after {
-    content: "]"; }
-  .view_read_work .docauthor {
-    display: block;
-    padding-bottom: 16px; }
-  .view_read_work .label:not(.block) .label {
-    margin-left: 8px;
-    margin-right: 4px; }
-  .view_read_work .note-tag {
-    margin-left: 4px;
-    margin-right: 2px;
-    cursor: hand;
-    cursor: pointer; }
-  .view_read_work .read-more {
-    margin-top: 16px;
-    display: block; }
-  .view_read_work .lb {
-    display: block; }
-  .view_read_work .div3 {
-    padding-top: 16px;
-    display: block; }
-  .view_read_work .quote > .title {
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 20px;
+    display: inline-block;
+    padding: 2px 4px;
+    font-size: 11.844px;
     font-weight: bold;
-    display: block; }
-  .view_read_work .castlist:before {
-    content: "Cast list: "; }
-  .view_read_work .castlist > .castitem:after {
-    content: ", "; }
-  .view_read_work .castlist > .castitem:last-child:after {
-    content: ""; }
-  .view_read_work .argument {
-    font-style: italic; }
-  .view_read_work .p {
-    margin-bottom: 16px;
-    display: block; }
-  .view_read_work .lemma {
-    text-decoration: underline;
-    font-weight: bold; }
-  .view_read_work .orth {
-    font-weight: bold;
-    font-size: 14pt;
-    display: block; }
-  .view_read_work .etym {
-    display: block;
-    margin-top: 12px;
-    font-weight: bold; }
-  .view_read_work .sense {
-    display: block;
-    margin-left: 32px; }
-
-/*
- * The following enables the Open-sans font for the text; this is necessary because some devices don't have a Greek font.
- */
-@font-face {
-  font-family: OpenSans;
-  font-weight: normal;
-  font-style: normal;
-  src: url(OpenSans-Regular.ttf); }
-
-@font-face {
-  font-family: OpenSansItalic;
-  font-weight: normal;
-  font-style: italic;
-  src: url(OpenSans-Italic.ttf); }
-
-@font-face {
-  font-family: OpenSansBold;
-  font-weight: normal;
-  font-style: italic;
-  src: url(OpenSans-Bold.ttf); }
-
-.verse-container {
-  font-family: "OpenSans", sans-serif;
-  color: #333333; }
-
-.verse-container em, .verse-container i {
-  font-family: "OpenSansItalic", sans-serif; }
-
-.verse-container .label {
-  font-family: "OpenSansBold", sans-serif; }
-
-/*
- * The CSS below is basically content to fill in what Bootstrap would have styled if it was available.
- */
-.label {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 14px;
-  font-weight: normal;
-  line-height: 20px;
-  display: inline-block;
-  padding: 2px 4px;
-  font-size: 11.844px;
-  font-weight: bold;
-  line-height: 14px;
-  color: #ffffff;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  white-space: nowrap;
-  vertical-align: baseline;
-  background-color: #999999;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px; }
-
-sub,
-sup {
-  font-size: 75%;
-  vertical-align: baseline; }
-
-sup {
-  top: -0.5em; }
-
-sub {
-  bottom: -0.25em; }
-
-a {
-  color: #0088cc; }
-
-body {
-  font-family: "Helvetica Neue", Helvetica, Arial, "OpenSans", sans-serif;
-  color: #333333; }
+    line-height: 14px;
+    color: #ffffff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    white-space: nowrap;
+    vertical-align: baseline;
+    background-color: #999999;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px; }
+  
+  sub,
+  sup {
+    font-size: 75%;
+    vertical-align: baseline; }
+  
+  sup {
+    top: -0.5em; }
+  
+  sub {
+    bottom: -0.25em; }
+  
+  a {
+    color: #0088cc; }
+  
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, "OpenSans", sans-serif;
+    color: #333333; }
+  
