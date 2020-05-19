@@ -335,41 +335,6 @@ def string_limiter(text, limit):
     
     return text[:i]
 
-def ajaxify(fn):
-    """
-    Loads a page that inserts an AJAX request to load the content in another request so that the page can be loaded quickly.
-    """
-    
-    def ajax_switch(*args, **kwargs):
-        """
-        The actual content of the page will be shown if:
-        
-         1) the request is not a GET
-         2) the async parameter is provided with a value of 0
-         3) the request is an AJAX call
-        """
-        
-        # Get the request (which ought to be the first argument)
-        request = args[0]
-        
-        # If the call is not a GET, then just pass it through
-        if request.method != "GET":
-            return fn(*args, **kwargs)
-        
-        # If we are told to treat the request as synchronous, then just pass it through
-        if 'async' in request.GET and request.GET['async'] != "0":
-            return fn(*args, **kwargs)
-        
-        # If the call is an AJAX call, then pass it through
-        if request.is_ajax() and ('async' not in request.GET or request.GET['async'] == "0"):
-            return fn(*args, **kwargs)
-        
-        # If the call is a plain GET call, then get it
-        return render(request, 'ajah_redirect.html',
-                               {'content_url' : request.get_full_path() },
-                               RequestContext(request))
-    
-    return ajax_switch
 
 class cache_page_if_ajax(object):
     """

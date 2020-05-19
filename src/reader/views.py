@@ -23,7 +23,7 @@ from reader.templatetags.reader_extras import transform_perseus_text
 from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork, WikiArticle, LexiconEntry, WorkSource
 from reader.language_tools.greek import Greek
 from reader import language_tools
-from reader.shortcuts import string_limiter, uniquefy, ajaxify, cache_page_if_ajax, convert_xml_to_html5
+from reader.shortcuts import string_limiter, uniquefy, convert_xml_to_html5
 from reader.utils import get_word_descriptions
 from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
