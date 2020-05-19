@@ -406,7 +406,8 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
                 'divisions'                  : divisions_to_json(divisions),
                 'next_chapter'               : division_to_json(next_chapter),
                 'previous_chapter'           : division_to_json(previous_chapter),
-                'content'                    : content
+                'content'                    : content,
+                'verse_to_highlight'         : verse_to_highlight,
         }
 
     return data
