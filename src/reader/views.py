@@ -55,50 +55,6 @@ def single_page_app(request):
                             {},
                             RequestContext(request))
 
-def search(request, query=None):
-    
-    if 'q' in request.GET:
-        query = request.GET['q']
-    else:
-        query = None
-        
-    if 'page' in request.GET:
-        page = request.GET['page']
-    else:
-        page = None
-        
-    if 'include_related' in request.GET:
-        search_related_forms = (request.GET['include_related'] == '1')
-    else:
-        search_related_forms = False
-        
-    if 'ignore_diacritics' in request.GET:
-        ignore_diacritics = (request.GET['ignore_diacritics'] == '1')
-    else:
-        ignore_diacritics = False
-
-    return render(request, 'search.html',
-                            {'title'   : 'Search',
-                             'query'   : query,
-                             'page'    : page,
-                             'search_related_forms' : search_related_forms,
-                             'ignore_diacritics' : ignore_diacritics
-                            },
-                            RequestContext(request)) 
-
-@cache_page(2 * hours)
-def works_index(request):
-    
-    if 'search' in request.GET:
-        search_filter = request.GET['search']
-    else:
-        search_filter = None
-    
-    return render(request, 'works_index.html',
-                            {'title' : 'Works',
-                             'filter': search_filter},
-                            RequestContext(request))
-
 def download_work(request, title=None,):
     
     if 'refresh' in request.GET and request.GET['refresh'].strip().lower() in ["1", "true", "t", "", None]:
@@ -221,18 +177,6 @@ def not_found_404(request):
     context = {'title': 'Not Found'}
         
     return HttpResponse(content=template.render(context), content_type='text/html; charset=utf-8', status=404)
-    
-@cache_page(8 * hours)
-def beta_code_converter(request):
-    return render(request, 'beta_code_converter.html',
-                           {'title': 'Beta-code Converter'},
-                           RequestContext(request))
-
-@cache_page(8 * hours)
-def word_forms(request):
-    return render(request, 'word_forms.html',
-                            {'title': 'Word forms'},
-                            RequestContext(request))
 
 # -----------------------------------
 # API views are defined below
