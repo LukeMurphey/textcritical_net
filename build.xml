@@ -58,7 +58,7 @@
     <!-- ================================= 
           target: compile
          ================================= -->
-	<target name="compile" description="Compile the application" depends="update_build_info,compile_scss,minify_js"></target>
+	<target name="compile" description="Compile the application" depends="update_build_info"></target>
 	
     <!-- ================================= 
           target: initialize_libraries
@@ -314,73 +314,7 @@
           target: install
          ================================= -->
 	<target name="install" depends="install_dependencies,init_database" description="Install the dependencies and initialize the database"></target>
-
-    <!-- ================================= 
-          target: compile_scss
-         ================================= -->
-    <target name="compile_scss" description="Compile the SCSS files">
-    	
-        <echo message="Compiling scss files..." />
-
-		<!-- The mapper to change scss to the css file name -->
-		<mapper id="minified_scss_mapper" type="glob" from="*.scss" to="*.css" />
-
-		<!-- Modify the files -->		
-	    <apply executable="sass" parallel="false">
-	        <fileset dir="." includes="src/media/stylesheets/*.scss">
-	        	<patternset refid="application_js_files" />
-	        </fileset>
-	        <srcfile />
-	    	<mapper refid="minified_scss_mapper" />
-	        <targetfile />
-			 <arg line="--no-source-map"/>
-	    </apply>
-        <echo message="Done compiling scss files!" />
-    </target>
-
-    <!-- ================================= 
-          target: Check JavaScript
-         ================================= -->
-	<target name="check_js" description="Checks the Javascript for potential problems">
-		
-		<!-- Load the JSLint library -->
-		<taskdef name="jslint"
-		           classname="com.googlecode.jslint4java.ant.JSLintTask"
-		           classpath="lib/jslint4java-2.0.3.jar" />
-		
-		<!-- Check the Javascript files -->
-		<jslint>
-			<predef>jQuery,$$</predef>
-		    <formatter type="plain" />
-		    <fileset dir="." >
-		    	<patternset refid="application_js_files" />
-		    </fileset>
-		</jslint>
-		
-	</target>
 	
-    <!-- ================================= 
-          target: Minify JavaScript
-         ================================= -->
-	<target name="minify_js" description="Minifies the application JavaScript">
-		
-		<!-- The mapper to add "min" to the file name -->
-		<mapper id="minified_js_mapper" type="glob" from="*.js" to="*.min.js" />
-
-		<!-- Minify the files -->		
-	    <apply executable="java" parallel="false">
-	        <fileset dir="." includes="src/media/javascripts/app.js">
-	        	<patternset refid="application_js_files" />
-	        </fileset>
-	        <arg line="-jar" />
-	        <arg path="lib/yuicompressor-2.4.7.jar" />
-	        <srcfile />
-	        <arg line="-o"/>
-	    	<mapper refid="minified_js_mapper" />
-	        <targetfile />
-	    </apply>
-	</target>
-
     <!-- ================================= 
           target: define_package_library
          ================================= -->
