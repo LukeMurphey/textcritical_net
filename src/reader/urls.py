@@ -27,15 +27,7 @@ urlpatterns = [
     url(r'^work/(?P<title>.*)/(?P<division_0>.+)/?$', views.single_page_app, name='read_work' ),
     url(r'^work/(?P<title>[^/]*)/?$', views.single_page_app, name='read_work' ),
 
-    # url(r'^$', views.works_index, name='home' ),
-
-    #url(r'^search/?$', views.search, name='search' ),
-    
-    #url(r'^word_forms/?$', views.word_forms, name='word_forms' ),
-    #url(r'^beta_code_converter/?$', views.beta_code_converter, name='beta_code_converter' ),
-
-    # This is now the home page. This is kept around for historical reasons.
-    #url(r'^works/?$', views.works_index, name='works_index' ),
+    url(r'^search/?$', views.single_page_app, name='search' ),
     
     # ----------------------------------
     # The following endpoints are those that are served by the backend and static file serving won't fulfill it
