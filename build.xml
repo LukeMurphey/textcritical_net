@@ -281,7 +281,9 @@
           target: clear_cache
          ================================= -->
 	<target name="clear_cache" description="Clear the Django file-system cache">
-		<delete dir="var/cache"/>
+        <delete>  
+            <fileset dir="var/cache" includes="**/*cache"/>  
+        </delete>  
 	</target>
 
     <!-- ================================= 

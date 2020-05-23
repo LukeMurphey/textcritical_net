@@ -250,7 +250,9 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
     data = cache.get(cache_key)
 
     # See if found a match in the cache
-    if data is not None:
+    # If there was leftover stuff that the user requested, then continue on since we will need to
+    # tell them that something about their request is weird
+    if data is not None and leftovers is None:
         if logger:
             logger.info("Cache hit for %s", cache_key)
 
@@ -271,6 +273,26 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
     # Get the chapter
     division, verse_to_highlight = get_division_and_verse(work, division_0, division_1, division_2, division_3, division_4)
     
+    # Start the user off at the beginning of the work
+    if division is None:
+        division = Division.objects.filter(work=work).order_by("sequence_number")[:1]
+        
+        if len(division) == 0:
+            raise Http404('Division could not be found.')
+        else:
+            division = division[0]
+
+    # Make the cache key for the entry without the verse, then see if we have a hit for the division
+    if data is None:
+        cache_key = make_cache_key_for_work(title, division_0, division_1, division_2, division_3)
+        data = cache.get(cache_key)
+
+        if data is not None and logger:
+            logger.info("Cache hit for %s", cache_key)
+            
+    # Make sure the verse exists
+    verse_not_found = False
+    
     # Note a warning if were unable to find the given chapter
     chapter_not_found = False
     
@@ -284,26 +306,7 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
     elif division is None and division_0 is not None:
         warnings.append(("Section not found", "The place in the text you asked for could not be found."))
         chapter_not_found = True
-    
-    # Start the user off at the beginning of the work
-    if division is None:
-        division = Division.objects.filter(work=work).order_by("sequence_number")[:1]
-        
-        if len(division) == 0:
-            raise Http404('Division could not be found.')
-        else:
-            division = division[0]
 
-    # Make the cache key for the entry without the verse, then see if we have a hit for the division
-    cache_key = make_cache_key_for_work(title, division_0, division_1, division_2, division_3)
-    data = cache.get(cache_key)
-
-    if data is not None and logger:
-        logger.info("Cache hit for %s", cache_key)
-            
-    # Make sure the verse exists
-    verse_not_found = False
-    
     if chapter_not_found == False and verse_to_highlight is not None:
         if Verse.objects.filter(division=division, indicator=verse_to_highlight).count() == 0:
             warnings.append(("Verse not found", "The verse you specified couldn't be found."))
@@ -421,7 +424,7 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
         # Convert the verses to an HTML blob
         template = loader.get_template('work_verses.html')
 
-        # Add in the content
+        # Add in the processed HTML content
         data['content'] = template.render({
             'work'    : work,
             'verses'  : verses,
