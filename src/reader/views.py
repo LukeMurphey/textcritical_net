@@ -8,6 +8,7 @@ from django.template.context import RequestContext
 from django.template import loader, TemplateDoesNotExist
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
+from django.utils.cache import patch_response_headers
 from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -181,12 +182,17 @@ def not_found_404(request):
 # -----------------------------------
 # API views are defined below
 # -----------------------------------
-def render_api_response(request, content, status=200):
+def render_api_response(request, content, status=200, cache_timeout=None):
     
     # For XML, see: http://code.activestate.com/recipes/577268-python-data-structure-to-xml-serialization/
     raw_content = json.dumps(content)
     
-    return HttpResponse(raw_content, content_type=JSON_CONTENT_TYPE, status=status)
+    response = HttpResponse(raw_content, content_type=JSON_CONTENT_TYPE, status=status)
+
+    if cache_timeout is not None:
+        patch_response_headers(response, cache_timeout)
+    
+    return response
 
 def render_api_error(request, message, status=400):
     
@@ -643,9 +649,8 @@ def api_works_list(request, author=None):
     
     return render_api_response(request, works_json)
 
-@cache_page(12 * months)
 def api_read_work(request, author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
-    data = get_work_page_info(author, language, title, division_0, division_1, division_2, division_3, division_4, leftovers, to_json=True)
+    data = get_work_page_info(author, language, title, division_0, division_1, division_2, division_3, division_4, leftovers, logger=logger)
     
     # Return a 404 if the work could not be found
     if data is None:
@@ -664,7 +669,7 @@ def api_read_work(request, author=None, language=None, title=None, division_0=No
         else:
             data_json[k] = v
 
-    return render_api_response(request, data, status=status_code)
+    return render_api_response(request, data, status=status_code, cache_timeout=12 * months)
 
 def assign_divisions(ref_components):
 

@@ -2,8 +2,9 @@ import math
 import re
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
-from reader.models import Division, WorkAlias, Verse, RelatedWork
+from django.core.cache import cache
 from django.http import Http404
+from reader.models import Division, WorkAlias, Verse, RelatedWork
 
 def get_chapter_for_division(division):
     """
@@ -215,17 +216,50 @@ def get_division(work, division_0=None, division_1=None, division_2=None, divisi
         
         return None # We couldn't find a matching division, perhaps one doesn't exist with the given set of descriptors?
     
-def get_work_page_info(author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, to_json=False, **kwargs):
+def make_cache_key_for_work(title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None):
+    # Remove none
+    processed_list = list(filter(None, [title, division_0, division_1, division_2, division_3, division_4]))
+
+    # Convert ints to strings
+    processed_list = [str(elem) for elem in processed_list]
+
+    # Return the result
+    return '/'.join(processed_list)
+
+def get_work_page_info(author=None, language=None, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, logger=None, **kwargs):
     """
     This will get dictionary full of information that can be used to render information about a work.
 
     This may raise the following exceptions:
     * Http404: the division or work could not be located
+
+    This code will cache the responses in order to improve performance. Here are some notes about how caching works:
+      1) It will not cache the chapter with the verse information. This would cause a massive cache size
+      2) It will attempt to use the cached response for the chapter and will apply the verse
+         information to it. This allows a partial use of the cache.
     """
 
-    # Some warnings that should be posted to the user
-    warnings = []
-    
+    ##############
+    # Step 1: returned the cached entry if available
+    ##############
+
+    # Make the cache key
+    cache_key = make_cache_key_for_work(title, division_0, division_1, division_2, division_3, division_4)
+
+    # See if we have a cache entry for this
+    data = cache.get(cache_key)
+
+    # See if found a match in the cache
+    if data is not None:
+        if logger:
+            logger.info("Cache hit for %s", cache_key)
+
+        return data
+
+    ##############
+    # Step 2: use the cached entry along with the verse information if we have a cache entry for the
+    # chapter
+    ##############
     # Try to get the work
     try:
         work_alias = WorkAlias.objects.get(title_slug=title)
@@ -240,6 +274,9 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
     # Note a warning if were unable to find the given chapter
     chapter_not_found = False
     
+    # Make some warnings that should be posted to the user
+    warnings = []
+
     if leftovers is not None:
         warnings.append(("Section not found", "The place in the text you asked for could not be found (the reference you defined is too deep)."))
         chapter_not_found = True
@@ -256,6 +293,13 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
             raise Http404('Division could not be found.')
         else:
             division = division[0]
+
+    # Make the cache key for the entry without the verse, then see if we have a hit for the division
+    cache_key = make_cache_key_for_work(title, division_0, division_1, division_2, division_3)
+    data = cache.get(cache_key)
+
+    if data is not None and logger:
+        logger.info("Cache hit for %s", cache_key)
             
     # Make sure the verse exists
     verse_not_found = False
@@ -265,128 +309,92 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
             warnings.append(("Verse not found", "The verse you specified couldn't be found."))
             verse_not_found = True
     
-    # Get the readable unit
-    chapter = get_chapter_for_division(division)
+    # Make the data if we didn't get a cache hit
+    if data is None:
+        if logger:
+            logger.info("Cache miss for %s", cache_key)
     
-    # Get the verses to display
-    verses = Verse.objects.filter(division=chapter).all()
-    
-    # Get the divisions that ought to be included in the table of contents
-    divisions = Division.objects.filter(work=work, readable_unit=False)
-    
-    if len(divisions) == 0:
-        divisions = None
-    
-    # Get the list of chapters for pagination
-    chapters = get_chapters_list(chapter)
-    
-    # Get the amount of progress (based on chapters)
-    total_chapters     = Division.objects.filter(work=division.work, readable_unit=True).count()
-    completed_chapters = Division.objects.filter(work=division.work, readable_unit=True, sequence_number__lte=chapter.sequence_number).count()
-    remaining_chapters = total_chapters - completed_chapters
-    progress = ((1.0 * completed_chapters) / total_chapters) * 100
-    
-    # Get the amount of progress (based on chapters within this book)
-    total_chapters_in_book = None
-    completed_chapters_in_book = None
-    remaining_chapters_in_book = None
-    progress_in_book = None
-    
-    if chapter.parent_division is not None:
-        total_chapters_in_book = Division.objects.filter(parent_division=chapter.parent_division, readable_unit=True).count()
-        completed_chapters_in_book = Division.objects.filter(parent_division=chapter.parent_division, readable_unit=True, sequence_number__lte=chapter.sequence_number).count()
-        remaining_chapters_in_book = total_chapters_in_book - completed_chapters_in_book
-        progress_in_book = ((1.0 * completed_chapters_in_book) / total_chapters_in_book) * 100
-    
-    # Get the next and previous chapter number
-    previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).order_by('-sequence_number')[:1]
-    next_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__gt=chapter.sequence_number).order_by('sequence_number')[:1]
-    
-    if len(previous_chapter) > 0:
-        previous_chapter = previous_chapter[0]
-    else:
-        previous_chapter = None
+        # Get the readable unit
+        chapter = get_chapter_for_division(division)
         
-    if len(next_chapter) > 0:
-        next_chapter = next_chapter[0]
-    else:
-        next_chapter = None
-    
-    # Get related works
-    related_works_tmp = RelatedWork.objects.filter(work=work)#.values_list('related_work__title_slug', flat=True)
-    related_works = []
-    
-    # Filter out entries for related works that do not have the related section
-    for r in related_works_tmp:
+        # Get the verses to display
+        verses = Verse.objects.filter(division=chapter).all()
         
-        # Make up the list of chapter division descriptors
-        args = []
+        # Get the divisions that ought to be included in the table of contents
+        divisions = Division.objects.filter(work=work, readable_unit=False)
         
-        next_division = chapter
-    
-        while next_division is not None:
-            args.insert(0, next_division.descriptor)
-            next_division = next_division.parent_division
-            
-        # Insert the first argument (the related work)
-        args.insert(0, r.related_work)
+        if len(divisions) == 0:
+            divisions = None
         
-        # Try to get the related division
-        related_work_division = get_division(*args)
+        # Get the list of chapters for pagination
+        chapters = get_chapters_list(chapter)
         
-        # If we got a match, then the link to the related work should function.
-        if related_work_division is not None:
-            related_works.append(r.related_work)
-    
-    # Make the chapter title
-    title = work.title
-    
-    # Add the chapter
-    chapter_description = chapter.get_division_description()
-    title = title + " " + chapter_description
-    
-    # Add the verse
-    if verse_to_highlight:
+        # Get the amount of progress (based on chapters)
+        total_chapters     = Division.objects.filter(work=division.work, readable_unit=True).count()
+        completed_chapters = Division.objects.filter(work=division.work, readable_unit=True, sequence_number__lte=chapter.sequence_number).count()
+        remaining_chapters = total_chapters - completed_chapters
+        progress = ((1.0 * completed_chapters) / total_chapters) * 100
         
-        if chapter_description.find(".") >= 0:
-            title = title + "."
+        # Get the amount of progress (based on chapters within this book)
+        total_chapters_in_book = None
+        completed_chapters_in_book = None
+        remaining_chapters_in_book = None
+        progress_in_book = None
+        
+        if chapter.parent_division is not None:
+            total_chapters_in_book = Division.objects.filter(parent_division=chapter.parent_division, readable_unit=True).count()
+            completed_chapters_in_book = Division.objects.filter(parent_division=chapter.parent_division, readable_unit=True, sequence_number__lte=chapter.sequence_number).count()
+            remaining_chapters_in_book = total_chapters_in_book - completed_chapters_in_book
+            progress_in_book = ((1.0 * completed_chapters_in_book) / total_chapters_in_book) * 100
+        
+        # Get the next and previous chapter number
+        previous_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__lt=chapter.sequence_number).order_by('-sequence_number')[:1]
+        next_chapter = Division.objects.filter(work=work, readable_unit=True, sequence_number__gt=chapter.sequence_number).order_by('sequence_number')[:1]
+        
+        if len(previous_chapter) > 0:
+            previous_chapter = previous_chapter[0]
         else:
-            title = title + ":"
+            previous_chapter = None
             
-        title = title + verse_to_highlight
-    
-    data = {
-            'title'                      : title,
-            'work_alias'                 : work_alias,
-            'warnings'                   : warnings,
-            'work'                       : work,
-            'related_works'              : related_works,
-            'verses'                     : verses,
-            'divisions'                  : divisions,
-            'chapter'                    : chapter,
-            'chapters'                   : chapters,
-            'authors'                    : work.authors.filter(meta_author=False),
-            'next_chapter'               : next_chapter,
-            'previous_chapter'           : previous_chapter,
-            'verse_to_highlight'         : verse_to_highlight,
-            'total_chapters'             : total_chapters,
-            'completed_chapters'         : completed_chapters,
-            'remaining_chapters'         : remaining_chapters,
-            'chapter_not_found'          : chapter_not_found,
-            'verse_not_found'            : verse_not_found,
-            'progress'                   : progress,
-            'progress_in_book'           : progress_in_book,
-            'total_chapters_in_book'     : total_chapters_in_book,
-            'completed_chapters_in_book' : completed_chapters_in_book,
-            'remaining_chapters_in_book' : remaining_chapters_in_book
-        }
-
-    if to_json:
+        if len(next_chapter) > 0:
+            next_chapter = next_chapter[0]
+        else:
+            next_chapter = None
         
-        # Convert the verses to an HTML blob
-        template = loader.get_template('work_verses.html')
-        content = template.render(data)
+        # Get related works
+        related_works_tmp = RelatedWork.objects.filter(work=work)
+        related_works = []
+        
+        # Filter out entries for related works that do not have the related section
+        for r in related_works_tmp:
+            
+            # Make up the list of chapter division descriptors
+            args = []
+            
+            next_division = chapter
+        
+            while next_division is not None:
+                args.insert(0, next_division.descriptor)
+                next_division = next_division.parent_division
+                
+            # Insert the first argument (the related work)
+            args.insert(0, r.related_work)
+            
+            # Try to get the related division
+            related_work_division = get_division(*args)
+            
+            # If we got a match, then the link to the related work should function.
+            if related_work_division is not None:
+                related_works.append(r.related_work)
+        
+        # Make the chapter title
+        title = work.title
+        
+        # Add the chapter
+        chapter_description = chapter.get_division_description()
+        title = title + " " + chapter_description
 
+        # Assemble the response
         data = {
                 'title'                      : title,
                 'work_alias'                 : {
@@ -395,8 +403,8 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
                 'work'                       : work_to_json(work),
                 'authors'                    : [author_to_json(w) for w in work.authors.filter(meta_author=False)],
                 'related_works'              : [work_to_json(w) for w in related_works] ,
-                'verse_not_found'            : verse_not_found,
-                'warnings'                   : warnings,
+                'verse_not_found'            : False,
+                'warnings'                   : [],
                 'total_chapters'             : total_chapters,
                 'progress_in_book'           : progress_in_book,
                 'completed_chapters_in_book' : completed_chapters_in_book,
@@ -407,9 +415,47 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
                 'divisions'                  : divisions_to_json(divisions),
                 'next_chapter'               : division_to_json(next_chapter),
                 'previous_chapter'           : division_to_json(previous_chapter),
-                'content'                    : content,
-                'verse_to_highlight'         : verse_to_highlight,
+                'verse_to_highlight'         : None,
         }
+
+        # Convert the verses to an HTML blob
+        template = loader.get_template('work_verses.html')
+
+        # Add in the content
+        data['content'] = template.render({
+            'work'    : work,
+            'verses'  : verses,
+            'chapter' : chapter,
+        })
+
+        # Save the entry to the cache
+        # We are saving this without the verse information since we don't want to store every verse
+        # since this is would cause the cache to be extremely large. We will add in the verse
+        # information later.
+        if not chapter_not_found:
+            if logger:
+                logger.info("New cache entry set for %s", cache_key)
+
+            cache.set(cache_key, data, 365 * 86400)
+
+    ##############
+    # Step 3: add the verse information
+    ##############    
+    # Add the verse
+    if verse_to_highlight:
+        
+        if chapter_description.find(".") >= 0:
+            title = title + "."
+        else:
+            title = title + ":"
+            
+        title = title + verse_to_highlight
+
+    # Add in the verse information
+    data['warnings'] = warnings
+    data['verse_to_highlight'] = verse_to_highlight
+    data['title'] = title
+    data['verse_not_found'] = verse_not_found
 
     return data
 
