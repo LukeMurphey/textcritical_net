@@ -216,9 +216,9 @@ def get_division(work, division_0=None, division_1=None, division_2=None, divisi
         
         return None # We couldn't find a matching division, perhaps one doesn't exist with the given set of descriptors?
     
-def make_cache_key_for_work(title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None):
+def make_cache_key_for_work(title, divisions):
     # Remove none
-    processed_list = list(filter(None, [title, division_0, division_1, division_2, division_3, division_4]))
+    processed_list = list(filter(None, [title, *divisions]))
 
     # Convert ints to strings
     processed_list = [str(elem) for elem in processed_list]
@@ -244,7 +244,9 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
     ##############
 
     # Make the cache key
-    cache_key = make_cache_key_for_work(title, division_0, division_1, division_2, division_3, division_4)
+    divisions_list = [division_0, division_1, division_2, division_3, division_4]
+    divisions_list = list(filter(None, divisions_list))
+    cache_key = make_cache_key_for_work(title, divisions_list)
 
     # See if we have a cache entry for this
     data = cache.get(cache_key)
@@ -283,12 +285,12 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
             division = division[0]
 
     # Make the cache key for the entry without the verse, then see if we have a hit for the division
-    if data is None:
-        cache_key = make_cache_key_for_work(title, division_0, division_1, division_2, division_3)
+    if data is None and verse_to_highlight is not None:
+        cache_key = make_cache_key_for_work(title, divisions_list[0:-1])
         data = cache.get(cache_key)
 
         if data is not None and logger:
-            logger.info("Cache hit for %s", cache_key)
+            logger.info("Cache hit for %s; appending information for verse %s", cache_key, verse_to_highlight)
             
     # Make sure the verse exists
     verse_not_found = False
@@ -312,13 +314,13 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
             warnings.append(("Verse not found", "The verse you specified couldn't be found."))
             verse_not_found = True
     
+    # Get the readable unit
+    chapter = get_chapter_for_division(division)
+
     # Make the data if we didn't get a cache hit
     if data is None:
         if logger:
             logger.info("Cache miss for %s", cache_key)
-    
-        # Get the readable unit
-        chapter = get_chapter_for_division(division)
         
         # Get the verses to display
         verses = Verse.objects.filter(division=chapter).all()
@@ -447,7 +449,7 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
     # Add the verse
     if verse_to_highlight:
         
-        if chapter_description.find(".") >= 0:
+        if chapter.get_division_description().find(".") >= 0:
             title = title + "."
         else:
             title = title + ":"
