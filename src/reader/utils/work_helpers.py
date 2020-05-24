@@ -421,6 +421,7 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
                 'next_chapter'               : division_to_json(next_chapter),
                 'previous_chapter'           : division_to_json(previous_chapter),
                 'verse_to_highlight'         : None,
+                'reference_descriptor'       : chapter_description,
         }
 
         # Convert the verses to an HTML blob
@@ -448,18 +449,24 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
     ##############    
     # Add the verse
     if verse_to_highlight:
-        
-        if chapter.get_division_description().find(".") >= 0:
-            title = title + "."
+        verse_locator = ''
+        chapter_description = chapter.get_division_description()
+
+        if chapter_description.find(".") >= 0:
+            verse_locator = "." + verse_to_highlight
         else:
-            title = title + ":"
-            
-        title = title + verse_to_highlight
+            verse_locator = ":" + verse_to_highlight
+
+        title = work.title + " " + chapter_description + verse_locator
+        location_description = chapter_description + verse_locator
+
+        # Update the information
+        data['verse_to_highlight'] = verse_to_highlight
+        data['reference_descriptor'] = location_description
+        data['title'] = title
 
     # Add in the verse information
     data['warnings'] = warnings
-    data['verse_to_highlight'] = verse_to_highlight
-    data['title'] = title
     data['verse_not_found'] = verse_not_found
 
     return data
