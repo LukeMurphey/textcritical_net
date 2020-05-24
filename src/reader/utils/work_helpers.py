@@ -272,7 +272,7 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
 
     work = work_alias.work
     
-    # Get the chapter
+    # Get the chapter and the verse we ought to highlight
     division, verse_to_highlight = get_division_and_verse(work, division_0, division_1, division_2, division_3, division_4)
     
     # Start the user off at the beginning of the work
@@ -291,9 +291,6 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
 
         if data is not None and logger:
             logger.info("Cache hit for %s; appending information for verse %s", cache_key, verse_to_highlight)
-            
-    # Make sure the verse exists
-    verse_not_found = False
     
     # Note a warning if were unable to find the given chapter
     chapter_not_found = False
@@ -308,6 +305,9 @@ def get_work_page_info(author=None, language=None, title=None, division_0=None, 
     elif division is None and division_0 is not None:
         warnings.append(("Section not found", "The place in the text you asked for could not be found."))
         chapter_not_found = True
+
+    # Make sure the verse exists
+    verse_not_found = False
 
     if chapter_not_found == False and verse_to_highlight is not None:
         if Verse.objects.filter(division=division, indicator=verse_to_highlight).count() == 0:
