@@ -51,7 +51,7 @@ days    = 24 * hours
 months  = 30 * days
 years   = 365.25 * days
 
-def single_page_app(request):
+def single_page_app(request, **kwargs):
     return render(request, 'spa.html',
                             {},
                             RequestContext(request))
@@ -80,6 +80,10 @@ def download_work(request, title=None,):
     # Try to get the work
     work_alias = get_object_or_404(WorkAlias, title_slug=title)
     work = work_alias.work
+
+    # Make the directory
+    if not os.path.isdir(settings.GENERATED_FILES_DIR):
+        os.mkdir(settings.GENERATED_FILES_DIR)
     
     # Get the filename of the eBook
     ebook_file = work.title_slug + "." + book_format
