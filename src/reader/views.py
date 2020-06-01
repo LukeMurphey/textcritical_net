@@ -178,10 +178,10 @@ def humans_txt(request):
                             RequestContext(request))
     
 def not_found_404(request):
-    template = loader.get_template('404.html')
-    context = {'title': 'Not Found'}
-        
-    return HttpResponse(content=template.render(context), content_type='text/html; charset=utf-8', status=404)
+    return render(request, 'spa.html',
+                            {},
+                            RequestContext(request),
+                            status=404)
 
 # -----------------------------------
 # API views are defined below

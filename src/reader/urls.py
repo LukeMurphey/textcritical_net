@@ -28,6 +28,8 @@ urlpatterns = [
     url(r'^work/(?P<title>[^/]*)/?$', views.single_page_app, name='read_work' ),
 
     url(r'^search/?$', views.single_page_app, name='search' ),
+    url(r'^about/?$', views.single_page_app, name='about' ),
+    url(r'^contact/?$', views.single_page_app, name='contact' ),
     
     # ----------------------------------
     # The following endpoints are those that are served by the backend and static file serving won't fulfill it
