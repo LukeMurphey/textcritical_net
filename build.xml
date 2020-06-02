@@ -443,6 +443,8 @@
 		<property name="install_directory" location="."/>
 		<exec executable="docker">
 			<arg value="run"/>
+			<arg value="--name"/>
+			<arg value="textcritical"/>
 			<arg value="--rm"/>
 			<arg value="-d"/>
 			<arg value="-p"/>
