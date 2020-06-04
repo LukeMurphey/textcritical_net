@@ -177,11 +177,17 @@ def humans_txt(request):
                             {'version_info': version_info},
                             RequestContext(request))
     
-def not_found_404(request):
+def not_found_404(request, *args, **kwargs):
     return render(request, 'spa.html',
                             {},
                             RequestContext(request),
                             status=404)
+
+def error_500(request, *args, **kwargs):
+    return render(request, 'spa.html',
+                            {},
+                            RequestContext(request),
+                            status=500) 
 
 # -----------------------------------
 # API views are defined below

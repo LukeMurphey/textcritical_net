@@ -2,11 +2,15 @@ from django.conf.urls import include, url
 from django.conf import settings
 from django.views.static import serve
 from grappelli import urls as grappelli_urls
+import reader.views
 import textcritical.auth_logging
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
+
+handler404 = reader.views.not_found_404
+handler500 = reader.views.error_500
 
 urlpatterns = [
     
@@ -27,6 +31,3 @@ urlpatterns = [
         'document_root': settings.MEDIA_ROOT
     }),
 ]
-    
-handler404 = 'reader.views.not_found_404'
-handler500 = 'reader.views.not_found_404'

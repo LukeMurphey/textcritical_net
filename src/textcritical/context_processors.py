@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.core.urlresolvers import resolve
 from django.template import loader, TemplateDoesNotExist
+from django.urls import Resolver404
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +54,11 @@ def global_settings(request):
     return settings_dict
 
 def get_url_name(request):
-    return {
-       'url_name': resolve(request.path_info).url_name
-     }
+    try:
+        return {
+            'url_name': resolve(request.path_info).url_name
+        }
+    except Resolver404:
+        return {
+            'url_name': None
+        }
