@@ -166,12 +166,10 @@ def robots_txt(request):
     
 @cache_page(8 * hours)
 def humans_txt(request):
-    
     try:
         version_info = loader.get_template('VERSION.txt').render()
     except TemplateDoesNotExist:
         version_info = None
-    
     
     return render(request, 'humans.txt',
                             {'version_info': version_info},
