@@ -1,0 +1,55 @@
+*!rei/as	{*(rei/a_s,*(re/a	fem gen sg (attic epic doric aeolic)}
+*!ri/oisi	{*(ri/oisi,*(ri/on	neut dat pl (epic ionic aeolic)}
+*!ri/on	{*(ri/on,*(ri/on	neut nom/voc/acc sg}
+*!ri/ou	{*(ri/ou,*(ri/on	neut gen sg}
+'ba/dize	{e)ba/dize,badi/zw	imperf ind act 3rd sg}
+'bale	{e)/bale,ba/llw	aor ind act 3rd sg}{e)/ba_le,ba/llw	aor ind act 3rd sg (doric)}
+'bolw=n	{a)bolw=n,a)bole/w	pres part act masc nom sg (attic epic doric)}
+'bou/leuse	{e)bou/leuse,bouleu/w	aor ind act 3rd sg}
+'bou/leusen	{e)bou/leusen,bouleu/w	aor ind act 3rd sg}
+'boulo/mhn	{e)boulo/mhn,bou/lomai	imperf ind mp 1st sg}
+'c	{e)c,e)k	proclitic indeclform (prep)}
+'ca/ch|s	{e)ca_/ch|s,e)ca/gnumi	aor subj act 2nd sg}{e)ca/ch|s,e)ca/gw	aor subj act 2nd sg}
+'cai/fnhs	{e)cai/fnhs,e)cai/fnhs	indeclform (adverb)}
+'cairh/setai	{e)cairh/setai,e)caire/w	aor subj mid 3rd sg (epic)}{e)cairh/setai,e)caire/w	fut ind mid 3rd sg}{e)cairh/setai,e)caire/w	aor subj mid 3rd sg (epic prose)}{e)cairh/setai,e)caire/w	fut ind mid 3rd sg}
+'caleifqh=nai	{e)caleifqh=nai,e)calei/fw	aor inf pass}
+'calei/yh|s	{e)calei/yh|s,e)calei/fw	aor subj act 2nd sg}
+'camarta/nein	{e)camarta/nein,e)camarta/nw	pres inf act (attic epic)}
+'camarti/a	{e)camarti/a_,e)camarti/a	fem nom/voc/acc dual}{e)camarti/a_,e)camarti/a	fem nom/voc sg (attic doric aeolic)}
+'camei/yei	{e)camei/yei,e)ca/meiyis	fem nom/voc/acc dual (attic epic)}{e)camei/yei+,e)ca/meiyis	fem dat sg (epic)}{e)camei/yei,e)ca/meiyis	fem dat sg (attic ionic)}{e)camei/yei,e)camei/bw	aor subj act 3rd sg (epic)}{e)camei/yei,e)camei/bw	fut ind mid 2nd sg}{e)camei/yei,e)camei/bw	fut ind act 3rd sg}
+'capata=n	{e)capata=n,e)capa/th	fem gen pl (doric aeolic)}{e)capata=n,e)capata/w	pres part act masc voc sg (doric aeolic)}{e)capata=n,e)capata/w	pres part act neut nom/voc/acc sg (doric aeolic)}{e)capata=n,e)capata/w	pres part act masc nom sg (doric aeolic)}{e)capata=_n,e)capata/w	pres inf act (epic doric)}{e)capata=n,e)capata/w	pres inf act (attic doric)}{e)capata=n,e)capata/w	pres part act masc voc sg (doric aeolic)}{e)capata=n,e)capata/w	pres part act neut nom/voc/acc sg (doric aeolic)}{e)capata=n,e)capata/w	pres part act masc nom sg (doric aeolic)}{e)capata=_n,e)capata/w	pres inf act (epic doric)}{e)capata=n,e)capata/w	pres inf act (attic doric)}
+'capathqh=|s	{e)capathqh=|s,e)capata/w	aor subj pass 2nd sg (attic ionic)}{e)capathqh=|s,e)capata/w	aor subj pass 2nd sg (attic ionic)}
+'capoqnh/skwn	{e)capoqnh/skwn,e)k-a)poqnh/skw	pres part act masc nom sg}
+'carpa/sas	{e)carpa_/sa_s,e)carpa/zw	fut part act fem acc pl (doric)}{e)carpa_/sa_s,e)carpa/zw	fut part act fem gen sg (doric)}{e)carpa_/sa_s,e)carpa/zw	fut part act fem acc pl (doric)}{e)carpa_/sa_s,e)carpa/zw	fut part act fem gen sg (doric)}{e)carpa/sa_s,e)carpa/zw	aor part act masc nom/voc sg (attic epic ionic)}{e)carpa/sa_s,e)carpa/zw	aor part act masc nom/voc sg (attic epic ionic)}
+'catima/zhton	{e)catima/zhton,e)catima/zw	pres subj act 3rd dual}{e)catima/zhton,e)catima/zw	pres subj act 2nd dual}{e)cati_ma/zhton,e)catima/zw	pres subj act 3rd dual}{e)cati_ma/zhton,e)catima/zw	pres subj act 2nd dual}
+'cegerei=s	{e)cegerei=s,e)cegei/rw	fut ind act 2nd sg (attic epic doric ionic)}
+'cegerqh=i	{e)cegerqh=|,e)cegei/rw	aor subj pass 3rd sg}
+'cei=nai	{e)cei=nai,e)/cesti	pres inf act}{e)cei=nai,e)ci/hmi	aor inf act}{e)cei=nai,e)ci/hmi	aor inf act}
+'ceirgasme/nh	{e)ceirgasme/nh,e)cerga/zomai	perf part mp fem nom/voc sg (attic epic ionic)}
+'ceke/nwsen	{e)ceke/nwsen,e)kkeno/w	aor ind act 3rd sg}
+'cele/gcai	{e)cele/gcai,e)cele/gxw	aor inf act}{e)cele/gcai_,e)cele/gxw	aor opt act 3rd sg}
+'ce/legxe	{e)ce/legxe,e)cele/gxw	pres imperat act 2nd sg}{e)ce/legxe,e)cele/gxw	imperf ind act 3rd sg (homeric ionic)}
+'celegxqh=i	{e)celegxqh=|,e)cele/gxw	aor subj pass 3rd sg}
+'cele/tw	{e)cele/tw,e)caire/w	aor imperat act 3rd sg}
+'ce/lh|	{e)ce/lh|,e)caire/w	aor subj mid 2nd sg}{e)ce/lh|,e)caire/w	aor subj act 3rd sg}{e)ce/lh|,e)caire/w	aor subj mid 2nd sg}{e)ce/lh|,e)caire/w	aor subj mp 2nd sg}{e)ce/lh|,e)caire/w	aor subj act 3rd sg}
+'celku/sai	{e)celku/sai,e)ce/lkw	aor inf act}{e)celku/sai_,e)ce/lkw	aor opt act 3rd sg}
+'celkusqh=|	{e)celkusqh=|,e)ce/lkw	aor subj pass 3rd sg}
+'celqei=n	{e)celqei=n,e)ce/rxomai	aor inf act (attic epic doric)}
+'cemei=n	{e)cemei=n,e)ceme/w	pres inf act (attic epic doric)}{e)cemei=n,e)ceme/w	fut inf act (attic epic doric)}{e)cemei=n,e)ceme/w	pres inf act (attic epic doric)}
+'ce/negke	{e)ce/negke,e)kfe/rw	aor ind act 3rd sg (homeric ionic)}{e)ce/negke,e)kfe/rw	aor ind act 3rd sg (homeric ionic)}
+'cenegkei=n	{e)cenegkei=n,e)kfe/rw	aor inf act (attic epic doric)}
+'cepai/rei	{e)cepai/rei,e)k-e)faire/omai	pres imperat act 2nd sg (attic epic doric ionic aeolic parad_form prose)}{e)cepai/rei,e)k-e)faire/omai	imperf ind act 3rd sg (attic epic doric ionic aeolic parad_form prose)}{e)cepai/rei,e)k-e)pai/rw	pres ind mp 2nd sg}{e)cepai/rei,e)k-e)pai/rw	pres ind act 3rd sg}
+'ce/peisa	{e)ce/peisa,e)kpei/qw	aor ind act 1st sg}
+'ceph/dhs'	{e)ceph/dhsa,e)kphda/w	aor ind act 1st sg (attic ionic)}{e)ceph/dhso,e)kphda/w	imperf ind mp 2nd sg}{e)ceph/dhse,e)kphda/w	aor ind act 3rd sg (attic ionic)}
+'ce/qhk'	{e)ce/qhka,e)kti/qhmi	aor ind act 1st sg}{e)ce/qhke,e)kti/qhmi	aor ind act 3rd sg}
+'cerw=	{e)cerw=,e)cera/w	pres imperat mp 2nd sg}{e)cerw=,e)cera/w	pres subj act 1st sg (attic epic ionic)}{e)cerw=,e)cera/w	pres ind act 1st sg (attic epic ionic)}{e)cerw=,e)cera/w	pres subj act 1st sg (attic epic doric ionic)}{e)cerw=,e)cera/w	pres ind act 1st sg (attic epic doric ionic)}{e)cerw=,e)cera/w	pres imperat mp 2nd sg}{e)cerw=,e)cera/w	pres subj act 1st sg (attic epic ionic)}{e)cerw=,e)cera/w	pres ind act 1st sg (attic epic ionic)}{e)cerw=,e)cera/w	imperf ind mp 2nd sg (homeric ionic)}{e)cerw=,e)cera/w	imperf ind mp 2nd sg (homeric ionic)}{e)cerw=,e)cere/w	pres subj act 1st sg (attic epic doric)}{e)cerw=,e)cere/w	pres ind act 1st sg (attic epic doric)}{e)cerw=,e)cere/w1	fut ind act 1st sg (attic epic doric)}
+'ce/rxetai	{e)ce/rxetai,e)ce/rxomai	pres ind mp 3rd sg}
+'ce/taze	{e)ce/taze,e)ceta/zw	pres imperat act 2nd sg}{e)ce/taze,e)ceta/zw	pres imperat act 2nd sg}{e)ce/taze,e)ceta/zw	imperf ind act 3rd sg (homeric ionic)}{e)ce/taze,e)ceta/zw	imperf ind act 3rd sg (homeric ionic)}
+'ceta/zwn	{e)ceta/zwn,e)ceta/zw	pres part act masc nom sg}{e)ceta/zwn,e)ceta/zw	pres part act masc nom sg}
+'ceure	{e)/ceure,e)ceuri/skw	aor imperat act 2nd sg}{e)/ceure,e)ceuri/skw	aor ind act 3rd sg (homeric ionic)}{e)/ceure,e)ceuri/skw	aor ind act 3rd sg (homeric ionic)}
+'ceurei=n	{e)ceurei=n,e)ceuri/skw	aor inf act (attic epic doric)}
+'chgh/qh	{e)chgh/qh,e)chge/omai	aor ind pass 3rd sg}{e)chgh/qh,e)chge/omai	aor ind mp 3rd sg (homeric ionic)}{e)chgh/qh,e)chge/omai	aor ind pass 3rd sg (homeric ionic)}
+'chith/sato	{e)ch|th/sato,e)caite/w	aor ind mid 3rd sg}
+'ch/kousen	{e)ch/kousen,e)cakou/w	aor ind act 3rd sg (attic epic ionic)}
+'ch=lqen	{e)ch=lqen,e)ce/rxomai	aor ind act 3rd sg}{e)ch=lqen,e)ce/rxomai	aor ind act 3rd sg}
+'ch/negken	{e)ch/negken,e)kfe/rw	aor ind act 3rd sg}{e)ch/negken,e)kfe/rw	aor ind act 3rd sg}
