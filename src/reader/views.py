@@ -1001,7 +1001,7 @@ def api_resolve_reference(request, work=None, ref=None):
             'verse_to_highlight': verse_to_highlight,
             'divisions': divisions,
             'work_title': work_alias.work.title,
-            'division_title': division.get_division_description(),
+            'division_title': division.get_division_description() if division else None,
         }
     except NoReverseMatch:
         response_code = 404
