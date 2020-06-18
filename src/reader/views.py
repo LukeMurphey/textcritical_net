@@ -995,7 +995,11 @@ def api_resolve_reference(request, work=None, ref=None):
 
     # Make the response
     try:
-        response_code = 200
+        if division is not None:
+            response_code = 200
+        else:
+            response_code = 404
+
         data = {
             'url': reverse('read_work', args=args),
             'verse_to_highlight': verse_to_highlight,
