@@ -13,6 +13,7 @@ from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from functools import cmp_to_key
+from wiktionaryparser import WiktionaryParser
 
 import json
 import logging
@@ -509,7 +510,6 @@ def api_convert_query_beta_code(request, search_query):
 
     return render_api_response(request, " ".join(new_queries))
 
-
 @cache_page(15 * minutes)
 def api_word_parse(request, word=None):
 
@@ -573,18 +573,6 @@ def api_word_parse(request, word=None):
         # Add in the lexicon references
         lexicon_entries = []
 
-        #lemma = LexiconEntry.objects.all()[0].lemma
-        #entries = LexiconEntry.objects.filter(lemma=lemma)
-
-        """
-        for entry in LexiconEntry.objects.filter(lemma=d.lemma).values('work__id', 'work__title', 'verse__original_content', 'lemma__lexical_form'):
-            lexicon_entries.append({
-                'work_id': 
-            })
-        """
-
-        lexicon_entries = []
-
         def text_transformation_fx(text, parent_node, dst_doc): return transform_perseus_text(
             text, parent_node, dst_doc, None)
 
@@ -609,6 +597,18 @@ def api_word_parse(request, word=None):
     # Return the response
     return render_api_response(request, results)
 
+@cache_page(15 * minutes)
+def api_wiktionary_lookup(request, word=None):
+
+    if word is None or len(word) == 0 and 'word' in request.GET:
+        word = request.GET['word']
+
+    # Add entries from wikitionary
+    parser = WiktionaryParser()
+    word = parser.fetch(word, 'greek')
+
+    # Return the response
+    return render_api_response(request, word)
 
 @cache_page(15 * minutes)
 def api_word_parse_beta_code(request, word=None):

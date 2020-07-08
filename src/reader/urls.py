@@ -75,6 +75,8 @@ urlpatterns = [
         views.api_word_parse_beta_code, name='api_word_parse_beta_code'),
     url(r'^api/word_parse/(?P<word>[^/]*)/?$',
         views.api_word_parse, name='api_word_parse'),
+    url(r'^api/wiktionary_lookup/(?P<word>[^/]*)/?$',
+        views.api_wiktionary_lookup, name='api_wiktionary_lookup'),
     url(r'^api/word_forms/(?P<word>.*)/?$',
         views.api_word_forms, name='api_word_forms'),
     url(r'^api/author_works/(?P<author>[^/]*)/?$',
