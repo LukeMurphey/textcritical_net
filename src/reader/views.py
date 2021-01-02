@@ -509,6 +509,17 @@ def api_convert_query_beta_code(request, search_query):
 
     return render_api_response(request, " ".join(new_queries))
 
+@cache_page(15 * minutes)
+def api_word_parse2(request, word=None):
+
+    if word is None or len(word) == 0 and 'word' in request.GET:
+        word = request.GET['word']
+
+    from cltk.tag.pos import POSTag
+    tagger = POSTag('greek')
+    tagger.tag_ngram_123_backoff(word)
+
+
 
 @cache_page(15 * minutes)
 def api_word_parse(request, word=None):
@@ -565,6 +576,18 @@ def api_word_parse(request, word=None):
             language = d.lemma.language
         else:
             entry["lemma"] = None
+
+        # Add in the other lemma
+        from cltk.tag.pos import POSTag
+        from cltk.corpus.utils.formatter import cltk_normalize
+        tagger = POSTag('greek')
+        # entry["lemma_ngram"] = tagger.tag_ngram_123_backoff(word)
+        # entry["lemma_tnt"] = tagger.tag_tnt(word)
+        entry["lemma_crf"] = tagger.tag_crf(word)
+
+        from cltk.stem.lemma import LemmaReplacer
+        lemmatizer = LemmaReplacer('greek')
+        entry["lemma_lexical"] = lemmatizer.lemmatize([cltk_normalize(word)])
 
         # Calculate the similarity so that sort the results by similarity
         entry["similarity"] = int(round(difflib.SequenceMatcher(

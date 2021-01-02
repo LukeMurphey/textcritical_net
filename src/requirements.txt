@@ -10,3 +10,5 @@ requests
 wikipedia
 WSGIserver
 django-cors-headers 
+cltk
+greek-accentuation
