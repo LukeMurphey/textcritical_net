@@ -41,7 +41,7 @@
     </script>
 	
 	<!-- Finalize the references to Python and PIP -->
-	<property name="python" value="${python_dir_cleaned}/bin/python" />
+	<property name="python" value="${python_dir_cleaned}/bin/python3" />
 	<property name="pip" value="${python_dir_cleaned}/bin/pip" />
 	
 	<!-- This patternset matches the custom application Javascript -->
