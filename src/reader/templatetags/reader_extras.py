@@ -1,6 +1,6 @@
 import re
 from django import template
-from reader.shortcuts import convert_xml_to_html5, convert_xml_to_html5_minidom
+from reader.shortcuts import convert_xml_to_html5
 from xml.dom import minidom
 from reader.language_tools import transform_text
 import random
