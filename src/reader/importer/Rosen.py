@@ -78,6 +78,7 @@ class RosenAnalysesImporter(LineImporter):
     cached_dialects = None
 
     @classmethod
+    @transaction.atomic
     def import_file(cls, file_name, return_created_objects=False, start_line_number=None, logger=None, raise_exception_on_match_failure=False, **kwargs):
 
         if logger:
@@ -166,7 +167,6 @@ class RosenAnalysesImporter(LineImporter):
         return objects
 
     @classmethod
-    @transaction.atomic
     def import_line(cls, form, entry, line_number=None, raise_exception_on_match_failure=False):
         """
         Parse an entry in the analysis file.
