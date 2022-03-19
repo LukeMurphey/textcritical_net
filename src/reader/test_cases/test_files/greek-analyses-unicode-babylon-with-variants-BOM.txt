@@ -1,0 +1,26 @@
+
+#stripmethod=keep
+#sametypesequence=h
+#bookname=Ancient Greek Analyses
+#author=Jacob Rosen 
+
+!άβαις|!άβαις
+ἥβη : youthful prime : fem dat pl (doric)
+
+!άβροις|!άβροις
+ἔβρος : he-goat : masc dat pl
+
+!άξαν|!άξαν
+ἄγω : lead : aor part act neut nom/voc/acc sg
+
+!άξιν|!άξιν
+ἔξειμι2 : sum : imperf ind act 3rd pl (epic)
+
+!άξιος|!άξιος
+ἄξιος : counterbalancing : masc nom sg
+
+!άδα|!άδα
+ἅδος : satiety : neut nom/voc/acc pl (doric aeolic)
+
+!άδη|!άδη
+ἅδος : satiety : neut nom/voc/acc pl (attic epic doric)<br>ἅδος : satiety : neut nom/voc/acc dual (doric aeolic)
