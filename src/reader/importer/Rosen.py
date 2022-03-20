@@ -1,22 +1,18 @@
 from reader.language_tools import Greek
 from reader.models import Lemma, Case, WordForm, WordDescription, Dialect
-from reader.importer.LineImporter import LineImporter
+from reader.importer.greek_analyses_parser import GreekAnalysesParser
 import re
 import logging
 from time import time
 from django.db import transaction
 
-logger = logging.getLogger(__name__)
+default_logger = logging.getLogger(__name__)
 
 # See http://www.mobileread.mobi/forums/showthread.php?t=256360 and https://latin-dict.github.io/dictionaries/morphology-grc.html
-class RosenAnalysesImporter(LineImporter):
+class RosenAnalysesImporter(GreekAnalysesParser):
     """
     Importer for the analyses of words in the Greek language from the file made by Jacob Rosen.
     """
-    COMMENT_RE = re.compile("[#].*")
-    FORMS_RE = re.compile("[^|]+")
-    MAIN_ANALYSIS_RE = re.compile("(.*):(.*):(.*)")
-    PARSE_FIND_ATTRS = re.compile("[a-zA-Z0-9_]+")
 
     CASE_MAP = {
         'nom': 'nominative',
@@ -77,6 +73,10 @@ class RosenAnalysesImporter(LineImporter):
     cached_cases = None
     cached_dialects = None
 
+    def __init__(self, raise_exception_on_match_failure=False, logger=None):
+        self.logger = logger
+        self.raise_exception_on_match_failure = raise_exception_on_match_failure
+
     @classmethod
     @transaction.atomic
     def import_file(cls, file_name, return_created_objects=False, start_line_number=None, logger=None, raise_exception_on_match_failure=False, **kwargs):
@@ -87,76 +87,20 @@ class RosenAnalysesImporter(LineImporter):
         # Record the start time so that we can measure performance
         start_time = time()
 
-        # If we are returning the objects, then initialize an array to store them. Otherwise, initialize the count.
-        if return_created_objects:
-            objects = []
-        else:
-            objects = 0
+        # Initialize the file handle
+        f = None
 
-        # Initialize a couple more things...
-        f = None  # The file handle
-        line_number = 0  # The line number
+        # Initialize the objects to return
+        objects = None
 
         try:
-
             # Open the file
             f = open(file_name, 'r')
 
-            # This will be the line
-            formLine = None
+            # Start the import process
+            importer = RosenAnalysesImporter(raise_exception_on_match_failure, logger)
+            objects = importer.parse_file(f, return_created_objects, start_line_number, logger, raise_exception_on_match_failure)
 
-            # Process each line
-            for line in f:
-
-                # Note the line number we are importing
-                line_number = line_number + 1
-
-                # If we are importing starting from a particular line number, then skip lines until you get to this point
-                if start_line_number is not None and line_number < start_line_number:
-                    pass # Skip this line
-
-                else:
-                    # Stop if this is a comment
-                    if cls.COMMENT_RE.match(line):
-                        if formLine is not None:
-                            if raise_exception_on_match_failure:
-                                raise Exception("Line %i: Observed a comment line, but we have a form line" % line_number)
-                            
-                            if logger:
-                                logger.warn("Line %i: Observed a comment line, but we have a form line", line_number)
-
-                            formLine = None
-                    
-                    # Stop if this is an empty line
-                    elif line.strip() == "":
-                        if formLine is not None:
-                            if raise_exception_on_match_failure:
-                                raise Exception("Line %i: Observed an empty line, but we have a form line" % line_number)
-                            
-                            if logger:
-                                logger.warn("Line %i: Observed an empty line, but we have a form line", line_number)
-
-                            formLine = None
-
-                    # These are supposed to be two rows; add the first row as the one with the list of matching forms
-                    elif formLine is None:
-                        formLine = line
-
-                    elif formLine is not None:
-
-                        # Import the line
-                        obj = cls.import_line(formLine, line, line_number, **kwargs)
-
-                        # Reset the form line since we are done with it
-                        formLine = None
-
-                        # Create the entries
-
-                        if return_created_objects:
-                            if obj is not None:
-                                objects.extend(obj)
-                        else:
-                            objects = objects + len(obj)
         finally:
             if f is not None:
                 f.close()
@@ -165,56 +109,6 @@ class RosenAnalysesImporter(LineImporter):
             logger.info("Import complete, duration=%i", time() - start_time)
 
         return objects
-
-    @classmethod
-    def import_line(cls, form, entry, line_number=None, raise_exception_on_match_failure=False):
-        """
-        Parse an entry in the analysis file.
-
-        Example:
-            !άβαις|!άβαις
-            ἥβη : youthful prime : fem dat pl (doric)
-
-        Arguments:
-        entry -- A line in the greek-analysis file
-        line_number -- The line number associated with the entry
-        """
-
-        # Keep a list of the created forms
-        created_forms = []
-
-        # Break up the forms into a list
-        possibleForms = cls.FORMS_RE.findall(form)
-
-        # Clean up the forms
-        for i in range(len(possibleForms)):
-            possibleForms[i] = cls.clean_up_form(possibleForms[i])
-
-        # Break up the entry if it has multiple forms
-        definitions = entry.split("<br>")
-
-        # Handle each definition
-        for possibleForm in possibleForms:
-            for definition in definitions:
-                parsed_entry = cls.MAIN_ANALYSIS_RE.match(definition)
-                
-                lemma_form = parsed_entry.group(1).strip()
-                meaning = parsed_entry.group(2).strip()
-                details = parsed_entry.group(3).strip()
-
-                word_description = cls.create_word_description(possibleForm, lemma_form, meaning, details, definition)
-
-                if word_description is not None:
-                    created_forms.append(word_description)
-
-                # Parse into a list of attributes
-                attrs = cls.PARSE_FIND_ATTRS.findall(details)
-
-                # Update the word description with the data from the attributes
-                cls.create_description_attributes(attrs, word_description, line_number)
-
-        # Return what we created
-        return created_forms
 
     @classmethod
     def get_word_form(cls, form):
@@ -240,19 +134,20 @@ class RosenAnalysesImporter(LineImporter):
 
         return word_form
 
-    @classmethod
-    def create_word_description(cls, form, lemma_form, meaning, details, desc):
+    def process_word_description(self, form, lemma_form, meaning, details, attrs, description):
         # Make the form
-        word_form = cls.get_word_form(form)
+        word_form = self.get_word_form(form)
 
         # Get the lemma
-        lemma = cls.get_lemma(lemma_form)
+        lemma = self.get_lemma(lemma_form)
 
         # Add the description of the form
-        word_description = WordDescription(description=desc)
+        word_description = WordDescription(description=description)
         word_description.word_form = word_form
         word_description.lemma = lemma
         word_description.meaning = meaning
+
+        self.create_description_attributes(attrs, word_description)
 
         return word_description
 
@@ -432,17 +327,6 @@ class RosenAnalysesImporter(LineImporter):
             lemma.save()
 
             return lemma
-
-    @classmethod
-    def clean_up_form(cls, form):
-        """
-        Clean up the form.
-        """
-        if form.startswith("!"):
-            return form[1:].strip()
-
-        return form.strip()
-
 
     @classmethod
     def get_case(cls, case, raise_exception_if_not_found=False):
