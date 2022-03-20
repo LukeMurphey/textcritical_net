@@ -1,6 +1,7 @@
 from reader.language_tools import Greek
 from reader.models import Lemma, Case, WordForm, WordDescription, Dialect
 from reader.importer.greek_analyses_parser import GreekAnalysesParser
+from reader.utils import get_lemma
 import re
 import logging
 from time import time
@@ -139,7 +140,7 @@ class RosenAnalysesImporter(GreekAnalysesParser):
         word_form = self.get_word_form(form)
 
         # Get the lemma
-        lemma = self.get_lemma(lemma_form)
+        lemma = self.get_or_make_lemma(lemma_form)
 
         # Add the description of the form
         word_description = WordDescription(description=description)
@@ -305,7 +306,7 @@ class RosenAnalysesImporter(GreekAnalysesParser):
         return word_description
 
     @classmethod
-    def get_lemma(cls, lexical_form):
+    def get_or_make_lemma(cls, lexical_form):
         """
         Get the lemma associated with the given form.
 
@@ -314,11 +315,10 @@ class RosenAnalysesImporter(GreekAnalysesParser):
         lexical_form -- The lexical form of the lemma
         """
 
-        lemma = Lemma.objects.only("lexical_form").filter(
-            lexical_form=lexical_form)[:1]
+        lemma = get_lemma(lexical_form)
 
-        if len(lemma) > 0:
-            return lemma[0]
+        if lemma is not None:
+            return lemma
 
         else:
             # Make the entry
