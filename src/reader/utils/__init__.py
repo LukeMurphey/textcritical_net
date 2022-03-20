@@ -117,8 +117,11 @@ def get_lexicon_entries(lemma):
     Get the lexicon entries (as Verse instances) for the given lemma.
 
     Arguments:
-    lemma -- The lemma to get the entries for
+    lemma -- The lemma to get the entries for (either the lexical string or the Lemma instance)
     """
 
-    # Get the matching lexicon entries
-    lexicon_entries = LexiconEntry.objects.filter(lemma=lemma)
+    if isinstance(lemma, str):
+        return LexiconEntry.objects.filter(lemma__lexical_form=lemma)
+    else:
+        # Get the matching lexicon entries
+        return LexiconEntry.objects.filter(lemma=lemma)
