@@ -36,3 +36,39 @@ class TestRosenAnalysesImport(TestReader):
         # Dialects
         first_dialect = words[0].dialects.get()
         self.assertEqual(first_dialect.name, "doric")
+
+    @time_function_call
+    def test_import_file_lemma_dupes(self):
+
+        # Count the number of lemmas
+        numberAtBeginning = Lemma.objects.count()
+        
+        # Get the analyses
+        words = RosenAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses-unicode-babylon-with-variants-BOM-dupes.txt"), return_created_objects=True, raise_exception_on_match_failure=True)
+        
+        self.assertEqual(len(words), 126)
+
+        # Count the number of lemmas
+        numberAtEnd = Lemma.objects.count()
+
+        self.assertEqual(numberAtEnd - numberAtBeginning, 2)
+
+    @time_function_call
+    def test_import_file_form_dupes(self):
+
+        # Count the number of lemmas
+        numberAtBeginning = WordForm.objects.count()
+        
+        # Get the analyses
+        words = RosenAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses-unicode-babylon-with-variants-BOM-dupes.txt"), return_created_objects=True, raise_exception_on_match_failure=True)
+
+        # Count the number of word forms
+        numberAtEnd = WordForm.objects.count()
+
+        self.assertEqual(numberAtEnd - numberAtBeginning, 40)
+
+        # Do it again; verify that zero new objects are created
+        numberAtBeginning = WordForm.objects.count()
+        RosenAnalysesImporter.import_file(self.get_test_resource_file_name("greek-analyses-unicode-babylon-with-variants-BOM-dupes.txt"), return_created_objects=True, raise_exception_on_match_failure=True)
+        numberAtEnd = WordForm.objects.count()
+        self.assertEqual(numberAtEnd - numberAtBeginning, 0)

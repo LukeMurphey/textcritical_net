@@ -1,0 +1,120 @@
+
+ἐκτίσαι|ἐκτίσαι
+ἐκτίνω : pay off : aor opt act 3rd sg
+
+ἐκτίσαιεν|ἐκτίσαιεν
+ἐκτίνω : pay off : aor opt act 3rd pl
+
+ἐκτίσαιμι|ἐκτίσαιμι
+ἐκτίνω : pay off : aor opt act 1st sg
+
+ἐκτίσαμεν|ἐκτίσαμεν
+ἐκτίνω : pay off : aor ind act 1st pl (homeric ionic)<br>κτίζω : people : aor ind act 1st pl
+
+ἐκτίσαντα|ἐκτίσαντα
+ἐκτίνω : pay off : aor part act neut nom/voc/acc pl<br>ἐκτίνω : pay off : aor part act masc acc sg
+
+ἐκτίσαντας|ἐκτίσαντας
+ἐκτίνω : pay off : aor part act masc acc pl
+
+ἐκτίσαντες|ἐκτίσαντες
+ἐκτίνω : pay off : aor part act masc nom/voc pl
+
+ἐκτίσαντι|ἐκτίσαντι
+ἐκτίνω : pay off : aor part act masc/neut dat sg
+
+ἐκτίσαντο|ἐκτίσαντο
+ἐκτίνω : pay off : aor ind mid 3rd pl (homeric ionic)<br>κτίζω : people : aor ind mid 3rd pl
+
+ἐκτίσαντος|ἐκτίσαντος
+ἐκτίνω : pay off : aor part act masc/neut gen sg
+
+ἐκτίσας|ἐκτίσας
+ἐκτίνω : pay off : aor part act masc nom/voc sg (attic epic ionic)
+
+ἐκτίσασαν|ἐκτίσασαν
+ἐκτίνω : pay off : aor part act fem acc sg (attic epic ionic)
+
+ἐκτίσασι|ἐκτίσασι
+ἐκτίνω : pay off : aor part act masc/neut dat pl (attic epic ionic)
+
+ἐκτίσασθαι|ἐκτίσασθαι
+ἐκτίνω : pay off : aor inf mid
+
+ἐκτίσασθε|ἐκτίσασθε
+ἐκτίνω : pay off : aor imperat mid 2nd pl<br>ἐκτίνω : pay off : aor ind mid 2nd pl (homeric ionic)
+
+ἐκτίσατο|ἐκτίσατο
+ἐκτίνω : pay off : aor ind mid 3rd sg (homeric ionic)<br>κτίζω : people : aor ind mid 3rd sg
+
+ἐκτίσειαν|ἐκτίσειαν
+ἐκτίνω : pay off : aor opt act 3rd pl
+
+ἐκτίσειε|ἐκτίσειε
+ἐκτίνω : pay off : aor opt act 3rd sg
+
+ἐκτίσειν|ἐκτίσειν
+ἐκτίνω : pay off : fut inf act (attic epic)
+
+ἐκτίσετ'|ἐκτίσετ'
+ἐκτίνω : pay off : aor subj act 2nd pl (epic)<br>ἐκτίνω : pay off : fut ind act 2nd pl<br>ἐκτίνω : pay off : aor subj mid 3rd sg (epic)<br>ἐκτίνω : pay off : fut ind mid 3rd sg
+
+ἐκτίσεται|ἐκτίσεται
+ἐκτίνω : pay off : aor subj mid 3rd sg (epic)<br>ἐκτίνω : pay off : fut ind mid 3rd sg
+
+ἐκτίσῃς|ἐκτίσῃς
+ἐκτίνω : pay off : aor subj act 2nd sg
+
+ἐκτίσοι|ἐκτίσοι
+ἐκτίνω : pay off : fut opt act 3rd sg
+
+ἐκτίσομεν|ἐκτίσομεν
+ἐκτίνω : pay off : aor subj act 1st pl (epic)<br>ἐκτίνω : pay off : fut ind act 1st pl
+
+ἐκτίσοντα|ἐκτίσοντα
+ἐκτίνω : pay off : fut part act neut nom/voc/acc pl<br>ἐκτίνω : pay off : fut part act masc acc sg
+
+ἐκτίσοντος|ἐκτίσοντος
+ἐκτίνω : pay off : fut part act masc/neut gen sg
+
+ἐκτίσουσα|ἐκτίσουσα
+ἐκτίνω : pay off : fut part act fem nom/voc sg (attic epic doric ionic)
+
+ἐκτίσουσι|ἐκτίσουσι
+ἐκτίνω : pay off : aor subj act 3rd pl (epic)<br>ἐκτίνω : pay off : fut part act masc/neut dat pl (attic epic doric ionic)<br>ἐκτίνω : pay off : fut ind act 3rd pl (attic epic doric ionic)
+
+ἐκτίσουσιν|ἐκτίσουσιν
+ἐκτίνω : pay off : aor subj act 3rd pl (epic)<br>ἐκτίνω : pay off : fut part act masc/neut dat pl (attic epic doric ionic)<br>ἐκτίνω : pay off : fut ind act 3rd pl (attic epic doric ionic)
+
+ἐκτίσθη|ἐκτίσθη
+ἐκτίνω : pay off : aor ind pass 3rd sg (homeric ionic)<br>κτίζω : people : aor ind pass 3rd sg
+
+ἐκτίσθημεν|ἐκτίσθημεν
+ἐκτίνω : pay off : aor ind pass 1st pl (homeric ionic)<br>κτίζω : people : aor ind pass 1st pl
+
+ἐκτίσθην|ἐκτίσθην
+ἐκτίνω : pay off : aor ind pass 3rd pl (epic doric aeolic)<br>ἐκτίνω : pay off : aor ind pass 1st sg (homeric ionic)
+
+ἐκτίσθης|ἐκτίσθης
+ἐκτίνω : pay off : aor ind pass 2nd sg (homeric ionic)<br>κτίζω : people : aor ind pass 2nd sg
+
+ἐκτίσθησαν|ἐκτίσθησαν
+ἐκτίνω : pay off : aor ind pass 3rd pl (homeric ionic)<br>κτίζω : people : aor ind pass 3rd pl
+
+ἐκτίσθητε|ἐκτίσθητε
+ἐκτίνω : pay off : aor ind pass 2nd pl (homeric ionic)<br>κτίζω : people : aor ind pass 2nd pl
+
+ἐκτίσω|ἐκτίσω
+ἐκτίνω : pay off : aor subj act 1st sg<br>ἐκτίνω : pay off : fut ind act 1st sg<br>ἐκτίνω : pay off : aor ind mid 2nd sg (homeric ionic)
+
+ἐκτίσωμεν|ἐκτίσωμεν
+ἐκτίνω : pay off : aor subj act 1st pl
+
+ἐκτίσων|ἐκτίσων
+ἐκτίνω : pay off : fut part act masc nom sg
+
+ἐκτίσωσι|ἐκτίσωσι
+ἐκτίνω : pay off : aor subj act 3rd pl
+
+ἐκτίσωσιν|ἐκτίσωσιν
+ἐκτίνω : pay off : aor subj act 3rd pl

@@ -1,7 +1,7 @@
 from reader.language_tools import Greek
 from reader.models import Lemma, Case, WordForm, WordDescription, Dialect
 from reader.importer.greek_analyses_parser import GreekAnalysesParser
-from reader.utils import get_lemma
+from reader.utils import get_lemma, get_word_form
 import re
 import logging
 from time import time
@@ -79,7 +79,6 @@ class RosenAnalysesImporter(GreekAnalysesParser):
         self.raise_exception_on_match_failure = raise_exception_on_match_failure
 
     @classmethod
-    @transaction.atomic
     def import_file(cls, file_name, return_created_objects=False, start_line_number=None, logger=None, raise_exception_on_match_failure=False, **kwargs):
 
         if logger:
@@ -112,6 +111,7 @@ class RosenAnalysesImporter(GreekAnalysesParser):
         return objects
 
     @classmethod
+    @transaction.atomic
     def get_word_form(cls, form):
         """
         Get the WordForm associated with the given form.
@@ -122,11 +122,10 @@ class RosenAnalysesImporter(GreekAnalysesParser):
         """
 
         # Find the form if it already exists
-        word_form = WordForm.objects.only("form").filter(
-            form=form)[:1]
+        word_form = get_word_form(form)
 
-        if len(word_form) > 0:
-            return word_form[0]
+        if word_form is not None:
+            return word_form
 
         # Make the form
         word_form = WordForm()
@@ -153,7 +152,7 @@ class RosenAnalysesImporter(GreekAnalysesParser):
         return word_description
 
     @classmethod
-    def create_description_attributes(cls, attrs, word_description, raise_on_unused_attributes=False, line_number=None):
+    def create_description_attributes(cls, attrs, word_description, raise_on_unused_attributes=False, line_number=None, logger=None):
         """
         Update the description with attributes from the attrs.
 

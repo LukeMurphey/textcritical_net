@@ -1,5 +1,5 @@
 from reader import language_tools
-from reader.models import WordDescription, Lemma, LexiconEntry
+from reader.models import WordDescription, Lemma, LexiconEntry, WordForm
 from reader.shortcuts import uniquefy
 from reader.language_tools import Greek
 
@@ -62,6 +62,32 @@ def get_lemma(word, ignore_diacritics=False):
 
     if len(lemmas) > 0:
         return lemmas[0]
+    else:
+        return None
+
+def get_word_form(form, ignore_diacritics=False):
+    """
+    Gets the word form that matches the given word form.
+    
+    Arguments:
+    word -- The word to return the Lemma instance for
+    ignore_diacritics -- Indicates if diacritical marks should be ignored for the purposes of matching.
+    """
+    
+    # Do a search for the parse
+    form_lookup = language_tools.normalize_unicode(form.lower())
+    form_lookup = Greek.fix_final_sigma(form_lookup)
+    
+    # Do a lookup without the diacritics if requested
+    if ignore_diacritics:
+        form_lookup = language_tools.strip_accents(form_lookup)
+        words = WordForm.objects.filter(form=form_lookup)
+    
+    else:
+        words = WordForm.objects.filter(form=form_lookup)
+
+    if len(words) > 0:
+        return words[0]
     else:
         return None
 
