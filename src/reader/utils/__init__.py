@@ -70,7 +70,7 @@ def get_word_form(form, ignore_diacritics=False):
     Gets the word form that matches the given word form.
     
     Arguments:
-    word -- The word to return the Lemma instance for
+    word -- The word to return the WordForm instance for the given form
     ignore_diacritics -- Indicates if diacritical marks should be ignored for the purposes of matching.
     """
     

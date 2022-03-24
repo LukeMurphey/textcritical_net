@@ -134,12 +134,12 @@ class RosenAnalysesImporter(GreekAnalysesParser):
         return word_form
 
     @transaction.atomic
-    def process_word_description(self, form, lemma_form, meaning, details, attrs, description):
+    def process_word_description(self, form, lexical_form, meaning, details, attrs, description):
         # Make the form
         word_form = self.get_word_form(form)
 
         # Get the lemma
-        lemma = self.get_or_make_lemma(lemma_form)
+        lemma = self.get_or_make_lemma(lexical_form)
 
         # Add the description of the form
         word_description = WordDescription(description=description)
