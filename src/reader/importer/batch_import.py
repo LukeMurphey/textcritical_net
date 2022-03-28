@@ -438,7 +438,8 @@ class ImportTransforms():
                 # Make the entry
                 if lemma is None:
                     logger.warn("Lemma could not be found, entry=%s", entry)
-                elif not exists_already:
+                
+                if not exists_already:
                     lexicon_entry = LexiconEntry()
                     lexicon_entry.verse = verse
                     lexicon_entry.work = work
