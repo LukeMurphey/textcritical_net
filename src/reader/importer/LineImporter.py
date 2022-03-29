@@ -17,7 +17,7 @@ class LineImporter():
         # Record the start time so that we can measure performance
         start_time = time()
 
-        # If we are returning the objects, then initialize an array to store them. Otherwise, intialize the count.
+        # If we are returning the objects, then initialize an array to store them. Otherwise, initialize the count.
         if return_created_objects:
             objects = []
         else:

@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 
 from reader.importer.PerseusBatchImporter import PerseusBatchImporter
 from reader.importer.batch_import import JSONImportPolicy
+import datetime
 
 import os
 import sys
@@ -63,7 +64,7 @@ class Command(BaseCommand):
         import_policy_file = os.path.join( os.path.split(sys.argv[0])[0], "reader", "importer", "perseus_import_policy.json")
         
         selection_policy = JSONImportPolicy()
-        selection_policy.load_policy( import_policy_file )
+        selection_policy.load_policy(import_policy_file)
         
         perseus_batch_importer = PerseusBatchImporter(
                                                       perseus_directory= directory,
@@ -82,3 +83,4 @@ class Command(BaseCommand):
             print("Files from the", directory, "evaluated")
         else:
             print("Files from the", directory, "directory successfully imported")
+            print(datetime.datetime.now())

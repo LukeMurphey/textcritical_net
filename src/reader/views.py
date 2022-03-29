@@ -25,7 +25,7 @@ from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork,
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy, convert_xml_to_html5
-from reader.utils import get_word_descriptions
+from reader.utils import get_word_descriptions, get_lexicon_entries
 from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
 from reader.bookcover import makeCoverImage
@@ -588,7 +588,8 @@ def api_word_parse(request, word=None):
         def text_transformation_fx(text, parent_node, dst_doc): return transform_perseus_text(
             text, parent_node, dst_doc, None)
 
-        for lexicon_entry in LexiconEntry.objects.filter(lemma=d.lemma):
+        # The following finds the lexicon entries that have a matching lemma
+        for lexicon_entry in get_lexicon_entries(d.lemma.lexical_form):
             lexicon_entries.append({
                 'work_id': lexicon_entry.work.id,
                 'work_title': lexicon_entry.work.title,

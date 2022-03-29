@@ -500,7 +500,7 @@ class Lemma(models.Model):
     lexical_form = models.CharField(max_length=200, db_index=True)
     basic_lexical_form = models.CharField(max_length=200, db_index=True)
     language = models.CharField(max_length=40)
-    reference_number = models.IntegerField(db_index=True)
+    reference_number = models.IntegerField(db_index=True, null=True)
     
     def __str__(self):
         return str(self.lexical_form)
@@ -522,7 +522,7 @@ class LexiconEntry(models.Model):
     
     verse = models.ForeignKey(Verse)
     work = models.ForeignKey(Work)
-    lemma = models.ForeignKey(Lemma)
+    lemma = models.ForeignKey(Lemma, null=True)
     
 class Case(models.Model):
     """

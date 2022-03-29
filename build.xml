@@ -22,27 +22,10 @@
 
 	<!-- Load parameters relating to the the location of the Python directory -->
 	<import_environment_var property="python_dir" variable="PYTHON_DIR" />
-
-	<!-- Strip the ending slash if needed -->
-    <script language="javascript">
-		var py_dir = project.getProperty("python_dir");
-
-		if(py_dir === null){
-			project.setProperty("python_dir_cleaned", "");
-			project.setProperty("python", "python");
-			project.setProperty("pip", "pip");
-		}
-		else if(py_dir.match(/^.*[/\\]$/)){
-			project.setProperty("python_dir_cleaned", py_dir.slice(0, -1));
-		}
-		else{
-			project.setProperty("python_dir_cleaned", py_dir);
-		}
-    </script>
 	
 	<!-- Finalize the references to Python and PIP -->
-	<property name="python" value="${python_dir_cleaned}/bin/python3" />
-	<property name="pip" value="${python_dir_cleaned}/bin/pip" />
+	<property name="python" value="${python_dir}/bin/python3" />
+	<property name="pip" value="${python_dir}/bin/pip" />
 	
 	<!-- This patternset matches the custom application Javascript -->
 	<patternset id="application_js_files">
@@ -182,7 +165,7 @@
 
 		<copy file="src/textcritical/test_settings.py" tofile="src/textcritical/settings.py"/>
 
-		<!-- Arguments passed from the CLI will be used to indicate which test to run (e.g. ant test -Dtest=reader) -->
+		<!-- Arguments passed from the CLI will be used to indicate which test to run (e.g. ant test -Dtest=reader.test_cases.test_reader_utils) -->
 		<property name="test" value="" />
 		
 		<exec failonerror="true" executable="${python}" dir="src">
