@@ -171,8 +171,8 @@ USE_MINIFIED = True
 # Contains the Google analytics ID (optional)
 GOOGLE_ANALYTICS_ID = None
 
-# Defines the path to the kindlegen binary that is used for converting epub files to mobi files. By default, the app assumes that kindlegen is on the path.
-KINDLEGEN = "kindlegen"
+# Defines the path to the calibre binary that is used for converting epub files to mobi files. By default, the app assumes that calibre is on the path.
+EBOOK_CONVERT = "ebook-convert"
 
 # The following indicates what kind of resource limits are imposed on the search indexer
 SEARCH_INDEXER_MEMORY_MB = 128

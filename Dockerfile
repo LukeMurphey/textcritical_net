@@ -54,10 +54,8 @@ RUN mkdir -p /usr/src/app/var/indexes
 RUN mkdir -p /usr/src/app/media/files/
 RUN mkdir -p /usr/src/app/var/cache
 
-# Install Kindlgen
-RUN apt-get install -y wget
-RUN wget http://kindlegen.s3.amazonaws.com/kindlegen_linux_2.6_i386_v2_9.tar.gz -P /bin
-RUN tar -C /bin -xf /bin/kindlegen_linux_2.6_i386_v2_9.tar.gz
+# Install Calibre
+RUN apt install -y calibre
 
 # Collect the static files
 RUN python /usr/src/app/manage.py collectstatic --noinput
