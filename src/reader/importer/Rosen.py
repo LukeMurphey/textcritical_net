@@ -9,10 +9,15 @@ from django.db import transaction
 
 default_logger = logging.getLogger(__name__)
 
-# See http://www.mobileread.mobi/forums/showthread.php?t=256360 and https://latin-dict.github.io/dictionaries/morphology-grc.html
 class RosenAnalysesImporter(GreekAnalysesParser):
     """
     Importer for the analyses of words in the Greek language from the file made by Jacob Rosen.
+
+    The source for this was from:
+      * http://www.mobileread.mobi/forums/showthread.php?t=256360
+      * https://latin-dict.github.io/dictionaries/morphology-grc.html
+
+    The analyses files can now be obtained from https://github.com/LukeMurphey/ancient-greek-analyses
     """
 
     CASE_MAP = {
