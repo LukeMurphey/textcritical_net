@@ -1,8 +1,8 @@
 <project default="compile_and_package" name="textcritical.com">
-	
+
 	<!-- Define some things so that we can import things from environment variables -->
 	<property environment="env" />
-	
+
 	<macrodef name="import_environment_var">
 		<attribute name="property" />
 		<attribute name="variable" />
@@ -13,69 +13,69 @@
 		</sequential>
 	</macrodef>
 
-    <!--
+	<!--
     Load the properties files, local is loaded first since properties are immutable (cannot be changed
     by later property files) and we want the local properties to override the default properties
     -->
-    <property file="local.properties" />
-    <property file="default.properties" />
+	<property file="local.properties" />
+	<property file="default.properties" />
 
 	<!-- Load parameters relating to the the location of the Python directory -->
 	<import_environment_var property="python_dir" variable="PYTHON_DIR" />
-	
+
 	<!-- Finalize the references to Python and PIP -->
 	<property name="python" value="${python_dir}/bin/python3" />
 	<property name="pip" value="${python_dir}/bin/pip" />
-	
+
 	<!-- This patternset matches the custom application Javascript -->
 	<patternset id="application_js_files">
-	    <include name="src/media/javascripts/app.js" />
+		<include name="src/media/javascripts/app.js" />
 	</patternset>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: initialize
          ================================= -->
 	<target name="initialize">
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: compile
          ================================= -->
 	<target name="compile" description="Compile the application" depends="update_build_info"></target>
-	
-    <!-- ================================= 
+
+	<!-- ================================= 
           target: initialize_libraries
          ================================= -->
 	<target name="initialize_libraries">
 		<taskdef resource="net/sf/antcontrib/antlib.xml">
-		     <classpath>
-		    	<pathelement location="lib/ant-contrib-0.6.jar"/>
-		     </classpath>
+			<classpath>
+				<pathelement location="lib/ant-contrib-0.6.jar"/>
+			</classpath>
 		</taskdef>
 	</target>
-    
-    <!-- ================================= 
+
+	<!-- ================================= 
           target: get_build_number
          ================================= -->
 	<target name="get_build_number" depends="initialize_libraries">
-		
+
 		<macrodef name="get_build_info">
 			<attribute name="path" default="${user.dir}" />
 			<attribute name="format" default="ct" />
 			<attribute name="outputproperty" />
-			
+
 			<sequential>
-			    <exec failonerror="true" executable="git" outputproperty="@{outputproperty}"> <!-- Fail on error is set to true in order to prevent a bad build number from being included -->
+				<exec failonerror="true" executable="git" outputproperty="@{outputproperty}">					<!-- Fail on error is set to true in order to prevent a bad build number from being included -->
 					<arg value="log"/>
-			    	<arg value="-1"/>
+					<arg value="-1"/>
 					<arg value="--pretty=format:%@{format}"/>
-			    	<arg value="--abbrev-commit"/>
+					<arg value="--abbrev-commit"/>
 					<arg value="@{path}"/>
-			    </exec>
+				</exec>
 			</sequential>
-			
+
 		</macrodef>
-		
+
 		<!-- Determine if this project is using Git and get the build info accordingly -->
 		<if>
 			<available file=".git" type="dir" />
@@ -99,65 +99,55 @@
 					<![CDATA[
 						property = project.setProperty("value.build.number",Math.floor((new Date()).getTime()/1000));
 					]]>
-			    </script>
+				</script>
 			</else>
 		</if>
 
-		<script language="javascript">
-			<![CDATA[
-				project.setProperty("value.build.number_hex", parseInt(project.getProperty("value.build.number"),10).toString(16));
-			]]>
-		</script>
-
-		<echo>Revision number is: ${value.build.number} (${value.build.date}, ${value.build.number_hex})</echo>
+		<echo>Revision number is: ${value.build.number} (${value.build.date})</echo>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: update_build_info
          ================================= -->
-    <target name="update_build_info" depends="get_build_number">
-    	<echo file="src/reader/templates/VERSION.txt" append="false">${value.build.version} (build ${value.build.number})</echo>
+	<target name="update_build_info" depends="get_build_number">
+		<echo file="src/reader/templates/VERSION.txt" append="false">${value.build.version} (build ${value.build.number})</echo>
 		<echo file="src/reader/templates/VERSION.json" append="false">{
 		"version": "${value.build.version}",
 		"build": "${value.build.number}",
 		"build_date": "${value.build.date}"
 }</echo>
-    </target>
-	
-    <!-- ================================= 
+	</target>
+
+	<!-- ================================= 
           target: package
          ================================= -->
-    <target name="package" depends="get_build_number,update_build_info" description="Create the application package (sans media)">
-    	<mkdir dir="${value.build.packageoutput.directory}" />
-        <zip destfile="${value.build.packageoutput.directory}/textcritical.zip"
-            basedir="src"
-            excludes="reader/test/**, reader/tests.py, **/*.pyc, textcritical/settings.py, media/files/**"
-            whenempty="create"
-        />
-    </target>
+	<target name="package" depends="get_build_number,update_build_info" description="Create the application package (sans media)">
+		<mkdir dir="${value.build.packageoutput.directory}" />
+		<zip destfile="${value.build.packageoutput.directory}/textcritical.zip" basedir="src" excludes="reader/test/**, reader/tests.py, **/*.pyc, textcritical/settings.py, media/files/**" whenempty="create" />
+	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: package_static
          ================================= -->
-    <target name="package_static" depends="get_build_number,update_build_info" description="Create the package with the static package contents">
-    	<mkdir dir="${value.build.packageoutput.directory}" />
-        <zip destfile="${value.build.packageoutput.directory}/textcritical.zip" whenempty="create">
+	<target name="package_static" depends="get_build_number,update_build_info" description="Create the package with the static package contents">
+		<mkdir dir="${value.build.packageoutput.directory}" />
+		<zip destfile="${value.build.packageoutput.directory}/textcritical.zip" whenempty="create">
 			<zipfileset dir="src/media" />
 			<zipfileset dir="src/reader/templates/" includes="503.html" />
 		</zip>
-    </target>
+	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: compile_and_package
          ================================= -->
-    <target name="compile_and_package" depends="get_build_number,compile,package_static" description="Compile the application and create the package (sans media)"></target>
+	<target name="compile_and_package" depends="get_build_number,compile,package_static" description="Compile the application and create the package (sans media)"></target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: verify
          ================================= -->
 	<target name="verify" description="Verify that the package appears to be valid"></target>
-	
-    <!-- ================================= 
+
+	<!-- ================================= 
           target: test
          ================================= -->
 	<target name="test" description="Verify that the package appears to be valid" depends="install_dependencies">
@@ -167,7 +157,7 @@
 
 		<!-- Arguments passed from the CLI will be used to indicate which test to run (e.g. ant test -Dtest=reader.test_cases.test_reader_utils) -->
 		<property name="test" value="" />
-		
+
 		<exec failonerror="true" executable="${python}" dir="src">
 			<arg value="manage.py"/>
 			<arg value="test"/>
@@ -177,7 +167,7 @@
 
 	<target name="deploy"></target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: init_database
          ================================= -->
 	<target name="init_database" description="Initialize the database">
@@ -192,14 +182,14 @@
 			<arg value="migrate"/>
 		</exec>
 
-		<echo> </echo>
-		<echo> </echo>
+		<echo></echo>
+		<echo></echo>
 		<echo>You may need to create a super user. Do so with:</echo>
 		<echo>      python manage.py createsuperuser</echo>
 
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: migrate_library
          ================================= -->
 	<target name="migrate_library" description="Migrate changes for the library database">
@@ -217,7 +207,7 @@
 		</exec>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: index_works
          ================================= -->
 	<target name="index_works" description="Create the search indexes for the works (deleting existing indexes)">
@@ -228,7 +218,7 @@
 		</exec>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: create_ebooks_epub
          ================================= -->
 	<target name="create_ebooks_epub" description="Create the epubs ebook files">
@@ -238,7 +228,7 @@
 		</exec>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: create_ebooks_mobi
          ================================= -->
 	<target name="create_ebooks_mobi" description="Create the mobi ebook files">
@@ -248,28 +238,28 @@
 		</exec>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: create_ebooks
          ================================= -->
 	<target name="create_ebooks" depends="create_ebooks_mobi,create_ebooks_epub" description="Create the ebook files (mobi and epub)"></target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: clear_ebooks
          ================================= -->
 	<target name="clear_ebooks" description="Clear the ebooks">
 		<delete dir="media/files"/>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: clear_cache
          ================================= -->
 	<target name="clear_cache" description="Clear the Django file-system cache">
-        <delete>  
-            <fileset dir="var/cache" includes="**/*cache"/>  
-        </delete>  
+		<delete>
+			<fileset dir="var/cache" includes="**/*cache"/>
+		</delete>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: run_server
          ================================= -->
 	<target name="run_server" description="Run the internal web-server">
@@ -277,10 +267,11 @@
 			<arg value="manage.py"/>
 			<arg value="runserver"/>
 			<arg value="0.0.0.0:8080"/>
+			<arg value="--nothreading"/>
 		</exec>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: install_dependencies
          ================================= -->
 	<target name="install_dependencies" description="Install dependencies">
@@ -295,12 +286,12 @@
 
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: install
          ================================= -->
 	<target name="install" depends="install_dependencies,init_database" description="Install the dependencies and initialize the database"></target>
-	
-    <!-- ================================= 
+
+	<!-- ================================= 
           target: define_package_library
          ================================= -->
 	<target name="define_package_library" depends="initialize_libraries">
@@ -312,10 +303,10 @@
 		<property name="install_package" value="${toString:install_package_file}" />
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: collect_static
          ================================= -->
-	<target name="collect_static" >
+	<target name="collect_static">
 		<exec executable="${python}" dir="src">
 			<arg value="manage.py"/>
 			<arg value="collectstatic"/>
@@ -323,13 +314,13 @@
 		</exec>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: upgrade install directory
          ================================= -->
 	<target name="upgrade_install_directory" depends="define_package_library,check_install_state,collect_static">
 
 		<echo>Deploying package:</echo>
-		<echo>     </echo>
+		<echo></echo>
 		<echo>     ${install_package}</echo>
 
 		<tstamp>
@@ -362,52 +353,52 @@
 
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: upgrade
          ================================= -->
 	<target name="upgrade" description="Upgrade the existing install of TextCritical" depends="upgrade_install_directory">
 
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: check_install_state
          ================================= -->
 	<target name="check_install_state" depends="initialize_libraries">
 		<!-- Check: media/files exists -->
 		<if>
-        	<available file="${install_directory}/media/files"/>
+			<available file="${install_directory}/media/files"/>
 			<then>
 				<echo>ebook files cache exists</echo>
 			</then>
 			<else>
 				<echo level="warning">ebook files cache does not exist</echo>
 			</else>
-    	</if>
+		</if>
 
 		<!-- Check: settings.py exists -->
 		<if>
-        	<available file="${install_directory}/textcritical/settings.py"/>
+			<available file="${install_directory}/textcritical/settings.py"/>
 			<then>
 				<echo>settings file exists</echo>
 			</then>
 			<else>
 				<echo level="warning">settings file does not exist</echo>
 			</else>
-    	</if>
+		</if>
 
 		<!-- Check: var/library.sqlite exists -->
 		<if>
-        	<available file="${install_directory}/var/library.sqlite"/>
+			<available file="${install_directory}/var/library.sqlite"/>
 			<then>
 				<echo>library database exists</echo>
 			</then>
 			<else>
 				<echo level="warning">library database does not exist</echo>
 			</else>
-    	</if>
+		</if>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: docker_build
          ================================= -->
 	<target name="docker_build" description="Build the docker image">
@@ -419,7 +410,7 @@
 		</exec>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: docker_run
          ================================= -->
 	<target name="docker_run" description="Run the docker image">
@@ -440,10 +431,10 @@
 		</exec>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: docker_test
          ================================= -->
-	<target name="docker_test" description="Run the tests in the docker image"  depends="docker_running_id">
+	<target name="docker_test" description="Run the tests in the docker image" depends="docker_running_id">
 		<echo>Docker: ${docker_id}</echo>
 		<exec executable="docker">
 			<arg value="exec"/>
@@ -455,7 +446,7 @@
 		</exec>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: docker_push
          ================================= -->
 	<target name="docker_push" description="Push the docker image">
@@ -466,23 +457,21 @@
 		</exec>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: docker_build_and_run
          ================================= -->
 	<target name="docker_build_and_run" description="Build the docker image and then run it" depends="get_build_number,compile,docker_stop,docker_build,docker_run">
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: docker_running_id
          ================================= -->
 	<target name="docker_running_id" description="Get the ID of the running docker image">
-		<exec executable="docker"
-			outputproperty="docker_id"
-			failonerror="false">
-				<arg value="ps"/>
-				<arg value="-q"/>
-				<arg value="--filter"/>
-				<arg value="ancestor=${value.docker.username}/${value.docker.name}"/>
+		<exec executable="docker" outputproperty="docker_id" failonerror="false">
+			<arg value="ps"/>
+			<arg value="-q"/>
+			<arg value="--filter"/>
+			<arg value="ancestor=${value.docker.username}/${value.docker.name}"/>
 		</exec>
 
 		<script language="javascript">
@@ -494,7 +483,7 @@
 		</script>
 	</target>
 
-    <!-- ================================= 
+	<!-- ================================= 
           target: docker_stop
          ================================= -->
 	<target name="docker_stop" description="Stop the docker image" depends="docker_running_id" if="docker_running">
@@ -505,5 +494,5 @@
 			<arg value="${docker_id}"/>
 		</exec>
 	</target>
-	
+
 </project>
