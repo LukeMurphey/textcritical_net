@@ -461,7 +461,7 @@ class MobiConvert(object):
         mobi_file = os.path.basename(mobi_file_path)
         
         # https://manual.calibre-ebook.com/generated/en/ebook-convert.html
-        p = subprocess.Popen([settings.EBOOK_CONVERT, epub_file_path, mobi_file, "-h"], cwd=mobi_path)
+        p = subprocess.Popen([settings.EBOOK_CONVERT, epub_file_path, mobi_file], cwd=mobi_path)
         p.wait()
         
         if p.returncode > 1:
