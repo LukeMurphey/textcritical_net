@@ -43,7 +43,7 @@ If you liked this work, then you may like other works from this author:
 
 {% else %}
 <p class="add-space-small">
-If you liked this work, then you may like some of the other <a href="https://TextCritical.net{% url "works_index" %}?search={{work.authors.all.0}}">{{authors_works|length}} works from this author</a>.
+If you liked this work, then you may like some of the other {{authors_works|length}} works from this author</a>. Go to <a href="https://TextCritical.net{% url "home" %}">TextCritical.net</a> to read them.
 </p>
 
 {% endif %}
