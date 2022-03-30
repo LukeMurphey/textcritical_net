@@ -39,6 +39,18 @@
 	</target>
 
 	<!-- ================================= 
+          target: update_js
+         ================================= -->
+	<target name="update_js" description="Get the Javascript code and copy it into this repo" depends="initialize">
+		<property name="js_files" value="${value.build.textcritical_spa.directory}/dist" />
+		<property name="js_dest" value="src/media/dist" />
+		<mkdir dir="${js_dest}" />
+		<copy todir="${js_dest}">
+			<fileset dir="${js_files}" includes="**"/>  
+		</copy>
+	</target>
+
+	<!-- ================================= 
           target: compile
          ================================= -->
 	<target name="compile" description="Compile the application" depends="update_build_info"></target>
