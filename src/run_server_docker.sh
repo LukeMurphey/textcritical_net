@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 cd /usr/src/app
 mkdir -p /usr/src/app/var/log/
 
