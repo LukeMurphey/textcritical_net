@@ -22,6 +22,7 @@
 
 	<!-- Load parameters relating to the the location of the Python directory -->
 	<import_environment_var property="python_dir" variable="PYTHON_DIR" />
+	<import_environment_var property="value.docker.password" variable="DOCKER_PASSWORD" />
 
 	<!-- Finalize the references to Python and PIP -->
 	<property name="python" value="${python_dir}/bin/python3" />
@@ -411,6 +412,19 @@
 	</target>
 
 	<!-- ================================= 
+          target: docker_login
+         ================================= -->
+	<target name="docker_login" description="Login to docker" if="value.docker.password">
+		<!-- https://docs.docker.com/engine/reference/commandline/login/ -->
+		<exec inputstring="${value.docker.password}" executable="echo" failonerror="true">
+			<arg value="login"/>
+			<arg value="-u"/>
+			<arg value="${value.docker.username}"/>
+			<arg value="--password-stdin"/>
+		</exec>
+	</target>
+
+	<!-- ================================= 
           target: docker_build
          ================================= -->
 	<target name="docker_build" description="Build the docker image">
@@ -461,19 +475,9 @@
 	<!-- ================================= 
           target: docker_push
          ================================= -->
-	<target name="docker_push" description="Push the docker image">
+	<target name="docker_push" description="Push the docker image" depends="docker_login,docker_tag">
 		<property name="install_directory" location="."/>
-		<exec executable="docker">
-			<arg value="push"/>
-			<arg value="${value.docker.username}/${value.docker.name}:${value.build.version}"/>
-		</exec>
-	</target>
 
-	<!-- ================================= 
-          target: docker_push
-         ================================= -->
-	<target name="docker_push_version" description="Push the docker image">
-		<property name="install_directory" location="."/>
 		<!-- Push the latest -->
 		<exec executable="docker">
 			<arg value="push"/>
