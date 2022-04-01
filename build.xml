@@ -465,7 +465,7 @@
 		<property name="install_directory" location="."/>
 		<exec executable="docker">
 			<arg value="push"/>
-			<arg value="${value.docker.username}/${value.docker.name}:${value.build.version}"/>
+			<arg value="${value.docker.username}/${value.docker.name}"/>
 		</exec>
 	</target>
 
