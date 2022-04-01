@@ -417,7 +417,7 @@
 		<exec executable="docker" failonerror="true">
 			<arg value="build"/>
 			<arg value="-t"/>
-			<arg value="${value.docker.username}/${value.docker.name}"/>
+			<arg value="${value.docker.username}/${value.docker.name}:latest"/>
 			<arg value="."/>
 		</exec>
 	</target>
@@ -465,7 +465,37 @@
 		<property name="install_directory" location="."/>
 		<exec executable="docker">
 			<arg value="push"/>
-			<arg value="${value.docker.username}/${value.docker.name}"/>
+			<arg value="${value.docker.username}/${value.docker.name}:${value.build.version}"/>
+		</exec>
+	</target>
+
+	<!-- ================================= 
+          target: docker_push
+         ================================= -->
+	<target name="docker_push_version" description="Push the docker image">
+		<property name="install_directory" location="."/>
+		<!-- Push the latest -->
+		<exec executable="docker">
+			<arg value="push"/>
+			<arg value="${value.docker.username}/${value.docker.name}:latest"/>
+		</exec>
+
+		<!-- Push the version -->
+		<exec executable="docker">
+			<arg value="push"/>
+			<arg value="${value.docker.username}/${value.docker.name}:${value.build.version}"/>
+		</exec>
+	</target>
+
+	<!-- ================================= 
+          target: docker_tag
+         ================================= -->
+	<target name="docker_tag" description="Tag the docker image">
+		<property name="install_directory" location="."/>
+		<exec executable="docker">
+			<arg value="tag"/>
+			<arg value="${value.docker.username}/${value.docker.name}:latest"/>
+			<arg value="${value.docker.username}/${value.docker.name}:${value.build.version}"/>
 		</exec>
 	</target>
 
