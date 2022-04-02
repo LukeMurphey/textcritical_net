@@ -40,9 +40,32 @@
 	</target>
 
 	<!-- ================================= 
+          target: spa_does_exist
+         ================================= -->
+	<target name="spa_does_exist" depends="does_spa_exist" if="spa_exists">
+		<echo>${value.build.textcritical_spa.directory} exists</echo>
+	</target>
+
+	<!-- ================================= 
+          target: spa_check
+         ================================= -->
+	<target name="spa_check" depends="does_spa_exist" unless="spa_exists">
+		<fail>The TextCritical SPA code doesn't exist; get it by checking it out from https://github.com/LukeMurphey/textcritical_spa</fail>
+	</target>
+
+	<!-- ================================= 
+          target: does_spa_exist
+         ================================= -->
+	<target name="does_spa_exist">
+		<condition property="spa_exists">
+			<available file="${value.build.textcritical_spa.directory}" type="dir"/>
+		</condition>
+	</target>
+
+	<!-- ================================= 
           target: update_js
          ================================= -->
-	<target name="update_js" description="Get the Javascript code and copy it into this repo" depends="initialize">
+	<target name="update_js" description="Get the Javascript code and copy it into this repo" depends="initialize,spa_check">
 		<property name="js_files" value="${value.build.textcritical_spa.directory}/dist" />
 		<property name="js_dest" value="src/media/dist" />
 		<mkdir dir="${js_dest}" />
