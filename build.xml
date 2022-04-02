@@ -439,7 +439,7 @@
          ================================= -->
 	<target name="docker_login" description="Login to docker" if="value.docker.password">
 		<!-- https://docs.docker.com/engine/reference/commandline/login/ -->
-		<exec inputstring="${value.docker.password}" executable="echo" failonerror="true">
+		<exec inputstring="${value.docker.password}" executable="docker" failonerror="true">
 			<arg value="login"/>
 			<arg value="-u"/>
 			<arg value="${value.docker.username}"/>
