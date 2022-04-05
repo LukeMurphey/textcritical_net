@@ -13,12 +13,15 @@ from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from functools import cmp_to_key
+from django.contrib.sites.models import Site
 
 import json
 import logging
 import difflib
 import re
 import os
+import io
+import csv
 
 from reader.templatetags.reader_extras import transform_perseus_text
 from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork, WikiArticle, LexiconEntry, WorkSource
@@ -41,6 +44,9 @@ except ImportError:
 
 # Per RFC 4627: http://www.ietf.org/rfc/rfc4627.txt
 JSON_CONTENT_TYPE = "application/json"
+
+# Per RFC 7111: https://www.rfc-editor.org/rfc/rfc7111
+CSV_CONTENT_TYPE = "text/csv"
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -390,6 +396,12 @@ def api_search(request, search_text=None):
     else:
         ignore_diacritics = False
 
+    # Determine if results are to be downloaded
+    if 'download' in request.GET:
+        download_results = True
+    else:
+        download_results = False
+
     # Perform the search
     search_results = search_verses(search_text, page=page, pagelen=pagelen,
                                    include_related_forms=include_related_forms, ignore_diacritics=ignore_diacritics)
@@ -439,6 +451,35 @@ def api_search(request, search_text=None):
     # Get the search stats
     stats = search_stats(
         search_text, include_related_forms=include_related_forms, ignore_diacritics=ignore_diacritics)
+
+    # Provide the results as a file if that is what is requested
+    if download_results:
+        csv_string = io.StringIO()
+
+        current_site = Site.objects.get_current()
+
+        # Make the results into a CSV
+        fieldnames = ['url', 'description', 'content_snippet', 'work', 'division', 'verse']
+        resultswriter = csv.DictWriter(csv_string, fieldnames=fieldnames)
+        
+        resultswriter.writeheader()
+
+        for result in results_lists:
+            resultswriter.writerow({
+                'url': 'https://' + current_site.domain + result['url'],
+                'description': result['description'],
+                'content_snippet': result['content_snippet'],
+                'work': result['work'],
+                'division': result['division'],
+                'verse': result['verse'],
+            })
+
+        # Stream the CSV file results
+        response = HttpResponse(csv_string.getvalue(), content_type=CSV_CONTENT_TYPE + "; charset=utf-8-sig")
+        response['Content-Disposition'] = 'attachment; filename="%s"' % (
+            'search_results.csv')
+
+        return response
 
     results_set = {
         'result_count': search_results.result_count,
