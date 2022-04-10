@@ -28,7 +28,7 @@ from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork,
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy, convert_xml_to_html5
-from reader.utils import get_word_descriptions, get_lexicon_entries
+from reader.utils import get_word_descriptions, get_lexicon_entries, table_export
 from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
 from reader.bookcover import makeCoverImage
@@ -398,9 +398,9 @@ def api_search(request, search_text=None):
 
     # Determine if results are to be downloaded
     if 'download' in request.GET:
-        download_results = True
+        download_results = request.GET['download']
     else:
-        download_results = False
+        download_results = None
 
     # Perform the search
     search_results = search_verses(search_text, page=page, pagelen=pagelen,
@@ -453,19 +453,16 @@ def api_search(request, search_text=None):
         search_text, include_related_forms=include_related_forms, ignore_diacritics=ignore_diacritics)
 
     # Provide the results as a file if that is what is requested
-    if download_results:
-        csv_string = io.StringIO()
-
+    if download_results is not None:
         current_site = Site.objects.get_current()
 
-        # Make the results into a CSV
+        # Make the results the download
         fieldnames = ['url', 'description', 'content_snippet', 'work', 'division', 'verse']
-        resultswriter = csv.DictWriter(csv_string, fieldnames=fieldnames)
-        
-        resultswriter.writeheader()
+        exporter = table_export.get_exporter(download_results, fieldnames)
 
         for result in results_lists:
-            resultswriter.writerow({
+
+            exporter.add_row({
                 'url': 'https://' + current_site.domain + result['url'],
                 'description': result['description'],
                 'content_snippet': result['content_snippet'],
@@ -474,10 +471,12 @@ def api_search(request, search_text=None):
                 'verse': result['verse'],
             })
 
-        # Stream the CSV file results
-        response = HttpResponse(csv_string.getvalue(), content_type=CSV_CONTENT_TYPE + "; charset=utf-8-sig")
+        exporter.close()
+
+        # Stream the file results
+        response = HttpResponse(exporter.getvalue(), content_type=exporter.content_type())
         response['Content-Disposition'] = 'attachment; filename="%s"' % (
-            'search_results.csv')
+            'search_results' + exporter.file_extension())
 
         return response
 

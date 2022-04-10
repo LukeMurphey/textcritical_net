@@ -10,3 +10,4 @@ requests
 wikipedia
 WSGIserver
 django-cors-headers 
+xlsxwriter
