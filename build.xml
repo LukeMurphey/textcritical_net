@@ -450,7 +450,7 @@
 	<!-- ================================= 
           target: docker_build
          ================================= -->
-	<target name="docker_build" description="Build the docker image">
+	<target name="docker_build" description="Build the docker image" depends="update_build_info">
 		<exec executable="docker" failonerror="true">
 			<arg value="build"/>
 			<arg value="-t"/>
