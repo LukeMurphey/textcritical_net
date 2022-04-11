@@ -466,10 +466,10 @@ def api_search(request, search_text=None):
         if(hasattr(exporter, 'set_column_widths')):
             exporter.set_column_widths([
                 50,
-                10,
+                15,
                 80,
                 20,
-                8,
+                15,
                 5
             ])
 
@@ -492,6 +492,12 @@ def api_search(request, search_text=None):
 
             exporter.set_cell(1, 0, 'URL')
             exporter.set_cell(1, 1, request.build_absolute_uri())
+
+            exporter.set_cell(2, 0, 'Result Count')
+            exporter.set_cell(2, 1, search_results.result_count)
+
+            exporter.set_cell(3, 0, 'Match Count')
+            exporter.set_cell(3, 1, stats['matches'])
 
             if(hasattr(exporter, 'set_column_widths')):
                 exporter.set_column_widths([13, 50])
