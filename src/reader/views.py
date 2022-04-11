@@ -20,8 +20,6 @@ import logging
 import difflib
 import re
 import os
-import io
-import csv
 
 from reader.templatetags.reader_extras import transform_perseus_text
 from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork, WikiArticle, LexiconEntry, WorkSource
@@ -458,10 +456,25 @@ def api_search(request, search_text=None):
 
         # Make the results the download
         fieldnames = ['url', 'description', 'content_snippet', 'work', 'division', 'verse']
-        exporter = table_export.get_exporter(download_results, fieldnames)
+        exporter = table_export.get_exporter(download_results, fieldnames, title='Search Results')
 
+        # Stop if we could not find an exporter to use
+        if exporter is None:
+            return render_api_error(request, "Invalid download format: " + str(download_results), 404)
+
+        # Set the column widths (if available)
+        if(hasattr(exporter, 'set_column_widths')):
+            exporter.set_column_widths([
+                50,
+                10,
+                80,
+                20,
+                8,
+                5
+            ])
+
+        # Add the results
         for result in results_lists:
-
             exporter.add_row({
                 'url': 'https://' + current_site.domain + result['url'],
                 'description': result['description'],
@@ -470,6 +483,18 @@ def api_search(request, search_text=None):
                 'division': result['division'],
                 'verse': result['verse'],
             })
+
+        # Add the meta page
+        if(hasattr(exporter, 'add_worksheet') and hasattr(exporter, 'set_cell')):
+            exporter.add_worksheet('Meta Data')
+            exporter.set_cell(0, 0, 'Search Query')
+            exporter.set_cell(0, 1, search_text)
+
+            exporter.set_cell(1, 0, 'URL')
+            exporter.set_cell(1, 1, request.build_absolute_uri())
+
+            if(hasattr(exporter, 'set_column_widths')):
+                exporter.set_column_widths([13, 50])
 
         exporter.close()
 
