@@ -195,6 +195,7 @@
 		<property name="test" value="" />
 
 		<exec failonerror="true" executable="${python}" dir="src">
+			<arg value="-Wa"/>
 			<arg value="manage.py"/>
 			<arg value="test"/>
 			<arg line="${test}" />
@@ -490,6 +491,7 @@
 			<arg value="-it"/>
 			<arg value="${docker_id}"/>
 			<arg value="python"/>
+			<arg value="-Wa"/>
 			<arg value="manage.py"/>
 			<arg value="test"/>
 		</exec>
