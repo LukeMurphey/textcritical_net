@@ -76,9 +76,6 @@ class RosenAnalysesImporter(GreekAnalysesParser):
         "enclitic": WordDescription.ENCLITIC
     }
 
-    cached_cases = None
-    cached_dialects = None
-
     def __init__(self, raise_exception_on_match_failure=False, logger=None):
         self.logger = logger
         self.raise_exception_on_match_failure = raise_exception_on_match_failure
@@ -342,13 +339,10 @@ class RosenAnalysesImporter(GreekAnalysesParser):
         case -- A name of a case.
         """
 
-        if cls.cached_cases is None:
-            cls.cached_cases = Case.objects.all()
+        existing_case = Case.objects.filter(name=case).first()
 
-        for c in cls.cached_cases:
-
-            if c.name == case:
-                return c
+        if existing_case:
+            return existing_case
 
         # Create the new case
         if raise_exception_if_not_found:
@@ -356,8 +350,6 @@ class RosenAnalysesImporter(GreekAnalysesParser):
         else:
             new_case = Case(name=case)
             new_case.save()
-
-            cls.cached_cases = None
 
         return new_case
 
@@ -371,13 +363,10 @@ class RosenAnalysesImporter(GreekAnalysesParser):
         dialect -- A name of a dialect.
         """
 
-        if cls.cached_dialects is None:
-            cls.cached_dialects = Dialect.objects.all()
+        existing_dialect = Dialect.objects.filter(name=dialect).first()
 
-        for c in cls.cached_dialects:
-
-            if c.name == dialect:
-                return c
+        if existing_dialect:
+            return existing_dialect
 
         # Create the new dialect
         if raise_exception_if_not_found:
@@ -385,8 +374,6 @@ class RosenAnalysesImporter(GreekAnalysesParser):
         else:
             new_dialect = Dialect(name=dialect)
             new_dialect.save()
-
-            cls.cached_dialects = None
 
             return new_dialect
 

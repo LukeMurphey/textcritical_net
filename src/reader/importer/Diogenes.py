@@ -98,9 +98,6 @@ class DiogenesAnalysesImporter(LineImporter):
         "enclitic": WordDescription.ENCLITIC
     }
 
-    cached_cases = None
-    cached_dialects = None
-
     @classmethod
     @transaction.atomic
     def import_line(cls, entry, line_number=None, raise_exception_on_match_failure=False):
@@ -222,20 +219,15 @@ class DiogenesAnalysesImporter(LineImporter):
         cls -- The class
         case -- A name of a case.
         """
+    
+        existing_case = Case.objects.filter(name=case).first()
 
-        if cls.cached_cases is None:
-            cls.cached_cases = Case.objects.all()
-
-        for c in cls.cached_cases:
-
-            if c.name == case:
-                return c
+        if existing_case:
+            return existing_case
 
         # Create the new case
         new_case = Case(name=case)
         new_case.save()
-
-        cls.cached_cases = None
 
         return new_case
 
@@ -248,20 +240,14 @@ class DiogenesAnalysesImporter(LineImporter):
         cls -- The class
         dialect -- A name of a dialect.
         """
+        existing_dialect = Dialect.objects.filter(name=dialect).first()
 
-        if cls.cached_dialects is None:
-            cls.cached_dialects = Dialect.objects.all()
-
-        for c in cls.cached_dialects:
-
-            if c.name == dialect:
-                return c
+        if existing_dialect:
+            return existing_dialect
 
         # Create the new dialect
         new_dialect = Dialect(name=dialect)
         new_dialect.save()
-
-        cls.cached_dialects = None
 
         return new_dialect
 
