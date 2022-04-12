@@ -29,7 +29,7 @@ class PreLoadedWorksRouter(object):
         
         return None
 
-    def allow_migrate(self, db, app_label, model_name, **hints):
+    def allow_migrate(self, db, app_label, model_name=None, **hints):
 
         # If this is one of the models for the library database and the reader app then allow the
         # changes
