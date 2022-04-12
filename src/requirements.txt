@@ -1,5 +1,5 @@
-django==2.2.28
-django-grappelli==2.13.4
+django==3.2.13
+django-grappelli==2.15.5
 lxml
 Genshi
 six
