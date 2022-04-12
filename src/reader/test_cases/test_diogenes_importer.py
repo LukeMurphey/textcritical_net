@@ -27,7 +27,7 @@ class TestDiogenesLemmaImport(TestReader):
         
         lemmas = DiogenesLemmataImporter.import_file(self.get_test_resource_file_name("greek-lemmata.txt"), return_created_objects=True)
         
-        self.assertEquals(len(lemmas), 95)
+        self.assertEqual(len(lemmas), 95)
     
     def test_parse(self):
         
@@ -36,5 +36,5 @@ class TestDiogenesLemmaImport(TestReader):
         
         lemma = DiogenesLemmataImporter.parse_lemma(s)
         
-        self.assertEquals(lemma.lexical_form, Greek.beta_code_str_to_unicode("a(/bra"))
-        self.assertEquals(lemma.reference_number, 537850)
+        self.assertEqual(lemma.lexical_form, Greek.beta_code_str_to_unicode("a(/bra"))
+        self.assertEqual(lemma.reference_number, 537850)

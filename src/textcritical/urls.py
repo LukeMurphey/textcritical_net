@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 
     # Serve static files (images, css, javascript, etc.):
     url(r'^media/(?P<path>.*)$', serve, {

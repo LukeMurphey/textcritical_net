@@ -249,7 +249,7 @@ class PerseusTextImporter(TextImporter):
                 if same_level_division is not None:
                     new_division.parent_division = same_level_division.parent_division
                 else:
-                    logger.warn("Unable to find parent division for level %i" % (level))
+                    logger.warning("Unable to find parent division for level %i" % (level))
 
             # If the new level is higher than the current one, then add
             else:
@@ -1131,7 +1131,7 @@ class PerseusTextImporter(TextImporter):
                     import_context.verse.indicator = node.attributes["n"].value
                 else:
                     import_context.verse.indicator = str(verses_created + 1)
-                    logger.warn('Milestone observed that did not have an associated unit, the sequence number will be used instead, division=%s, verse=%s, title=%s', import_context.division.sequence_number, import_context.verse.indicator, self.work.title)
+                    logger.warning('Milestone observed that did not have an associated unit, the sequence number will be used instead, division=%s, verse=%s, title=%s', import_context.division.sequence_number, import_context.verse.indicator, self.work.title)
                 
                 import_context.verse.save()
                 

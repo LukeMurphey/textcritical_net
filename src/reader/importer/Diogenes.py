@@ -185,7 +185,7 @@ class DiogenesAnalysesImporter(LineImporter):
                 raise Exception("Analysis entry does not match the regex, form=%s, line_number=%r, form_number=%r" % (
                     word_form.form, line_number, form_number))
 
-            logger.warn("Analysis entry does not match the regex, form=%s, line_number=%r, form_number=%r" % (
+            logger.warning("Analysis entry does not match the regex, form=%s, line_number=%r, form_number=%r" % (
                 word_form.form, line_number, form_number))
             return
 
@@ -197,7 +197,7 @@ class DiogenesAnalysesImporter(LineImporter):
 
         # Stop if we couldn't find a matching lemma
         if lemma is None:
-            logger.warn("Unable to find the lemma for an analysis entry, form=%s, reference_number=%r, line_number=%r, form_number=%r" % (
+            logger.warning("Unable to find the lemma for an analysis entry, form=%s, reference_number=%r, line_number=%r, form_number=%r" % (
                 word_form.form, reference_number, line_number, form_number))
         else:
 
@@ -422,10 +422,10 @@ class DiogenesAnalysesImporter(LineImporter):
             else:
 
                 if line_number is not None:
-                    logger.warn(
+                    logger.warning(
                         "Attribute was not expected: attribute=%s, line_number=%i" % (a, line_number))
                 else:
-                    logger.warn("Attribute was not expected: attribute=%s" % a)
+                    logger.warning("Attribute was not expected: attribute=%s" % a)
 
         # Save the description
         word_description.save()

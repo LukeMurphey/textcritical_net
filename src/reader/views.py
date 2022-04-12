@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.urls import NoReverseMatch
 from django.core import serializers
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponse, Http404
 from wsgiref.util import FileWrapper
 from django.template.context import RequestContext

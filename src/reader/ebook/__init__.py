@@ -5,7 +5,7 @@ from reader.templatetags.reader_extras import transform_perseus_text, transform_
 from reader.shortcuts import convert_xml_to_html5
 from reader.language_tools.greek import Greek
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.template import loader
 from django.conf import settings
 

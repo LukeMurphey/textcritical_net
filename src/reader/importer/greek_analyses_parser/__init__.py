@@ -100,7 +100,7 @@ class GreekAnalysesParser():
                             raise Exception("Line %i: Observed a comment line, but we have a form line" % line_number)
                         
                         if logger:
-                            logger.warn("Line %i: Observed a comment line, but we have a form line", line_number)
+                            logger.warning("Line %i: Observed a comment line, but we have a form line", line_number)
 
                         formLine = None
                 
@@ -111,7 +111,7 @@ class GreekAnalysesParser():
                             raise Exception("Line %i: Observed an empty line, but we have a form line" % line_number)
                         
                         if logger:
-                            logger.warn("Line %i: Observed an empty line, but we have a form line", line_number)
+                            logger.warning("Line %i: Observed an empty line, but we have a form line", line_number)
 
                         formLine = None
 

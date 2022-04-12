@@ -101,5 +101,5 @@ class TestDiogenesAnalysesImport(TestReader):
         desc = "Wont match regex"
         
         # Make sure this does not trigger an exception
-        self.assertEquals(DiogenesAnalysesImporter.import_analysis_entry(desc, word_form), None)
+        self.assertEqual(DiogenesAnalysesImporter.import_analysis_entry(desc, word_form), None)
     

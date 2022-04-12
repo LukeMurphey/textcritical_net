@@ -50,7 +50,7 @@ class Command(BaseCommand):
                         logger.info("Created mobi, filename=%s", fname)
                         print("Created mobi, filename=%s" % (fname))
                     else:
-                        logger.warn("Could not create mobi, filename=%s", fname)
+                        logger.warning("Could not create mobi, filename=%s", fname)
                         print("Could not create mobi, filename=%s" % (fname))
             
         except Exception:

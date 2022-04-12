@@ -67,4 +67,4 @@ class TestWorkAlias(TestReader):
         WorkAlias.objects.filter(title_slug="test_make_alias_ignore_overlap2").delete()
         
         # Now see if populate_from_existing re-creates them
-        self.assertEquals(WorkAlias.populate_from_existing(), 2)
+        self.assertEqual(WorkAlias.populate_from_existing(), 2)

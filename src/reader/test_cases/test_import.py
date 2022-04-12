@@ -16,7 +16,7 @@ class TestImport(TestCase):
         self.importer.make_author(name)
         self.importer.make_author(name)
         
-        self.assertEquals(Author.objects.filter(name=name).count(), 1)
+        self.assertEqual(Author.objects.filter(name=name).count(), 1)
         
     def test_copy_node(self):
         
@@ -56,4 +56,4 @@ class TestImport(TestCase):
                 <a capitol="A"/></vowels>
             </dst>"""
         
-        self.assertEquals(expected, dst_dom.toxml())
+        self.assertEqual(expected, dst_dom.toxml())

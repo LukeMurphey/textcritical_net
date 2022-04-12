@@ -139,7 +139,7 @@ class HTML5Converter(HTMLParser):
             # Append the txt node
             self.current_node.appendChild(txt_node)
         except KeyError:
-            logger.warn("Unable to handle unexpected entity, entityref=%s", name)
+            logger.warning("Unable to handle unexpected entity, entityref=%s", name)
         
     def handle_charref(self, name):
         if name.startswith('x'):

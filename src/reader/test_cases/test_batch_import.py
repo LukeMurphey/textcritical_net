@@ -12,7 +12,7 @@ class TestBatchImport(TestCase):
         
         ImportTransforms.update_title_slug(work, "english")
         
-        self.assertEquals(work.title_slug, "some-doc-english")
+        self.assertEqual(work.title_slug, "some-doc-english")
         
     def test_update_title_slug_default(self):
         
@@ -21,7 +21,7 @@ class TestBatchImport(TestCase):
         
         ImportTransforms.update_title_slug(work)
         
-        self.assertEquals(work.title_slug, "some-doc-greek")
+        self.assertEqual(work.title_slug, "some-doc-greek")
      
     def test_update_title_slug_by_editor(self):
         
@@ -35,7 +35,7 @@ class TestBatchImport(TestCase):
         
         ImportTransforms.update_title_slug(work)
         
-        self.assertEquals(work.title_slug, "some-doc-whiston")
+        self.assertEqual(work.title_slug, "some-doc-whiston")
 
      
     def test_update_title_slug_by_editor_with_extra(self):
@@ -50,7 +50,7 @@ class TestBatchImport(TestCase):
         
         ImportTransforms.update_title_slug(work)
         
-        self.assertEquals(work.title_slug, "some-doc-whiston")   
+        self.assertEqual(work.title_slug, "some-doc-whiston")   
         
     def test_set_division_title(self):
         
@@ -63,7 +63,7 @@ class TestBatchImport(TestCase):
         
         ImportTransforms.set_division_title(work, existing_division_sequence_number=18, descriptor="NewDesc")
         
-        self.assertEquals(Division.objects.get(work=work, sequence_number=18).descriptor, "NewDesc")
+        self.assertEqual(Division.objects.get(work=work, sequence_number=18).descriptor, "NewDesc")
         
     def test_set_division_title_by_parent(self):
         
@@ -80,7 +80,7 @@ class TestBatchImport(TestCase):
         
         ImportTransforms.set_division_title(work, existing_division_parent_title_slug="parent18", existing_division_title_slug="child18", descriptor="NewDesc")
         
-        self.assertEquals(Division.objects.get(work=work, sequence_number=118).descriptor, "NewDesc")
+        self.assertEqual(Division.objects.get(work=work, sequence_number=118).descriptor, "NewDesc")
         
     """
     def test_set_verse_title(self):
@@ -97,7 +97,7 @@ class TestBatchImport(TestCase):
         
         ImportTransforms.set_verse_title(work, existing_verse_sequence_number=3, existing_verse_title_slug="3", descriptor="Intro")
         
-        self.assertEquals(Verse.objects.get(work=work, sequence_number=3).descriptor, "Intro")
+        self.assertEqual(Verse.objects.get(work=work, sequence_number=3).descriptor, "Intro")
     """
     
     def test_set_division_readable(self):
@@ -115,4 +115,4 @@ class TestBatchImport(TestCase):
         
         ImportTransforms.set_division_readable(work, sequence_number=110, title_slug="10", type="Chapter", descriptor="1", level=2)
         
-        self.assertEquals(Division.objects.get(work=work, sequence_number=110).readable_unit, True)
+        self.assertEqual(Division.objects.get(work=work, sequence_number=110).readable_unit, True)

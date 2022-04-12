@@ -1,7 +1,7 @@
 import json
 import logging
 from django.conf import settings
-from django.core.urlresolvers import resolve
+from django.urls import resolve
 from django.template import loader, TemplateDoesNotExist
 from django.urls import Resolver404
 

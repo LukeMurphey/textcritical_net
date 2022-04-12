@@ -68,9 +68,9 @@ class TestContentSearch(TestReader):
         
         results = search_verses("amet", self.indexer.get_index())
         
-        self.assertEquals(len(results.verses), 1)
-        self.assertEquals(results.matched_terms.get('amet', -1), 1)
-        self.assertEquals(results.matched_terms_no_diacritics.get('amet', -1), 1)
+        self.assertEqual(len(results.verses), 1)
+        self.assertEqual(results.matched_terms.get('amet', -1), 1)
+        self.assertEqual(results.matched_terms_no_diacritics.get('amet', -1), 1)
         
     def test_search_verse_no_diacritic(self):
         
@@ -82,7 +82,7 @@ class TestContentSearch(TestReader):
         
         results = search_verses("no_diacritics:νομου", self.indexer.get_index())
         
-        self.assertEquals(len(results.verses), 1)
+        self.assertEqual(len(results.verses), 1)
         
     def test_search_verse_beta_code(self):
         
@@ -94,7 +94,7 @@ class TestContentSearch(TestReader):
         
         results = search_verses('NO/MOU', self.indexer.get_index())
         
-        self.assertEquals(len(results.verses), 1)
+        self.assertEqual(len(results.verses), 1)
         
     def test_search_verse_beta_code_no_diacritics(self):
         
@@ -106,7 +106,7 @@ class TestContentSearch(TestReader):
         
         results = search_verses("NOMOU", self.indexer.get_index())
         
-        self.assertEquals(len(results.verses), 1)
+        self.assertEqual(len(results.verses), 1)
     
     def test_search_verse_work_by_slug(self):
         
@@ -117,13 +117,13 @@ class TestContentSearch(TestReader):
         self.indexer.index_verse(verse, commit=True)
         
         results = search_verses("work_id:test_search_verse_work_by_slug", self.indexer.get_index())
-        self.assertEquals(len(results.verses), 1)
+        self.assertEqual(len(results.verses), 1)
         
         results = search_verses("work:test_search_verse_work_by_slug", self.indexer.get_index())
-        self.assertEquals(len(results.verses), 1)
+        self.assertEqual(len(results.verses), 1)
 
         results = search_verses('work:"New Testament"', self.indexer.get_index())
-        self.assertEquals(len(results.verses), 1)
+        self.assertEqual(len(results.verses), 1)
         
     def test_search_division_by_slug(self):
         
@@ -134,10 +134,10 @@ class TestContentSearch(TestReader):
         self.indexer.index_verse(verse, commit=True)
         
         results = search_verses("section:division_descriptor", self.indexer.get_index())
-        self.assertEquals(len(results.verses), 1)
+        self.assertEqual(len(results.verses), 1)
 
         results = search_verses('section:"Some Division"', self.indexer.get_index())
-        self.assertEquals(len(results.verses), 1)
+        self.assertEqual(len(results.verses), 1)
         
     def test_index_work(self):
         
@@ -149,7 +149,7 @@ class TestContentSearch(TestReader):
         
         results = search_verses("amet", self.indexer.get_index())
         
-        self.assertEquals(len(results.verses), 1)
+        self.assertEqual(len(results.verses), 1)
         
     def test_index_division(self):
         
@@ -161,7 +161,7 @@ class TestContentSearch(TestReader):
         
         results = search_verses("amet", self.indexer.get_index())
         
-        self.assertEquals(len(results.verses), 1)
+        self.assertEqual(len(results.verses), 1)
         
     def test_matched_terms(self):
         
@@ -173,10 +173,10 @@ class TestContentSearch(TestReader):
         
         results = search_verses("no_diacritics:εις τὸ", self.indexer.get_index())
         
-        self.assertEquals(len(results.verses), 1)
-        self.assertEquals(len(results.matched_terms), 1)
-        self.assertEquals(results.matched_terms.get('τὸ', -1), 1)
-        self.assertEquals(results.matched_terms_no_diacritics.get('τὸ', -1), 1)
+        self.assertEqual(len(results.verses), 1)
+        self.assertEqual(len(results.matched_terms), 1)
+        self.assertEqual(results.matched_terms.get('τὸ', -1), 1)
+        self.assertEqual(results.matched_terms_no_diacritics.get('τὸ', -1), 1)
         
     def test_search_stats(self):
         
@@ -188,9 +188,9 @@ class TestContentSearch(TestReader):
         
         results = search_stats("εἰς OR τὸ", self.indexer.get_index())
         
-        self.assertEquals(results['matches'], 5)
-        self.assertEquals(results['matched_terms']["εἰς"], 3)
-        self.assertEquals(results['matched_terms']["τὸ"], 2)
+        self.assertEqual(results['matches'], 5)
+        self.assertEqual(results['matched_terms']["εἰς"], 3)
+        self.assertEqual(results['matched_terms']["τὸ"], 2)
         
     def test_search_stats_no_diacritics(self):
         
@@ -202,6 +202,6 @@ class TestContentSearch(TestReader):
         
         results = search_stats("εἰς OR no_diacritics:το", self.indexer.get_index())
         
-        self.assertEquals(results['matches'], 5)
-        self.assertEquals(results['matched_terms']["εἰς"], 3)
-        self.assertEquals(results['matched_terms']["το"], 2)
+        self.assertEqual(results['matches'], 5)
+        self.assertEqual(results['matched_terms']["εἰς"], 3)
+        self.assertEqual(results['matched_terms']["το"], 2)

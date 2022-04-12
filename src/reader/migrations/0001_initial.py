@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
                 ('level', models.IntegerField()),
                 ('original_content', models.TextField(blank=True)),
                 ('readable_unit', models.BooleanField(default=False, db_index=True)),
-                ('parent_division', models.ForeignKey(blank=True, to='reader.Division', null=True)),
+                ('parent_division', models.ForeignKey(blank=True, to='reader.Division', null=True, on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -80,7 +80,7 @@ class Migration(migrations.Migration):
                 ('indicator', models.CharField(max_length=10)),
                 ('content', models.TextField()),
                 ('original_content', models.TextField()),
-                ('division', models.ForeignKey(to='reader.Division')),
+                ('division', models.ForeignKey(to='reader.Division', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -121,7 +121,7 @@ class Migration(migrations.Migration):
                 ('meaning', models.CharField(default=b'', max_length=200, null=True)),
                 ('cases', models.ManyToManyField(to='reader.Case')),
                 ('dialects', models.ManyToManyField(to='reader.Dialect')),
-                ('lemma', models.ForeignKey(to='reader.Lemma')),
+                ('lemma', models.ForeignKey(to='reader.Lemma', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -151,7 +151,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('title_slug', models.SlugField(unique=True)),
-                ('work', models.ForeignKey(to='reader.Work')),
+                ('work', models.ForeignKey(to='reader.Work', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -161,7 +161,7 @@ class Migration(migrations.Migration):
                 ('source', models.CharField(max_length=200)),
                 ('resource', models.CharField(max_length=500)),
                 ('description', models.TextField(blank=True)),
-                ('work', models.ForeignKey(to='reader.Work')),
+                ('work', models.ForeignKey(to='reader.Work', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -174,27 +174,27 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='work',
             name='work_type',
-            field=models.ForeignKey(blank=True, to='reader.WorkType', null=True),
+            field=models.ForeignKey(blank=True, to='reader.WorkType', null=True, on_delete=models.PROTECT),
         ),
         migrations.AddField(
             model_name='worddescription',
             name='word_form',
-            field=models.ForeignKey(to='reader.WordForm'),
+            field=models.ForeignKey(to='reader.WordForm', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='relatedwork',
             name='related_work',
-            field=models.ForeignKey(related_name='related_work', to='reader.Work'),
+            field=models.ForeignKey(related_name='related_work', to='reader.Work', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='relatedwork',
             name='work',
-            field=models.ForeignKey(related_name='work', to='reader.Work'),
+            field=models.ForeignKey(related_name='work', to='reader.Work', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='division',
             name='work',
-            field=models.ForeignKey(to='reader.Work'),
+            field=models.ForeignKey(to='reader.Work', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='relatedwork',

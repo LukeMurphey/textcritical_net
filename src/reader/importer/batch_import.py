@@ -366,7 +366,7 @@ class ImportTransforms():
     @staticmethod
     def delete_divisions_by_title_slug(work=None, title_slugs=None):
         if title_slugs is None:
-            logger.warn("Transform could not be executed because no title_slugs were provided, transform=delete_divisions_by_title_slug")
+            logger.warning("Transform could not be executed because no title_slugs were provided, transform=delete_divisions_by_title_slug")
         else:
             
             # Get the divisions to delete
@@ -437,7 +437,7 @@ class ImportTransforms():
 
                 # Make the entry
                 if lemma is None:
-                    logger.warn("Lemma could not be found, entry=%s", entry)
+                    logger.warning("Lemma could not be found, entry=%s", entry)
                 
                 if not exists_already:
                     lexicon_entry = LexiconEntry()
@@ -478,4 +478,4 @@ class ImportTransforms():
                         logger.debug("Successfully executed transforms without arguments, transform=%s", fx_name)
                         
                 else:
-                    logger.warn("Transform function could not be found, transform=%s", fx_name)
+                    logger.warning("Transform function could not be found, transform=%s", fx_name)

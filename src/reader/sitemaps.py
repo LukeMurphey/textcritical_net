@@ -1,6 +1,6 @@
 from django.contrib.sitemaps import Sitemap
 from reader.models import Work
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 class StaticSitemap(Sitemap):

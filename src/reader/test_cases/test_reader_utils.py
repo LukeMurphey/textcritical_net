@@ -16,33 +16,33 @@ class TestReaderUtils(TestReader):
     def test_get_word_descriptions(self):
         descriptions = utils.get_word_descriptions("ἅβρυνα", False)
         
-        self.assertEquals(len(descriptions), 2)
+        self.assertEqual(len(descriptions), 2)
 
     @time_function_call
     def test_get_lemma(self):
         lemma = utils.get_lemma(language_tools.greek.Greek.beta_code_to_unicode("a(/rpina"))
-        self.assertNotEquals(lemma, None)
+        self.assertNotEqual(lemma, None)
 
         lemma = utils.get_lemma("ἅρπινα", False)
-        self.assertNotEquals(lemma, None)
+        self.assertNotEqual(lemma, None)
 
         lemma = utils.get_lemma("αρπινα", True)
-        self.assertNotEquals(lemma, None)
+        self.assertNotEqual(lemma, None)
 
     @time_function_call
     def test_get_lemma_no_diacritics(self):
         lemma = utils.get_lemma("αρπινα", True)
         
-        self.assertNotEquals(lemma, None)
+        self.assertNotEqual(lemma, None)
         
     @time_function_call
     def test_get_all_related_forms(self):
         forms = utils.get_all_related_forms("ἅβραν", False) #a(/bran
         
-        self.assertEquals(len(forms), 6)
+        self.assertEqual(len(forms), 6)
         
     @time_function_call
     def test_get_all_related_forms_no_diacritics(self):
         forms = utils.get_all_related_forms("αβραν", True) #a(/bran
         
-        self.assertEquals(len(forms), 6) 
+        self.assertEqual(len(forms), 6) 

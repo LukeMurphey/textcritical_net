@@ -291,10 +291,10 @@ class RosenAnalysesImporter(GreekAnalysesParser):
             else:
 
                 if line_number is not None:
-                    logger.warn(
+                    logger.warning(
                         "Attribute was not expected: attribute=%s, line_number=%i" % (a, line_number))
                 else:
-                    logger.warn("Attribute was not expected: attribute=%s" % a)
+                    logger.warning("Attribute was not expected: attribute=%s" % a)
 
         # Save the description
         word_description.save()

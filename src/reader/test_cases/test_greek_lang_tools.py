@@ -46,7 +46,7 @@ fwnh=s sunegraya/mhn."""
 
         output = Greek.beta_code_str_to_unicode(input)
         
-        self.assertEquals(output, expected_output)
+        self.assertEqual(output, expected_output)
         
     def test_various_beta_code_conversions(self):
         

@@ -20,4 +20,4 @@ class TestWorkHelpers(TestReader):
         # Get the work information
         data = get_work_page_info(title=self.importer.work.title_slug, division_0=1)
 
-        self.assertEquals(data['title'], 'Josephi vita 1')
+        self.assertEqual(data['title'], 'Josephi vita 1')

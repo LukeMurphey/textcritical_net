@@ -38,7 +38,7 @@ The following models are currently included:
 """
 
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, CASCADE, PROTECT, SET_NULL
 from django.template.defaultfilters import slugify
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -98,7 +98,7 @@ class Work(models.Model):
     title        = models.CharField(max_length=200)
     title_slug   = models.SlugField(unique=True)
     
-    work_type    = models.ForeignKey(WorkType, blank=True, null=True)
+    work_type    = models.ForeignKey(WorkType, blank=True, null=True, on_delete=PROTECT)
     authors      = models.ManyToManyField(Author, blank=True)
     editors      = models.ManyToManyField(Author, blank=True, related_name="editors")
     descriptor   = models.CharField(max_length=30, blank=True)
@@ -123,8 +123,8 @@ class RelatedWork(models.Model):
     Represents a relationship between two works.
     """
     
-    work           = models.ForeignKey(Work, related_name="work")
-    related_work   = models.ForeignKey(Work, related_name="related_work")
+    work           = models.ForeignKey(Work, related_name="work", on_delete=CASCADE)
+    related_work   = models.ForeignKey(Work, related_name="related_work", on_delete=CASCADE)
     related_levels = models.IntegerField(null=True)
     
     class Meta:
@@ -282,7 +282,7 @@ class WorkAlias(models.Model):
     """
     
     title_slug = models.SlugField(unique=True)
-    work       = models.ForeignKey(Work, blank=False, null=False)
+    work       = models.ForeignKey(Work, blank=False, null=False, on_delete=CASCADE)
     
     @staticmethod
     def populate_from_existing():
@@ -324,7 +324,7 @@ class Division(models.Model):
     of documents.
     """
     
-    work             = models.ForeignKey(Work)
+    work             = models.ForeignKey(Work, on_delete=CASCADE)
     sequence_number  = models.IntegerField()
     
     title            = models.CharField(max_length=200, blank=True, null=True)
@@ -338,7 +338,7 @@ class Division(models.Model):
     
     original_content = models.TextField(blank=True)
     
-    parent_division  = models.ForeignKey('self', blank=True, null=True)
+    parent_division  = models.ForeignKey('self', blank=True, null=True, on_delete=CASCADE)
     readable_unit    = models.BooleanField(default=False, db_index=True)
     
     def __str__(self):
@@ -459,7 +459,7 @@ class Verse(models.Model):
     Represents a verse within a chapter of a work.
     """
     
-    division          = models.ForeignKey(Division)
+    division          = models.ForeignKey(Division, on_delete=CASCADE)
     sequence_number   = models.IntegerField()
     indicator         = models.CharField(max_length=10)
     
@@ -490,7 +490,7 @@ class WorkSource(models.Model):
     source      = models.CharField(max_length=200)
     resource    = models.CharField(max_length=500)
     description = models.TextField(blank=True)
-    work        = models.ForeignKey(Work)
+    work        = models.ForeignKey(Work, on_delete=CASCADE)
     
 class Lemma(models.Model):
     """
@@ -520,9 +520,9 @@ class LexiconEntry(models.Model):
     Represents a word
     """
     
-    verse = models.ForeignKey(Verse)
-    work = models.ForeignKey(Work)
-    lemma = models.ForeignKey(Lemma, null=True)
+    verse = models.ForeignKey(Verse, on_delete=CASCADE)
+    work = models.ForeignKey(Work, on_delete=CASCADE)
+    lemma = models.ForeignKey(Lemma, null=True, on_delete=SET_NULL)
     
 class Case(models.Model):
     """
@@ -696,8 +696,8 @@ class WordDescription(models.Model):
     
     movable_nu     = models.NullBooleanField(default=None, null=True)
     
-    lemma          = models.ForeignKey(Lemma)
-    word_form      = models.ForeignKey(WordForm)
+    lemma          = models.ForeignKey(Lemma, on_delete=CASCADE)
+    word_form      = models.ForeignKey(WordForm, on_delete=CASCADE)
     description    = models.CharField(max_length=50, default="", null=True)
     
     meaning        = models.CharField(max_length=200, default="", null=True)

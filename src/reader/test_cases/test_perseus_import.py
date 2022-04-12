@@ -19,7 +19,7 @@ class TestPerseusImport(TestReader):
         book_doc = parseString(book_xml)
         self.importer.import_xml_document(book_doc)
         
-        self.assertEquals(self.importer.get_title_slug("josephi-vita"), ("josephi-vita-1" , True))
+        self.assertEqual(self.importer.get_title_slug("josephi-vita"), ("josephi-vita-1" , True))
     
     def test_bibl_struct_import(self):
         
@@ -41,8 +41,8 @@ class TestPerseusImport(TestReader):
         
         self.importer.import_info_from_bibl_struct(bible_struct_document)
         
-        self.assertEquals(self.importer.work.authors.all()[0].name,"Flavius Josephus")
-        self.assertEquals(self.importer.work.title,"Flavii Iosephi opera")
+        self.assertEqual(self.importer.work.authors.all()[0].name,"Flavius Josephus")
+        self.assertEqual(self.importer.work.title,"Flavii Iosephi opera")
         
     def test_findTagInDivision(self):
         
@@ -58,7 +58,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         head = self.importer.findTagInDivision(div_node, "head")
     
-        self.assertEquals(head.tagName, "head")
+        self.assertEqual(head.tagName, "head")
         
     def test_get_language(self):
         
@@ -68,7 +68,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         language = self.importer.get_language(lang_document)
         
-        self.assertEquals(language, "Greek")
+        self.assertEqual(language, "Greek")
         
     def write_out_test_file(self, content):
         
@@ -87,7 +87,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         expected = r"*ta/de e)/nestin e)n th=|  tw=n *)iwsh/pou i(storiw=n th=s *)ioudai+kh=s a)rxaiologi/as."
         
-        self.assertEquals(PerseusTextImporter.getText(head.childNodes, False), expected)
+        self.assertEqual(PerseusTextImporter.getText(head.childNodes, False), expected)
         
     def test_get_text_recursive(self):
         
@@ -99,7 +99,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         expected = r"*ta/de e)/nestin e)n th=| b tw=n *)iwsh/pou i(storiw=n th=s *)ioudai+kh=s a)rxaiologi/as."
         
-        self.assertEquals(PerseusTextImporter.getText(head.childNodes, True), expected)
+        self.assertEqual(PerseusTextImporter.getText(head.childNodes, True), expected)
         
     def test_get_states(self):
                                     
@@ -112,9 +112,9 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         states = PerseusTextImporter.getStates(states_doc)
         
-        self.assertEquals(states[0].name, "section")
-        self.assertEquals(states[1].name, "Whiston section")
-        self.assertEquals(states[1].section_type, "chunk")
+        self.assertEqual(states[0].name, "section")
+        self.assertEqual(states[1].name, "Whiston section")
+        self.assertEqual(states[1].section_type, "chunk")
         
     def test_get_chunks(self):
         
@@ -131,10 +131,10 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         chunks = PerseusTextImporter.getStateSets(encoding_desc)
         
-        self.assertEquals(chunks[0][0].name, "section")
+        self.assertEqual(chunks[0][0].name, "section")
         
-        self.assertEquals(chunks[1][0].name, "Whiston section")
-        self.assertEquals(chunks[1][0].section_type, "chunk")
+        self.assertEqual(chunks[1][0].name, "Whiston section")
+        self.assertEqual(chunks[1][0].section_type, "chunk")
     
     def test_get_title(self):
         
@@ -145,7 +145,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         title = PerseusTextImporter.get_title_from_tei_header(tei_header_node)
         
-        self.assertEquals(title, "Conjugalia Praecepta")
+        self.assertEqual(title, "Conjugalia Praecepta")
         
     def test_get_title_sub_nodes(self):
         
@@ -156,7 +156,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         title = PerseusTextImporter.get_title_from_tei_header(tei_header_node)
         
-        self.assertEquals(title, "Works on Socrates")
+        self.assertEqual(title, "Works on Socrates")
         
     def test_get_title_for_processing(self):
         
@@ -167,7 +167,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         title = PerseusTextImporter.get_title_from_tei_header(tei_header_node)
         
-        self.assertEquals(title, "Anabasis")
+        self.assertEqual(title, "Anabasis")
         
     def test_get_title_not_sub(self):
         
@@ -178,7 +178,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         title = PerseusTextImporter.get_title_from_tei_header(tei_header_node)
         
-        self.assertEquals(title, "Galba")
+        self.assertEqual(title, "Galba")
         
     def test_get_author_from_tei_header(self):
         
@@ -189,7 +189,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         author = PerseusTextImporter.get_author_from_tei_header(tei_header_node)
         
-        self.assertEquals(author, "Aristotle")
+        self.assertEqual(author, "Aristotle")
         
     def test_get_editors(self):
         
@@ -198,7 +198,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         editors = PerseusTextImporter.get_editors(book_doc)
         
-        self.assertEquals(editors[0], "J. M. Edmonds")
+        self.assertEqual(editors[0], "J. M. Edmonds")
         
     def test_get_editors_multiple(self):
         
@@ -207,8 +207,8 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         editors = PerseusTextImporter.get_editors(book_doc)
         
-        self.assertEquals(editors[0], "Brooke Foss Westcott")
-        self.assertEquals(editors[1], "Fenton John Anthony Hort")
+        self.assertEqual(editors[0], "Brooke Foss Westcott")
+        self.assertEqual(editors[1], "Fenton John Anthony Hort")
         
     def test_get_editors_multiple_in_single_field(self):
         
@@ -217,14 +217,14 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         editors = PerseusTextImporter.get_editors(book_doc)
         
-        self.assertEquals(editors[0], "Harold Cherniss")
-        self.assertEquals(editors[1], "William C. Helmbold")
+        self.assertEqual(editors[0], "Harold Cherniss")
+        self.assertEqual(editors[1], "William C. Helmbold")
     
     def test_get_author_no_title_stmt(self):
         
         book_xml = self.load_test_resource('aristot.vir_gk.xml')
         book_doc = parseString(book_xml)
-        self.assertEquals(PerseusTextImporter.get_author(book_doc), "Aristotle")
+        self.assertEqual(PerseusTextImporter.get_author(book_doc), "Aristotle")
         
     def test_load_book_descriptorless_milestone(self):
         # See issue #440 (http://lukemurphey.net/issues/440)
@@ -252,7 +252,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         book_xml = self.load_test_resource('plut.cat.ma_gk_portion.xml')
         book_doc = parseString(book_xml)
-        self.assertEquals(PerseusTextImporter.get_author(book_doc), "Plutarch")
+        self.assertEqual(PerseusTextImporter.get_author(book_doc), "Plutarch")
         
     def test_load_bad_chars(self):
         
@@ -283,9 +283,9 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         self.assertEqual(divisions[0].title, "lines 1-39")
         self.assertEqual(divisions[1].title, "lines 40-82")
         self.assertEqual(divisions[2].title, "lines 83-103")
-        self.assertEquals(divisions[3].title, "lines 104-1616")
-        self.assertEquals(divisions[4].title, "lines 1617-1648")
-        self.assertEquals(divisions[5].title, "lines 1649-1672")
+        self.assertEqual(divisions[3].title, "lines 104-1616")
+        self.assertEqual(divisions[4].title, "lines 1617-1648")
+        self.assertEqual(divisions[5].title, "lines 1649-1672")
 
     def test_load_book_with_multiple_divisions_with_same_id(self):
         # See https://lukemurphey.net/issues/2537
@@ -340,7 +340,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         line_number, _ = self.importer.get_line_count(verse_doc)
         
-        self.assertEquals(str(line_number), "35")
+        self.assertEqual(str(line_number), "35")
         
     def test_get_line_count_trailing_line(self):
         
@@ -379,7 +379,7 @@ th=s *)ioudai+kh=s a)rxaiologi/as.</head></list></note></div1>"""
         
         line_number, _ = self.importer.get_line_count(verse_doc)
         
-        self.assertEquals(str(line_number), "36")
+        self.assertEqual(str(line_number), "36")
     
     def test_load_book_with_empty_first_milestone(self):
         file_name = self.get_test_resource_file_name('52_gk.xml')
@@ -401,10 +401,10 @@ ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/
 
 </verse>"""
         
-        self.assertEquals(verses[0].original_content, expected)
+        self.assertEqual(verses[0].original_content, expected)
         
-        self.assertEquals(divisions[1].descriptor, "1")
-        self.assertEquals(divisions[1].level, 1)
+        self.assertEqual(divisions[1].descriptor, "1")
+        self.assertEqual(divisions[1].level, 1)
     
     def test_load_book_no_bibl_struct(self):
         # See issue #438 (http://lukemurphey.net/issues/438)
@@ -426,21 +426,21 @@ ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/
         
         divisions = Division.objects.filter(work=work).order_by("sequence_number")
         
-        self.assertEquals(divisions.count(), 10)
+        self.assertEqual(divisions.count(), 10)
         
-        #self.assertEquals(divisions[1].title, "lines 1-32")
+        #self.assertEqual(divisions[1].title, "lines 1-32")
         
-        self.assertEquals(divisions[1].title, "lines 1-96")
-        self.assertEquals(divisions[1].title_slug, "lines-1-96")
-        self.assertEquals(divisions[1].descriptor, "1")
+        self.assertEqual(divisions[1].title, "lines 1-96")
+        self.assertEqual(divisions[1].title_slug, "lines-1-96")
+        self.assertEqual(divisions[1].descriptor, "1")
         
         
-        self.assertEquals(divisions[8].title, "Scroll 2")
-        self.assertEquals(divisions[8].descriptor, "2")
+        self.assertEqual(divisions[8].title, "Scroll 2")
+        self.assertEqual(divisions[8].descriptor, "2")
         
-        self.assertEquals(divisions[9].title, "lines 1-15")
-        self.assertEquals(divisions[9].title_slug, "lines-1-15")
-        self.assertEquals(divisions[9].descriptor, "1")
+        self.assertEqual(divisions[9].title, "lines 1-15")
+        self.assertEqual(divisions[9].title_slug, "lines-1-15")
+        self.assertEqual(divisions[9].descriptor, "1")
         
     def test_load_book_with_line_numbers_per_division(self):
         
@@ -456,34 +456,34 @@ ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/
         
         divisions = Division.objects.filter(work=work).order_by("sequence_number")
         
-        self.assertEquals(divisions.count(), 5)
+        self.assertEqual(divisions.count(), 5)
         
         # Make sure that the first division has the title declared in the head node
-        self.assertEquals(divisions[0].title, "Scroll 1")
-        self.assertEquals(divisions[0].descriptor, "1")
+        self.assertEqual(divisions[0].title, "Scroll 1")
+        self.assertEqual(divisions[0].descriptor, "1")
         
         # Check the second division
-        self.assertEquals(divisions[1].parent_division.id, divisions[0].id) # Make sure that the second is under the first node
-        self.assertEquals(divisions[1].title, "lines 1-39")
-        self.assertEquals(divisions[1].title_slug, "lines-1-39")
-        self.assertEquals(divisions[1].descriptor, "1")
+        self.assertEqual(divisions[1].parent_division.id, divisions[0].id) # Make sure that the second is under the first node
+        self.assertEqual(divisions[1].title, "lines 1-39")
+        self.assertEqual(divisions[1].title_slug, "lines-1-39")
+        self.assertEqual(divisions[1].descriptor, "1")
         
         # Check the third division
-        self.assertEquals(divisions[2].parent_division.id, divisions[0].id)
-        self.assertEquals(divisions[2].title, "lines 40-45")
-        self.assertEquals(divisions[2].title_slug, "lines-40-45")
-        self.assertEquals(divisions[2].descriptor, "40")
+        self.assertEqual(divisions[2].parent_division.id, divisions[0].id)
+        self.assertEqual(divisions[2].title, "lines 40-45")
+        self.assertEqual(divisions[2].title_slug, "lines-40-45")
+        self.assertEqual(divisions[2].descriptor, "40")
         
         # Check the fourth division
-        self.assertEquals(divisions[3].parent_division, None)
-        self.assertEquals(divisions[3].title, "Scroll 2")
-        self.assertEquals(divisions[3].descriptor, "2")
+        self.assertEqual(divisions[3].parent_division, None)
+        self.assertEqual(divisions[3].title, "Scroll 2")
+        self.assertEqual(divisions[3].descriptor, "2")
         
         # Check the fifth division
-        self.assertEquals(divisions[4].parent_division.id, divisions[3].id)
-        self.assertEquals(divisions[4].title, "lines 1-15")
-        self.assertEquals(divisions[4].title_slug, "lines-1-15")
-        self.assertEquals(divisions[4].descriptor, "1")
+        self.assertEqual(divisions[4].parent_division.id, divisions[3].id)
+        self.assertEqual(divisions[4].title, "lines 1-15")
+        self.assertEqual(divisions[4].title_slug, "lines-1-15")
+        self.assertEqual(divisions[4].descriptor, "1")
         
         
         
@@ -501,8 +501,8 @@ ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/
         
         divisions = Division.objects.filter(work=work).order_by("sequence_number")
         
-        self.assertEquals(str(divisions[0]), "Book 1")
-        self.assertEquals(str(divisions[1]), "lines 1-32")
+        self.assertEqual(str(divisions[0]), "Book 1")
+        self.assertEqual(str(divisions[1]), "lines 1-32")
     
     def test_load_book(self):
         
@@ -519,14 +519,14 @@ ta\ de\ th=s o)rgh=s ma=llon e)pitei/netai, kai\ to\ deino/taton, toi=s me\n a)/
         verses = Verse.objects.filter(division=divisions[0])
         
         # Make sure the importer is smart enougn not to make duplicate authors
-        self.assertEquals(Author.objects.filter(name="Flavius Josephus").count(), 1)
-        self.assertEquals(divisions.count(), 1)
-        self.assertEquals(verses.count(), 7)
-        self.assertEquals(verses[0].indicator, "1")
-        self.assertEquals(verses[1].indicator, "2")
+        self.assertEqual(Author.objects.filter(name="Flavius Josephus").count(), 1)
+        self.assertEqual(divisions.count(), 1)
+        self.assertEqual(verses.count(), 7)
+        self.assertEqual(verses[0].indicator, "1")
+        self.assertEqual(verses[1].indicator, "2")
         
         # Make sure we slugified the title accordingly
-        self.assertEquals(self.importer.work.title_slug, "josephi-vita")
+        self.assertEqual(self.importer.work.title_slug, "josephi-vita")
         
         # Make sure the original content
         expected_content = r"""<?xml version="1.0" ?><verse><p>*)emoi\ de\ ge/nos e)sti\n ou)k a)/shmon, a)ll' e)c i(ere/wn a)/nwqen
@@ -534,7 +534,7 @@ katabebhko/s. w(/sper d' h( par' e(ka/stois a)/llh ti/s e)stin eu)genei/as
 u(po/qesis, ou(/tws par' h(mi=n h( th=s i(erwsu/nhs metousi/a tekmh/rio/n
 e)stin ge/nous lampro/thtos. </p></verse>"""
         
-        self.assertEquals(verses[0].original_content, expected_content)
+        self.assertEqual(verses[0].original_content, expected_content)
     
     def test_load_book_division_name_from_type_field(self):
         
@@ -550,8 +550,8 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         divisions = Division.objects.filter(work=self.importer.work)[:1]
         
         # Make sure the division title was set correctly
-        self.assertEquals(divisions[0].title, "Introduction")
-        self.assertEquals(divisions[0].original_title, "intro")
+        self.assertEqual(divisions[0].title, "Introduction")
+        self.assertEqual(divisions[0].original_title, "intro")
     
     def test_load_book_multiple_texts(self):
         """
@@ -574,11 +574,11 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
             if division.readable_unit:
                 self.assertGreater(Verse.objects.filter(division=division).count(), 0)
         
-        self.assertEquals(divisions[0].descriptor, "Library")
+        self.assertEqual(divisions[0].descriptor, "Library")
         
         # 35: 28 sections + 2 text nodes + 3 chapters + 2 div1
-        self.assertEquals(divisions.count(), 35)
-        self.assertEquals(verses.count(), 28)
+        self.assertEqual(divisions.count(), 35)
+        self.assertEqual(verses.count(), 28)
         
     def test_load_book_texts_with_head(self):
         
@@ -591,12 +591,12 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         divisions = Division.objects.filter(work=self.importer.work)
         verses = Verse.objects.filter(division__work=self.importer.work)
         
-        self.assertEquals(divisions[0].descriptor, "Reg.")
-        self.assertEquals(divisions[0].original_title, "*e*k *t*h*s *b*a*s*i*l*i*k*h*s.")
+        self.assertEqual(divisions[0].descriptor, "Reg.")
+        self.assertEqual(divisions[0].original_title, "*e*k *t*h*s *b*a*s*i*l*i*k*h*s.")
         
         # 2: 1 text nodes, 0 chapters, 1 div1
-        self.assertEquals(divisions.count(), 2)
-        self.assertEquals(verses.count(), 2)
+        self.assertEqual(divisions.count(), 2)
+        self.assertEqual(verses.count(), 2)
     
     def test_load_book_editors(self):
         
@@ -609,11 +609,11 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         book_doc = parseString(book_xml)
         self.importer.import_xml_document(book_doc)
         
-        self.assertEquals(Author.objects.filter(name="Fenton John Anthony Hort").count(), 1)
+        self.assertEqual(Author.objects.filter(name="Fenton John Anthony Hort").count(), 1)
         
-        self.assertEquals(self.importer.work.editors.all().count(), 2)
-        self.assertEquals(self.importer.work.editors.filter(name="Brooke Foss Westcott").count(), 1)
-        self.assertEquals(self.importer.work.editors.filter(name="Fenton John Anthony Hort").count(), 1)
+        self.assertEqual(self.importer.work.editors.all().count(), 2)
+        self.assertEqual(self.importer.work.editors.filter(name="Brooke Foss Westcott").count(), 1)
+        self.assertEqual(self.importer.work.editors.filter(name="Fenton John Anthony Hort").count(), 1)
     
     def test_load_book_alternate_state_set(self):
         self.importer.state_set = 1  #Using Whiston sections as opposed to the defaults
@@ -623,9 +623,9 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals(divisions.count(), 2)
-        self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 1)
-        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 1)
+        self.assertEqual(divisions.count(), 2)
+        self.assertEqual(Verse.objects.filter(division=divisions[0]).count(), 1)
+        self.assertEqual(Verse.objects.filter(division=divisions[1]).count(), 1)
         
     def test_load_book_division_descriptors(self):
         self.importer.state_set = 1
@@ -635,8 +635,8 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals(divisions.count(), 2)
-        self.assertEquals(divisions[0].descriptor, "1")
+        self.assertEqual(divisions.count(), 2)
+        self.assertEqual(divisions[0].descriptor, "1")
         
     def test_load_book_line_count_division_titles(self):
         self.importer.state_set = 1
@@ -647,10 +647,10 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        #self.assertEquals(divisions.count(), 3)
-        #self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 1)
-        self.assertEquals(divisions[1].title, "lines 1-33")
-        self.assertEquals(divisions[2].title, "lines 34-38")
+        #self.assertEqual(divisions.count(), 3)
+        #self.assertEqual(Verse.objects.filter(division=divisions[0]).count(), 1)
+        self.assertEqual(divisions[1].title, "lines 1-33")
+        self.assertEqual(divisions[2].title, "lines 34-38")
         
     def test_load_book_empty_sub_divisions(self):
         self.importer.state_set = 0
@@ -662,10 +662,10 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals(divisions.count(), 6) # Was 3 before cards are always treated as chunks
-        self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 0)
-        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 1)
-        self.assertEquals(Verse.objects.filter(division=divisions[2]).count(), 0)
+        self.assertEqual(divisions.count(), 6) # Was 3 before cards are always treated as chunks
+        self.assertEqual(Verse.objects.filter(division=divisions[0]).count(), 0)
+        self.assertEqual(Verse.objects.filter(division=divisions[1]).count(), 1)
+        self.assertEqual(Verse.objects.filter(division=divisions[2]).count(), 0)
     
     def test_load_book_no_chunks(self):
         # See bug #446, http://lukemurphey.net/issues/446
@@ -678,11 +678,11 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals(divisions[0].original_title, "*k*a*t*a *m*a*q*q*a*i*o*n")
+        self.assertEqual(divisions[0].original_title, "*k*a*t*a *m*a*q*q*a*i*o*n")
         
-        self.assertEquals(divisions.count(), 2)
-        self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 0)
-        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 4)
+        self.assertEqual(divisions.count(), 2)
+        self.assertEqual(Verse.objects.filter(division=divisions[0]).count(), 0)
+        self.assertEqual(Verse.objects.filter(division=divisions[1]).count(), 4)
         
     def test_load_book_xml_processing_instruction(self):
         # See bug #557, http://lukemurphey.net/issues/557
@@ -704,11 +704,11 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals(divisions[0].original_title, "*Prooi/mion")
+        self.assertEqual(divisions[0].original_title, "*Prooi/mion")
         
-        self.assertEquals(divisions.count(), 2)
-        self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 5)
-        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 5)
+        self.assertEqual(divisions.count(), 2)
+        self.assertEqual(Verse.objects.filter(division=divisions[0]).count(), 5)
+        self.assertEqual(Verse.objects.filter(division=divisions[1]).count(), 5)
         
     def test_load_book_no_verses2(self):
         # See bug #446, http://lukemurphey.net/issues/446
@@ -722,9 +722,9 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals(divisions.count(), 2)
-        self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 0)
-        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 1)
+        self.assertEqual(divisions.count(), 2)
+        self.assertEqual(Verse.objects.filter(division=divisions[0]).count(), 0)
+        self.assertEqual(Verse.objects.filter(division=divisions[1]).count(), 1)
     
     def test_load_book_merged_state_set(self):
         
@@ -735,9 +735,9 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work)
         
-        self.assertEquals(divisions.count(), 2)
-        self.assertEquals(Verse.objects.filter(division=divisions[0]).count(), 6)
-        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 1)
+        self.assertEqual(divisions.count(), 2)
+        self.assertEqual(Verse.objects.filter(division=divisions[0]).count(), 6)
+        self.assertEqual(Verse.objects.filter(division=divisions[1]).count(), 1)
     
     def test_load_book_ignore_divs_not_in_refsdecl(self):
         
@@ -749,7 +749,7 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         divisions = Division.objects.filter(work=self.importer.work)
         
         # Make sure that the div3 nodes were not treated as chunks
-        self.assertEquals(len(divisions), 3) # Would be 5 otherwise
+        self.assertEqual(len(divisions), 3) # Would be 5 otherwise
         
     
     def test_load_book_with_sections(self):
@@ -761,20 +761,20 @@ e)stin ge/nous lampro/thtos. </p></verse>"""
         
         divisions = Division.objects.filter(work=work).distinct()
         
-        self.assertEquals(divisions[1].descriptor, "pr.")
-        self.assertEquals(Verse.objects.filter(division__work=work).count(), 5)
-        self.assertEquals(Verse.objects.filter(division=divisions[1]).count(), 2)
+        self.assertEqual(divisions[1].descriptor, "pr.")
+        self.assertEqual(Verse.objects.filter(division__work=work).count(), 5)
+        self.assertEqual(Verse.objects.filter(division=divisions[1]).count(), 2)
         
-        self.assertEquals(divisions.count(), 5)
-        self.assertEquals(divisions[0].type, "Book")
-        self.assertEquals(divisions[0].level, 1)
+        self.assertEqual(divisions.count(), 5)
+        self.assertEqual(divisions[0].type, "Book")
+        self.assertEqual(divisions[0].level, 1)
         
-        self.assertEquals(divisions[1].type, "Whiston chapter")
-        self.assertEquals(divisions[1].level, 2)
+        self.assertEqual(divisions[1].type, "Whiston chapter")
+        self.assertEqual(divisions[1].level, 2)
         
-        self.assertEquals(divisions[0].original_title, r"""*ta/de e)/nestin e)n th=| prw/th| tw=n *)iwsh/pou i(storiw=n
+        self.assertEqual(divisions[0].original_title, r"""*ta/de e)/nestin e)n th=| prw/th| tw=n *)iwsh/pou i(storiw=n
 th=s *)ioudai+kh=s a)rxaiologi/as.""")
-        self.assertEquals(divisions[2].original_title, r"""*ta/de e)/nestin e)n th=|  b  tw=n *)iwsh/pou i(storiw=n th=s
+        self.assertEqual(divisions[2].original_title, r"""*ta/de e)/nestin e)n th=|  b  tw=n *)iwsh/pou i(storiw=n th=s
 *)ioudai+kh=s a)rxaiologi/as.""")
         
         # Make sure that the text from the TOC did not get included
@@ -796,7 +796,7 @@ th\n xw/ran ou(/tws proshgo/reusen: *(/ellhnes ga\r au)th\n e)pi\ to\
 semno/teron *)idoumai/an w)no/masan.
 </p></verse>"""
         
-        self.assertEquals(Verse.objects.filter(division=divisions[3])[0].original_content, expected_content)
+        self.assertEqual(Verse.objects.filter(division=divisions[3])[0].original_content, expected_content)
         
     def test_load_book_break_sections(self):
         # See #424, http://lukemurphey.net/issues/424
@@ -808,11 +808,11 @@ semno/teron *)idoumai/an w)no/masan.
         
         divisions = Division.objects.filter(work=self.importer.work)
         
-        self.assertEquals(divisions.count(), 5)
-        self.assertEquals(divisions[1].parent_division.id, divisions[0].id)
-        self.assertEquals(divisions[2].parent_division.id, divisions[1].id)
+        self.assertEqual(divisions.count(), 5)
+        self.assertEqual(divisions[1].parent_division.id, divisions[0].id)
+        self.assertEqual(divisions[2].parent_division.id, divisions[1].id)
         
-        self.assertEquals(divisions[4].parent_division.id, divisions[3].id)
+        self.assertEqual(divisions[4].parent_division.id, divisions[3].id)
         
     def test_load_book_ignore_divs_and_use_line_numbers(self):
         # See #468, http://lukemurphey.net/issues/468
@@ -826,8 +826,8 @@ semno/teron *)idoumai/an w)no/masan.
         
         divisions = Division.objects.filter(work=self.importer.work)
         
-        self.assertEquals(divisions.count(), 4)
-        self.assertEquals(divisions[0].title, "lines 1-48")
+        self.assertEqual(divisions.count(), 4)
+        self.assertEqual(divisions[0].title, "lines 1-48")
         
     def test_load_book_only_bottom_division_readable(self):
         # See #502, http://lukemurphey.net/issues/502
@@ -839,8 +839,8 @@ semno/teron *)idoumai/an w)no/masan.
         
         divisions = Division.objects.filter(work=self.importer.work)
         
-        self.assertEquals(divisions.count(), 13)
-        self.assertEquals(divisions.filter(readable_unit=True).count(), 11) #is 13 without using only_leaf_divisions_readable = True 
+        self.assertEqual(divisions.count(), 13)
+        self.assertEqual(divisions.filter(readable_unit=True).count(), 11) #is 13 without using only_leaf_divisions_readable = True 
         
     def test_load_book_explicit_division_tags(self):
         # See #503, http://lukemurphey.net/issues/503
@@ -853,7 +853,7 @@ semno/teron *)idoumai/an w)no/masan.
         
         divisions = Division.objects.filter(work=self.importer.work)
         
-        self.assertEquals(divisions.count(), 12) #Should not have made the div3 under chapter 10 a division
+        self.assertEqual(divisions.count(), 12) #Should not have made the div3 under chapter 10 a division
         
     def test_xml_use_line_numbers(self):
         
@@ -906,7 +906,7 @@ semno/teron *)idoumai/an w)no/masan.
         
         line_count, _ = PerseusTextImporter.get_line_count(verse_doc)
         
-        self.assertEquals(str(line_count), "4")
+        self.assertEqual(str(line_count), "4")
         
     def test_line_count_update_with_start(self):
         
@@ -923,7 +923,7 @@ semno/teron *)idoumai/an w)no/masan.
         
         line_count, _ = PerseusTextImporter.get_line_count(verse_doc, count = 5)
         
-        self.assertEquals(str(line_count), "9")
+        self.assertEqual(str(line_count), "9")
         
     def test_line_count_update_with_specifier(self):
         
@@ -940,4 +940,4 @@ semno/teron *)idoumai/an w)no/masan.
         
         line_count, _ = PerseusTextImporter.get_line_count(verse_doc)
         
-        self.assertEquals(str(line_count), "9")
+        self.assertEqual(str(line_count), "9")
