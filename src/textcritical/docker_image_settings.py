@@ -37,12 +37,19 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
     # Uncomment the next line to enable the admin:
-     'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
-     'django.contrib.admindocs',
-     'django.contrib.humanize',
-     'reader',
-     'corsheaders',
+    'django.contrib.admindocs',
+    'django.contrib.humanize',
+    'reader',
+    'corsheaders',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # social providers
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.twitter',
 )
 
 if not DEBUG:
