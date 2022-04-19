@@ -309,6 +309,17 @@
 	</target>
 
 	<!-- ================================= 
+          target: run_server_wsgi
+         ================================= -->
+	<target name="run_server_wsgi" description="Run the internal web-server using the Python WSGI server">
+		<exec executable="${python}" dir="src">
+			<env key="WEB_SERVER_ADDRESS" value="127.0.0.1"/>
+			<env key="WEB_SERVER_PORT" value="8080"/>
+			<arg value="run_server.py"/>
+		</exec>
+	</target>
+
+	<!-- ================================= 
           target: install_dependencies
          ================================= -->
 	<target name="install_dependencies" description="Install dependencies">
