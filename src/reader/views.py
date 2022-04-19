@@ -171,6 +171,10 @@ def work_image(request, title=None, **kwargs):
         response.status_code = 500
         return response
 
+def social_auth(request):
+    return render(request, 'social_auth.html',
+                  {},
+                  RequestContext(request))
 
 @cache_page(8 * hours)
 def robots_txt(request):
@@ -262,6 +266,15 @@ def api_version_info(request):
         version_info = {}
 
     return render_api_response(request, version_info)
+
+def api_social_auth(request):
+
+    try:
+        auth_info = json.loads(loader.get_template('social_auth.json').render())
+    except TemplateDoesNotExist:
+        auth_info = {}
+
+    return render_api_response(request, auth_info)
 
 
 @cache_page(8 * hours)

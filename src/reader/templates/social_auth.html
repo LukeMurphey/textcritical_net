@@ -1,0 +1,10 @@
+{% load socialaccount %}
+{% if user.is_authenticated %}
+    <h3>Logged in as {{ user.username }}</h3>
+    <a href="{% url 'account_logout' %}" class="btn btn-danger">Logout</a>
+{% else %}
+    <a href="{% provider_login_url 'google' %}" class="btn btn-secondary">
+        <i class="fa fa-google fa-fw"></i>
+        <span>Login with Google</span>
+    </a>
+{% endif %}

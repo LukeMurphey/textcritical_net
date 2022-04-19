@@ -29,6 +29,9 @@ DATABASES = {
     }
 }
 
+# https://docs.djangoproject.com/en/4.0/releases/3.2/
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 # Determine if tests are being executed.
 import sys
 if len(sys.argv) >= 2:
