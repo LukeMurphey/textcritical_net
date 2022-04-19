@@ -1,4 +1,5 @@
 from django.conf.urls import include, url
+from django.urls import path
 from django.conf import settings
 from django.views.static import serve
 from grappelli import urls as grappelli_urls
@@ -25,6 +26,9 @@ urlpatterns = [
 
     # Enable the admin:
     url(r'^admin/', admin.site.urls),
+
+    # For social logins
+    path('accounts/', include('allauth.urls')),
 
     # Serve static files (images, css, javascript, etc.):
     url(r'^media/(?P<path>.*)$', serve, {

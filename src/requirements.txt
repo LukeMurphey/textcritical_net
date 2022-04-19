@@ -11,3 +11,4 @@ wikipedia
 WSGIserver
 django-cors-headers 
 xlsxwriter
+django-allauth

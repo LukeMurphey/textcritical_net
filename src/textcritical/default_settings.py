@@ -217,12 +217,27 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
     # Uncomment the next line to enable the admin:
-     'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
-     'django.contrib.admindocs',
-     'django.contrib.humanize',
-     'reader'
+    'django.contrib.admindocs',
+    'django.contrib.humanize',
+    'reader',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # social providers
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.twitter',
 )
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
+LOGIN_REDIRECT_URL = "work"
+ACCOUNT_LOGOUT_ON_GET = True
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
