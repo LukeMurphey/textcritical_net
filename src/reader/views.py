@@ -268,13 +268,10 @@ def api_version_info(request):
     return render_api_response(request, version_info)
 
 def api_social_auth(request):
+    return render(request, 'social_auth.json',
+                  {},
+                  content_type=JSON_CONTENT_TYPE)
 
-    try:
-        auth_info = json.loads(loader.get_template('social_auth.json').render())
-    except TemplateDoesNotExist:
-        auth_info = {}
-
-    return render_api_response(request, auth_info)
 
 
 @cache_page(8 * hours)
