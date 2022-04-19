@@ -49,7 +49,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     # social providers
     'allauth.socialaccount.providers.github',
-    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.google',
 )
 
 if not DEBUG:

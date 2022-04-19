@@ -227,7 +227,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     # social providers
     'allauth.socialaccount.providers.github',
-    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.google',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -236,7 +236,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 ACCOUNT_EMAIL_VERIFICATION = "none"
-LOGIN_REDIRECT_URL = "work"
+LOGIN_REDIRECT_URL = "home"
 ACCOUNT_LOGOUT_ON_GET = True
 
 # A sample logging configuration. The only tangible logging
