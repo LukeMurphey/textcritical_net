@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>{% block head_title %}{% endblock %}</title>
-    {% block extra_head %}
-    {% endblock %}
-    <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}dist/semantic.cosmo.css" />
-  </head>
-  <body>
+{% extends "base.html" %}
+  {% block extra_head %}
+  <style>
+    body {
+      background-color: #2B2B2E;
+      color: #F9F9FA;
+    }
+  </style>
+  {% endblock %}
     {% block body %}
-
     {% if messages %}
     <div>
       <strong>Messages:</strong>
@@ -20,10 +19,11 @@
     </div>
     {% endif %}
 
+    <div style="margin: 64px" class="inverted ui very padded segment">
     {% block content %}
     {% endblock %}
+    </div>
     {% endblock %}
     {% block extra_body %}
     {% endblock %}
-  </body>
-</html>
+
