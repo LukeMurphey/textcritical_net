@@ -1,13 +1,16 @@
 {% load socialaccount %}
 {% if user.is_authenticated %}
 {
-    "authenticated": "true",
+    "authenticated": true,
     "logout": "{% url 'account_logout' %}",
-    "username": "{{ user.username }}"
+    "username": "{{ user.username }}",
+    "email": "{{ user.email }}",
+    "first_name": "{{ user.first_name }}",
+    "last_name": "{{ user.last_name }}"
 }
 {% else %}
 {
-    "authenticated": "false",
+    "authenticated": false,
     "login_google": "{% provider_login_url 'google' %}"
 }
 {% endif %}
