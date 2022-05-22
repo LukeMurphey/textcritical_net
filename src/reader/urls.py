@@ -39,6 +39,9 @@ urlpatterns = [
     url(r'^about/?$', views.single_page_app, name='about'),
     url(r'^contact/?$', views.single_page_app, name='contact'),
 
+    # This is the page that the user will be sent on once authentication is complete
+    url(r'^auth_success/?$', views.single_page_app, name='auth_success'),
+
     # ----------------------------------
     # The following endpoints are those that are served by the backend and static file serving won't fulfill it
     # ----------------------------------
