@@ -334,6 +334,29 @@
 
 	</target>
 
+	<!-- =================================
+	      target: verify_python_dir
+	     ================================= -->
+	<target name="verify_python_dir">
+		<fail unless="python_dir">Define the python directory to where you want the virtual environment to be made</fail>
+	</target>
+
+	<!-- ================================= 
+          target: make_venv
+         ================================= -->
+	<target name="make_venv" depends="verify_python_dir">
+
+		<property name="absolute_path_venv" location="${python_dir}"/>
+
+		<exec executable="python3" failonerror="true">
+			<arg value="-m"/>
+			<arg value="venv"/>
+			<arg value="${absolute_path_venv}"/>
+		</exec>
+
+		<antcall target="install_dependencies" />
+	</target>
+
 	<!-- ================================= 
           target: install
          ================================= -->
