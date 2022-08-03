@@ -20,6 +20,7 @@ import logging
 import difflib
 import re
 import os
+from urllib.parse import urlencode
 
 from reader.templatetags.reader_extras import transform_perseus_text
 from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork, WikiArticle, LexiconEntry, WorkSource
@@ -491,7 +492,18 @@ def api_search(request, search_text=None):
             exporter.set_cell(0, 1, search_text)
 
             exporter.set_cell(1, 0, 'URL')
-            exporter.set_cell(1, 1, request.build_absolute_uri())
+
+            search_args = {}
+            search_args["q"] = search_text
+
+            if ignore_diacritics:
+                search_args["ignore_diacritics"] = "1"
+    
+            if include_related_forms:
+                search_args["include_related"] = "1"
+            
+            current_site = Site.objects.get_current()
+            exporter.set_cell(1, 1, 'https://' + current_site.domain + reverse('search') + "/?" + urlencode(search_args))
 
             exporter.set_cell(2, 0, 'Result Count')
             exporter.set_cell(2, 1, search_results.result_count)
