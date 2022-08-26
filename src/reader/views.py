@@ -172,6 +172,10 @@ def work_image(request, title=None, **kwargs):
         response.status_code = 500
         return response
 
+def social_auth(request):
+    return render(request, 'social_auth.html',
+                  {},
+                  RequestContext(request))
 
 @cache_page(8 * hours)
 def robots_txt(request):
@@ -263,6 +267,21 @@ def api_version_info(request):
         version_info = {}
 
     return render_api_response(request, version_info)
+
+def api_social_auth(request):
+    """
+    return render_api_response(request, {
+        'authenticated': request.user.is_authenticated,
+        'username': request.user.username,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+    })
+    """
+
+    return render(request, 'social_auth.json',
+                  {},
+                  content_type=JSON_CONTENT_TYPE)
+
 
 
 @cache_page(8 * hours)

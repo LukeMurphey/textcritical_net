@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+  {% block extra_head %}
+  <style>
+    body {
+      background-color: #2B2B2E;
+      color: #F9F9FA;
+    }
+  </style>
+  {% endblock %}
+    {% block body %}
+    {% if messages %}
+    <div>
+      <strong>Messages:</strong>
+      <ul>
+        {% for message in messages %}
+        <li>{{message}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <div style="margin: 64px" class="inverted ui very padded segment">
+    {% block content %}
+    {% endblock %}
+    </div>
+    {% endblock %}
+    {% block extra_body %}
+    {% endblock %}
+

@@ -39,11 +39,15 @@ urlpatterns = [
     url(r'^about/?$', views.single_page_app, name='about'),
     url(r'^contact/?$', views.single_page_app, name='contact'),
 
+    # This is the page that the user will be sent on once authentication is complete
+    url(r'^auth_success/?$', views.single_page_app, name='auth_success'),
+
     # ----------------------------------
     # The following endpoints are those that are served by the backend and static file serving won't fulfill it
     # ----------------------------------
     url(r'^admin/reader/', include('reader.admin_urls')),
 
+    url(r'^social_auth/?$', views.social_auth, name='social_auth'),
     url(r'^robots.txt/?$', views.robots_txt, name='robots_txt'),
     url(r'^humans.txt/?$', views.humans_txt, name='humans_txt'),
     url(r'^sitemap.xml$', sitemap, {'sitemaps': sitemaps}),
@@ -68,7 +72,8 @@ urlpatterns = [
     url(r'^api/unicode_to_betacode/(?P<text>[^/]*)/?$',
         views.api_unicode_to_betacode, name='api_unicode_to_betacode'),
     url(r'^api/version_info/?$', views.api_version_info, name='api_version_info'),
-
+    url(r'^api/social_auth/?$', views.api_social_auth, name='api_social_auth'),
+    
     url(r'^api/works_stats/?$', views.api_works_stats, name='api_works_stats'),
     url(r'^api/works/?$', views.api_works_list, name='api_works_list'),
     url(r'^api/word_parse_beta_code/(?P<word>[^/]*)/?$',

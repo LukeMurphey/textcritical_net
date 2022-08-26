@@ -1,35 +1,7 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,shrink-to-fit=no"
-    />
-    <title>TextCritical.net</title>
-    <link rel="stylesheet" href="{{ MEDIA_URL|default:"/media/" }}dist/semantic.cosmo.css" />
-
-    <!-- Icons -->
-    <link rel="icon" type="image/png" href="{{ MEDIA_URL|default:"/media/" }}images/favicon.ico" />
-    <link rel="apple-touch-icon" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon.png">
-    <link rel="apple-touch-icon-precomposed" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="57x57" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-57x57-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-72x72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-114x114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ MEDIA_URL|default:"/media/" }}images/apple-touch-icon-144x144-precomposed.png">
-  </head>
-  <body>
+{% extends "base.html" %}
+{% block head_title %}TextCritical.net{% endblock %}
+{% block body %}
     <div id="root"></div>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <script src="{{ MEDIA_URL|default:"/media/" }}dist/app.bundle.js?v={{BUILD_VERSION}}"></script>
-
-    {% if GOOGLE_ANALYTICS_ID %}
-    <script>
-      var _gaq=[['_setAccount','{{GOOGLE_ANALYTICS_ID}}'],['_trackPageview']];
-      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-      s.parentNode.insertBefore(g,s)}(document,'script'));
-    </script>
-    {% endif %}
-  </body>
-</html>
+{% endblock %}

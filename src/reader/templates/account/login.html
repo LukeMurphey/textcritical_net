@@ -1,0 +1,38 @@
+{% extends "bases/bootstrap-auth.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+
+{% block inner-content %}
+{% get_providers as socialaccount_providers %}
+
+<h1 class="text-center">Log In</h1>
+<hr>
+
+<div class="ui segment">
+  {% if socialaccount_providers  %}
+  <div class="segment">
+    {% include "allauth/account/provider_panel.html" with process="login" %}
+  </div>
+  {% endif %}
+
+  <div class="segment">
+    <form class="login" method="POST" action="{% url 'account_login' %}">
+      <span class="pull-right">Not yet a member? <a href="{% url 'account_signup' %}">Join</a></span>
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
+      <div class="form-actions">
+        <button class="ui primary button" type="submit">{% trans "Sign In" %}</button>
+        <a class="btn" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
