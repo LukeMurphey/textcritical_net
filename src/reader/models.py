@@ -667,18 +667,18 @@ class WordDescription(models.Model):
     )
     
     # Attributes associated with nouns
-    masculine      = models.NullBooleanField(default=False)
-    feminine       = models.NullBooleanField(default=False)
-    neuter         = models.NullBooleanField(default=False)
+    masculine      = models.BooleanField(default=False, null=True)
+    feminine       = models.BooleanField(default=False, null=True)
+    neuter         = models.BooleanField(default=False, null=True)
     
     cases          = models.ManyToManyField(Case)
-    geog_name      = models.NullBooleanField(default=None, null=True)
-    numeral        = models.NullBooleanField(default=None, null=True)
+    geog_name      = models.BooleanField(default=None, null=True)
+    numeral        = models.BooleanField(default=None, null=True)
     
     # Attributes associated with verbs
-    adverb         = models.NullBooleanField(default=None, null=True)
-    infinitive     = models.NullBooleanField(default=None, null=True)
-    participle     = models.NullBooleanField(default=None, null=True)
+    adverb         = models.BooleanField(default=None, null=True)
+    infinitive     = models.BooleanField(default=None, null=True)
+    participle     = models.BooleanField(default=None, null=True)
     voice          = models.IntegerField(choices=VOICE, default=None, null=True)
     mood           = models.CharField(max_length=100, default=None, null=True)
     tense          = models.CharField(max_length=100, default=None, null=True)
@@ -688,16 +688,16 @@ class WordDescription(models.Model):
     number         = models.IntegerField(choices=NUMBER, default=None, null=True)
     dialects       = models.ManyToManyField(Dialect)
     part_of_speech = models.IntegerField(choices=PARTS_OF_SPEECH, default=None, null=True)
-    indeclinable   = models.NullBooleanField(default=None, null=True)
-    particle       = models.NullBooleanField(default=None, null=True)
+    indeclinable   = models.BooleanField(default=None, null=True)
+    particle       = models.BooleanField(default=None, null=True)
     
     superlative    = models.IntegerField(choices=REGULARITY, default=None, null=True)
     comparative    = models.IntegerField(choices=REGULARITY, default=None, null=True)
-    expletive      = models.NullBooleanField(default=None, null=True)
-    poetic         = models.NullBooleanField(default=None, null=True)
+    expletive      = models.BooleanField(default=None, null=True)
+    poetic         = models.BooleanField(default=None, null=True)
     clitic         = models.IntegerField(choices=CLITIC, default=None, null=True)
     
-    movable_nu     = models.NullBooleanField(default=None, null=True)
+    movable_nu     = models.BooleanField(default=None, null=True)
     
     lemma          = models.ForeignKey(Lemma, on_delete=CASCADE)
     word_form      = models.ForeignKey(WordForm, on_delete=CASCADE)
