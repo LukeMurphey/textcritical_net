@@ -23,7 +23,7 @@ import os
 from urllib.parse import urlencode
 
 from reader.templatetags.reader_extras import transform_perseus_text
-from reader.models import Work, WorkAlias, Division, Verse, Author, RelatedWork, WikiArticle, LexiconEntry, WorkSource
+from reader.models import Work, WorkAlias, Division, Verse, Author, UserPreference, WikiArticle, WorkSource
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy, convert_xml_to_html5
@@ -31,7 +31,7 @@ from reader.utils import get_word_descriptions, get_lexicon_entries, table_expor
 from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
 from reader.bookcover import makeCoverImage
-from reader.utils.work_helpers import get_division_and_verse, get_chapter_for_division, get_chapters_list, get_division, get_work_page_info
+from reader.utils.work_helpers import get_division_and_verse, get_work_page_info
 
 # Try to import the ePubExport but be forgiving if the necessary dependencies do not exist
 try:
@@ -981,8 +981,6 @@ def get_wikipedia_info(topic):
     except DisambiguationError:
         return None
 
-    return None
-
 
 def get_wikipedia_info_multiple(topic=None, topic2=None, topic3=None):
 
@@ -1115,3 +1113,43 @@ def api_resolve_reference(request, work=None, ref=None):
         data = {}
 
     return render_api_response(request, data, response_code)
+
+def api_user_preference(request):
+
+    if request.method == 'POST':
+        # Make sure the parameters exist
+        if 'name' not in request.POST:
+            return render_api_error(request, "Argument 'name' was not provided")
+        if 'value' not in request.POST:
+            return render_api_error(request, "Argument 'value' was not provided")
+            
+        # Try to load the existing entry
+        if UserPreference.objects.filter(user=request.user, name=request.POST['name']).exists():
+            preference = UserPreference.objects.get(user=request.user, name=request.POST['name'])
+        else:
+            # Or create it if it doesn't exist yet
+            preference = UserPreference.objects.create(user=request.user, name=request.POST['name'])
+        
+        # Modify it
+        preference.value = request.POST['value']
+        
+        # Save it
+        preference.save()
+        
+        return render_api_response(request, {'message': 'Successfully set the preference'}, status=200)
+    else:
+        # Handle the case where the user is not logged in
+        if request.user is None or not request.user.is_authenticated:
+            return render_api_response(request, {}, status=403)
+
+        # Get the preferences for the logged in user
+        preferences = UserPreference.objects.filter(user=request.user)
+
+        # Build out the preferences content
+        content = {}
+        
+        for pref in preferences:
+            content[pref.name] = pref.value
+
+        # Return the content
+        return render_api_response(request, content)
