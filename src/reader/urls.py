@@ -123,5 +123,8 @@ urlpatterns = [
 
     url(r'^api/work_info/(?P<title>[^/]*)/?$',
         views.api_work_info, name='api_work_info'),
+    
+    url(r'^api/user_preference/?$',
+        views.api_user_preference, name='api_user_preference'),
 
 ]
