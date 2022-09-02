@@ -124,7 +124,12 @@ urlpatterns = [
     url(r'^api/work_info/(?P<title>[^/]*)/?$',
         views.api_work_info, name='api_work_info'),
     
-    url(r'^api/user_preference/?$',
-        views.api_user_preference, name='api_user_preference'),
+    
+    url(r'^api/user_preferences/?$',
+        views.api_user_preferences, name='api_user_preferences'),
+    url(r'^api/user_preference/edit/(?P<name>[^/]*)/?$',
+        views.api_user_preference_edit, name='api_user_preference_edit'),
+    url(r'^api/user_preference/delete/(?P<name>[^/]*)/?$',
+        views.api_user_preference_delete, name='api_user_preference_delete'),
 
 ]

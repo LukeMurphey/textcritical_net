@@ -1114,21 +1114,37 @@ def api_resolve_reference(request, work=None, ref=None):
 
     return render_api_response(request, data, response_code)
 
-def api_user_preference(request):
+def api_user_preferences(request):
+
+    # Handle the case where the user is not logged in
+    if request.user is None or not request.user.is_authenticated:
+        return render_api_response(request, {}, status=403)
+
+    # Get the preferences for the logged in user
+    preferences = UserPreference.objects.filter(user=request.user)
+
+    # Build out the preferences content
+    content = {}
+    
+    for pref in preferences:
+        content[pref.name] = pref.value
+
+    # Return the content
+    return render_api_response(request, content)
+    
+def api_user_preference_edit(request, name):
 
     if request.method == 'POST':
         # Make sure the parameters exist
-        if 'name' not in request.POST:
-            return render_api_error(request, "Argument 'name' was not provided")
         if 'value' not in request.POST:
             return render_api_error(request, "Argument 'value' was not provided")
             
         # Try to load the existing entry
-        if UserPreference.objects.filter(user=request.user, name=request.POST['name']).exists():
-            preference = UserPreference.objects.get(user=request.user, name=request.POST['name'])
+        if UserPreference.objects.filter(user=request.user, name=name).exists():
+            preference = UserPreference.objects.get(user=request.user, name=name)
         else:
             # Or create it if it doesn't exist yet
-            preference = UserPreference.objects.create(user=request.user, name=request.POST['name'])
+            preference = UserPreference.objects.create(user=request.user, name=name)
         
         # Modify it
         preference.value = request.POST['value']
@@ -1137,19 +1153,13 @@ def api_user_preference(request):
         preference.save()
         
         return render_api_response(request, {'message': 'Successfully set the preference'}, status=200)
-    else:
-        # Handle the case where the user is not logged in
-        if request.user is None or not request.user.is_authenticated:
-            return render_api_response(request, {}, status=403)
 
-        # Get the preferences for the logged in user
-        preferences = UserPreference.objects.filter(user=request.user)
+def api_user_preference_delete(request, name):
 
-        # Build out the preferences content
-        content = {}
-        
-        for pref in preferences:
-            content[pref.name] = pref.value
-
-        # Return the content
-        return render_api_response(request, content)
+    if request.method == 'POST':
+        try:
+            preference = UserPreference.objects.get(user=request.user, name=name)
+            preference.delete()
+            return render_api_response(request, {'message': 'Successfully deleted the preference'}, status=200)
+        except ObjectDoesNotExist:
+            return render_api_response(request, {'message': 'Preference did not exist'}, status=201)
