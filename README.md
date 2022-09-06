@@ -22,3 +22,21 @@ from textcritical.default_settings import *
 DATABASES['default']['NAME'] = '/home/luke/git/textcritical_net/var/text_critical.sqlite'
 DATABASES['library']['NAME'] = '/home/luke/git/textcritical_net/var/library.sqlite'
 ```
+
+### Various errors when trying to setup the Python environment
+
+You will need to run PIP to install the requirements from the requirements.txt` in the `src` directory:
+
+```pip3 install -r requirements.txt```
+
+#### "c/_cffi_backend.c:15:10: fatal error: ffi.h: No such file or directory"
+
+```apt install libffi-dev```
+
+#### "This package requires Rust >=1.41.0."
+
+Install Rust with this:
+```curl https://sh.rustup.rs -sSf | sh```
+
+Then run 
+```sudo pip3 install -U pip```
