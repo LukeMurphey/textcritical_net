@@ -35,6 +35,8 @@ The following models are currently included:
 |-----------------|-----------------------------------------------------------|
 | WikiArticle     | The information necessary to look up a topic on Wikipedia |
 |-----------------|-----------------------------------------------------------|
+| UserPreference  | A user preference setting for the user                    |
+|-----------------|-----------------------------------------------------------|
 """
 
 from django.db import models
@@ -43,6 +45,7 @@ from django.template.defaultfilters import slugify
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
 
 import logging
 import re
@@ -828,6 +831,21 @@ class WikiArticle(models.Model):
             
             if wiki is not None:
                 return wiki
+
+class UserPreference(models.Model):
+    """
+    A setting for a user
+    """
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200, db_index=True, unique=True)
+    value = models.TextField()
+    
+    def __str__(self):
+        return str(self.name)
+    
+    class Meta:
+        unique_together = ("user", "name")
 
 @receiver(post_save, sender=Work)
 def work_alias_create(sender, instance, signal, created, **kwargs):

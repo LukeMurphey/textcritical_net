@@ -51,7 +51,6 @@ urlpatterns = [
     url(r'^robots.txt/?$', views.robots_txt, name='robots_txt'),
     url(r'^humans.txt/?$', views.humans_txt, name='humans_txt'),
     url(r'^sitemap.xml$', sitemap, {'sitemaps': sitemaps}),
-    # url(r'^sitemap.xml$', sitemap),
 
     # The following two links have been moved to be under /api but are kept here for historical reasons
     url(r'^download/work/(?P<title>.*)/?$',
@@ -59,7 +58,9 @@ urlpatterns = [
     url(r'^work_image/(?P<title>[^/]*)/?$',
         views.work_image, name='legacy_work_image'),
 
+    # -----------------------------
     # API views
+    # -----------------------------
     url(r'^api/?$', views.api_index, name='api_index'),
 
     url(r'^api/download/work/(?P<title>.*)/?$',
@@ -96,9 +97,11 @@ urlpatterns = [
     url(r'^api/resolve_reference/?$', views.api_resolve_reference,
         name='api_resolve_reference'),
 
+    # Type-ahead hints for the list of works
     url(r'^api/works_typeahead_hints/?$', views.api_works_typeahead_hints,
         name='api_works_typeahead_hints'),
 
+    # Reading works
     url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>.+)/?$',
         views.api_read_work, name='api_read_work'),
     url(r'^api/work/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/?$',
@@ -114,6 +117,7 @@ urlpatterns = [
     url(r'^api/work/(?P<title>[^/]*)/?$',
         views.api_read_work, name='api_read_work'),
 
+    # Wikipedia info
     url(r'^api/wikipedia_info/(?P<topic>[^/]*)/?$',
         views.api_wikipedia_info, name='api_wikipedia_info'),
     url(r'^api/wikipedia_info/(?P<topic>[^/]*)/(?P<topic2>[^/]*)/?$',
@@ -121,7 +125,16 @@ urlpatterns = [
     url(r'^api/wikipedia_info/(?P<topic>[^/]*)/(?P<topic2>[^/]*)/(?P<topic3>[^/]*)/?$',
         views.api_wikipedia_info, name='api_wikipedia_info_3'),
 
+    # Information on works
     url(r'^api/work_info/(?P<title>[^/]*)/?$',
         views.api_work_info, name='api_work_info'),
+    
+    # User preferences
+    url(r'^api/user_preferences/?$',
+        views.api_user_preferences, name='api_user_preferences'),
+    url(r'^api/user_preference/edit/(?P<name>[^/]*)/?$',
+        views.api_user_preference_edit, name='api_user_preference_edit'),
+    url(r'^api/user_preference/delete/(?P<name>[^/]*)/?$',
+        views.api_user_preference_delete, name='api_user_preference_delete'),
 
 ]
