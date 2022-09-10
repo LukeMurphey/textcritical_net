@@ -37,6 +37,8 @@ The following models are currently included:
 |-----------------|-----------------------------------------------------------|
 | UserPreference  | A user preference setting for the user                    |
 |-----------------|-----------------------------------------------------------|
+| Note            | A note for a text                                         |
+|-----------------|-----------------------------------------------------------|
 """
 
 from django.db import models
