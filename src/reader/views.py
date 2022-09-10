@@ -64,7 +64,7 @@ def must_be_authenticated(func):
         if request.user is None or not request.user.is_authenticated:
             return render_api_error(request, "User is not authenticated", status=403)
          
-        return func(*args, **kwargs)
+        return func(request, *args, **kwargs)
  
     return wrapper
 
@@ -74,7 +74,7 @@ def must_be_post(func):
         if request.method != 'POST':
             return render_api_error(request, "Request must be a POST", status=400)
          
-        return func(*args, **kwargs)
+        return func(request, *args, **kwargs)
  
     return wrapper
 
@@ -1136,11 +1136,8 @@ def api_resolve_reference(request, work=None, ref=None):
 #--------------------------
 # User preferences
 #--------------------------
+@must_be_authenticated
 def api_user_preferences(request):
-
-    # Handle the case where the user is not logged in
-    if request.user is None or not request.user.is_authenticated:
-        return render_api_response(request, {}, status=403)
 
     # Get the preferences for the logged in user
     preferences = UserPreference.objects.filter(user=request.user)
@@ -1154,75 +1151,161 @@ def api_user_preferences(request):
     # Return the content
     return render_api_response(request, content)
     
+@must_be_authenticated
+@must_be_post
 def api_user_preference_edit(request, name):
 
-    if request.method == 'POST':
-        # Make sure the parameters exist
-        if 'value' not in request.POST:
-            return render_api_error(request, "Argument 'value' was not provided")
-            
-        # Try to load the existing entry
-        if UserPreference.objects.filter(user=request.user, name=name).exists():
-            preference = UserPreference.objects.get(user=request.user, name=name)
-        else:
-            # Or create it if it doesn't exist yet
-            preference = UserPreference.objects.create(user=request.user, name=name)
+    # Make sure the parameters exist
+    if 'value' not in request.POST:
+        return render_api_error(request, "Argument 'value' was not provided")
         
-        # Modify it
-        preference.value = request.POST['value']
-        
-        # Save it
-        preference.save()
-        
-        return render_api_response(request, {'message': 'Successfully set the preference'}, status=200)
+    # Try to load the existing entry
+    if UserPreference.objects.filter(user=request.user, name=name).exists():
+        preference = UserPreference.objects.get(user=request.user, name=name)
+    else:
+        # Or create it if it doesn't exist yet
+        preference = UserPreference.objects.create(user=request.user, name=name)
+    
+    # Modify it
+    preference.value = request.POST['value']
+    
+    # Save it
+    preference.save()
+    
+    return render_api_response(request, {'message': 'Successfully set the preference'}, status=200)
 
-    # TODO wrong request type
-
+@must_be_authenticated
+@must_be_post
 def api_user_preference_delete(request, name):
 
-    if request.method == 'POST':
-        try:
-            preference = UserPreference.objects.get(user=request.user, name=name)
-            preference.delete()
-            return render_api_response(request, {'message': 'Successfully deleted the preference'}, status=200)
-        except ObjectDoesNotExist:
-            return render_api_response(request, {'message': 'Preference did not exist'}, status=201)
+    try:
+        preference = UserPreference.objects.get(user=request.user, name=name)
+        preference.delete()
+        return render_api_response(request, {'message': 'Successfully deleted the preference'}, status=200)
+    except ObjectDoesNotExist:
+        return render_api_response(request, {'message': 'Preference did not exist'}, status=201)
 
 #--------------------------
 # Notes
 #--------------------------
+@must_be_authenticated
 def api_notes(request):
 
-    # Handle the case where the user is not logged in
-    if request.user is None or not request.user.is_authenticated:
-        return render_api_response(request, {}, status=403)
+    # Get the entries to search for
+    if 'division' in request.GET:
+        division = request.GET['division']
+    else:
+        division = None
+        
+    if 'verse' in request.GET:
+        verse = request.GET['verse']
+    else:
+        verse = None
 
+    if 'search' in request.GET:
+        search = request.GET['search']
+    else:
+        search = None
+        
     # Get the notes for the logged in user
-    notes = Note.objects.filter(user=request.user)
+    notes = Note.objects.filter(user=request.user).values_list('id', 'title', 'text')
 
     # Paginate the data
     # TODO
+    
+    # Handle searching
+    # TODO
 
     # Return the content
-    return render_api_response(request, notes.values())
+    return render_queryset_api_response(request, notes)
 
+@must_be_authenticated
 def api_note(request, note_id):
 
-    # Handle the case where the user is not logged in
-    if request.user is None or not request.user.is_authenticated:
-        return render_api_response(request, {}, status=403)
-
     # Get the note
-    note = Note.objects.get(user=request.user, id=note_id)
-
-    # Handle the case where the note cannot be found (perhaps due to being for the wrong user)
-    # TODO handle 404
+    try:
+        note = Note.objects.get(user=request.user, id=note_id)
+    except ObjectDoesNotExist:
+        # Handle the case where the note cannot be found (perhaps due to being for the wrong user)
+        return render_api_error(request,"No note found with the given ID", status=404)
 
     # Return the content
-    return render_api_response(request, note.values())
+    return render_queryset_api_response(request, note)
 
-def api_note_edit(request, note_id):
-    pass
+@must_be_authenticated
+@must_be_post
+def api_note_edit(request, note_id=None):
+    # Get the note
+    if note_id is not None:
+        try:
+            note = Note.objects.get(user=request.user, id=note_id)
+        except ObjectDoesNotExist:
+            # Handle the case where the note cannot be found (perhaps due to being for the wrong user)
+            return render_api_error(request,"No note found with the given ID", status=404)
+    else:
+        note = Note()
 
+    # Change the text and the title
+    if 'text' not in request.POST:
+        return render_api_error(request, "Argument 'text' was not provided")
+    else:
+        note.text = request.POST['text']
+    
+    if 'title' in request.POST:
+        note.title = request.POST['title']
+    else:
+        note.title = None
+    
+    # Change the verse
+    if 'verse' in request.POST:
+        # Load the Verse
+        try:
+            verse = Verse.objects.get(id=request.POST['verse'])
+        except ObjectDoesNotExist:
+             return render_api_error(request, "Verse with the given id does not exist")
+    
+        note.verse = verse
+        note.division = note.verse.division
+        note.work = note.verse.division.work
+    
+    # Change the division
+    if 'division' in request.POST and note.division is None:
+        # Load the division
+        try:
+            division = Division.objects.get(id=request.POST['division'])
+        except ObjectDoesNotExist:
+             return render_api_error(request, "Division with the given id does not exist")
+    
+        note.division = division
+        note.work = division.work
+        
+    # Change the work
+    if 'work' in request.POST and note.work is None:
+        # Load the work
+        try:
+            work = Work.objects.get(id=request.POST['work'])
+        except ObjectDoesNotExist:
+             return render_api_error(request, "Work with the given id does not exist")
+    
+        note.work = work
+    
+    # Save it
+    note.save()
+
+    # Return
+    return render_queryset_api_response(request, note)
+
+@must_be_authenticated
+@must_be_post
 def api_note_delete(request, note_id):
-    pass
+    # Get the note
+    try:
+        note = Note.objects.get(user=request.user, id=note_id)
+    except ObjectDoesNotExist:
+        # Handle the case where the note cannot be found (perhaps due to being for the wrong user)
+        return render_api_error(request,"No note found with the given ID", status=404)
+    
+    # Delete the note
+    note.delete()
+    
+    return render_api_response(request, {'message': 'Note deleted'}, status=200)
