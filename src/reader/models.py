@@ -855,10 +855,11 @@ class Note(models.Model):
     """
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    division = models.ForeignKey(Division, on_delete=models.SET_NULL)
-    verse = models.ForeignKey(Verse, on_delete=models.SET_NULL)
-    name = models.CharField(max_length=200, db_index=True, unique=True)
-    value = models.TextField()
+    work = models.ForeignKey(Work, on_delete=models.SET_NULL, null=True)
+    division = models.ForeignKey(Division, on_delete=models.SET_NULL, null=True)
+    verse = models.ForeignKey(Verse, on_delete=models.SET_NULL, null=True)
+    title = models.CharField(max_length=200, db_index=True, unique=True)
+    text = models.TextField()
     public = models.BooleanField(default=False)
     
     def __str__(self):
