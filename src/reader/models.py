@@ -847,6 +847,21 @@ class UserPreference(models.Model):
     class Meta:
         unique_together = ("user", "name")
 
+class Note(models.Model):
+    """
+    A note within a work
+    """
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    division = models.ForeignKey(Division, on_delete=models.SET_NULL)
+    verse = models.ForeignKey(Verse, on_delete=models.SET_NULL)
+    name = models.CharField(max_length=200, db_index=True, unique=True)
+    value = models.TextField()
+    public = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return str(self.name)
+
 @receiver(post_save, sender=Work)
 def work_alias_create(sender, instance, signal, created, **kwargs):
     WorkAlias.populate_alias_from_work(instance)

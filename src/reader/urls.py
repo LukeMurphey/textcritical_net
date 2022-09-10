@@ -137,4 +137,14 @@ urlpatterns = [
     url(r'^api/user_preference/delete/(?P<name>[^/]*)/?$',
         views.api_user_preference_delete, name='api_user_preference_delete'),
 
+    # Notes
+    url(r'^api/notes/?$',
+        views.api_notes, name='api_notes'),
+    url(r'^api/note/(?P<note_id>[^/]*)/?$',
+        views.api_note, name='api_note'),
+    url(r'^api/note/(?P<note_id>[^/]*)/edit/?$',
+        views.api_note_edit, name='api_note_edit'),
+    url(r'^api/note/(?P<note_id>[^/]*)/delete/?$',
+        views.api_note_delete, name='api_note_delete'),
+
 ]

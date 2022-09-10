@@ -23,7 +23,7 @@ import os
 from urllib.parse import urlencode
 
 from reader.templatetags.reader_extras import transform_perseus_text
-from reader.models import Work, WorkAlias, Division, Verse, Author, UserPreference, WikiArticle, WorkSource
+from reader.models import Work, WorkAlias, Division, Verse, Author, UserPreference, WikiArticle, WorkSource, Note
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy, convert_xml_to_html5
@@ -57,6 +57,26 @@ days = 24 * hours
 months = 30 * days
 years = 365.25 * days
 
+# Ensure the request is for an authenticated user
+def must_be_authenticated(func):
+    def wrapper(request, *args, **kwargs):
+        # Handle the case where the user is not logged in
+        if request.user is None or not request.user.is_authenticated:
+            return render_api_error(request, "User is not authenticated", status=403)
+         
+        return func(*args, **kwargs)
+ 
+    return wrapper
+
+# Ensure this is a POST request
+def must_be_post(func):
+    def wrapper(request, *args, **kwargs):
+        if request.method != 'POST':
+            return render_api_error(request, "Request must be a POST", status=400)
+         
+        return func(*args, **kwargs)
+ 
+    return wrapper
 
 def single_page_app(request, **kwargs):
     return render(request, 'spa.html',
@@ -1047,7 +1067,6 @@ def api_wikipedia_info(request, topic=None, topic2=None, topic3=None):
     # Couldn't find the article
     return render_api_response(request, {'topic': topic}, status=404)
 
-
 def api_resolve_reference(request, work=None, ref=None):
 
     # Get the work and reference from the arguments
@@ -1114,6 +1133,9 @@ def api_resolve_reference(request, work=None, ref=None):
 
     return render_api_response(request, data, response_code)
 
+#--------------------------
+# User preferences
+#--------------------------
 def api_user_preferences(request):
 
     # Handle the case where the user is not logged in
@@ -1154,6 +1176,8 @@ def api_user_preference_edit(request, name):
         
         return render_api_response(request, {'message': 'Successfully set the preference'}, status=200)
 
+    # TODO wrong request type
+
 def api_user_preference_delete(request, name):
 
     if request.method == 'POST':
@@ -1163,3 +1187,42 @@ def api_user_preference_delete(request, name):
             return render_api_response(request, {'message': 'Successfully deleted the preference'}, status=200)
         except ObjectDoesNotExist:
             return render_api_response(request, {'message': 'Preference did not exist'}, status=201)
+
+#--------------------------
+# Notes
+#--------------------------
+def api_notes(request):
+
+    # Handle the case where the user is not logged in
+    if request.user is None or not request.user.is_authenticated:
+        return render_api_response(request, {}, status=403)
+
+    # Get the notes for the logged in user
+    notes = Note.objects.filter(user=request.user)
+
+    # Paginate the data
+    # TODO
+
+    # Return the content
+    return render_api_response(request, notes.values())
+
+def api_note(request, note_id):
+
+    # Handle the case where the user is not logged in
+    if request.user is None or not request.user.is_authenticated:
+        return render_api_response(request, {}, status=403)
+
+    # Get the note
+    note = Note.objects.get(user=request.user, id=note_id)
+
+    # Handle the case where the note cannot be found (perhaps due to being for the wrong user)
+    # TODO handle 404
+
+    # Return the content
+    return render_api_response(request, note.values())
+
+def api_note_edit(request, note_id):
+    pass
+
+def api_note_delete(request, note_id):
+    pass
