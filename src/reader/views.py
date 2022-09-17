@@ -31,7 +31,7 @@ from reader.utils import get_word_descriptions, get_lexicon_entries, table_expor
 from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
 from reader.bookcover import makeCoverImage
-from reader.utils.work_helpers import get_division_and_verse, get_work_page_info
+from reader.utils.work_helpers import get_division_and_verse, get_work_page_info, get_chapter_for_division
 
 # Try to import the ePubExport but be forgiving if the necessary dependencies do not exist
 try:
@@ -843,6 +843,34 @@ def api_read_work(request, author=None, language=None, title=None, division_0=No
 
     return render_api_response(request, data, status=status_code, cache_timeout=12 * months)
 
+
+def api_work_text(request,  title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
+    # Try to get the work
+    try:
+        work_alias = WorkAlias.objects.get(title_slug=title)
+    except WorkAlias.DoesNotExist:
+         return render_api_response(request, [], status=404)
+
+    work = work_alias.work
+    
+    # Get the chapter and the verse we ought to highlight
+    division, verse_to_highlight = get_division_and_verse(work, division_0, division_1, division_2, division_3, division_4)
+
+    # Return a 404 if the work could not be found
+    if division is None:
+        return render_api_response(request, [], status=404)
+
+    # If the verse could not be found, set a response code to note that we couldn't get the content that the user wanted so that caching doesn't take place
+    if verse_to_highlight is None:
+        chapter = get_chapter_for_division(division)
+        verses = Verse.objects.filter(division=chapter).all()
+        template = loader.get_template('work_verses.txt')
+
+        return render_api_response(request, template.render({'verses'  : verses}), status=210, cache_timeout=15 * minutes)
+    else:
+        # Find the verse
+        verse = Verse.objects.get(indicator=verse_to_highlight, division=division)
+        return render_api_response(request, verse.content, status=200, cache_timeout=15 * minutes)
 
 def assign_divisions(ref_components):
 

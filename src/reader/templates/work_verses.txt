@@ -1,0 +1,1 @@
+{% load reader_extras %}{% for verse in verses.all %}{% if verse.indicator|length > 0 %}{{verse.indicator}} {% endif %}{% if verse.content|length == 0 %}{{verse.original_content|safe}}{% else %}{{verse.content|safe}}{% endif %}{% endfor %}
