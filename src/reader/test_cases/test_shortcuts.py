@@ -1,5 +1,5 @@
 from . import TestReader
-from reader.shortcuts import convert_xml_to_html5
+from reader.shortcuts import convert_xml_to_html5, convert_xml_to_text
 from reader.templatetags.reader_extras import perseus_xml_to_html5
 
 class TestShortcuts(TestReader):
@@ -98,3 +98,18 @@ class TestShortcuts(TestReader):
         actual_result = perseus_xml_to_html5(original_content, language=language)
 
         self.assertIn('<span class="word">κοτίνοις</span>', actual_result)
+        
+    def test_convert_xml_to_text(self):
+        
+        
+        original_content = r"""
+<verse>
+    <head>*(ikanw=s <num ref="some_ref">d</num> me\n </head>
+</verse>"""
+
+        language = "Greek"
+        expected_result = r"""Ἱκανῶς δ μὲν"""
+
+        actual_result = convert_xml_to_text(original_content, language=language)
+        
+        self.assertEqual(expected_result, actual_result)

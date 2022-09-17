@@ -1,14 +1,12 @@
 import xml.dom.minidom as minidom
-from reader.language_tools.greek import Greek
 from reader.language_tools import transform_text
 
 from six.moves.html_parser import HTMLParser
 from six.moves.html_entities import name2codepoint
 from xml.dom.minidom import parseString
 from time import time
+from .text_converter import TextConverter
 
-from django.shortcuts import render
-from django.template.context import RequestContext
 from django.core.cache import cache
 
 import hashlib
@@ -181,6 +179,28 @@ def convert_xml_to_html5( xml_str, new_root_node_tag_name=None, text_transformat
     else:
         return converter.dst_doc
     
+def convert_xml_to_text( xml_str, new_root_node_tag_name=None, text_transformation_fx=None, language=None, allow_closing_in_start_tag=False, node_transformation_fx=None):
+    """
+    Convert the XML into a text string.
+    
+    Arguments:
+    xml_str -- An XML document containing the original XML to be converted
+    new_root_node_tag_name -- The name of the root node (otherwise, the root node will be converted too).
+    text_transformation_fx -- A function which will be applied to all text. The function must take the following parameters: the text to transform, the tag_name of the parent node
+    language -- the language to use for transforming the text. This will only be used if text_transformation_fx is not none in which case the transform_text function will be used
+    allow_closing_in_start_tag -- If true, then nodes with no children will be closed without an explicit closing tag. Otherwise, they will include an explicit closing tag.
+    node_transformation_fx -- A function that allows node transformations to be overridden. The function must take the following parameters: tag name, attributes, parent node, document
+    """
+    
+    converted_doc = convert_xml_to_html5(xml_str, return_as_str=True, new_root_node_tag_name=new_root_node_tag_name, text_transformation_fx=text_transformation_fx, language=language, allow_closing_in_start_tag=allow_closing_in_start_tag, node_transformation_fx=node_transformation_fx)
+    
+    # Convert the document to text
+    # We will do this by extracting the text portions but a little special handling of the footnotes
+    # TODO: extract the footnotes
+    converter = TextConverter()
+    converter.feed(converted_doc)
+    extracted_txt = converter.text_doc
+    return extracted_txt.strip()
 
 def convert_xml_to_html5_minidom( xml_str, new_root_node_tag_name=None, text_transformation_fx=None, language=None, return_as_str=False, allow_closing_in_start_tag=False):
     """
