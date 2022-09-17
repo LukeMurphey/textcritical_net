@@ -186,7 +186,7 @@
 	<!-- ================================= 
           target: test
          ================================= -->
-	<target name="test" description="Verify that the package appears to be valid" depends="install_dependencies">
+	<target name="test" description="Run the Python based tests" depends="install_dependencies">
 		<mkdir dir="var/log"/>
 
 		<copy file="src/textcritical/test_settings.py" tofile="src/textcritical/settings.py"/>
