@@ -860,7 +860,7 @@ def api_work_text(request,  title=None, division_0=None, division_1=None, divisi
     if division is None:
         return render_api_response(request, [], status=404)
 
-    # If the verse could not be found, set a response code to note that we couldn't get the content that the user wanted so that caching doesn't take place
+    # If the verse could not be found, then return the entire chapter
     if verse_to_highlight is None:
         chapter = get_chapter_for_division(division)
         verses = Verse.objects.filter(division=chapter).all()
