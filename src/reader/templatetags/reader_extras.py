@@ -148,7 +148,17 @@ def transform_perseus_xml_to_epub_html5(xml_text, language=None, return_as_str=F
     finally:
         converted_doc.unlink()
         del(converted_doc)
-        
+
+@register.filter(name='perseus_xml_to_text')
+def perseus_xml_to_text(value, language=None):
+    """
+    Converts the provided XML to text. Performs some changes specific to Perseus TEI documents.
+    
+    Usage:
+    {{text|perseus_xml_to_text:"Greek"}}
+    """
+    return transform_perseus_xml_to_text(value, language)
+
 def transform_perseus_xml_to_text(xml_text, language=None, note_number_start=1):
     """
     Converts the provided XML to text only.

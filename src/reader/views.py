@@ -866,7 +866,7 @@ def api_work_text(request,  title=None, division_0=None, division_1=None, divisi
         verses = Verse.objects.filter(division=chapter).all()
         template = loader.get_template('work_verses.txt')
 
-        return render_api_response(request, template.render({'verses'  : verses}), status=210, cache_timeout=15 * minutes)
+        return render_api_response(request, template.render({'verses'  : verses, 'chapter': chapter}), status=210, cache_timeout=15 * minutes)
     else:
         # Find the verse
         verse = Verse.objects.get(indicator=verse_to_highlight, division=division)
