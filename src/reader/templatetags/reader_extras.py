@@ -1,6 +1,6 @@
 import re
 from django import template
-from reader.shortcuts import convert_xml_to_html5, convert_xml_to_text
+from reader.shortcuts import convert_xml_to_html5
 from xml.dom import minidom
 from reader.language_tools import transform_text
 import random
@@ -149,39 +149,6 @@ def transform_perseus_xml_to_epub_html5(xml_text, language=None, return_as_str=F
         converted_doc.unlink()
         del(converted_doc)
 
-@register.filter(name='perseus_xml_to_text')
-def perseus_xml_to_text(value, arg=None):
-    """
-    Converts the provided XML to text. Performs some changes specific to Perseus TEI documents.
-    
-    Usage:
-    {{text|perseus_xml_to_text:"Greek"}}
-    
-    This example provides the initial note number
-    {{text|perseus_xml_to_text:"Greek,5"}}
-    """
-
-    if "," in arg:
-        language, note_number = arg.split(",")
-        note_number = int(note_number)
-    else:
-        note_number = 1
-        language = arg
-    
-    return transform_perseus_xml_to_text(value, language, note_number)
-
-def transform_perseus_xml_to_text(xml_text, language=None, note_number_start=None):
-    """
-    Converts the provided XML to text only.
-    """
-    
-    # Make the function to perform the transformation
-    text_transformation_fx = lambda text, parent_node, dst_doc: transform_perseus_text(text, parent_node, dst_doc, language, disable_wrapping=True)
-    next_note_number = NoteNumber(note_number_start)
-    transform_node = lambda tag, attrs, parent, dst_doc: transform_perseus_node(tag, attrs, parent, dst_doc, True, False, next_note_number)
-
-    return convert_xml_to_text(xml_text, language=language, text_transformation_fx=text_transformation_fx, node_transformation_fx=transform_node, next_note_number=note_number_start)
-    
 @register.filter(name='count_note_nodes')
 def count_note_nodes( value, previous_count=None ):
     
@@ -218,7 +185,7 @@ class NoteNumber(object):
         self.number = self.number + amount
         return self.number
     
-def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_icon=True, next_note_number=None ):
+def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_icon=True, next_note_number=None, note_prefix="Note" ):
     """
     Transform nodes to improve rendering. Specifically, this function will make note nodes able to be rendered with popovers.
     
@@ -230,6 +197,7 @@ def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_
     use_popovers -- The document will be modified such that popovers will be placed in the document for the notes
     use_icon -- An icon will be placed in the location where the notes will go.
     next_note_number -- Provides the starting value for the notes (useful when the notes numbers need to continue from a prior value)
+    note_prefix -- Defines some text that appears before the footnote
     """
     
     # If the notes should be rendered with popovers
@@ -249,8 +217,9 @@ def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_
             note_tag.setAttribute( "class", "label label-success note-tag" )
             note_tag.setAttribute( "id", identifier )
             
-            txt_node = dst_doc.createTextNode("Note")
-            note_tag.appendChild(txt_node)
+            if note_prefix is not None:
+                txt_node = dst_doc.createTextNode(note_prefix)
+                note_tag.appendChild(txt_node)
             
         # Add the attribute number so that it can be added to the title of the note
         for attr in attrs:

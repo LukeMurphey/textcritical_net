@@ -7,7 +7,6 @@ from wsgiref.util import FileWrapper
 from django.template.context import RequestContext
 from django.template import loader, TemplateDoesNotExist
 from django.views.decorators.cache import cache_page
-from django.core.cache import cache
 from django.utils.cache import patch_response_headers
 from django.template.defaultfilters import slugify
 from django.conf import settings
@@ -22,17 +21,17 @@ import re
 import os
 from urllib.parse import urlencode
 
-from reader.templatetags.reader_extras import transform_perseus_text, NoteNumber
+from reader.templatetags.reader_extras import transform_perseus_text
 from reader.models import Work, WorkAlias, Division, Verse, Author, UserPreference, WikiArticle, WorkSource, Note
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy, convert_xml_to_html5
-from reader.shortcuts.perseus_notes import PerseusNotesExtractor
 from reader.utils import get_word_descriptions, get_lexicon_entries, table_export
 from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
 from reader.bookcover import makeCoverImage
 from reader.utils.work_helpers import get_division_and_verse, get_work_page_info, get_chapter_for_division
+from reader.exporter.text import convert_verses_to_text
 
 # Try to import the ePubExport but be forgiving if the necessary dependencies do not exist
 try:
@@ -861,20 +860,17 @@ def api_work_text(request,  title=None, division_0=None, division_1=None, divisi
     if division is None:
         return render_api_response(request, [], status=404)
 
+    chapter = get_chapter_for_division(division)
+
     # If the verse could not be found, then return the entire chapter
     if verse_to_highlight is None:
-        chapter = get_chapter_for_division(division)
         verses = Verse.objects.filter(division=chapter).all()
-        template = loader.get_template('work_verses.txt')
-        
-        # Extract the footnotes
-        notes = PerseusNotesExtractor.getPerseusNotesFromVerses(chapter)
 
-        return render_api_response(request, template.render({'verses'  : verses, 'chapter': chapter, 'notes': notes, "note_number" : NoteNumber()}), status=210)
+        return render_api_response(request, convert_verses_to_text(verses, chapter), status=210)
     else:
         # Find the verse
         verse = Verse.objects.get(indicator=verse_to_highlight, division=division)
-        return render_api_response(request, verse.content, status=200)
+        return render_api_response(request, convert_verses_to_text([verse], chapter), status=210)
 
 def assign_divisions(ref_components):
 

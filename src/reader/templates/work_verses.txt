@@ -1,4 +1,0 @@
-{% load reader_extras %}{% for verse in verses.all %}{% if verse.indicator|length > 0 %}{{verse.indicator}}{% endif %}{% if verse.original_content|length == 0 %}{{verse.content|safe}}{% else %}{% with chapter.work.language|add:","|add:note_number.value as args %}{{verse.original_content|perseus_xml_to_text:args|safe}}{% endwith %}{% with verse.original_content|count_note_nodes as increment %}{% with note_number|increment_note_count:increment as n %}{% endwith %}{% endwith %}{% endif %}{% endfor %}{% if notes %}
-
-Footnotes:  {% for note in notes %}
-[{{forloop.counter}}] {{note.text|safe}}{% endfor %}{% endif %}

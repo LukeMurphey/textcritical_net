@@ -1,7 +1,7 @@
 from . import TestReader
 from reader.shortcuts.perseus_notes import PerseusNotesExtractor
 from reader.models import Division
-from reader.shortcuts.text_converter import TextConverter
+from reader.exporter.text import TextConverter
 
 class TestShortcutsTextConverter(TestReader):
     def test_drop_notes(self):

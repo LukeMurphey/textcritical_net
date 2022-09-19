@@ -32,7 +32,7 @@ class TextConverter(HTMLParser):
         # Initialize the base class
         HTMLParser.__init__(self)
         
-    def is_in_ignore_state(self):
+    def is_in_note_tag_state(self):
         if self.ignore_tag_stack is None:
             return False
 
@@ -56,8 +56,7 @@ class TextConverter(HTMLParser):
         
         return classname in classnames
 
-    def is_tag_to_ignore(self, tag, attrs):
-        # TODO: determine if this ought to be filtering on the span tag
+    def is_note_tag(self, tag, attrs):
         if tag == "span" and self.has_classname(attrs, "note"):
             return True
         
@@ -66,11 +65,11 @@ class TextConverter(HTMLParser):
     def handle_starttag(self, tag, attrs):
         # If we are in a state in which we should ignore these tags, then add the current one so that we can track when
         # to leave this state
-        if(self.is_in_ignore_state()):
+        if(self.is_in_note_tag_state()):
             self.ignore_tag_stack.append(tag)
         
         # Determine if this is a tag to start ignoring
-        elif(self.is_tag_to_ignore(tag, attrs)):
+        elif(self.is_note_tag(tag, attrs)):
 
             # Add in a placeholder for the note
             self.text_doc = self.text_doc + "[" + str(self.note_number) + "]"
@@ -79,15 +78,17 @@ class TextConverter(HTMLParser):
             self.ignore_tag_stack = [tag]
 
     def handle_endtag(self, tag):
-        if self.is_in_ignore_state():
+        if self.is_in_note_tag_state():
             self.ignore_tag_stack.pop()
             
-            self.notes[self.note_number] = self.current_note
-            self.current_note = ''
-            self.note_number += 1
+            # If this is the last tag, then register the note and prep for the next one
+            if len(self.ignore_tag_stack) == 0:
+                self.notes[self.note_number] = self.current_note
+                self.current_note = ''
+                self.note_number += 1
             
     def handle_data(self, data):
-        if not self.is_in_ignore_state():
+        if not self.is_in_note_tag_state():
             self.text_doc = self.text_doc + data
         else:
             self.current_note = self.current_note + data

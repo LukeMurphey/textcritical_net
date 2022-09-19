@@ -1,7 +1,4 @@
 from . import TestReader
-from reader.shortcuts import convert_xml_to_html5, convert_xml_to_text
-from reader.templatetags.reader_extras import perseus_xml_to_html5
-from . import TestReader
 from reader.shortcuts.perseus_notes import PerseusNotesExtractor
 from reader.models import Division, Work
 from reader.importer.Perseus import PerseusTextImporter
