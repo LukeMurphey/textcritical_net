@@ -179,7 +179,7 @@ def convert_xml_to_html5( xml_str, new_root_node_tag_name=None, text_transformat
     else:
         return converter.dst_doc
     
-def convert_xml_to_text( xml_str, new_root_node_tag_name=None, text_transformation_fx=None, language=None, allow_closing_in_start_tag=False, node_transformation_fx=None):
+def convert_xml_to_text( xml_str, new_root_node_tag_name=None, text_transformation_fx=None, language=None, allow_closing_in_start_tag=False, node_transformation_fx=None, next_note_number=1):
     """
     Convert the XML into a text string.
     
@@ -193,11 +193,10 @@ def convert_xml_to_text( xml_str, new_root_node_tag_name=None, text_transformati
     """
     
     converted_doc = convert_xml_to_html5(xml_str, return_as_str=True, new_root_node_tag_name=new_root_node_tag_name, text_transformation_fx=text_transformation_fx, language=language, allow_closing_in_start_tag=allow_closing_in_start_tag, node_transformation_fx=node_transformation_fx)
-    
+
     # Convert the document to text
     # We will do this by extracting the text portions but a little special handling of the footnotes
-    # TODO: extract the footnotes
-    converter = TextConverter()
+    converter = TextConverter(next_note_number)
     converter.feed(converted_doc)
     extracted_txt = converter.text_doc
     return extracted_txt.strip()

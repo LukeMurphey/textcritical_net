@@ -150,16 +150,27 @@ def transform_perseus_xml_to_epub_html5(xml_text, language=None, return_as_str=F
         del(converted_doc)
 
 @register.filter(name='perseus_xml_to_text')
-def perseus_xml_to_text(value, language=None):
+def perseus_xml_to_text(value, arg=None):
     """
     Converts the provided XML to text. Performs some changes specific to Perseus TEI documents.
     
     Usage:
     {{text|perseus_xml_to_text:"Greek"}}
+    
+    This example provides the initial note number
+    {{text|perseus_xml_to_text:"Greek,5"}}
     """
-    return transform_perseus_xml_to_text(value, language)
 
-def transform_perseus_xml_to_text(xml_text, language=None, note_number_start=1):
+    if "," in arg:
+        language, note_number = arg.split(",")
+        note_number = int(note_number)
+    else:
+        note_number = 1
+        language = arg
+    
+    return transform_perseus_xml_to_text(value, language, note_number)
+
+def transform_perseus_xml_to_text(xml_text, language=None, note_number_start=None):
     """
     Converts the provided XML to text only.
     """
@@ -167,9 +178,9 @@ def transform_perseus_xml_to_text(xml_text, language=None, note_number_start=1):
     # Make the function to perform the transformation
     text_transformation_fx = lambda text, parent_node, dst_doc: transform_perseus_text(text, parent_node, dst_doc, language, disable_wrapping=True)
     next_note_number = NoteNumber(note_number_start)
-    transform_node = lambda tag, attrs, parent, dst_doc: transform_perseus_node(tag, attrs, parent, dst_doc, False, False, next_note_number)
-    
-    return convert_xml_to_text(xml_text, language=language, text_transformation_fx=text_transformation_fx, node_transformation_fx=transform_node)
+    transform_node = lambda tag, attrs, parent, dst_doc: transform_perseus_node(tag, attrs, parent, dst_doc, True, False, next_note_number)
+
+    return convert_xml_to_text(xml_text, language=language, text_transformation_fx=text_transformation_fx, node_transformation_fx=transform_node, next_note_number=note_number_start)
     
 @register.filter(name='count_note_nodes')
 def count_note_nodes( value, previous_count=None ):
