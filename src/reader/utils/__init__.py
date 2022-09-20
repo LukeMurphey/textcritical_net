@@ -1,3 +1,5 @@
+import re
+
 from reader import language_tools
 from reader.models import WordDescription, Lemma, LexiconEntry, WordForm
 from reader.shortcuts import uniquefy
@@ -151,3 +153,13 @@ def get_lexicon_entries(lemma):
     else:
         # Get the matching lexicon entries
         return LexiconEntry.objects.filter(lemma=lemma)
+
+def remove_unnecessary_whitespace(s):
+    # Strip whitespace at the beginning or end.
+    s = s.strip()
+
+    # Replace excess endlines
+    s = re.sub(r"\n+", "\n", s)
+
+    # Replace excess space or tabs
+    return re.sub("[\t ]+", " ", s)

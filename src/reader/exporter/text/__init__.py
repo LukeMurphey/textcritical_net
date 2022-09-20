@@ -1,6 +1,7 @@
 from reader.templatetags.reader_extras import transform_perseus_text, transform_perseus_node, convert_xml_to_html5, NoteNumber
 from reader.exporter.text_conversion.text_converter import TextConverter
 from collections import OrderedDict
+from reader.utils import remove_unnecessary_whitespace
 
 def convert_verses_to_text(verses, chapter):
     # Initialize the output
@@ -54,7 +55,7 @@ def convert_verse_to_text(xml_str, language, note_number):
     # We will do this by extracting the text portions but a little special handling of the footnotes
     converter = TextConverter(int(note_number.value()))
     converter.feed(converted_doc)
-    extracted_txt = converter.text_doc
+    extracted_txt = remove_unnecessary_whitespace(converter.text_doc)
     
     # Output the content
     return extracted_txt.strip(), converter.notes
