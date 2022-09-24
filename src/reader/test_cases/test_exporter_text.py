@@ -61,8 +61,7 @@ class TestTextExporter(TestReader):
         
         txt = convert_verses_to_text(Verse.objects.filter(division=division), division)
 
-        expected = """1. Luke Murphey[1] wrote TextCritical[2]
-            starting in 2012 after struggling to find cheap or free copies of ancient Greek works.
+        expected = """1. Luke Murphey[1] wrote TextCritical[2] starting in 2012 after struggling to find cheap or free copies of ancient Greek works.
 
 Footnotes:
 [1] https://LukeMurphey.net

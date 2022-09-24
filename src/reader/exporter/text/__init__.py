@@ -55,7 +55,7 @@ def convert_verse_to_text(xml_str, language, note_number):
     # We will do this by extracting the text portions but a little special handling of the footnotes
     converter = TextConverter(int(note_number.value()))
     converter.feed(converted_doc)
-    extracted_txt = remove_unnecessary_whitespace(converter.text_doc)
+    extracted_txt = converter.text_doc
     
     # Output the content
-    return extracted_txt.strip(), converter.notes
+    return remove_unnecessary_whitespace(extracted_txt), converter.notes
