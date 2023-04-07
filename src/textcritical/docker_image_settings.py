@@ -5,6 +5,23 @@
 
 # Import the default settings so the you do not have to redefine everything
 from textcritical.default_settings import *
+import string
+import random
+
+SECRET_KEY_LOCATION = '/db/secret.txt'
+
+# Generate or load the secret key
+try:
+    with open(SECRET_KEY_LOCATION, 'r') as secret_key_file:
+        SECRET_KEY = secret_key_file.read()
+except:
+    # Make a new secret key
+    c = string.ascii_letters + string.digits + string.punctuation
+    SECRET_KEY = ''.join(random.choice(c) for i in range(67))
+
+    # Write out the secret key
+    with open(SECRET_KEY_LOCATION, 'w') as secret_key_file:
+        secret_key_file.write(SECRET_KEY)
 
 DATABASES = {
     'default': {
