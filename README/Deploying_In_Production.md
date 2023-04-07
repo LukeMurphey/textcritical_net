@@ -1,5 +1,9 @@
 # Deploying TextCritical in Production
 
+## Change the secret key
+
+You will need to change the *SECRET_KEY* in the settings file needs to be unique. The Docker container will automatically generate it on startup and store it in ```/db/secret.txt``` if you don't define one.
+
 ## Setting the detault site
 
 You will need to set the default site to match your domain name. Open the administration UI and navigate to the defaul site to change the domain name accordingly.
