@@ -1236,7 +1236,7 @@ def api_notes(request):
         search = None
         
     # Get the notes for the logged in user
-    notes = Note.objects.filter(user=request.user).values_list('id', 'title', 'text')
+    notes = Note.objects.filter(user=request.user)#.values_list('id', 'title', 'text')
 
     # Paginate the data
     # TODO
@@ -1258,7 +1258,7 @@ def api_note(request, note_id):
         return render_api_error(request,"No note found with the given ID", status=404)
 
     # Return the content
-    return render_queryset_api_response(request, note)
+    return render_queryset_api_response(request, [note])
 
 @must_be_authenticated
 @must_be_post
@@ -1272,6 +1272,7 @@ def api_note_edit(request, note_id=None):
             return render_api_error(request,"No note found with the given ID", status=404)
     else:
         note = Note()
+        note.user = request.user
 
     # Change the text and the title
     if 'text' not in request.POST:
@@ -1298,32 +1299,37 @@ def api_note_edit(request, note_id=None):
         note.work = note.verse.division.work
     """
     
-    # Change the work
-    if 'work' in request.POST and note.work is None:
+    # Change the workbui
+    if 'work' in request.POST and note.work_id is None:
         # Load the work
         try:
             work = Work.objects.get(title_slug=request.POST['work'])
         except ObjectDoesNotExist:
              return render_api_error(request, "Work with the given id does not exist")
     
-        note.work = work
+        note.work_id = work.id
+        note.work_title_slug = work.title_slug
 
     # Change the division
-    if 'division' in request.POST and note.division is None:
+    if 'division' in request.POST and note.division_id is None:
         # Get the division information from the descriptor
-        division, verse = get_division_and_verse(work, *request.POST['division'].split("/"))
+        division, verse_indicator = get_division_and_verse(work, *request.POST['division'].split("/"))
     
-        note.division = division
-        note.work = division.work
+        note.division_id = division.id
+        note.division_full_descriptor = request.POST['division']
 
-        if verse:
-            note.verse = verse
+        if verse_indicator is not None:
+            verse = Verse.objects.get(indicator=verse_indicator, division=division)
+
+            if verse:
+                note.verse_id = verse.id
+                note.verse_indicator = verse.indicator
     
     # Save it
     note.save()
 
-    # Return
-    return render_queryset_api_response(request, note)
+    # Return the created note
+    return render_queryset_api_response(request, [note])
 
 @must_be_authenticated
 @must_be_post

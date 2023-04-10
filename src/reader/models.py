@@ -851,19 +851,47 @@ class UserPreference(models.Model):
 
 class Note(models.Model):
     """
-    A note within a work
+    A note within a work.
+
+    This model is designed to support putting notes in a separate database from the library. For
+    this reason, this model has no foreign keys to the library. Instead, it stores the values such
+    as the foreign keys directly.
     """
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    work = models.ForeignKey(Work, on_delete=models.SET_NULL, null=True)
-    division = models.ForeignKey(Division, on_delete=models.SET_NULL, null=True)
-    verse = models.ForeignKey(Verse, on_delete=models.SET_NULL, null=True)
-    title = models.CharField(max_length=200, db_index=True, unique=True)
+    work_id = models.IntegerField(null=True)
+    work_title_slug = models.SlugField(null=True)
+
+    division_id = models.IntegerField(null=True)
+    division_full_descriptor = models.CharField(max_length=100, null=True)
+
+    verse_id = models.IntegerField(null=True)
+    verse_indicator = models.CharField(max_length=10, null=True)
+
+    title = models.CharField(max_length=200, db_index=True)
     text = models.TextField()
     public = models.BooleanField(default=False)
+
+    @property
+    def work(self):
+        return Work.objects.get(self.work_id)
+    
+    @property
+    def division(self):
+        if self.division_id is not None:
+            return Division.objects.get(self.division_id)
+
+        return None
+
+    @property
+    def verse(self):
+        if self.verse_id is not None:
+            return Verse.objects.get(self.verse_id)
+        
+        return None
     
     def __str__(self):
-        return str(self.name)
+        return str(self.title)
 
 @receiver(post_save, sender=Work)
 def work_alias_create(sender, instance, signal, created, **kwargs):

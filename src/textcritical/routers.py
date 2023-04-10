@@ -34,10 +34,11 @@ class PreLoadedWorksRouter(object):
     
     def allow_relation(self, obj1, obj2, **hints):
         
-        if obj1._meta.app_label == PreLoadedWorksRouter.APP_LABEL_READER or obj2._meta.app_label == PreLoadedWorksRouter.APP_LABEL_READER:
+        # Allow the relationship if it is for the same app
+        if obj1._meta.app_label == obj2._meta.app_label:
             return True
-        
-        return PreLoadedWorksRouter.DATABASE_NAME_DEFAULT
+
+        return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
 
