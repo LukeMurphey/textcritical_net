@@ -156,8 +156,8 @@ urlpatterns = [
     # Notes
     url(r'^api/notes/?$',
         views.api_notes, name='api_notes'),
-    url(r'^api/notes/(?P<note_id>[^/]*)/?$',
-        views.api_note, name='api_note'),
+    #url(r'^api/notes/(?P<note_id>[^/]*)/?$',
+    #    views.api_note, name='api_note'),
     url(r'^api/notes/edit/(?P<note_id>[^/]*)/?$',
         views.api_note_edit, name='api_note_edit'),
     url(r'^api/notes/delete/(?P<note_id>[^/]*)/?$',

@@ -1264,7 +1264,7 @@ def api_note(request, note_id):
 @must_be_post
 def api_note_edit(request, note_id=None):
     # Get the note
-    if note_id is not None:
+    if note_id is not None and len(note_id) > 0:
         try:
             note = Note.objects.get(user=request.user, id=note_id)
         except ObjectDoesNotExist:
@@ -1285,6 +1285,7 @@ def api_note_edit(request, note_id=None):
         note.title = None
     
     # Change the verse
+    """
     if 'verse' in request.POST:
         # Load the Verse
         try:
@@ -1295,27 +1296,28 @@ def api_note_edit(request, note_id=None):
         note.verse = verse
         note.division = note.verse.division
         note.work = note.verse.division.work
+    """
     
-    # Change the division
-    if 'division' in request.POST and note.division is None:
-        # Load the division
-        try:
-            division = Division.objects.get(id=request.POST['division'])
-        except ObjectDoesNotExist:
-             return render_api_error(request, "Division with the given id does not exist")
-    
-        note.division = division
-        note.work = division.work
-        
     # Change the work
     if 'work' in request.POST and note.work is None:
         # Load the work
         try:
-            work = Work.objects.get(id=request.POST['work'])
+            work = Work.objects.get(title_slug=request.POST['work'])
         except ObjectDoesNotExist:
              return render_api_error(request, "Work with the given id does not exist")
     
         note.work = work
+
+    # Change the division
+    if 'division' in request.POST and note.division is None:
+        # Get the division information from the descriptor
+        division, verse = get_division_and_verse(work, *request.POST['division'].split("/"))
+    
+        note.division = division
+        note.work = division.work
+
+        if verse:
+            note.verse = verse
     
     # Save it
     note.save()
