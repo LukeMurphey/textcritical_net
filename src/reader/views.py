@@ -13,6 +13,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from functools import cmp_to_key
 from django.contrib.sites.models import Site
+from django.db.models import Q
 
 import json
 import logging
@@ -1235,15 +1236,41 @@ def api_notes(request):
     else:
         search = None
         
+    if 'work' in request.GET:
+        work = request.GET['work']
+    else:
+        work = None
+        
+    if 'page' in request.GET:
+        page = int(request.GET['page'])
+    else:
+        page = None
+        
+    if 'count' in request.GET:
+        count = int(request.GET['count'])
+    else:
+        count = 10
+        
     # Get the notes for the logged in user
     notes = Note.objects.filter(user=request.user)#.values_list('id', 'title', 'text')
 
-    # Paginate the data
-    # TODO
-    
-    # Handle searching
-    # TODO
+    if (division):
+        notes = notes.filter(division_full_descriptor=division)
+        
+    if (work):
+        notes = notes.filter(work_title_slug=work)
+        
+    if (search):
+        notes = notes.filter((Q(title__icontains=search) | Q(text__icontains=search)))
 
+    # Paginate the data
+    if (page):
+        start = page * count
+        end = start + count
+        
+        # Cut the results down to the page
+        notes = notes[start:end]
+        
     # Return the content
     return render_queryset_api_response(request, notes)
 
