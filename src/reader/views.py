@@ -1189,9 +1189,9 @@ def api_user_preference_edit(request, name):
         return render_api_error(request, "Argument 'value' was not provided")
         
     # Try to load the existing entry
-    if UserPreference.objects.filter(user=request.user, name=name).exists():
+    try:
         preference = UserPreference.objects.get(user=request.user, name=name)
-    else:
+    except UserPreference.DoesNotExist:
         # Or create it if it doesn't exist yet
         preference = UserPreference.objects.create(user=request.user, name=name)
     
@@ -1222,14 +1222,9 @@ def api_notes(request):
 
     # Get the entries to search for
     if 'division' in request.GET:
-        division = request.GET['division']
+        division_descriptor = request.GET['division']
     else:
-        division = None
-        
-    if 'verse' in request.GET:
-        verse = request.GET['verse']
-    else:
-        verse = None
+        division_descriptor = None
 
     if 'search' in request.GET:
         search = request.GET['search']
@@ -1237,9 +1232,9 @@ def api_notes(request):
         search = None
         
     if 'work' in request.GET:
-        work = request.GET['work']
+        work_slug = request.GET['work']
     else:
-        work = None
+        work_slug = None
         
     if 'page' in request.GET:
         page = int(request.GET['page'])
@@ -1254,11 +1249,22 @@ def api_notes(request):
     # Get the notes for the logged in user
     notes = Note.objects.filter(user=request.user)#.values_list('id', 'title', 'text')
 
-    if (division):
-        notes = notes.filter(division_full_descriptor=division)
+    if (work_slug):
+        work = Work.objects.get(title_slug=work_slug)
+
+    if (division_descriptor and work):
+        # Get the division requested
+        division, verse_indicator = get_division_and_verse(work, *division_descriptor.split("/"))
         
-    if (work):
-        notes = notes.filter(work_title_slug=work)
+        # Find notes for the division
+        notes = notes.filter(Q(division_full_descriptor=division.get_full_division_indicator_string()) | Q(division_id=division.id))
+        
+        # Filter down to the verse if necessary
+        if (verse_indicator):
+            notes = notes.filter(verse_indicator=verse_indicator)
+        
+    if (work_slug):
+        notes = notes.filter(work_title_slug=work_slug)
         
     if (search):
         notes = notes.filter((Q(title__icontains=search) | Q(text__icontains=search)))
@@ -1343,7 +1349,7 @@ def api_note_edit(request, note_id=None):
         division, verse_indicator = get_division_and_verse(work, *request.POST['division'].split("/"))
     
         note.division_id = division.id
-        note.division_full_descriptor = request.POST['division']
+        note.division_full_descriptor = division.get_full_division_indicator_string()
 
         if verse_indicator is not None:
             verse = Verse.objects.get(indicator=verse_indicator, division=division)
