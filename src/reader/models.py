@@ -456,6 +456,9 @@ class Division(models.Model):
             
         return descriptors
     
+    def get_full_division_indicator_string(self):
+        return "/".join(self.get_division_indicators())
+    
     def get_division_titles(self):
         return self.get_division_indicators(use_titles=True)
 
@@ -840,7 +843,7 @@ class UserPreference(models.Model):
     """
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200, db_index=True, unique=True)
+    name = models.CharField(max_length=200, db_index=True)
     value = models.TextField()
     
     def __str__(self):
@@ -871,6 +874,9 @@ class Note(models.Model):
     title = models.CharField(max_length=200, db_index=True)
     text = models.TextField()
     public = models.BooleanField(default=False)
+    
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+    date_updated = models.DateTimeField(auto_now=True, null=True)
 
     @property
     def work(self):
