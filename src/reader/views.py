@@ -1378,3 +1378,27 @@ def api_note_delete(request, note_id):
     note.delete()
     
     return render_api_response(request, {'message': 'Note deleted'}, status=200)
+
+@must_be_authenticated
+def api_export_notes(request):
+    notes = Note.objects.filter(user=request.user)
+
+    # Make the results the download
+    fieldnames = ['id', 'title', 'text', 'work', 'division', 'verse']
+    exporter = table_export.get_exporter('csv', fieldnames, title='Notes')
+
+    for note in notes:
+        exporter.add_row({
+            'id': note.id,
+            'title': note.title,
+            'text':  note.text,
+            'work': note.work_title_slug,
+            'division': note.division_full_descriptor,
+            'verse': note.verse_indicator,
+        })  
+
+    # Stream the file
+    response = HttpResponse(exporter.getvalue(), content_type=exporter.content_type())
+    response['Content-Disposition'] = 'attachment; filename="%s"' % (
+        'notes' + exporter.file_extension())
+    return response

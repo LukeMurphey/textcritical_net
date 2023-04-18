@@ -162,5 +162,7 @@ urlpatterns = [
         views.api_note_delete, name='api_note_delete'),
     url(r'^api/notes/(?P<note_id>[0-9]+)/?$',
         views.api_note, name='api_note'),
+    url(r'^api/export_notes/?$',
+        views.api_export_notes, name='api_export_notes'),
 
 ]
