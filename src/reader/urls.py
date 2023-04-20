@@ -116,6 +116,22 @@ urlpatterns = [
         views.api_read_work, name='api_read_work'),
     url(r'^api/work/(?P<title>[^/]*)/?$',
         views.api_read_work, name='api_read_work'),
+    
+    # Get a copy of the work as text
+    url(r'^api/work_text/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>[^/]+)/?$',
+        views.api_work_text, name='api_work_text'),
+    url(r'^api/work_text/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>[^/]+)/?$',
+        views.api_work_text, name='api_work_text'),
+    url(r'^api/work_text/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>[^/]+)/?$',
+        views.api_work_text, name='api_work_text'),
+    url(r'^api/work_text/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>[^/]+)/?$',
+        views.api_work_text, name='api_work_text'),
+    url(r'^api/work_text/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>[^/]+)/?$',
+        views.api_work_text, name='api_work_text'),
+    url(r'^api/work_text/(?P<title>.*)/(?P<division_0>[^/]+)/?$',
+        views.api_work_text, name='api_work_text'),
+    url(r'^api/work_text/(?P<title>[^/]*)/?$',
+        views.api_work_text, name='api_work_text'),
 
     # Wikipedia info
     url(r'^api/wikipedia_info/(?P<topic>[^/]*)/?$',
@@ -136,5 +152,17 @@ urlpatterns = [
         views.api_user_preference_edit, name='api_user_preference_edit'),
     url(r'^api/user_preference/delete/(?P<name>[^/]*)/?$',
         views.api_user_preference_delete, name='api_user_preference_delete'),
+
+    # Notes
+    url(r'^api/notes/?$',
+        views.api_notes, name='api_notes'),
+    url(r'^api/notes/edit/(?P<note_id>[^/]*)/?$',
+        views.api_note_edit, name='api_note_edit'),
+    url(r'^api/notes/delete/(?P<note_id>[^/]*)/?$',
+        views.api_note_delete, name='api_note_delete'),
+    url(r'^api/notes/(?P<note_id>[0-9]+)/?$',
+        views.api_note, name='api_note'),
+    url(r'^api/export_notes/?$',
+        views.api_export_notes, name='api_export_notes'),
 
 ]

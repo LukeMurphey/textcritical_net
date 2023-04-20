@@ -1,0 +1,16 @@
+# Start this with:
+#    docker-compose up
+version: "3.9"
+services:
+  webapp:
+    # https://docs.docker.com/compose/compose-file/compose-file-v3/#network_mode
+    network_mode: "bridge"
+    build:
+      context: .
+    image: textcritical_dev
+    container_name: textcritical_dev
+    ports:
+      - "30080:8080"
+      - "8081:8081"
+    volumes:
+       - ../../var:/git/textcritical_net/var

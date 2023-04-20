@@ -1,14 +1,11 @@
 import xml.dom.minidom as minidom
-from reader.language_tools.greek import Greek
 from reader.language_tools import transform_text
 
 from six.moves.html_parser import HTMLParser
 from six.moves.html_entities import name2codepoint
 from xml.dom.minidom import parseString
 from time import time
-
-from django.shortcuts import render
-from django.template.context import RequestContext
+from reader.exporter.text_conversion.text_converter import TextConverter
 from django.core.cache import cache
 
 import hashlib
@@ -180,7 +177,6 @@ def convert_xml_to_html5( xml_str, new_root_node_tag_name=None, text_transformat
         return converter.dst_doc.toxml(encoding="utf-8").decode('utf-8').replace('<?xml version="1.0" encoding="utf-8"?>', "")
     else:
         return converter.dst_doc
-    
 
 def convert_xml_to_html5_minidom( xml_str, new_root_node_tag_name=None, text_transformation_fx=None, language=None, return_as_str=False, allow_closing_in_start_tag=False):
     """

@@ -1,4 +1,4 @@
-from reader.models import UserPreference
+from reader.models import Note, UserPreference, NoteReference
 
 class PreLoadedWorksRouter(object):
     """
@@ -11,7 +11,7 @@ class PreLoadedWorksRouter(object):
     DATABASE_NAME_DEFAULT = "default"
 
     # Below is a list of models in the reader app that ought to not be sync'd in the library
-    MODELS_TO_EXCLUDE = [UserPreference]
+    MODELS_TO_EXCLUDE = [UserPreference, Note, NoteReference]
 
     # Build a list of the model names since the names are used by allow_migrate()
     MODEL_NAMES_EXCLUDE = []
@@ -34,10 +34,11 @@ class PreLoadedWorksRouter(object):
     
     def allow_relation(self, obj1, obj2, **hints):
         
-        if obj1._meta.app_label == PreLoadedWorksRouter.APP_LABEL_READER or obj2._meta.app_label == PreLoadedWorksRouter.APP_LABEL_READER:
+        # Allow the relationship if it is for the same app
+        if obj1._meta.app_label == obj2._meta.app_label:
             return True
-        
-        return PreLoadedWorksRouter.DATABASE_NAME_DEFAULT
+
+        return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
 

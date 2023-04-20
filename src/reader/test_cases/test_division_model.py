@@ -32,4 +32,11 @@ class TestDivisionModel(TestReader):
         # Build a description with a verse
         verse = Verse.objects.filter(division=division).order_by("sequence_number")[0]
         self.assertEqual(division.get_division_description(verse=verse), "Matthew 1:1")
-    
+        
+    def test_get_full_division_indicator_string(self):
+        book_xml = self.load_test_resource('nt_gk.xml')        
+        self.importer.import_xml_string(book_xml)
+        
+        division = Division.objects.filter(work=self.importer.work)[1]
+        
+        self.assertEqual(division.get_full_division_indicator_string(), 'Matthew/1')

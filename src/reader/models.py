@@ -37,6 +37,8 @@ The following models are currently included:
 |-----------------|-----------------------------------------------------------|
 | UserPreference  | A user preference setting for the user                    |
 |-----------------|-----------------------------------------------------------|
+| Note            | A note for a text                                         |
+|-----------------|-----------------------------------------------------------|
 """
 
 from django.db import models
@@ -454,6 +456,9 @@ class Division(models.Model):
             
         return descriptors
     
+    def get_full_division_indicator_string(self):
+        return "/".join(self.get_division_indicators())
+    
     def get_division_titles(self):
         return self.get_division_indicators(use_titles=True)
 
@@ -838,7 +843,7 @@ class UserPreference(models.Model):
     """
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200, db_index=True, unique=True)
+    name = models.CharField(max_length=200, db_index=True)
     value = models.TextField()
     
     def __str__(self):
@@ -846,6 +851,57 @@ class UserPreference(models.Model):
     
     class Meta:
         unique_together = ("user", "name")
+
+class Note(models.Model):
+    """
+    A note within a work.
+
+    This model is designed to support putting notes in a separate database from the library. For
+    this reason, this model has no foreign keys to the library. Instead, it stores the values such
+    as the foreign keys directly.
+    """
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    title = models.CharField(max_length=200, db_index=True)
+    text = models.TextField()
+    public = models.BooleanField(default=False)
+    
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+    date_updated = models.DateTimeField(auto_now=True, null=True)
+    
+    def __str__(self):
+        return str(self.title)
+    
+class NoteReference(models.Model):
+    note = models.ForeignKey(Note, on_delete=models.CASCADE)
+    
+    work_id = models.IntegerField(null=True)
+    work_title_slug = models.SlugField(null=True)
+    
+    division_id = models.IntegerField(null=True)
+    division_full_descriptor = models.CharField(max_length=100, null=True)
+
+    verse_id = models.IntegerField(null=True)
+    verse_indicator = models.CharField(max_length=10, null=True)
+    
+    @property
+    def work(self):
+        return Work.objects.get(self.work_id)
+    
+    @property
+    def division(self):
+        if self.division_id is not None:
+            return Division.objects.get(self.division_id)
+
+        return None
+
+    @property
+    def verse(self):
+        if self.verse_id is not None:
+            return Verse.objects.get(self.verse_id)
+        
+        return None
 
 @receiver(post_save, sender=Work)
 def work_alias_create(sender, instance, signal, created, **kwargs):

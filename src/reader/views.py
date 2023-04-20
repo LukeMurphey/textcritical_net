@@ -7,13 +7,13 @@ from wsgiref.util import FileWrapper
 from django.template.context import RequestContext
 from django.template import loader, TemplateDoesNotExist
 from django.views.decorators.cache import cache_page
-from django.core.cache import cache
 from django.utils.cache import patch_response_headers
 from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from functools import cmp_to_key
 from django.contrib.sites.models import Site
+from django.db.models import Q
 
 import json
 import logging
@@ -23,7 +23,7 @@ import os
 from urllib.parse import urlencode
 
 from reader.templatetags.reader_extras import transform_perseus_text
-from reader.models import Work, WorkAlias, Division, Verse, Author, UserPreference, WikiArticle, WorkSource
+from reader.models import Work, WorkAlias, Division, Verse, Author, UserPreference, WikiArticle, WorkSource, Note, NoteReference
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy, convert_xml_to_html5
@@ -31,7 +31,8 @@ from reader.utils import get_word_descriptions, get_lexicon_entries, table_expor
 from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
 from reader.bookcover import makeCoverImage
-from reader.utils.work_helpers import get_division_and_verse, get_work_page_info
+from reader.utils.work_helpers import get_division_and_verse, get_work_page_info, get_chapter_for_division, note_to_json, note_reference_to_json
+from reader.exporter.text import convert_verses_to_text
 
 # Try to import the ePubExport but be forgiving if the necessary dependencies do not exist
 try:
@@ -57,6 +58,26 @@ days = 24 * hours
 months = 30 * days
 years = 365.25 * days
 
+# Ensure the request is for an authenticated user
+def must_be_authenticated(func):
+    def wrapper(request, *args, **kwargs):
+        # Handle the case where the user is not logged in
+        if request.user is None or not request.user.is_authenticated:
+            return render_api_error(request, "User is not authenticated", status=403)
+         
+        return func(request, *args, **kwargs)
+ 
+    return wrapper
+
+# Ensure this is a POST request
+def must_be_post(func):
+    def wrapper(request, *args, **kwargs):
+        if request.method != 'POST':
+            return render_api_error(request, "Request must be a POST", status=400)
+         
+        return func(request, *args, **kwargs)
+ 
+    return wrapper
 
 def single_page_app(request, **kwargs):
     return render(request, 'spa.html',
@@ -824,6 +845,34 @@ def api_read_work(request, author=None, language=None, title=None, division_0=No
     return render_api_response(request, data, status=status_code, cache_timeout=12 * months)
 
 
+def api_work_text(request,  title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
+    # Try to get the work
+    try:
+        work_alias = WorkAlias.objects.get(title_slug=title)
+    except WorkAlias.DoesNotExist:
+         return render_api_response(request, [], status=404)
+
+    work = work_alias.work
+    
+    # Get the chapter and the verse we ought to highlight
+    division, verse_to_highlight = get_division_and_verse(work, division_0, division_1, division_2, division_3, division_4)
+
+    # Return a 404 if the work could not be found
+    if division is None:
+        return render_api_response(request, [], status=404)
+
+    chapter = get_chapter_for_division(division)
+
+    # If the verse could not be found, then return the entire chapter
+    if verse_to_highlight is None:
+        verses = Verse.objects.filter(division=chapter).all()
+
+        return render_api_response(request, convert_verses_to_text(verses, chapter), status=210)
+    else:
+        # Find the verse
+        verse = Verse.objects.get(indicator=verse_to_highlight, division=division)
+        return render_api_response(request, convert_verses_to_text([verse], chapter), status=210)
+
 def assign_divisions(ref_components):
 
     division_0, division_1, division_2, division_3, division_4 = None, None, None, None, None
@@ -1047,7 +1096,6 @@ def api_wikipedia_info(request, topic=None, topic2=None, topic3=None):
     # Couldn't find the article
     return render_api_response(request, {'topic': topic}, status=404)
 
-
 def api_resolve_reference(request, work=None, ref=None):
 
     # Get the work and reference from the arguments
@@ -1114,11 +1162,11 @@ def api_resolve_reference(request, work=None, ref=None):
 
     return render_api_response(request, data, response_code)
 
+#--------------------------
+# User preferences
+#--------------------------
+@must_be_authenticated
 def api_user_preferences(request):
-
-    # Handle the case where the user is not logged in
-    if request.user is None or not request.user.is_authenticated:
-        return render_api_response(request, {}, status=403)
 
     # Get the preferences for the logged in user
     preferences = UserPreference.objects.filter(user=request.user)
@@ -1132,34 +1180,232 @@ def api_user_preferences(request):
     # Return the content
     return render_api_response(request, content)
     
+@must_be_authenticated
+@must_be_post
 def api_user_preference_edit(request, name):
 
-    if request.method == 'POST':
-        # Make sure the parameters exist
-        if 'value' not in request.POST:
-            return render_api_error(request, "Argument 'value' was not provided")
-            
-        # Try to load the existing entry
-        if UserPreference.objects.filter(user=request.user, name=name).exists():
-            preference = UserPreference.objects.get(user=request.user, name=name)
-        else:
-            # Or create it if it doesn't exist yet
-            preference = UserPreference.objects.create(user=request.user, name=name)
+    # Make sure the parameters exist
+    if 'value' not in request.POST:
+        return render_api_error(request, "Argument 'value' was not provided")
         
-        # Modify it
-        preference.value = request.POST['value']
-        
-        # Save it
-        preference.save()
-        
-        return render_api_response(request, {'message': 'Successfully set the preference'}, status=200)
+    # Try to load the existing entry
+    try:
+        preference = UserPreference.objects.get(user=request.user, name=name)
+    except UserPreference.DoesNotExist:
+        # Or create it if it doesn't exist yet
+        preference = UserPreference.objects.create(user=request.user, name=name)
+    
+    # Modify it
+    preference.value = request.POST['value']
+    
+    # Save it
+    preference.save()
+    
+    return render_api_response(request, {'message': 'Successfully set the preference'}, status=200)
 
+@must_be_authenticated
+@must_be_post
 def api_user_preference_delete(request, name):
 
-    if request.method == 'POST':
+    try:
+        preference = UserPreference.objects.get(user=request.user, name=name)
+        preference.delete()
+        return render_api_response(request, {'message': 'Successfully deleted the preference'}, status=200)
+    except ObjectDoesNotExist:
+        return render_api_response(request, {'message': 'Preference did not exist'}, status=201)
+
+#--------------------------
+# Notes
+#--------------------------
+@must_be_authenticated
+def api_notes(request):
+
+    # Get the entries to search for
+    if 'division' in request.GET:
+        division_descriptor = request.GET['division']
+    else:
+        division_descriptor = None
+
+    if 'search' in request.GET:
+        search = request.GET['search']
+    else:
+        search = None
+        
+    if 'work' in request.GET:
+        work_slug = request.GET['work']
+    else:
+        work_slug = None
+        
+    if 'page' in request.GET:
+        page = int(request.GET['page'])
+    else:
+        page = None
+        
+    if 'count' in request.GET:
+        count = int(request.GET['count'])
+    else:
+        count = 10
+        
+    # Get the notes for the logged in user
+    notes = Note.objects.filter(user=request.user)
+
+    if (work_slug):
+        work = Work.objects.get(title_slug=work_slug)
+
+    if (division_descriptor and work):
+        # Get the division requested
+        division, verse_indicator = get_division_and_verse(work, *division_descriptor.split("/"))
+        
+        # Find notes for the division
+        notes = notes.filter(Q(notereference__division_full_descriptor=division.get_full_division_indicator_string()) | Q(notereference__division_id=division.id))
+        
+        # Filter down to the verse if necessary
+        if (verse_indicator):
+            notes = notes.filter(notereference__verse_indicator=verse_indicator)
+        
+    if (work_slug):
+        notes = notes.filter(notereference__work_title_slug=work_slug)
+        
+    if (search):
+        notes = notes.filter((Q(title__icontains=search) | Q(text__icontains=search)))
+
+    # Paginate the data
+    if (page):
+        start = page * count
+        end = start + count
+        
+        # Cut the results down to the page
+        notes = notes[start:end]
+        
+    notes_dict = []
+    for note in notes:
+        notes_dict.append(note_to_json(note))
+
+    # Return the content
+    return render_api_response(request, notes_dict)
+
+@must_be_authenticated
+def api_note(request, note_id):
+
+    # Get the note
+    try:
+        note = Note.objects.get(user=request.user, id=note_id)
+    except ObjectDoesNotExist:
+        # Handle the case where the note cannot be found (perhaps due to being for the wrong user)
+        return render_api_error(request,"No note found with the given ID", status=404)
+
+    # Return the content
+    return render_queryset_api_response(request, [note])
+
+@must_be_authenticated
+@must_be_post
+def api_note_edit(request, note_id=None):
+    # Get the note
+    if note_id is not None and len(note_id) > 0:
         try:
-            preference = UserPreference.objects.get(user=request.user, name=name)
-            preference.delete()
-            return render_api_response(request, {'message': 'Successfully deleted the preference'}, status=200)
+            note = Note.objects.get(user=request.user, id=note_id)
         except ObjectDoesNotExist:
-            return render_api_response(request, {'message': 'Preference did not exist'}, status=201)
+            # Handle the case where the note cannot be found (perhaps due to being for the wrong user)
+            return render_api_error(request,"No note found with the given ID", status=404)
+    else:
+        note = Note()
+        note.user = request.user
+
+    # Change the text and the title
+    if 'text' not in request.POST:
+        return render_api_error(request, "Argument 'text' was not provided")
+    else:
+        note.text = request.POST['text']
+    
+    if 'title' in request.POST:
+        note.title = request.POST['title']
+    else:
+        note.title = None
+    
+    # Save it
+    note.save()
+    
+    # Get the existing note reference
+    notes_count = NoteReference.objects.filter(note=note).count()
+    
+    # Create a new note reference
+    note_reference = None
+    
+    # Change the work
+    if 'work' in request.POST and notes_count == 0:
+        note_reference = NoteReference(note=note)
+
+        # Load the work
+        try:
+            work = Work.objects.get(title_slug=request.POST['work'])
+        except ObjectDoesNotExist:
+             return render_api_error(request, "Work with the given id does not exist")
+    
+        note_reference.work_id = work.id
+        note_reference.work_title_slug = work.title_slug
+
+        # Change the division
+        if 'division' in request.POST and notes_count == 0:
+
+            # Get the division information from the descriptor
+            division, verse_indicator = get_division_and_verse(work, *request.POST['division'].split("/"))
+        
+            note_reference.division_id = division.id
+            note_reference.division_full_descriptor = division.get_full_division_indicator_string()
+
+            if verse_indicator is not None:
+                verse = Verse.objects.get(indicator=verse_indicator, division=division)
+
+                if verse:
+                    note_reference.verse_id = verse.id
+                    note_reference.verse_indicator = verse.indicator
+                    
+        note_reference.save()
+    
+    # Return the created note
+    return render_api_response(request, note_to_json(note))
+
+@must_be_authenticated
+@must_be_post
+def api_note_delete(request, note_id):
+    # Get the note
+    try:
+        note = Note.objects.get(user=request.user, id=note_id)
+    except ObjectDoesNotExist:
+        # Handle the case where the note cannot be found (perhaps due to being for the wrong user)
+        return render_api_error(request,"No note found with the given ID", status=404)
+    
+    # Delete the note
+    note.delete()
+    
+    return render_api_response(request, {'message': 'Note deleted'}, status=200)
+
+@must_be_authenticated
+def api_export_notes(request):
+    notes = Note.objects.filter(user=request.user)
+
+    # Make the results the download
+    fieldnames = ['id', 'title', 'text', 'work', 'division', 'verse']
+    exporter = table_export.get_exporter('csv', fieldnames, title='Notes')
+
+    for note in notes:
+        note_references = NoteReference.objects.filter(note=note)[:1]
+        
+        row = {
+            'id': note.id,
+            'title': note.title,
+            'text':  note.text,
+        }
+        
+        if len(note_references) >= 1:
+            row['work'] = note_references[0].work_title_slug
+            row['division'] = note_references[0].division_full_descriptor
+            row['verse'] = note_references[0].verse_indicator
+        
+        exporter.add_row(row)  
+
+    # Stream the file
+    response = HttpResponse(exporter.getvalue(), content_type=exporter.content_type())
+    response['Content-Disposition'] = 'attachment; filename="%s"' % (
+        'notes' + exporter.file_extension())
+    return response

@@ -86,7 +86,7 @@ def perseus_xml_to_html5(value, language=None):
     """
     
     return transform_perseus_xml_to_html5(value, language, True).replace('<?xml version="1.0" encoding="utf-8"?>', "")
-        
+
 def transform_perseus_xml_to_html5(xml_text, language=None, return_as_str=False):
     """
     Converts the provided XML to HTML5 custom data attributes. Performs some changes specific to Perseus TEI documents.
@@ -130,6 +130,7 @@ def perseus_xml_to_epub_html5(value, arg=None):
 def transform_perseus_xml_to_epub_html5(xml_text, language=None, return_as_str=False, note_number_start=1):
     """
     Converts the provided XML to HTML5 custom data attributes. Performs some changes specific to Perseus TEI documents.
+    This function is unique to epub files in that it changes how footnotes are handled.
     """
     
     # Make the function to perform the transformation
@@ -147,7 +148,7 @@ def transform_perseus_xml_to_epub_html5(xml_text, language=None, return_as_str=F
     finally:
         converted_doc.unlink()
         del(converted_doc)
-    
+
 @register.filter(name='count_note_nodes')
 def count_note_nodes( value, previous_count=None ):
     
@@ -184,7 +185,7 @@ class NoteNumber(object):
         self.number = self.number + amount
         return self.number
     
-def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_icon=True, next_note_number=None ):
+def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_icon=True, next_note_number=None, note_prefix="Note" ):
     """
     Transform nodes to improve rendering. Specifically, this function will make note nodes able to be rendered with popovers.
     
@@ -193,6 +194,10 @@ def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_
     attrs -- The attributes of the given node
     parent -- The parent node that this node is going to be placed under
     dst_doc -- The document of the converted document (to add new nodes to)
+    use_popovers -- The document will be modified such that popovers will be placed in the document for the notes
+    use_icon -- An icon will be placed in the location where the notes will go.
+    next_note_number -- Provides the starting value for the notes (useful when the notes numbers need to continue from a prior value)
+    note_prefix -- Defines some text that appears before the footnote
     """
     
     # If the notes should be rendered with popovers
@@ -212,8 +217,9 @@ def transform_perseus_node( tag, attrs, parent, dst_doc, use_popovers=True, use_
             note_tag.setAttribute( "class", "label label-success note-tag" )
             note_tag.setAttribute( "id", identifier )
             
-            txt_node = dst_doc.createTextNode("Note")
-            note_tag.appendChild(txt_node)
+            if note_prefix is not None:
+                txt_node = dst_doc.createTextNode(note_prefix)
+                note_tag.appendChild(txt_node)
             
         # Add the attribute number so that it can be added to the title of the note
         for attr in attrs:

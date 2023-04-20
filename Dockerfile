@@ -1,4 +1,11 @@
 # This Docker image provides a way to run TextCritical.net within a container.
+# Below are some details about how it works:
+#    * This container will copy in the contents of ./src
+#    * The Django settings file is deployed from src/textcritical/docker_image_settings.py
+#    * The databases will need to be deployed locally:
+#          * db/library.sqlite
+#          * db/textcritical.sqlite
+#
 # To use this, first build the container:
 #
 #       docker build -t textcritical .
@@ -6,6 +13,10 @@
 # Next, run the server (on port 8080):
 #
 #       docker run -p 8080:8080 textcritical
+#
+# You will likely want to map the database files:
+#
+#       docker run -p 8080:8080/tcp -v /opt/textcritical/db:/db /textcritical
 #
 # If you need to operate the shell, do it this way:
 # 
