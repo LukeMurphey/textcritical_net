@@ -7,15 +7,13 @@ FROM python:3.7-slim
 RUN apt-get update && apt-get install -y imagemagick calibre ant git curl
 
 # Install node
-RUN curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
-RUN apt-get update
-RUN apt-get install -y nodejs
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+RUN apt install -y nodejs
 
 # Install yarn (but not "cmdtest")
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update
-RUN apt-get install -y yarn
+RUN apt-get update && apt-get install -y yarn
 
 # Change the cache bust value to invalidate the cache so that we get the latest repos
 ARG CACHEBUST=2
