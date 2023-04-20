@@ -23,7 +23,7 @@ import os
 from urllib.parse import urlencode
 
 from reader.templatetags.reader_extras import transform_perseus_text
-from reader.models import Work, WorkAlias, Division, Verse, Author, UserPreference, WikiArticle, WorkSource, Note
+from reader.models import Work, WorkAlias, Division, Verse, Author, UserPreference, WikiArticle, WorkSource, Note, NoteReference
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy, convert_xml_to_html5
@@ -31,7 +31,7 @@ from reader.utils import get_word_descriptions, get_lexicon_entries, table_expor
 from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
 from reader.bookcover import makeCoverImage
-from reader.utils.work_helpers import get_division_and_verse, get_work_page_info, get_chapter_for_division
+from reader.utils.work_helpers import get_division_and_verse, get_work_page_info, get_chapter_for_division, note_to_json, note_reference_to_json
 from reader.exporter.text import convert_verses_to_text
 
 # Try to import the ePubExport but be forgiving if the necessary dependencies do not exist
@@ -1247,7 +1247,7 @@ def api_notes(request):
         count = 10
         
     # Get the notes for the logged in user
-    notes = Note.objects.filter(user=request.user)#.values_list('id', 'title', 'text')
+    notes = Note.objects.filter(user=request.user)
 
     if (work_slug):
         work = Work.objects.get(title_slug=work_slug)
@@ -1257,14 +1257,14 @@ def api_notes(request):
         division, verse_indicator = get_division_and_verse(work, *division_descriptor.split("/"))
         
         # Find notes for the division
-        notes = notes.filter(Q(division_full_descriptor=division.get_full_division_indicator_string()) | Q(division_id=division.id))
+        notes = notes.filter(Q(notereference__division_full_descriptor=division.get_full_division_indicator_string()) | Q(notereference__division_id=division.id))
         
         # Filter down to the verse if necessary
         if (verse_indicator):
-            notes = notes.filter(verse_indicator=verse_indicator)
+            notes = notes.filter(notereference__verse_indicator=verse_indicator)
         
     if (work_slug):
-        notes = notes.filter(work_title_slug=work_slug)
+        notes = notes.filter(notereference__work_title_slug=work_slug)
         
     if (search):
         notes = notes.filter((Q(title__icontains=search) | Q(text__icontains=search)))
@@ -1277,8 +1277,12 @@ def api_notes(request):
         # Cut the results down to the page
         notes = notes[start:end]
         
+    notes_dict = []
+    for note in notes:
+        notes_dict.append(note_to_json(note))
+
     # Return the content
-    return render_queryset_api_response(request, notes)
+    return render_api_response(request, notes_dict)
 
 @must_be_authenticated
 def api_note(request, note_id):
@@ -1318,51 +1322,48 @@ def api_note_edit(request, note_id=None):
     else:
         note.title = None
     
-    # Change the verse
-    """
-    if 'verse' in request.POST:
-        # Load the Verse
-        try:
-            verse = Verse.objects.get(id=request.POST['verse'])
-        except ObjectDoesNotExist:
-             return render_api_error(request, "Verse with the given id does not exist")
+    # Save it
+    note.save()
     
-        note.verse = verse
-        note.division = note.verse.division
-        note.work = note.verse.division.work
-    """
+    # Get the existing note reference
+    notes_count = NoteReference.objects.filter(note=note).count()
     
-    # Change the workbui
-    if 'work' in request.POST and note.work_id is None:
+    # Create a new note reference
+    note_reference = None
+    
+    # Change the work
+    if 'work' in request.POST and notes_count == 0:
+        note_reference = NoteReference(note=note)
+
         # Load the work
         try:
             work = Work.objects.get(title_slug=request.POST['work'])
         except ObjectDoesNotExist:
              return render_api_error(request, "Work with the given id does not exist")
     
-        note.work_id = work.id
-        note.work_title_slug = work.title_slug
+        note_reference.work_id = work.id
+        note_reference.work_title_slug = work.title_slug
 
-    # Change the division
-    if 'division' in request.POST and note.division_id is None:
-        # Get the division information from the descriptor
-        division, verse_indicator = get_division_and_verse(work, *request.POST['division'].split("/"))
+        # Change the division
+        if 'division' in request.POST and notes_count == 0:
+
+            # Get the division information from the descriptor
+            division, verse_indicator = get_division_and_verse(work, *request.POST['division'].split("/"))
+        
+            note_reference.division_id = division.id
+            note_reference.division_full_descriptor = division.get_full_division_indicator_string()
+
+            if verse_indicator is not None:
+                verse = Verse.objects.get(indicator=verse_indicator, division=division)
+
+                if verse:
+                    note_reference.verse_id = verse.id
+                    note_reference.verse_indicator = verse.indicator
+                    
+        note_reference.save()
     
-        note.division_id = division.id
-        note.division_full_descriptor = division.get_full_division_indicator_string()
-
-        if verse_indicator is not None:
-            verse = Verse.objects.get(indicator=verse_indicator, division=division)
-
-            if verse:
-                note.verse_id = verse.id
-                note.verse_indicator = verse.indicator
-    
-    # Save it
-    note.save()
-
     # Return the created note
-    return render_queryset_api_response(request, [note])
+    return render_api_response(request, note_to_json(note))
 
 @must_be_authenticated
 @must_be_post
@@ -1388,14 +1389,20 @@ def api_export_notes(request):
     exporter = table_export.get_exporter('csv', fieldnames, title='Notes')
 
     for note in notes:
-        exporter.add_row({
+        note_references = NoteReference.objects.filter(note=note)[:1]
+        
+        row = {
             'id': note.id,
             'title': note.title,
             'text':  note.text,
-            'work': note.work_title_slug,
-            'division': note.division_full_descriptor,
-            'verse': note.verse_indicator,
-        })  
+        }
+        
+        if len(note_references) >= 1:
+            row['work'] = note_references[0].work_title_slug
+            row['division'] = note_references[0].division_full_descriptor
+            row['verse'] = note_references[0].verse_indicator
+        
+        exporter.add_row(row)  
 
     # Stream the file
     response = HttpResponse(exporter.getvalue(), content_type=exporter.content_type())

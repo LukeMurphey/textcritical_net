@@ -862,14 +862,6 @@ class Note(models.Model):
     """
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    work_id = models.IntegerField(null=True)
-    work_title_slug = models.SlugField(null=True)
-
-    division_id = models.IntegerField(null=True)
-    division_full_descriptor = models.CharField(max_length=100, null=True)
-
-    verse_id = models.IntegerField(null=True)
-    verse_indicator = models.CharField(max_length=10, null=True)
 
     title = models.CharField(max_length=200, db_index=True)
     text = models.TextField()
@@ -877,7 +869,22 @@ class Note(models.Model):
     
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     date_updated = models.DateTimeField(auto_now=True, null=True)
+    
+    def __str__(self):
+        return str(self.title)
+    
+class NoteReference(models.Model):
+    note = models.ForeignKey(Note, on_delete=models.CASCADE)
+    
+    work_id = models.IntegerField(null=True)
+    work_title_slug = models.SlugField(null=True)
+    
+    division_id = models.IntegerField(null=True)
+    division_full_descriptor = models.CharField(max_length=100, null=True)
 
+    verse_id = models.IntegerField(null=True)
+    verse_indicator = models.CharField(max_length=10, null=True)
+    
     @property
     def work(self):
         return Work.objects.get(self.work_id)
@@ -895,9 +902,6 @@ class Note(models.Model):
             return Verse.objects.get(self.verse_id)
         
         return None
-    
-    def __str__(self):
-        return str(self.title)
 
 @receiver(post_save, sender=Work)
 def work_alias_create(sender, instance, signal, created, **kwargs):

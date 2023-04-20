@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, render
 from django.template import loader
 from django.core.cache import cache
 from django.http import Http404
-from reader.models import Division, WorkAlias, Verse, RelatedWork
+from reader.models import Division, WorkAlias, Verse, RelatedWork, NoteReference
 
 def get_chapter_for_division(division):
     """
@@ -542,4 +542,42 @@ def author_to_json(author):
             'description': author.description
         }
     
+    return None
+
+def note_reference_to_json(note_reference):
+    if note_reference:
+        return {
+            'id': note_reference.id,
+            'work_id': note_reference.work_id,
+            'work_title_slug': note_reference.work_title_slug,
+            'division_id': note_reference.division_id,
+            'division_full_descriptor': note_reference.division_full_descriptor,
+            'verse_id': note_reference.verse_id,
+            'verse_indicator': note_reference.verse_indicator
+        }
+        
+    return None
+
+def note_to_json(note, get_references=True):
+    if note:
+        note_dict =  {
+            'id': note.id,
+            'title' : note.title,
+            'text' : note.text,
+            'public': note.public,
+            'date_created': str(note.date_created),
+            'date_updated': str(note.date_updated)
+        }
+        
+        if get_references:
+            note_references = NoteReference.objects.filter(note=note)
+            
+            note_refs = []
+            for note_ref in note_references:
+                note_refs.append(note_reference_to_json(note_ref))
+                
+            note_dict['references'] = note_refs
+        
+        return note_dict
+        
     return None
