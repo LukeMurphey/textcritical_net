@@ -7,6 +7,7 @@ FROM python:3.7-slim
 RUN apt-get update && apt-get install -y imagemagick calibre ant git curl
 
 # Install node
+# See https://askubuntu.com/questions/49390/how-do-i-install-the-latest-version-of-node-js
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt install -y nodejs
 
