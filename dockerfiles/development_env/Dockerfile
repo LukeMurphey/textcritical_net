@@ -51,4 +51,5 @@ EXPOSE 8081
 
 # Start the server
 COPY entrypoint.sh /git/textcritical_net/dockerfiles/development_env/entrypoint.sh
+RUN chmod 755 /git/textcritical_net/dockerfiles/development_env/entrypoint.sh
 ENTRYPOINT ["/git/textcritical_net/dockerfiles/development_env/entrypoint.sh"]
