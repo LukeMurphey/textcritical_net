@@ -887,12 +887,14 @@ class NoteReference(models.Model):
     
     @property
     def work(self):
-        return Work.objects.get(self.work_id)
+        if self.work_id is not None:
+            print(self.work_id)
+            return Work.objects.get(pk=self.work_id)
     
     @property
     def division(self):
         if self.division_id is not None:
-            return Division.objects.get(self.division_id)
+            return Division.objects.get(pk=self.division_id)
 
         return None
 

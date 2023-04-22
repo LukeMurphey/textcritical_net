@@ -553,7 +553,9 @@ def note_reference_to_json(note_reference):
             'division_id': note_reference.division_id,
             'division_full_descriptor': note_reference.division_full_descriptor,
             'verse_id': note_reference.verse_id,
-            'verse_indicator': note_reference.verse_indicator
+            'verse_indicator': note_reference.verse_indicator,
+            'work': work_to_json(note_reference.work),
+            'division': division_to_json(note_reference.division),
         }
         
     return None
