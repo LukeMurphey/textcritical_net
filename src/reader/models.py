@@ -893,14 +893,14 @@ class NoteReference(models.Model):
     @property
     def division(self):
         if self.division_id is not None:
-            return Division.objects.get(pk=self.division_id)
+            return Division.objects.get(id=self.division_id)
 
         return None
 
     @property
     def verse(self):
         if self.verse_id is not None:
-            return Verse.objects.get(self.verse_id)
+            return Verse.objects.get(id=self.verse_id)
         
         return None
 
