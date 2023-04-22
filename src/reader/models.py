@@ -888,7 +888,6 @@ class NoteReference(models.Model):
     @property
     def work(self):
         if self.work_id is not None:
-            print(self.work_id)
             return Work.objects.get(pk=self.work_id)
     
     @property
