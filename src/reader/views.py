@@ -1311,16 +1311,16 @@ def api_note_edit(request, note_id=None):
         note = Note()
         note.user = request.user
 
-    # Change the text and the title
+    # Get the text and the title
     if 'text' not in request.POST:
-        return render_api_error(request, "Argument 'text' was not provided")
+        return render_api_error(request, "Note is missing the 'text' field")
     else:
         note.text = request.POST['text']
     
-    if 'title' in request.POST:
-        note.title = request.POST['title']
+    if 'title' not in request.POST:
+        return render_api_error(request, "Note is missing the 'title' field")
     else:
-        note.title = None
+        note.title = request.POST['title']
     
     # Save it
     note.save()
@@ -1349,12 +1349,18 @@ def api_note_edit(request, note_id=None):
 
             # Get the division information from the descriptor
             division, verse_indicator = get_division_and_verse(work, *request.POST['division'].split("/"))
+            
+            if division is None:
+                return render_api_error(request, "Division with the given identifier does not exist in this work")
         
             note_reference.division_id = division.id
             note_reference.division_full_descriptor = division.get_full_division_indicator_string()
 
             if verse_indicator is not None:
                 verse = Verse.objects.get(indicator=verse_indicator, division=division)
+                
+                if verse is None:
+                    return render_api_error(request, "Verse with the given identifier does not exist in this work and division")
 
                 if verse:
                     note_reference.verse_id = verse.id
