@@ -28,6 +28,7 @@ from reader.models import Work, WorkAlias, Division, Verse, Author, UserPreferen
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy, convert_xml_to_html5
+from reader.utils.reference_resolver import resolve_division_reference
 from reader.utils import get_word_descriptions, get_lexicon_entries, table_export
 from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
@@ -874,55 +875,6 @@ def api_work_text(request,  title=None, division_0=None, division_1=None, divisi
         verse = Verse.objects.get(indicator=verse_to_highlight, division=division)
         return render_api_response(request, convert_verses_to_text([verse], chapter), status=210)
 
-def assign_divisions(ref_components):
-
-    division_0, division_1, division_2, division_3, division_4 = None, None, None, None, None
-
-    if len(ref_components) >= 5:
-        division_0, division_1, division_2, division_3, division_4 = ref_components[:5]
-    elif len(ref_components) == 4:
-        division_0, division_1, division_2, division_3 = ref_components
-    elif len(ref_components) == 3:
-        division_0, division_1, division_2 = ref_components
-    elif len(ref_components) == 2:
-        division_0, division_1 = ref_components
-    elif len(ref_components) == 1:
-        division_0 = ref_components[0]
-
-    return division_0, division_1, division_2, division_3, division_4
-
-
-def swap_slugs(divisions_with_spaces, *args):
-
-    results = []
-
-    for arg in args:
-        if arg is not None:
-            for d in divisions_with_spaces:
-                arg = arg.replace(slugify(d['descriptor']), d['descriptor'])
-
-        results.append(arg)
-
-    return results
-
-
-def parse_reference_and_get_division_and_verse(regex, escaped_ref, work, divisions_with_spaces):
-
-    # Try parsing the reference normally
-    division_0, division_1, division_2, division_3, division_4 = assign_divisions(
-        re.split(regex, escaped_ref))
-
-    # Swap back the slugs
-    division_0, division_1, division_2, division_3, division_4 = swap_slugs(
-        divisions_with_spaces, division_0, division_1, division_2, division_3, division_4)
-
-    # Try to resolve the division
-    division, verse_to_highlight = get_division_and_verse(
-        work, division_0, division_1, division_2, division_3, division_4)
-
-    return division, verse_to_highlight, division_0, division_1, division_2, division_3, division_4
-
-
 def get_work_info(title):
 
     # Try to get the work
@@ -1109,39 +1061,7 @@ def api_resolve_reference(request, work=None, ref=None):
     # Get the work that is being referred to
     work_alias = get_object_or_404(WorkAlias, title_slug=work)
 
-    # Get the division names that have spaces in them
-    divisions_with_spaces = Division.objects.filter(
-        work=work_alias.work, descriptor__contains=' ').values('descriptor')
-
-    # Start making the arguments the we need for making the URL
-    args = [work_alias.work.title_slug]
-
-    # Swap out the titles of the divisions with spaces in the name with the title slug (we will swap them back when we are done)
-    escaped_ref = ref + ''
-
-    for d in divisions_with_spaces:
-        escaped_ref = escaped_ref.replace(
-            d['descriptor'], slugify(d['descriptor']))
-
-    # Try to resolve the division
-    division, verse_to_highlight, division_0, division_1, division_2, division_3, division_4 = parse_reference_and_get_division_and_verse(
-        '[ .:]+', escaped_ref, work_alias.work, divisions_with_spaces)
-
-    # If parsing it normally didn't parse right, then try without using the period as a separator
-    if division is None and division_0 is not None:
-        division, verse_to_highlight, division_0, division_1, division_2, division_3, division_4 = parse_reference_and_get_division_and_verse(
-            '[ :]+', escaped_ref, work_alias.work, divisions_with_spaces)
-
-    l = [division_0, division_1, division_2, division_3, division_4]
-
-    args.extend([x for x in l if x is not None])
-
-    # Get the full reference of the divisions
-    divisions = [x for x in l if x is not None]
-
-    # Drop the last division ID since this is the verse if one was found
-    if verse_to_highlight:
-        divisions = divisions[:-1]
+    division, divisions, verse_to_highlight, url = resolve_division_reference(work_alias.work, ref)
 
     # Make the response
     try:
@@ -1151,7 +1071,7 @@ def api_resolve_reference(request, work=None, ref=None):
             response_code = 404
 
         data = {
-            'url': reverse('read_work', args=args),
+            'url': url,
             'verse_to_highlight': verse_to_highlight,
             'divisions': divisions,
             'work_title': work_alias.work.title,
@@ -1401,7 +1321,7 @@ def api_export_notes(request):
     notes = Note.objects.filter(user=request.user)
 
     # Make the results the download
-    fieldnames = ['id', 'title', 'text', 'work', 'division', 'verse']
+    fieldnames = ['id', 'title', 'text', 'work', 'division']
     exporter = table_export.get_exporter('csv', fieldnames, title='Notes')
 
     for note in notes:
@@ -1415,8 +1335,7 @@ def api_export_notes(request):
         
         if len(note_references) >= 1:
             row['work'] = note_references[0].work_title_slug
-            row['division'] = note_references[0].division_full_descriptor
-            row['verse'] = note_references[0].verse_indicator
+            row['division'] = note_references[0].division.get_division_description(verse=note_references[0].verse)
         
         exporter.add_row(row)  
 
