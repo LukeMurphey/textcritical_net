@@ -14,6 +14,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from functools import cmp_to_key
 from django.contrib.sites.models import Site
 from django.db.models import Q
+from django.db import transaction
 
 import json
 import logging
@@ -1321,52 +1322,61 @@ def api_note_edit(request, note_id=None):
         return render_api_error(request, "Note is missing the 'title' field")
     else:
         note.title = request.POST['title']
-    
-    # Save it
-    note.save()
-    
-    # Get the existing note reference
-    notes_count = NoteReference.objects.filter(note=note).count()
-    
-    # Create a new note reference
-    note_reference = None
-    
-    # Change the work
-    if 'work' in request.POST and notes_count == 0:
-        note_reference = NoteReference(note=note)
-
-        # Load the work
-        try:
-            work = Work.objects.get(title_slug=request.POST['work'])
-        except ObjectDoesNotExist:
-             return render_api_error(request, "Work with the given id does not exist")
-    
-        note_reference.work_id = work.id
-        note_reference.work_title_slug = work.title_slug
-
-        # Change the division
-        if 'division' in request.POST and notes_count == 0:
-
-            # Get the division information from the descriptor
-            division, verse_indicator = get_division_and_verse(work, *request.POST['division'].split("/"))
-            
-            if division is None:
-                return render_api_error(request, "Division with the given identifier does not exist in this work")
         
-            note_reference.division_id = division.id
-            note_reference.division_full_descriptor = division.get_full_division_indicator_string()
+    # Make sure the note doesn't already exist
+    if Note.objects.filter(user=request.user, text=note.text).exists():
+        return render_api_error(request, "A note already exists with this content")
+    
+    try:
+        with transaction.atomic():
+        
+            # Save it
+            note.save()
+            
+            # Get the existing note reference
+            notes_count = NoteReference.objects.filter(note=note).count()
+            
+            # Create a new note reference
+            note_reference = None
+            
+            # Change the work
+            if 'work' in request.POST and notes_count == 0:
+                note_reference = NoteReference(note=note)
 
-            if verse_indicator is not None:
-                verse = Verse.objects.get(indicator=verse_indicator, division=division)
-                
-                if verse is None:
-                    return render_api_error(request, "Verse with the given identifier does not exist in this work and division")
+                # Load the work
+                try:
+                    work = Work.objects.get(title_slug=request.POST['work'])
+                except ObjectDoesNotExist:
+                    raise Exception("Work with the given id does not exist")
+            
+                note_reference.work_id = work.id
+                note_reference.work_title_slug = work.title_slug
 
-                if verse:
-                    note_reference.verse_id = verse.id
-                    note_reference.verse_indicator = verse.indicator
+                # Change the division
+                if 'division' in request.POST and notes_count == 0:
+
+                    # Get the division information from the descriptor
+                    division, verse_indicator = get_division_and_verse(work, *request.POST['division'].split("/"))
                     
-        note_reference.save()
+                    if division is None:
+                        raise Exception("Division with the given identifier does not exist in this work")
+                
+                    note_reference.division_id = division.id
+                    note_reference.division_full_descriptor = division.get_full_division_indicator_string()
+
+                    if verse_indicator is not None:
+                        verse = Verse.objects.get(indicator=verse_indicator, division=division)
+                        
+                        if verse is None:
+                            raise Exception("Verse with the given identifier does not exist in this work and division")
+
+                        if verse:
+                            note_reference.verse_id = verse.id
+                            note_reference.verse_indicator = verse.indicator
+                            
+                note_reference.save()
+    except Exception as error:
+        return render_api_error(request, str(error))
     
     # Return the created note
     return render_api_response(request, note_to_json(note))
