@@ -1345,7 +1345,7 @@ def api_export_notes(request):
     exporter = table_export.get_exporter('csv', fieldnames, title='Notes')
 
     for note in notes:
-        note_references = NoteReference.objects.filter(note=note)[:1]
+        note_references = NoteReference.objects.filter(note=note)
         
         row = {
             'id': note.id,
@@ -1355,7 +1355,13 @@ def api_export_notes(request):
         
         if len(note_references) >= 1:
             row['work'] = note_references[0].work_title_slug
-            row['reference'] = note_references[0].division.get_division_description(verse=note_references[0].verse)
+
+        reference_strings = []
+
+        for note_reference in note_references:
+            reference_strings.append(note_reference.division.get_division_description(verse=note_reference.verse))
+
+        row['reference'] = ", ".join(reference_strings)
         
         exporter.add_row(row)  
 
