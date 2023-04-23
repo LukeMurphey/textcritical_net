@@ -1221,6 +1221,9 @@ def api_note(request, note_id):
 @must_be_authenticated
 @must_be_post
 def api_note_edit(request, note_id=None):
+    # Determine if we ought to be forgiving and allow some things in the input that may not be completely what we expect
+    be_forgiving = 'be_forgiving' in request.POST
+    
     # Get the note
     if note_id is not None and len(note_id) > 0:
         try:
@@ -1261,40 +1264,57 @@ def api_note_edit(request, note_id=None):
             
             # Change the work
             if 'work' in request.POST and notes_count == 0:
-                note_reference = NoteReference(note=note)
 
                 # Load the work
                 try:
-                    work = Work.objects.get(title_slug=request.POST['work'])
+                    work = Work.objects.get(Q(title_slug=request.POST['work']) | Q(title=request.POST['work']))
                 except ObjectDoesNotExist:
                     raise Exception("Work with the given id does not exist")
-            
-                note_reference.work_id = work.id
-                note_reference.work_title_slug = work.title_slug
 
                 # Change the division
                 if 'division' in request.POST and notes_count == 0:
-
-                    # Get the division information from the descriptor
-                    division, verse_indicator = get_division_and_verse(work, *request.POST['division'].split("/"))
                     
-                    if division is None:
-                        raise Exception("Division with the given identifier does not exist in this work")
-                
-                    note_reference.division_id = division.id
-                    note_reference.division_full_descriptor = division.get_full_division_indicator_string()
+                    references = request.POST['division'].split(",")
 
-                    if verse_indicator is not None:
-                        verse = Verse.objects.get(indicator=verse_indicator, division=division)
+                    for reference in references:
+                        reference = reference.strip()
                         
-                        if verse is None:
-                            raise Exception("Verse with the given identifier does not exist in this work and division")
-
-                        if verse:
-                            note_reference.verse_id = verse.id
-                            note_reference.verse_indicator = verse.indicator
+                        # Create the note reference
+                        note_reference = NoteReference(note=note, work_id=work.id, work_title_slug = work.title_slug)
+                        
+                        # Strip off the range if necessary
+                        if be_forgiving:
+                            ends_with_range_match = re.search(r'(.*)-[0-9]+$', reference, flags=re.IGNORECASE)
                             
-                note_reference.save()
+                            if ends_with_range_match:
+                                reference = ends_with_range_match.group(1)
+                        
+                        # Try to resolve the reference based on the name (i.e. "1 John 1:1")
+                        division, division_indicators, verse_indicator, url_path = resolve_division_reference(work, reference.strip())
+
+                        # Try to get the division information from the descriptor  (i.e. "1 John/1/1")
+                        if division is None:
+                            division, verse_indicator = get_division_and_verse(work, *reference.split("/"))
+                        
+                        if division is None:
+                            raise Exception("Division with the given identifier does not exist in this work")
+                    
+                        note_reference.division_id = division.id
+                        note_reference.division_full_descriptor = division.get_full_division_indicator_string()
+
+                        if verse_indicator is not None:
+                            verse = Verse.objects.get(indicator=verse_indicator, division=division)
+                            
+                            if verse is None:
+                                raise Exception("Verse with the given identifier does not exist in this work and division")
+
+                            if verse:
+                                note_reference.verse_id = verse.id
+                                note_reference.verse_indicator = verse.indicator
+                        
+                        # Save the note reference
+                        note_reference.save()
+
     except Exception as error:
         return render_api_error(request, str(error))
     
@@ -1321,7 +1341,7 @@ def api_export_notes(request):
     notes = Note.objects.filter(user=request.user)
 
     # Make the results the download
-    fieldnames = ['id', 'title', 'text', 'work', 'division']
+    fieldnames = ['id', 'title', 'text', 'work', 'reference']
     exporter = table_export.get_exporter('csv', fieldnames, title='Notes')
 
     for note in notes:
@@ -1335,7 +1355,7 @@ def api_export_notes(request):
         
         if len(note_references) >= 1:
             row['work'] = note_references[0].work_title_slug
-            row['division'] = note_references[0].division.get_division_description(verse=note_references[0].verse)
+            row['reference'] = note_references[0].division.get_division_description(verse=note_references[0].verse)
         
         exporter.add_row(row)  
 
