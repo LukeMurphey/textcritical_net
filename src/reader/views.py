@@ -1222,6 +1222,11 @@ def api_note(request, note_id):
 @must_be_post
 def api_note_edit(request, note_id=None):
     # Determine if we ought to be forgiving and allow some things in the input that may not be completely what we expect
+    # Specifically, the be_forgiving option changes the behavior such that:
+    #    1. We will attempt to do a lookup for the division based on its human-readable descriptors
+    #       (e.g. "John 1:1" will be accepted even though it ought to be "John/1/1")
+    #    2. We will strip off verse ranges to increase the liklihood we get a match
+    #       (i.e. "John 1:1-4" will match "John 1:1")
     be_forgiving = 'be_forgiving' in request.GET
     
     # Get the note
@@ -1289,12 +1294,19 @@ def api_note_edit(request, note_id=None):
                             if ends_with_range_match:
                                 reference = ends_with_range_match.group(1)
                         
-                        # Try to resolve the reference based on the name (i.e. "1 John 1:1")
-                        division, division_indicators, verse_indicator, url_path = resolve_division_reference(work, reference.strip())
-
                         # Try to get the division information from the descriptor  (i.e. "1 John/1/1")
-                        if division is None:
+                        try:
                             division, verse_indicator = get_division_and_verse(work, *reference.split("/"))
+                        except ObjectDoesNotExist:
+                            raise Exception("Division with the given identifier does not exist in this work")
+                        
+                        if division is None and be_forgiving:
+                            # Try to resolve the reference based on the name (i.e. "1 John 1:1")
+                            try:
+                                division, division_indicators, verse_indicator, url_path = resolve_division_reference(work, reference.strip())
+                            except ObjectDoesNotExist:
+                                # We couldn't find a match, we will try again in the next step
+                                pass
                         
                         if division is None:
                             raise Exception("Division with the given identifier does not exist in this work")
@@ -1303,10 +1315,10 @@ def api_note_edit(request, note_id=None):
                         note_reference.division_full_descriptor = division.get_full_division_indicator_string()
 
                         if verse_indicator is not None:
-                            verse = Verse.objects.get(indicator=verse_indicator, division=division)
-                            
-                            if verse is None:
-                                raise Exception("Verse with the given identifier does not exist in this work and division")
+                            try:
+                                verse = Verse.objects.get(indicator=verse_indicator, division=division)
+                            except ObjectDoesNotExist:
+                                 raise Exception("Verse with the given identifier does not exist in this work and division")
 
                             if verse:
                                 note_reference.verse_id = verse.id
