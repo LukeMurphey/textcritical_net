@@ -1222,7 +1222,7 @@ def api_note(request, note_id):
 @must_be_post
 def api_note_edit(request, note_id=None):
     # Determine if we ought to be forgiving and allow some things in the input that may not be completely what we expect
-    be_forgiving = 'be_forgiving' in request.POST
+    be_forgiving = 'be_forgiving' in request.GET
     
     # Get the note
     if note_id is not None and len(note_id) > 0:
