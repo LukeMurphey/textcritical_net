@@ -24,7 +24,7 @@ import os
 from urllib.parse import urlencode
 
 from reader.templatetags.reader_extras import transform_perseus_text
-from reader.models import Work, WorkAlias, Division, Verse, Author, UserPreference, WikiArticle, WorkSource, Note, NoteReference
+from reader.models import Work, WorkAlias, Verse, Author, UserPreference, WikiArticle, WorkSource, Note, NoteReference, RelatedWork
 from reader.language_tools.greek import Greek
 from reader import language_tools
 from reader.shortcuts import string_limiter, uniquefy, convert_xml_to_html5
@@ -1167,6 +1167,9 @@ def api_notes(request):
     else:
         count = 10
         
+    # If "include_related" is set, then include the notes for works that are related to this work
+    include_notes_for_related_works = 'include_related' in request.GET
+        
     # Get the notes for the logged in user
     notes = Note.objects.filter(user=request.user)
 
@@ -1185,7 +1188,15 @@ def api_notes(request):
             notes = notes.filter(notereference__verse_indicator=verse_indicator)
         
     if (work_slug):
-        notes = notes.filter(notereference__work_title_slug=work_slug)
+        works_filter = Q(notereference__work_title_slug=work_slug)
+        
+        if include_notes_for_related_works:
+            related_works = RelatedWork.objects.filter(work=work)
+
+            for related_work in related_works:
+                works_filter = works_filter | Q(notereference__work_title_slug=related_work.related_work.title_slug)
+            
+        notes = notes.filter(works_filter)
         
     if (search):
         notes = notes.filter((Q(title__icontains=search) | Q(text__icontains=search)))
