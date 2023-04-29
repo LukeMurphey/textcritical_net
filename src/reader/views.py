@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import NoReverseMatch
 from django.core import serializers
 from django.urls import reverse
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from wsgiref.util import FileWrapper
 from django.template.context import RequestContext
 from django.template import loader, TemplateDoesNotExist
@@ -13,7 +13,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from functools import cmp_to_key
 from django.contrib.sites.models import Site
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.db import transaction
 
 import json
@@ -1181,6 +1181,42 @@ def api_notes(request):
 
     # Return the content
     return render_api_response(request, notes_dict)
+
+
+@must_be_authenticated
+def api_notes_metadata(request):
+
+    # Get the entries to search for
+    if 'division' in request.GET:
+        division_descriptor = request.GET['division']
+    else:
+        division_descriptor = None
+        
+    if 'work' in request.GET:
+        work_slug = request.GET['work']
+    else:
+        work_slug = None
+        
+    # If "include_related" is set, then include the notes for works that are related to this work
+    include_notes_for_related_works = 'include_related' in request.GET
+    
+    # Get the related notes
+    notes = get_related_notes(request.user, work_slug, division_descriptor,  include_notes_for_related_works=include_notes_for_related_works)
+    
+    # Aggregate the data down to the verse indicators
+    notes_meta_data = notes.values("notereference__verse_indicator").annotate(Count("notereference__verse_indicator"))
+    
+    # Create the output
+    output_dict = []
+    
+    for metadata in notes_meta_data:
+        output_dict.append({
+            'verse_indicator': metadata['notereference__verse_indicator'],
+            'count': metadata['notereference__verse_indicator__count']
+        })
+    
+    # Return the content
+    return render_api_response(request, output_dict)
 
 @must_be_authenticated
 def api_note(request, note_id):

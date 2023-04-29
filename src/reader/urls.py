@@ -164,5 +164,6 @@ urlpatterns = [
         views.api_note, name='api_note'),
     url(r'^api/export_notes/?$',
         views.api_export_notes, name='api_export_notes'),
-
+    url(r'^api/notes_metadata/?$',
+        views.api_notes_metadata, name='api_notes_metadata'),
 ]
