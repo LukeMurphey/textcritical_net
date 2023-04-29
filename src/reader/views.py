@@ -1307,16 +1307,21 @@ def api_note_edit(request, note_id=None):
                             if ends_with_range_match:
                                 reference = ends_with_range_match.group(1)
                         
-                        # Try to get the division information from the descriptor  (i.e. "1 John/1/1")
-                        try:
-                            division, verse_indicator = get_division_and_verse(work, *reference.split("/"))
-                        except ObjectDoesNotExist:
-                            raise Exception("Division with the given identifier does not exist in this work")
+                        division = None
+                        verse_indicator = None
                         
-                        if division is None and be_forgiving:
+                        if not be_forgiving:
+                            # Try to get the division information from the descriptor  (i.e. "1 John/1/1")
+                            try:
+                                division, verse_indicator = get_division_and_verse(work, *reference.split("/"))
+                            except ObjectDoesNotExist:
+                                raise Exception("Division with the given identifier does not exist in this work")
+                        
+                        if be_forgiving:
                             # Try to resolve the reference based on the name (i.e. "1 John 1:1")
                             try:
                                 division, division_indicators, verse_indicator, url_path = resolve_division_reference(work, reference.strip())
+                                
                             except ObjectDoesNotExist:
                                 # We couldn't find a match, we will try again in the next step
                                 pass
