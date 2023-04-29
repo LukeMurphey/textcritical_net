@@ -33,7 +33,7 @@ from reader.utils import get_word_descriptions, get_lexicon_entries, table_expor
 from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
 from reader.bookcover import makeCoverImage
-from reader.utils.work_helpers import get_division_and_verse, get_work_page_info, get_chapter_for_division, note_to_json, note_reference_to_json
+from reader.utils.work_helpers import get_division_and_verse, get_work_page_info, get_chapter_for_division, note_to_json, get_division
 from reader.exporter.text import convert_verses_to_text
 
 # Try to import the ePubExport but be forgiving if the necessary dependencies do not exist
@@ -1172,22 +1172,11 @@ def api_notes(request):
         
     # Get the notes for the logged in user
     notes = Note.objects.filter(user=request.user)
-
+    related_works = None
+    
     if (work_slug):
         work = Work.objects.get(title_slug=work_slug)
-
-    if (division_descriptor and work):
-        # Get the division requested
-        division, verse_indicator = get_division_and_verse(work, *division_descriptor.split("/"))
         
-        # Find notes for the division
-        notes = notes.filter(Q(notereference__division_full_descriptor=division.get_full_division_indicator_string()) | Q(notereference__division_id=division.id))
-        
-        # Filter down to the verse if necessary
-        if (verse_indicator):
-            notes = notes.filter(notereference__verse_indicator=verse_indicator)
-        
-    if (work_slug):
         works_filter = Q(notereference__work_title_slug=work_slug)
         
         if include_notes_for_related_works:
@@ -1197,6 +1186,29 @@ def api_notes(request):
                 works_filter = works_filter | Q(notereference__work_title_slug=related_work.related_work.title_slug)
             
         notes = notes.filter(works_filter)
+        
+    if (division_descriptor and work):
+        # Get the division requested
+        division, verse_indicator = get_division_and_verse(work, *division_descriptor.split("/"))
+        
+        division_filter = Q(notereference__division_full_descriptor=division.get_full_division_indicator_string()) | Q(notereference__division_id=division.id)
+        
+        # Get the divisions for the related works
+        if related_works:
+            
+            for related_work in related_works:
+                related_division = get_division(related_work.related_work, *division.get_division_indicators())
+                
+                # Related division found, add the filter
+                if related_division:
+                    division_filter = division_filter | Q(notereference__division_full_descriptor=related_division.get_full_division_indicator_string()) | Q(notereference__division_id=related_division.id)
+
+        # Find notes for the division
+        notes = notes.filter(division_filter)
+        
+        # Filter down to the verse if necessary
+        if (verse_indicator):
+            notes = notes.filter(notereference__verse_indicator=verse_indicator)
         
     if (search):
         notes = notes.filter((Q(title__icontains=search) | Q(text__icontains=search)))
