@@ -1174,6 +1174,10 @@ def api_notes(request):
     # Get the related notes
     notes = get_related_notes(request.user, work_slug, division_descriptor, search, page, count, include_notes_for_related_works)
     
+    # The query set can produce multiple entries of a note instance due to the way the joins work
+    # This will eliminate them
+    notes = notes.annotate(Count('id', distinct=True))
+    
     # Convert the notes to a dictionary
     notes_dict = []
     for note in notes:
