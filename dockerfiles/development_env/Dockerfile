@@ -17,7 +17,7 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources
 RUN apt-get update && apt-get install -y yarn
 
 # Change the cache bust value to invalidate the cache so that we get the latest repos
-ARG CACHEBUST=2
+ARG CACHEBUST=4
 RUN echo "$CACHEBUST"
 
 # Get the repos
@@ -50,6 +50,5 @@ EXPOSE 8080
 EXPOSE 8081
 
 # Start the server
-COPY entrypoint.sh /git/textcritical_net/dockerfiles/development_env/entrypoint.sh
 RUN chmod 755 /git/textcritical_net/dockerfiles/development_env/entrypoint.sh
 ENTRYPOINT ["/git/textcritical_net/dockerfiles/development_env/entrypoint.sh"]
