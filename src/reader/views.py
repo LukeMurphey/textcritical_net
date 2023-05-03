@@ -1269,7 +1269,7 @@ def api_note_edit(request, note_id=None):
         note.title = request.POST['title']
         
     # Make sure the note doesn't already exist
-    if Note.objects.filter(user=request.user, text=note.text).exists():
+    if Note.objects.filter(user=request.user, text=note.text, title=note.title).exists():
         return render_api_error(request, "A note already exists with this content")
     
     try:
