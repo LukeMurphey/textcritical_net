@@ -1,4 +1,7 @@
 #!/bin/sh
+
+#Note: this file must use LF, not CR-LF
+
 cd /usr/src/app
 mkdir -p /usr/src/app/var/log/
 
