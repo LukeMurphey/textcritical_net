@@ -516,6 +516,27 @@
 	</target>
 
 	<!-- ================================= 
+          target: docker_run_i
+         ================================= -->
+	<target name="docker_run_i" description="Run the docker image interactively">
+		<property name="install_directory" location="."/>
+		<exec executable="docker">
+			<arg value="run"/>
+			<arg value="--name"/>
+			<arg value="textcritical"/>
+			<arg value="--rm"/>
+			<arg value="-i"/>
+			<arg value="-p"/>
+			<arg value="8080:8080/tcp"/>
+			<arg value="-v"/>
+			<arg value="${install_directory}/var:/db"/>
+			<arg value="-v"/>
+			<arg value="${install_directory}/var:/usr/src/app/var"/>
+			<arg value="${value.docker.username}/${value.docker.name}"/>
+		</exec>
+	</target>
+
+	<!-- ================================= 
           target: docker_test
          ================================= -->
 	<target name="docker_test" description="Run the tests in the docker image" depends="docker_running_id">
