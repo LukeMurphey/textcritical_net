@@ -101,6 +101,11 @@ USE_CDN = False
 USE_MINIFIED = False
 INCLUDE_SHARING_BUTTONS = False
 
+# This is added in order to support reverse proxies so that build_absolute_uri uses the correct
+# domain
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Set up logging. Below is a good start (though you may have to change the paths).
 LOGGING = {
     'version': 1,
