@@ -84,9 +84,9 @@ if not DEBUG:
 MEDIA_URL = '/media/'
 
 # Define the absolute path to the media on the file-system
-MEDIA_ROOT = '/git/textcritical_net/media/'
+MEDIA_ROOT = '/git/textcritical_net/src/media/'
 
-STATIC_ROOT = '/git/textcritical_net/media/static/'
+STATIC_ROOT = '/git/textcritical_net/src/media/static/'
 
 # Define the path to the static directory so that the admin page works
 STATIC_URL = '/media/static/'
