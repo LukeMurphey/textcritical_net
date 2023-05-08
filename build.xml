@@ -67,6 +67,7 @@
          ================================= -->
 	<target name="update_js" description="Get the Javascript code and copy it into this repo" depends="initialize,spa_check">
 		<property name="js_files" value="${value.build.textcritical_spa.directory}/dist" />
+		<property name="public_files" value="${value.build.textcritical_spa.directory}/public" />
 		<property name="js_dest" value="src/media/dist" />
 
 		<mkdir dir="${js_dest}" />
@@ -76,10 +77,15 @@
 		</delete>
 
 		<copy todir="${js_dest}">
-			<fileset dir="${js_files}" includes="**"/>  
+			<fileset dir="${js_files}" includes="**"/>
 		</copy>
 
 		<copy file="${value.build.textcritical_spa.directory}/public/semantic.cosmo.css" todir="${js_dest}"/>
+		
+		<mkdir dir="${js_dest}/themes" />
+		<copy todir="${js_dest}">
+			<fileset dir="${public_files}"/>
+		</copy>
 	</target>
 
 	<!-- ================================= 
