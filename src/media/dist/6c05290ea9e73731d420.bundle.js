@@ -1,0 +1,2 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[8],{808:function(e,n,t){"use strict";t.r(n);var a=t(0),o=t.n(a),r=t(659),c=t(136),i=t(42),s=t(2),l=function(e){var n=e.inverted;return o.a.createElement(r.a,{inverted:n},o.a.createElement(c.a,{as:"h3"},"Authentication Complete"),o.a.createElement(i.a,{name:"check",color:"green",size:"large"}),"You have completed the login process. You can close this window.")};l.propTypes={inverted:t.n(s).a.bool.isRequired},n.default=l}}]);
+//# sourceMappingURL=8.js.map
