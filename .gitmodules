@@ -1,0 +1,3 @@
+[submodule "submodules/textcritical_spa"]
+	path = submodules/textcritical_spa
+	url = https://github.com/LukeMurphey/textcritical_spa.git
