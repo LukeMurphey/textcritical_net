@@ -39,7 +39,7 @@ COPY webpack.config.json /git/textcritical_spa/webpack.config.json
 # RUN cp /git/textcritical_net/src/textcritical/docker_dev_image_settings.py /git/textcritical_net/src/textcritical/settings.py
 
 # Prep the frontend
-WORKDIR /git/textcritical_spa
+WORKDIR /git/textcritical_net/submodules/textcritical_spa
 RUN yarn install
 
 # Expose port 8080 to allow communication to/from the Django server

@@ -1,5 +1,5 @@
 #!/bin/sh
-cd /git/textcritical_spa
+cd /git/textcritical_net/submodules/textcritical_spa
 
 while true
 do

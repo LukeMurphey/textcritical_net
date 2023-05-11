@@ -4,7 +4,7 @@ ant test
 
 BACKEND=$?
 
-cd /git/textcritical_spa
+cd /git/textcritical_net/submodules/textcritical_spa
 yarn run test
 
 FRONTEND=$?
