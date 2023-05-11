@@ -63,9 +63,32 @@
 	</target>
 
 	<!-- ================================= 
+          target: built_js_does_exist
+         ================================= -->
+	<target name="built_js_does_exist" depends="does_built_js_exist" if="built_js_exists">
+		<echo>${value.build.textcritical_spa.directory}/dist exists</echo>
+	</target>
+
+	<!-- ================================= 
+          target: built_js_check
+         ================================= -->
+	<target name="built_js_check" depends="does_built_js_exist" unless="built_js_exists">
+		<fail>The built code for TextCritical SPA code doesn't exist; get it by building the SPA codebase with "yarn run build"</fail>
+	</target>
+
+	<!-- ================================= 
+          target: does_built_js_exist
+         ================================= -->
+	<target name="does_built_js_exist">
+		<condition property="built_js_exists">
+			<available file="${value.build.textcritical_spa.directory}/dist" type="dir"/>
+		</condition>
+	</target>
+
+	<!-- ================================= 
           target: update_js
          ================================= -->
-	<target name="update_js" description="Get the Javascript code and copy it into this repo" depends="initialize,spa_check">
+	<target name="update_js" description="Get the Javascript code and copy it into this repo" depends="initialize,spa_check,built_js_check">
 		<property name="js_files" value="${value.build.textcritical_spa.directory}/dist" />
 		<property name="public_files" value="${value.build.textcritical_spa.directory}/public" />
 		<property name="js_dest" value="src/media/dist" />
