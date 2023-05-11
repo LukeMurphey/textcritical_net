@@ -28,3 +28,6 @@ src/media/stylesheets/read_work.css
 src/media/stylesheets/search.css
 src/media/stylesheets/shortcuts.css
 src/media/stylesheets/works_index.css
+
+# Ignore the built JS files
+src/media/dist/*

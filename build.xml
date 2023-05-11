@@ -523,7 +523,7 @@
 	<!-- ================================= 
           target: docker_build
          ================================= -->
-	<target name="docker_build" description="Build the docker image" depends="update_build_info">
+	<target name="docker_build" description="Build the docker image" depends="compile_js,update_build_info">
 		<exec executable="docker" failonerror="true">
 			<arg value="build"/>
 			<arg value="-t"/>
@@ -599,6 +599,27 @@
 			<arg value="-t"/>
 			<arg value="${value.docker.name}_dev:latest"/>
 			<arg value="."/>
+		</exec>
+	</target>
+
+	<!-- ================================= 
+          target: compile_js
+         ================================= -->
+	<target name="compile_js" description="Build the docker image for the dev environment">
+		<exec dir="dockerfiles/development_env" executable="docker" failonerror="true">
+			<arg value="compose"/>
+			<arg value="run"/>
+			<arg value="--entrypoint"/>
+			<arg value="git pull"/>
+			<arg value="webapp"/>
+		</exec>
+
+		<exec dir="dockerfiles/development_env" executable="docker" failonerror="true">
+			<arg value="compose"/>
+			<arg value="run"/>
+			<arg value="--entrypoint"/>
+			<arg value="yarn run build"/>
+			<arg value="webapp"/>
 		</exec>
 	</target>
 
