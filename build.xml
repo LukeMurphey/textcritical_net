@@ -606,17 +606,18 @@
           target: compile_js
          ================================= -->
 	<target name="compile_js" description="Build the docker image for the dev environment">
-		<exec dir="dockerfiles/development_env" executable="docker" failonerror="true">
-			<arg value="compose"/>
-			<arg value="run"/>
-			<arg value="--entrypoint"/>
-			<arg value="git pull"/>
-			<arg value="webapp"/>
-		</exec>
+		<property name="js_dest" value="src/media/dist" />
+
+		<mkdir dir="${js_dest}" />
+
+		<delete>
+			<fileset dir="${js_dest}" includes="**/*"/>
+		</delete>
 
 		<exec dir="dockerfiles/development_env" executable="docker" failonerror="true">
 			<arg value="compose"/>
 			<arg value="run"/>
+			<arg value="--rm"/>
 			<arg value="--entrypoint"/>
 			<arg value="yarn run build"/>
 			<arg value="webapp"/>
