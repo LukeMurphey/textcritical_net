@@ -28,11 +28,6 @@
 	<property name="python" value="${python_dir}/bin/python3" />
 	<property name="pip" value="${python_dir}/bin/pip" />
 
-	<!-- This patternset matches the custom application Javascript -->
-	<patternset id="application_js_files">
-		<include name="src/media/javascripts/app.js" />
-	</patternset>
-
 	<!-- ================================= 
           target: initialize
          ================================= -->
@@ -63,9 +58,32 @@
 	</target>
 
 	<!-- ================================= 
+          target: built_js_does_exist
+         ================================= -->
+	<target name="built_js_does_exist" depends="does_built_js_exist" if="built_js_exists">
+		<echo>${value.build.textcritical_spa.directory}/dist exists</echo>
+	</target>
+
+	<!-- ================================= 
+          target: built_js_check
+         ================================= -->
+	<target name="built_js_check" depends="does_built_js_exist" unless="built_js_exists">
+		<fail>The built code for TextCritical SPA code doesn't exist; get it by building the SPA codebase with "yarn run build"</fail>
+	</target>
+
+	<!-- ================================= 
+          target: does_built_js_exist
+         ================================= -->
+	<target name="does_built_js_exist">
+		<condition property="built_js_exists">
+			<available file="${value.build.textcritical_spa.directory}/dist" type="dir"/>
+		</condition>
+	</target>
+
+	<!-- ================================= 
           target: update_js
          ================================= -->
-	<target name="update_js" description="Get the Javascript code and copy it into this repo" depends="initialize,spa_check">
+	<target name="update_js" description="Get the Javascript code and copy it into this repo" depends="initialize,spa_check,built_js_check">
 		<property name="js_files" value="${value.build.textcritical_spa.directory}/dist" />
 		<property name="public_files" value="${value.build.textcritical_spa.directory}/public" />
 		<property name="js_dest" value="src/media/dist" />
@@ -92,6 +110,12 @@
           target: compile
          ================================= -->
 	<target name="compile" description="Compile the application" depends="update_build_info"></target>
+
+	<!-- ================================= 
+          target: build_js
+         ================================= -->
+	<target name="build_js" description="Build the JS for SPA">
+	</target>
 
 	<!-- ================================= 
           target: initialize_libraries
@@ -563,6 +587,18 @@
 			<arg value="-Wa"/>
 			<arg value="manage.py"/>
 			<arg value="test"/>
+		</exec>
+	</target>
+
+	<!-- ================================= 
+          target: docker_build_dev
+         ================================= -->
+	<target name="docker_build_dev" description="Build the docker image for the dev environment">
+		<exec dir="dockerfiles/development_env" executable="docker" failonerror="true">
+			<arg value="build"/>
+			<arg value="-t"/>
+			<arg value="${value.docker.name}_dev:latest"/>
+			<arg value="."/>
 		</exec>
 	</target>
 

@@ -23,8 +23,7 @@ RUN echo "$CACHEBUST"
 # Get the repos
 RUN mkdir /git
 WORKDIR /git
-RUN git clone https://github.com/LukeMurphey/textcritical_net.git
-RUN git clone https://github.com/LukeMurphey/textcritical_spa.git
+RUN git clone --recurse-submodules https://github.com/LukeMurphey/textcritical_net.github
 
 RUN apt-get update && \
              apt-get install -y build-essential && \

@@ -14,3 +14,4 @@ services:
       - "8081:8081"
     volumes:
        - ../../var:/git/textcritical_net/var
+       - ../../src/media/dist:/git/textcritical_spa/dist
