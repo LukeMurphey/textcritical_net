@@ -28,11 +28,6 @@
 	<property name="python" value="${python_dir}/bin/python3" />
 	<property name="pip" value="${python_dir}/bin/pip" />
 
-	<!-- This patternset matches the custom application Javascript -->
-	<patternset id="application_js_files">
-		<include name="src/media/javascripts/app.js" />
-	</patternset>
-
 	<!-- ================================= 
           target: initialize
          ================================= -->
@@ -115,6 +110,12 @@
           target: compile
          ================================= -->
 	<target name="compile" description="Compile the application" depends="update_build_info"></target>
+
+	<!-- ================================= 
+          target: build_js
+         ================================= -->
+	<target name="build_js" description="Build the JS for SPA">
+	</target>
 
 	<!-- ================================= 
           target: initialize_libraries
@@ -586,6 +587,18 @@
 			<arg value="-Wa"/>
 			<arg value="manage.py"/>
 			<arg value="test"/>
+		</exec>
+	</target>
+
+	<!-- ================================= 
+          target: docker_build_dev
+         ================================= -->
+	<target name="docker_build_dev" description="Build the docker image for the dev environment">
+		<exec dir="dockerfiles/development_env" executable="docker" failonerror="true">
+			<arg value="build"/>
+			<arg value="-t"/>
+			<arg value="${value.docker.name}_dev:latest"/>
+			<arg value="."/>
 		</exec>
 	</target>
 

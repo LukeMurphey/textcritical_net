@@ -25,7 +25,6 @@ RUN mkdir /git
 WORKDIR /git
 RUN git clone --recurse-submodules https://github.com/LukeMurphey/textcritical_net.github
 
-
 RUN apt-get update && \
              apt-get install -y build-essential && \
              pip install --no-cache-dir -r /git/textcritical_net/src/requirements.txt && \
