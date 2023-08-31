@@ -74,7 +74,7 @@ def unbound_text_to_html5(text, language=None):
             # Append the node
             verse_node.appendChild(word_node)
     
-    return converted_doc.toxml( encoding="utf-8" )
+    return converted_doc.toxml()
 
 @register.filter(name='perseus_xml_to_html5')
 def perseus_xml_to_html5(value, language=None):
