@@ -502,6 +502,7 @@ def divisions_to_json(divisions):
         return [division_to_json(d) for d in divisions]
 
     return []
+
 def division_to_json(division):
     if division:
         if division.parent_division:
