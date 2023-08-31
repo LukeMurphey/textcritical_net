@@ -190,6 +190,11 @@
 		"build": "${value.build.number}",
 		"build_date": "${value.build.date}"
 }</echo>
+		<exec failonerror="true" executable="yarn" dir="submodules/textcritical_spa">
+			<arg value="version"/>
+			<arg value="--new-version"/>
+			<arg line="${value.build.version}" />
+		</exec>
 	</target>
 
 	<!-- ================================= 
