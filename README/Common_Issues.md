@@ -30,3 +30,12 @@ Install Rust with this:
 
 Then run 
 ```sudo pip3 install -U pip```
+
+
+### Social authentication fails after upgrading
+
+This may be beause the database needs to be migrated. Run the following to migrate the database:
+
+```
+python3 manage.py migrate
+```
