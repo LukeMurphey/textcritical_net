@@ -21,7 +21,7 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources
 RUN apt-get update && apt-get install -y yarn
 
 # Change the cache bust value to invalidate the cache so that we get the latest repos
-ARG CACHEBUST=8
+ARG CACHEBUST=9
 RUN echo "$CACHEBUST"
 
 # Get the repos
