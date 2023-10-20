@@ -9,6 +9,6 @@ Whoosh
 requests
 wikipedia
 WSGIserver
-django-cors-headers 
+django-cors-headers
 xlsxwriter
-django-allauth
+django-allauth==0.55.2
