@@ -21,6 +21,7 @@ import logging
 import difflib
 import re
 import os
+import io
 from urllib.parse import urlencode
 
 from reader.templatetags.reader_extras import transform_perseus_text
@@ -34,7 +35,7 @@ from reader.contentsearch import search_verses, search_stats, GreekVariations
 from reader.language_tools import normalize_unicode
 from reader.bookcover import makeCoverImage
 from reader.utils.work_helpers import get_division_and_verse, get_work_page_info, get_chapter_for_division, note_to_json, get_division
-from reader.exporter.text import convert_verses_to_text
+from reader.exporter import text, docx
 from reader.notes import get_related_notes
 
 # Try to import the ePubExport but be forgiving if the necessary dependencies do not exist
@@ -847,13 +848,9 @@ def api_read_work(request, author=None, language=None, title=None, division_0=No
 
     return render_api_response(request, data, status=status_code, cache_timeout=12 * months)
 
-
-def api_work_text(request,  title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
+def get_work_text(request, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None):
     # Try to get the work
-    try:
-        work_alias = WorkAlias.objects.get(title_slug=title)
-    except WorkAlias.DoesNotExist:
-         return render_api_response(request, [], status=404)
+    work_alias = WorkAlias.objects.get(title_slug=title)
 
     work = work_alias.work
     
@@ -862,7 +859,7 @@ def api_work_text(request,  title=None, division_0=None, division_1=None, divisi
 
     # Return a 404 if the work could not be found
     if division is None:
-        return render_api_response(request, [], status=404)
+        return None, None
 
     chapter = get_chapter_for_division(division)
 
@@ -870,12 +867,46 @@ def api_work_text(request,  title=None, division_0=None, division_1=None, divisi
     if verse_to_highlight is None:
         verses = Verse.objects.filter(division=chapter).all()
 
-        return render_api_response(request, convert_verses_to_text(verses, chapter), status=210)
+        return verses, chapter
     else:
         # Find the verse
         verse = Verse.objects.get(indicator=verse_to_highlight, division=division)
-        return render_api_response(request, convert_verses_to_text([verse], chapter), status=210)
+        return [verse], chapter
 
+def api_work_text(request, title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
+    try:
+        verses, chapter = get_work_text(request, title, division_0, division_1, division_2, division_3, division_4)
+    except WorkAlias.DoesNotExist:
+         return render_api_response(request, [], status=404)
+     
+    if verses is None and chapter is None:
+        return render_api_response(request, [], status=404)
+    
+    return render_api_response(request, text.convert_verses_to_text(verses, chapter), status=210)
+    
+def api_download_chapter(request,  title=None, division_0=None, division_1=None, division_2=None, division_3=None, division_4=None, leftovers=None, **kwargs):
+    try:
+        verses, chapter = get_work_text(request, title, division_0, division_1, division_2, division_3, division_4)
+    except WorkAlias.DoesNotExist:
+         return render_api_response(request, [], status=404)
+     
+    if verses is None and chapter is None:
+        return render_api_response(request, [], status=404)
+        
+    docx_document = docx.convert_verses_to_text(verses, chapter)
+
+    import tempfile
+    filepath = os.path.join(tempfile.gettempdir(), 'chapter.docx')
+    docx_document.save(filepath)
+    wrapper = FileWrapper(open(filepath, 'rb'))
+    response = HttpResponse(wrapper, content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+
+    response['Content-Disposition'] = 'attachment; filename="%s.docx"' % (
+        chapter.work.title + ' ' + chapter.get_division_description())
+    return response
+        
+    return render_api_response(request, convert_verses_to_text(verses, chapter), status=210)
+    
 def get_work_info(title):
 
     # Try to get the work

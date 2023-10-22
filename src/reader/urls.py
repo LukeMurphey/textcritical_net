@@ -132,6 +132,22 @@ urlpatterns = [
         views.api_work_text, name='api_work_text'),
     url(r'^api/work_text/(?P<title>[^/]*)/?$',
         views.api_work_text, name='api_work_text'),
+    
+    # Get a copy of the work as a file
+    url(r'^api/download_chapter/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>[^/]+)/?$',
+        views.api_download_chapter, name='api_download_chapter'),
+    url(r'^api/download_chapter/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>[^/]+)/?$',
+        views.api_download_chapter, name='api_download_chapter'),
+    url(r'^api/download_chapter/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>[^/]+)/?$',
+        views.api_download_chapter, name='api_download_chapter'),
+    url(r'^api/download_chapter/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>[^/]+)/?$',
+        views.api_download_chapter, name='api_download_chapter'),
+    url(r'^api/download_chapter/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>[^/]+)/?$',
+        views.api_download_chapter, name='api_download_chapter'),
+    url(r'^api/download_chapter/(?P<title>.*)/(?P<division_0>[^/]+)/?$',
+        views.api_download_chapter, name='api_download_chapter'),
+    url(r'^api/download_chapter/(?P<title>[^/]*)/?$',
+        views.api_download_chapter, name='api_download_chapter'),
 
     # Wikipedia info
     url(r'^api/wikipedia_info/(?P<topic>[^/]*)/?$',
