@@ -15,6 +15,7 @@ def convert_verses_to_text(verses, chapter):
     # Declare the meta-data
     document.core_properties.title = chapter.work.title + "; " + " ".join(chapter.get_division_titles())
     document.core_properties.comments = "Downloaded from TextCritical.net"
+    document.core_properties.language = chapter.work.language
 
     # Get a reference to the style used for the verse markers
     # A separate style is used so that you can hide the markers by using setting the 'hidden'
