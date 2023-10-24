@@ -21,7 +21,7 @@ import logging
 import difflib
 import re
 import os
-import io
+import tempfile
 from urllib.parse import urlencode
 
 from reader.templatetags.reader_extras import transform_perseus_text
@@ -895,18 +895,18 @@ def api_download_chapter(request,  title=None, division_0=None, division_1=None,
         
     docx_document = docx.convert_verses_to_text(verses, chapter)
 
-    import tempfile
-    filepath = os.path.join(tempfile.gettempdir(), 'chapter.docx')
-    docx_document.save(filepath)
-    wrapper = FileWrapper(open(filepath, 'rb'))
-    response = HttpResponse(wrapper, content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    _, tmp = tempfile.mkstemp()
+    try:
+        docx_document.save(tmp)
+        wrapper = FileWrapper(open(tmp, 'rb'))
+        response = HttpResponse(wrapper, content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
 
-    response['Content-Disposition'] = 'attachment; filename="%s.docx"' % (
-        chapter.work.title + ' ' + chapter.get_division_description())
-    return response
-        
-    return render_api_response(request, convert_verses_to_text(verses, chapter), status=210)
-    
+        response['Content-Disposition'] = 'attachment; filename="%s.docx"' % (
+            chapter.work.title + ' ' + chapter.get_division_description())
+        return response
+    finally:
+        os.remove(tmp)
+
 def get_work_info(title):
 
     # Try to get the work

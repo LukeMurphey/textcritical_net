@@ -133,7 +133,7 @@ urlpatterns = [
     url(r'^api/work_text/(?P<title>[^/]*)/?$',
         views.api_work_text, name='api_work_text'),
     
-    # Get a copy of the work as a file
+    # Get a copy of the chapter as a file
     url(r'^api/download_chapter/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>.+)/(?P<leftovers>[^/]+)/?$',
         views.api_download_chapter, name='api_download_chapter'),
     url(r'^api/download_chapter/(?P<title>.*)/(?P<division_0>.+)/(?P<division_1>.+)/(?P<division_2>.+)/(?P<division_3>.+)/(?P<division_4>[^/]+)/?$',

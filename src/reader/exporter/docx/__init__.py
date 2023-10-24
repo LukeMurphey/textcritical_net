@@ -1,6 +1,7 @@
 from reader.templatetags.reader_extras import NoteNumber
 from collections import OrderedDict
 from docx import Document
+from docx.enum.style import WD_STYLE_TYPE
 from reader.exporter.text import convert_verse_to_text
 
 def convert_verses_to_text(verses, chapter):
@@ -10,9 +11,18 @@ def convert_verses_to_text(verses, chapter):
     note_number = NoteNumber(1)
     notes = OrderedDict()
     verses_exported = 0
+    
+    # Declare the meta-data
+    document.core_properties.title = chapter.work.title + "; " + " ".join(chapter.get_division_titles())
+    document.core_properties.comments = "Downloaded from TextCritical.net"
 
-    # Get a reference to the strong style (used for the verse markers)
-    strong_style = document.styles['Strong']
+    # Get a reference to the style used for the verse markers
+    # A separate style is used so that you can hide the markers by using setting the 'hidden'
+    # font attribute.
+    verse_marker_style = document.styles.add_style('Verse Marker', WD_STYLE_TYPE.CHARACTER)
+    verse_marker_style.base_style = document.styles['Strong']
+    verse_marker_style.hidden = False
+    verse_marker_style.quick_style = True
      
     # Output the header
     document.add_paragraph(" ".join(chapter.get_division_titles())).style = document.styles['Heading 1']
@@ -27,7 +37,7 @@ def convert_verses_to_text(verses, chapter):
         
         # Add the verse indicator
         if len(verse.indicator) > 0:
-            p.add_run(verse.indicator + '. ').style = strong_style
+            p.add_run(verse.indicator + '. ').style = verse_marker_style
             
         # Use the original content if it exists
         if len(verse.original_content) > 0:
