@@ -1,0 +1,25 @@
+{
+    "dockerComposeFile": "./docker-compose.yml",
+
+    "service": "textcritical_dev_container",
+
+	"workspaceFolder": "/workspace",
+
+	// Use this environment variable if you need to bind mount your local source code into a new container.
+	"remoteEnv": {
+		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"bibhasdn.django-html",
+				"ms-python.python"
+			]
+		}
+	},
+
+	"postStartCommand": [
+		"./.devcontainer/postStartCommand.sh"
+	]
+}
