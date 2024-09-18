@@ -23,7 +23,7 @@ def is_request_async(request):
     elif 'async' in request.GET:
         return True
     
-    return request.is_ajax()
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest' # request.is_ajax()
 
 def is_async(request):
         

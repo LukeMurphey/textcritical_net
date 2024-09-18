@@ -344,13 +344,16 @@ class cache_page_if_ajax(object):
         self.timeout = timeout
         self.name = name
     
+    def is_ajax(self, request):
+        return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
     def __call__(self, fn):
         
         def return_cached_page_if_ajax(*args, **kwargs):
             
             request = args[0]
             
-            if request.is_ajax():
+            if self.is_ajax(request):
                 
                 # Make a key to identify the function call uniquely
                 kwargs_array = []

@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.urls import include, re_path
 from django.urls import path
 from django.conf import settings
 from django.views.static import serve
@@ -15,22 +15,22 @@ handler500 = reader.views.error_500
 urlpatterns = [
     
     # Include the Grappelli app
-    url(r'^grappelli/', include(grappelli_urls)),
+    re_path(r'^grappelli/', include(grappelli_urls)),
     
     # Include the reader app
-    url(r'^', include('reader.urls')),
+    re_path(r'^', include('reader.urls')),
 
     # Enable admin documentation:
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    re_path(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Enable the admin:
-    url(r'^admin/', admin.site.urls),
+    re_path(r'^admin/', admin.site.urls),
 
     # For social logins
     path('accounts/', include('allauth.urls')),
 
     # Serve static files (images, css, javascript, etc.):
-    url(r'^media/(?P<path>.*)$', serve, {
+    re_path(r'^media/(?P<path>.*)$', serve, {
         'document_root': settings.MEDIA_ROOT
     }),
 ]

@@ -1,9 +1,12 @@
-django==3.2.25
-django-grappelli==2.15.5
+# https://docs.djangoproject.com/en/5.1/releases/4.2/
+django==4.2.16
+# https://django-grappelli.readthedocs.io/en/latest/#versions
+django-grappelli==3.0.9
 lxml
 Genshi
 six
 wand
+jwt
 bs4
 Whoosh
 requests
@@ -12,4 +15,5 @@ WSGIserver
 django-cors-headers
 xlsxwriter
 python-docx
-django-allauth==0.55.2
+# https://docs.allauth.org/en/dev/release-notes/recent.html
+django-allauth==64.2.1
