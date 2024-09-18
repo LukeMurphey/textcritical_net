@@ -10,7 +10,7 @@ src/media/files/*.epub
 src/media/files/*.mobi
 src/media/static/*
 var/*
-settings.py
+src/textcritical/settings.py
 
 # Ignore the processed CSS files
 src/media/stylesheets/404.css
