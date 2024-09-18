@@ -347,7 +347,7 @@
 			<arg value="manage.py"/>
 			<arg value="runserver"/>
 			<arg value="0.0.0.0:8080"/>
-			<arg value="--nothreading"/>
+			<!-- <arg value="- -nothreading"/> -->
 		</exec>
 	</target>
 
