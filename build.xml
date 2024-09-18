@@ -114,7 +114,7 @@
 	<!-- ================================= 
           target: build_js
          ================================= -->
-	<target name="build_js" description="Build the JS for SPA">
+	<target name="build_js" description="Build the JS for the SPA">
 	</target>
 
 	<!-- ================================= 
@@ -610,7 +610,7 @@
 	<!-- ================================= 
           target: compile_js
          ================================= -->
-	<target name="compile_js" description="Build the docker image for the dev environment">
+	<target name="compile_js" description="Build the JS with the dev environment">
 		<property name="js_dest" value="src/media/dist" />
 
 		<mkdir dir="${js_dest}" />
