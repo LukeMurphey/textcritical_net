@@ -2,7 +2,7 @@
 
 # See https://hub.docker.com/_/python
 # Django/Python matrix is here: https://docs.djangoproject.com/en/3.0/faq/install/#what-python-version-can-i-use-with-django
-FROM python:3.7-slim
+FROM python:3.8-slim
 
 RUN apt-get update && apt-get install -y imagemagick calibre ant git curl
 
