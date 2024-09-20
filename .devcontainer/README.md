@@ -1,9 +1,20 @@
 This dev container allws you to run TextCritical in a container in order to make development easier.
 
-Here are some pointers:
 
- * The database files needs to be in the /var directory
+# Some things you should know
+Here are some pointers.
 
+## Where do the database files go?
+
+The database files needs to be in the /var directory
+
+## How do I get the Javascript to use the local server
+
+Copy over the webpack.config.json to tell the development server to not use the remote server (textcritical.net)
+
+```
+cp /workspace/dockerfiles/development_env/webpack.config.json /workspace/submodules/textcritical_spa/webpack.config.json
+```
 
 # Known issues
 

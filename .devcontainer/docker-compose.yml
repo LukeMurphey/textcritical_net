@@ -15,4 +15,3 @@ services:
       - "8081:8081"
     volumes:
       - ..:/workspace:cached
-
