@@ -8,8 +8,10 @@ Here are some pointers:
 # Known issues
 
 ## All files in the repo show modifications
-I don't know why this happens yet
+This is due to line-ending conversion. What happens is that the files are checked out with CRLF but the development container is running Linux. This causes git to get confused and think the line-endings changed. See https://stackoverflow.com/questions/2517190/how-do-i-force-git-to-use-lf-instead-of-crlf-under-windows
 
-## Not all dependencies get executed from the DockerFile
-I have to manually run them
+I recommend disabling line-ending conversion on Windows before you checkout the files:
 
+```
+git config --global core.autocrlf false
+```
