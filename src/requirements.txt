@@ -6,7 +6,7 @@ lxml
 Genshi
 six
 wand
-jwt
+pyjwt
 bs4
 Whoosh
 requests
