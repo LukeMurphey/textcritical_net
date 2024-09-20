@@ -13,9 +13,11 @@ class TestContextProcessors(TestCase):
                 self.GET = {'param' : 'nothing'}
             
             self.is_ajax_param = is_ajax
-        
-        def is_ajax(self):
-            return self.is_ajax_param
+
+            if is_ajax:
+                self.META = { 'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest' }
+            else:
+                self.META = { 'HTTP_X_REQUESTED_WITH': '' }
     
     def test_is_async(self):
         
