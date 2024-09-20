@@ -20,12 +20,11 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 RUN apt-get update && apt-get install -y yarn
 
-RUN apt-get update && \
-             apt-get install -y build-essential && \
-             pip install --no-cache-dir -r /workspace/src/requirements.txt && \
-             apt-get remove -y --purge build-essential && \
-             apt-get clean && \
-             rm -rf /var/lib/apt/lists/*
+RUN apt-get install -y build-essential
+# RUN pip install --no-cache-dir -r /workspace/src/requirements.txt
+RUN apt-get remove -y --purge build-essential
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
 
 # Prep the backend
 #COPY dockerfiles/development_env/docker_dev_image_settings.py /git/textcritical_net/src/textcritical/settings.py
@@ -45,4 +44,5 @@ EXPOSE 8081
 
 # Start the server
 #RUN chmod 755 /bin/entrypoint.sh
-ENTRYPOINT ["workspace/entrypoint.sh"]
+#ENTRYPOINT ["workspace/entrypoint.sh"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]
