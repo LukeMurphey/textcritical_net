@@ -6,7 +6,7 @@ services:
     # https://docs.docker.com/compose/compose-file/compose-file-v3/#network_mode
     network_mode: "bridge"
     build:
-      context: ..
+      context: .
       dockerfile: ./Dockerfile
     #image: textcritical_dev_container
     #container_name: textcritical_dev_container

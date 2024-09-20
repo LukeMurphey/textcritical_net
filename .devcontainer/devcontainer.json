@@ -20,6 +20,6 @@
 	},
 
 	"postStartCommand": [
-		"./.devcontainer/postStartCommand.sh"
+		"/workspace/.devcontainer/postStartCommand.sh"
 	]
 }
