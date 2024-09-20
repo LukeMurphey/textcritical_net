@@ -13,4 +13,4 @@ Peter Heslin: p.j.heslin@dur.ac.uk
 Version: {{ version_info }}{% endif %}
 Standards: HTML5, CSS3
 Components: React, Semantic UI
-Software: Visual Studio Code, Git
+Software: Visual Studio Code, Git, Docker
