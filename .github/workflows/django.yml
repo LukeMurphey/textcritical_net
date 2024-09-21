@@ -30,7 +30,8 @@ jobs:
         pip install cryptography
     - name: Copy settings
       run: |
-        cp src/textcritical/default_settings.py src/textcritical/settings.py
+        cp src/textcritical/test_settings.py src/textcritical/settings.py
     - name: Run Tests
+      working-directory: ./src
       run: |
-        python src/manage.py test
+        python -Wa manage.py test
