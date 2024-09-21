@@ -15,5 +15,6 @@ WSGIserver
 django-cors-headers
 xlsxwriter
 python-docx
+cryptography
 # https://docs.allauth.org/en/dev/release-notes/recent.html
 django-allauth==64.2.1
