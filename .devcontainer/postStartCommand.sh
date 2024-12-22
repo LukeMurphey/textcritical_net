@@ -2,7 +2,8 @@
 
 pip install --no-cache-dir -r /workspace/src/requirements.txt
 
-git submodule update --init
+#git submodule update --init
+
 cd /workspace/submodules/textcritical_spa
 
 # Copy over the settings file
