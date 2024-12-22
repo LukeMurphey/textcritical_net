@@ -2,7 +2,13 @@
 
 pip install --no-cache-dir -r /workspace/src/requirements.txt
 
-#git submodule update --init
+# Pull the latest for the submodules
+# This is commented out because if overrides your own branches
+if test -d "/workspace/submodules/"; then
+  echo "Submodules already exist"
+else
+  git submodule update --init
+fi
 
 cd /workspace/submodules/textcritical_spa
 
