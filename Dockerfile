@@ -40,7 +40,7 @@ WORKDIR /usr/src/app
 
 COPY src/requirements.txt /usr/src/app/
 RUN  apt-get update && \
-             apt-get install -y build-essential && \
+             apt-get install -y build-essential --no-install-recommends && \
              pip install --no-cache-dir -r requirements.txt && \
              apt-get remove -y --purge build-essential && \
              apt-get clean && \
@@ -48,7 +48,9 @@ RUN  apt-get update && \
 
 # RUN apt-get install -y libmagickwand-dev
 RUN apt-get update && \
-             apt-get install -y imagemagick
+             apt-get install -y imagemagick --no-install-recommends && \
+             apt-get clean && \
+             rm -rf /var/lib/apt/lists/*
 
 # Now copy in the textcritical files
 RUN mkdir -p /usr/src/app/
@@ -66,7 +68,10 @@ RUN mkdir -p /usr/src/app/media/files/
 RUN mkdir -p /usr/src/app/var/cache
 
 # Install Calibre
-RUN apt install -y calibre
+RUN wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sh /dev/stdin
+#RUN apt-get install -y calibre --no-install-recommends && \
+#    apt-get clean && \
+#    rm -rf /var/lib/apt/lists/*
 
 # Collect the static files
 RUN python /usr/src/app/manage.py collectstatic --noinput
