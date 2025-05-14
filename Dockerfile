@@ -32,7 +32,7 @@
 
 # See https://hub.docker.com/_/python
 # Django/Python matrix is here: https://docs.djangoproject.com/en/3.0/faq/install/#what-python-version-can-i-use-with-django
-FROM python:3.8-slim
+FROM python:3.9-slim
 
 # These are copied from python:2-onbuild (https://github.com/tomologic/docker-python/blob/master/2-onbuild/Dockerfile)
 RUN mkdir -p /usr/src/app
