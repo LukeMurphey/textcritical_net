@@ -39,3 +39,7 @@ This may be beause the database needs to be migrated. Run the following to migra
 ```
 python3 manage.py migrate
 ```
+
+## Social login is not working
+
+Local authentication will only work the TextCritical or localhost domains. You will also need to use a remote instance of TextCritical to avoid getting a CSRF token failure.
