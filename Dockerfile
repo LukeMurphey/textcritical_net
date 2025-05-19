@@ -32,7 +32,7 @@
 
 # See https://hub.docker.com/_/python
 # Django/Python matrix is here: https://docs.djangoproject.com/en/3.0/faq/install/#what-python-version-can-i-use-with-django
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 # These are copied from python:2-onbuild (https://github.com/tomologic/docker-python/blob/master/2-onbuild/Dockerfile)
 RUN mkdir -p /usr/src/app
@@ -40,32 +40,25 @@ WORKDIR /usr/src/app
 
 COPY src/requirements.txt /usr/src/app/
 RUN  apt-get update && \
-             apt-get install -y build-essential --no-install-recommends && \
              pip install --no-cache-dir -r requirements.txt && \
-             apt-get remove -y --purge build-essential && \
-             apt-get clean && \
-             rm -rf /var/lib/apt/lists/*
-
-# RUN apt-get install -y libmagickwand-dev
-RUN apt-get update && \
              apt-get install -y imagemagick --no-install-recommends && \
              apt-get clean && \
              rm -rf /var/lib/apt/lists/*
 
 # Now copy in the textcritical files
-RUN mkdir -p /usr/src/app/
-RUN mkdir -p /usr/src/app/var/
-RUN mkdir -p /db
+RUN mkdir -p /usr/src/app/ && \
+    mkdir -p /usr/src/app/var/ && \
+    mkdir -p /db
 COPY src /usr/src/app
 
 # Copy over the Docker settings file
 COPY src/textcritical/docker_image_settings.py /usr/src/app/textcritical/settings.py
 
 # Create the necessary directories
-RUN mkdir -p /usr/src/app/var/log/
-RUN mkdir -p /usr/src/app/var/indexes
-RUN mkdir -p /usr/src/app/media/files/
-RUN mkdir -p /usr/src/app/var/cache
+RUN mkdir -p /usr/src/app/var/log/ && \
+    mkdir -p /usr/src/app/var/indexes && \
+    mkdir -p /usr/src/app/media/files/ && \
+    mkdir -p /usr/src/app/var/cache
 
 # Install Calibre
 RUN wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sh /dev/stdin
