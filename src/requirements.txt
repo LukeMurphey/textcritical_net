@@ -1,5 +1,5 @@
 # https://docs.djangoproject.com/en/5.1/releases/4.2/
-django==4.2.21
+django==4.2.22
 # https://django-grappelli.readthedocs.io/en/latest/#versions
 django-grappelli==3.0.9
 lxml
